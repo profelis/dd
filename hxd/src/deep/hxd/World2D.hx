@@ -78,7 +78,6 @@ class World2D
 
     function onResize(?_)
     {
-        trace("resize " + autoResize);
 		if (autoResize)
         {
             bounds.width = Std.int(stage.stageWidth);
@@ -138,7 +137,7 @@ class World2D
             if (rect.height <= 0) throw "bounds.height < 0";
         }
         #end
-        trace(rect);
+
 		bounds = rect != null ? rect : new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
         autoResize = (rect == null);
 		invalidateSize = true;
