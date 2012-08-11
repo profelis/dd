@@ -16,18 +16,6 @@ class Node2D
         children = new Array();
         transform = new Matrix3D();
         worldTransform = new Matrix3D();
-
-        //rotationX = 0;
-        rotationY = 0;
-        rotationZ = 0;
-        x = 0;
-        y = 0;
-        z = 0;
-        scaleX = 1;
-        scaleY = 1;
-        scaleZ = 1;
-
-        invalidateTransform = true;
     }
 
     public var blendMode:BlendMode;
@@ -39,7 +27,7 @@ class Node2D
     var children:Array<Node2D>;
 
     public var transform(get_transform, null):Matrix3D;
-    var invalidateTransform:Bool;
+    var invalidateTransform:Bool = true;
 
     public var worldTransform(get_worldTransform, null):Matrix3D;
     var invalidateWorldTransform:Bool;
@@ -72,7 +60,7 @@ class Node2D
         c.setScene(null);
     }
 
-    function setScene(s:Scene2D)
+    function setScene(s:Scene2D):Void
     {
         scene = s;
         for (i in children) i.setScene(s);
@@ -153,12 +141,12 @@ class Node2D
     public var z(default, set_z):Float = 0;
 
     public var rotationX(default, set_rotationX):Float = 0;
-    public var rotationY(default, set_rotationY):Float;
-    public var rotationZ(default, set_rotationZ):Float;
+    public var rotationY(default, set_rotationY):Float = 0;
+    public var rotationZ(default, set_rotationZ):Float = 0;
 
-    public var scaleX(default, set_scaleX):Float;
-    public var scaleY(default, set_scaleY):Float;
-    public var scaleZ(default, set_scaleZ):Float;
+    public var scaleX(default, set_scaleX):Float = 1;
+    public var scaleY(default, set_scaleY):Float = 1;
+    public var scaleZ(default, set_scaleZ):Float = 1;
 
     function set_x(v:Float)
     {

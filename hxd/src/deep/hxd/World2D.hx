@@ -23,7 +23,7 @@ class World2D
     public var ctx(default, null):Context3D;
 
     public var autoResize(default, null):Bool;
-	var invalidateSize:Bool;
+	var invalidateSize:Bool = true;
 	public var bounds(default, set_bounds):Rectangle;
 	
 	public var antialiasing(default, set_antialiasing):UInt;
@@ -33,7 +33,7 @@ class World2D
     public var width(get_width, set_width):Int;
     public var height(get_height, set_height):Int;
 
-    public var pause:Bool;
+    public var pause:Bool = false;
 
     public var camera:Camera2D;
     public var scene(default, set_scene):Scene2D;
@@ -49,13 +49,9 @@ class World2D
         this.antialiasing = antialiasing;
         _stageId = stageId;
 
-        pause = false;
-
         bgColor = new Color(1, 1, 1);
 
         camera = new Camera2D();
-
-        invalidateSize = true;
 
         st3d = stage.stage3Ds[_stageId];
         st3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);

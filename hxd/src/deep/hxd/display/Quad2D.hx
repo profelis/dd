@@ -9,18 +9,13 @@ class Quad2D extends DisplayNode2D
     public function new(geometry:Geometry)
     {
         super(geometry, new Quad2DMaterial());
-
-        alpha = 1.0;
-        color = 0x0000FF;
-
-        needUpdateColor = true;
     }
 
-    var needUpdateColor:Bool;
+    var needUpdateColor:Bool = true;
 
     var fullColor:UInt;
-    public var color(default, set_color):Int;
-    public var alpha(default, set_alpha):Float;
+    public var color(default, set_color):Int = 0x0000FF;
+    public var alpha(default, set_alpha):Float = 1.0;
 
     function set_color(v)
     {

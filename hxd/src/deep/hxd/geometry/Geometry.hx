@@ -18,7 +18,6 @@ class Geometry
     public function new(?p:Poly2D)
     {
         this.p = p;
-        needUpdate = true;
     }
 
     public function resize(w:Float, h:Float)
@@ -48,7 +47,7 @@ class Geometry
         return res;
     }
 
-    public var needUpdate:Bool;
+    public var needUpdate:Bool = true;
     var ctx:Context3D;
 
     public function init(ctx:Context3D)
