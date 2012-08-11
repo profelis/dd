@@ -64,6 +64,7 @@ class Main
     {
         q2.rotationY = q2.rotationY + 0.5;
         q.rotationZ ++;
+        q.scaleX *= 0.995;
         //q2.transform.prependRotation(0.5, Vector3D.X_AXIS);
         //q2.transform.appendTranslation(0, 5, 0);
         //q.transform.appendRotation(0.2, Vector3D.X_AXIS);
