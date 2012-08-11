@@ -11,7 +11,6 @@ class Quad2D extends Sprite2D
 
         alpha = 1.0;
         color = 0x0000FF;
-        update();
     }
 
     var fullColor:UInt;

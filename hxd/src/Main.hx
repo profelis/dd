@@ -40,6 +40,8 @@ class Main
 	
 	
         world.scene.addChild(q = new Quad2D(Geometry.create(300, 300)));
+        q.alpha = 0.5;
+        q.update();
         q.geometry.colors[0].r = 1;
         q.geometry.colors[0].g = 0;
         q.geometry.colors[0].b = 0;
@@ -51,7 +53,7 @@ class Main
         q2.y = 300;
         q2.pivot = new Vector3D(150, 150, 0);
         q2.color = 0x00FF20;
-        q2.alpha = 0.5;
+        //q2.alpha = 0.5;
 
 
         q2.addChild(q);

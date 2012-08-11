@@ -10,7 +10,7 @@ class Node2D
 {
     public function new()
     {
-        blendMode = BlendMode.NORMAL_PREMULTIPLIED_ALPHA;
+        blendMode = BlendMode.NORMAL;
 
         children = new Array();
         transform = new Matrix3D();
