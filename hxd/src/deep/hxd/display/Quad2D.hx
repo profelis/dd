@@ -3,7 +3,7 @@ import deep.hxd.camera.Camera2D;
 import deep.hxd.material.Quad2DMaterial;
 import deep.hxd.geometry.Geometry;
 
-class Quad2D extends Sprite2D
+class Quad2D extends DisplayNode2D
 {
     public function new(geometry:Geometry)
     {

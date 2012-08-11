@@ -1,5 +1,5 @@
 package deep.hxd.material;
-import deep.hxd.display.Sprite2D;
+import deep.hxd.display.DisplayNode2D;
 import deep.hxd.camera.Camera2D;
 import deep.hxd.geometry.Geometry;
 import format.hxsl.Shader;
@@ -23,7 +23,7 @@ class Material
         if (shader == null) shader = Type.createInstance(shaderRef, [ctx]);
     }
 
-    public function draw(sprite:Sprite2D, camera:Camera2D)
+    public function draw(sprite:DisplayNode2D, camera:Camera2D)
     {
         ctx.setBlendFactors(sprite.blendMode.src, sprite.blendMode.dst);
 

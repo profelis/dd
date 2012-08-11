@@ -1,7 +1,7 @@
 package deep.hxd.material;
 
 import format.hxsl.Shader;
-import deep.hxd.display.Sprite2D;
+import deep.hxd.display.DisplayNode2D;
 import deep.hxd.camera.Camera2D;
 
 class Quad2DMaterial extends Material
@@ -11,7 +11,7 @@ class Quad2DMaterial extends Material
         super(QuadShader);
     }
 
-    override public function draw(sprite:Sprite2D, camera:Camera2D)
+    override public function draw(sprite:DisplayNode2D, camera:Camera2D)
     {
         cast(shader, QuadShader).init({ mpos : sprite.worldTransform, mproj : camera.proj }, {});
 

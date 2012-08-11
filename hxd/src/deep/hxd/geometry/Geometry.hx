@@ -34,8 +34,11 @@ class Geometry
 
     public function init(ctx:Context3D)
     {
-        this.ctx = ctx;
-        if (needUpdate) p.alloc(ctx);
+        if (this.ctx != ctx)
+        {
+            this.ctx = ctx;
+            needUpdate = true;
+        }
     }
 
     public function draw():Void

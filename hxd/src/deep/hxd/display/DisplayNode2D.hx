@@ -6,7 +6,7 @@ import flash.display3D.Context3D;
 import format.hxsl.Shader;
 import mt.m3d.Polygon;
 
-class Sprite2D extends Node2D
+class DisplayNode2D extends Node2D
 {
     public function new(geometry:Geometry = null, material:Material = null)
     {
@@ -15,9 +15,9 @@ class Sprite2D extends Node2D
         this.material = material;
     }
 
-    public var geometry:Geometry;
+    public var geometry(default, set_geometry):Geometry;
 
-    public var material:Material;
+    public var material(default, set_material):Material;
 
     override public function init(ctx:Context3D):Void
     {
@@ -26,7 +26,6 @@ class Sprite2D extends Node2D
         if (material != null) material.init(ctx);
         if (geometry != null) geometry.init(ctx);
     }
-
 
     override public function draw(camera:Camera2D):Void
     {
@@ -39,5 +38,20 @@ class Sprite2D extends Node2D
         super.draw(camera);
     }
 
+    function set_geometry(g:Geometry):Geometry
+    {
+        geometry = g;
+        if (geometry != null && ctx != null) geometry.init(ctx);
+
+        return g;
+    }
+
+    function set_material(m:Material):Material
+    {
+        material = m;
+        if (material != null && ctx != null) material.init(ctx);
+
+        return m;
+    }
 
 }

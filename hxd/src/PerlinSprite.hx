@@ -6,11 +6,11 @@ import deep.hxd.camera.Camera2D;
 import deep.hxd.geometry.Geometry;
 import deep.hxd.material.Material;
 import mt.m3d.PerlinShader;
-import deep.hxd.display.Sprite2D;
+import deep.hxd.display.DisplayNode2D;
 import mt.m3d.Vector;
 import mt.m3d.Polygon;
 
-class PerlinSprite extends Sprite2D {
+class PerlinSprite extends DisplayNode2D {
     public function new() {
 
         super();
@@ -39,7 +39,7 @@ class PerlinMaterial extends Material
 
     var time:Float;
 
-    override public function draw(sprite:Sprite2D, camera:Camera2D)
+    override public function draw(sprite:DisplayNode2D, camera:Camera2D)
     {
         time += 0.1;
         cast(shader, PerlinShader).perlin(time * 0.05, time * 0.05, 0 * time * 0.005, 3);
