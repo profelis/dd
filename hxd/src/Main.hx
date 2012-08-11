@@ -1,3 +1,5 @@
+import flash.events.MouseEvent;
+import deep.hxd.utils.Color;
 import deep.hxd.utils.BlendMode;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
@@ -34,6 +36,7 @@ class Main
 		world.bounds = new Rectangle(20, 20, 400, 400);
 		world.antialiasing = 2;
 		world.x = 200;
+        world.bgColor = new Color(0.0, 0.5, 0.0);
 	
 	
         world.scene.addChild(q = new Quad2D(Geometry.create(300, 300)));
@@ -58,6 +61,13 @@ class Main
         //sprite.blendMode = BlendMode.FILTER;
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
+
+        s.addEventListener(MouseEvent.CLICK, onClick);
+    }
+
+    function onClick(_)
+    {
+        world.bounds = world.autoResize ? new Rectangle(200, 20, 400, 400) : null;
     }
 
     function onRender(_)
@@ -65,18 +75,11 @@ class Main
         q2.rotationY = q2.rotationY + 0.5;
         q.rotationZ ++;
         q.scaleX *= 0.995;
-        //q2.transform.prependRotation(0.5, Vector3D.X_AXIS);
-        //q2.transform.appendTranslation(0, 5, 0);
-        //q.transform.appendRotation(0.2, Vector3D.X_AXIS);
     }
-
-
 
 
     static function main()
     {
-//flash.Lib.current.stage.scaleMode = flash.display.StageScaleMode.EXACT_FIT;
         new Main();
-
     }
 }

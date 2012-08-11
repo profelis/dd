@@ -19,18 +19,15 @@ class World2D
 
     var stage:Stage;
     var st3d:Stage3D;
-	
-	var _bounds:Rectangle;
-	var _needResize:Bool;
-	public var bounds(default, set_bounds):Rectangle;
-	
-	var _antialiasing:UInt;
-	public var antialiasing(get_antialiasing, set_antialiasing):UInt;
 
     public var ctx(default, null):Context3D;
 
-    public var autoResize:Bool;
+    public var autoResize(default, null):Bool;
+	var invalidateSize:Bool;
+	public var bounds(default, set_bounds):Rectangle;
 	
+	public var antialiasing(default, set_antialiasing):UInt;
+
 	public var x(get_x, set_x):Float;
 	public var y(get_y, set_y):Float;
     public var width(get_width, set_width):Int;
@@ -43,24 +40,23 @@ class World2D
 
     public var bgColor:Color;
 
-    public function new(context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, stageId:Int = 0)
+    public function new(context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stageId:Int = 0)
     {
+        stage = flash.Lib.current.stage;
+
         _context3DRenderMode = context3DRenderMode;
+        this.bounds =  bounds;
+        this.antialiasing = antialiasing;
         _stageId = stageId;
 
         pause = false;
 
-        bgColor = new Color(255, 255, 255);
+        bgColor = new Color(1, 1, 1);
 
         camera = new Camera2D();
 
-        stage = flash.Lib.current.stage;
-		
-		_bounds = (bounds != null) ? bounds : new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
-        autoResize = (bounds == null);
-		_needResize = true;
-		_antialiasing = 2;
-		
+        invalidateSize = true;
+
         st3d = stage.stage3Ds[_stageId];
         st3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);
 
@@ -82,29 +78,30 @@ class World2D
 
     function onResize(?_)
     {
-       var w:Int, h:Int;
+        trace("resize " + autoResize);
 		if (autoResize)
         {
-            w = Std.int(stage.stageWidth);
-            h = Std.int(stage.stageHeight);
+            bounds.width = Std.int(stage.stageWidth);
+            bounds.height = Std.int(stage.stageHeight);
+            invalidateSize = true;
         }
-		else
-		{
-			w = Std.int(_bounds.width);
-			h = Std.int(_bounds.height);
-		}
-		
-		st3d.x = _bounds.x;
-		st3d.y = _bounds.y;
+    }
+
+    function updateSize()
+    {
+        var w = Std.int(bounds.width);
+        var h = Std.int(bounds.height);
+        st3d.x = bounds.x;
+        st3d.y = bounds.y;
         camera.resize(w, h);
-        ctx.configureBackBuffer(w, h, _antialiasing);
-		_needResize = false;
+        ctx.configureBackBuffer(w, h, antialiasing);
+        invalidateSize = false;
     }
 
     function onRender(_)
     {
         if (pause) return;
-		if (_needResize) onResize();
+		if (invalidateSize) updateSize();
 
         camera.update();
 
@@ -124,72 +121,74 @@ class World2D
         Reflect.setProperty(scene, "world", this);
         return s;
     }
-	
+
+    function set_antialiasing(val:UInt):UInt
+    {
+        invalidateSize = (val != antialiasing);
+        antialiasing = val;
+        return val;
+    }
+
 	function set_bounds(rect:Rectangle):Rectangle
 	{
-		if (rect.width <= 0 || rect.height <= 0)
+		#if debug
+		if (rect != null)
 		{
-			return rect;
-		}
-		_bounds = rect;
-		autoResize = false;
-		_needResize = true;
-		return rect;
-	}
-	
-	function get_antialiasing():UInt
-	{
-		return _antialiasing;
-	}
-	
-	function set_antialiasing(val:UInt):UInt
-	{
-		_needResize = (val != _antialiasing);
-		_antialiasing = val;
-		return val;
+            if (rect.width <= 0) throw "bounds.width < 0";
+            if (rect.height <= 0) throw "bounds.height < 0";
+        }
+        #end
+        trace(rect);
+		bounds = rect != null ? rect : new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+        autoResize = (rect == null);
+		invalidateSize = true;
+		return bounds;
 	}
 	
 	function get_x():Float
 	{
-		return _bounds.x;
+		return bounds.x;
 	}
 	
 	function set_x(val:Float):Float
 	{
-		if (_bounds.x != val)
+		if (bounds.x != val)
 		{
-			_bounds.x = val;
-			_needResize = true;
+			bounds.x = val;
+			invalidateSize = true;
 		}
 		return val;
 	}
 	
 	function get_y():Float
 	{
-		return _bounds.y;
+		return bounds.y;
 	}
 	
 	function set_y(val:Float):Float
 	{
-		if (_bounds.y != val)
+		if (bounds.y != val)
 		{
-			_bounds.y = val;
-			_needResize = true;
+			bounds.y = val;
+			invalidateSize = true;
 		}
 		return val;
 	}
 	
 	function get_width():Int
 	{
-		return Std.int(_bounds.width);
+		return Std.int(bounds.width);
 	}
 	
 	function set_width(val:Int):Int
 	{
-		if (val >= 0 && _bounds.width != val)
+        #if debug
+        if (val < 0) throw "width < 0";
+        #end
+		if (bounds.width != val)
 		{
-			_bounds.width = val;
-			_needResize = true;
+			bounds.width = val;
+			invalidateSize = true;
 			autoResize = false;
 		}
 		return val;
@@ -197,15 +196,18 @@ class World2D
 	
 	function get_height():Int
 	{
-		return Std.int(_bounds.height);
+		return Std.int(bounds.height);
 	}
 	
 	function set_height(val:Int):Int
 	{
-		if (val >= 0 && _bounds.height != val)
+        #if debug
+        if (val < 0) throw "height < 0";
+        #end
+		if (bounds.height != val)
 		{
-			_bounds.height = val;
-			_needResize = true;
+			bounds.height = val;
+			invalidateSize = true;
 			autoResize = false;
 		}
 		return val;
