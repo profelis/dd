@@ -1,0 +1,10 @@
+-swf9 bin/app.swf
+-swf-header 800:600:40:FFFFFF
+--flash-strict
+-swf-version 11
+-main Main
+-lib format
+-cp src
+-D shaderDebug
+-debug
+-D fdb

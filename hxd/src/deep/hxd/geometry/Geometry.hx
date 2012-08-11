@@ -1,0 +1,140 @@
+package deep.hxd.geometry;
+import mt.m3d.UV;
+import deep.hxd.utils.Color;
+import flash.display3D.VertexBuffer3D;
+import flash.display3D.IndexBuffer3D;
+import mt.m3d.Vector;
+import flash.display3D.Context3D;
+import mt.m3d.Polygon;
+
+class Geometry
+{
+    var p:Poly2D;
+
+    public var ibuf(default, null):IndexBuffer3D;
+    public var vbuf(default, null):VertexBuffer3D;
+
+    public function new(?p:Poly2D)
+    {
+        this.p = p;
+        needUpdate = true;
+    }
+
+    static public function create(w:Float, h:Float):Geometry
+    {
+        var res = new Geometry();
+
+        res.p = new Poly2D([new Vector( 0, 0, 0), new Vector(w, 0, 0), new Vector( 0, h, 0), new Vector(w, h, 0)], [0, 1, 2, 1, 3, 2]);
+
+        return res;
+    }
+
+    public var needUpdate:Bool;
+    var ctx:Context3D;
+
+    public function init(ctx:Context3D)
+    {
+        this.ctx = ctx;
+        if (needUpdate) p.alloc(ctx);
+    }
+
+    public function draw():Void
+    {
+        if (needUpdate)
+        {
+            p.alloc(ctx);
+            ibuf = p.ibuf;
+            vbuf = p.vbuf;
+
+            needUpdate = false;
+        }
+    }
+
+    public function setColor(color:Int):Void
+    {
+        p.setColors(color);
+        needUpdate = true;
+
+        colors = p.colors;
+    }
+
+    public var colors(default, null):Array<Color>;
+}
+
+
+//------------------------------------------
+
+class Poly2D extends Polygon
+{
+    public var uvs:Array<UV>;
+
+    public function new(points, idx, ?uvs)
+    {
+        this.uvs = uvs;
+        super(points, idx);
+    }
+
+    public var colors:Array<Color>;
+
+    public function setColors(color:UInt):Void
+    {
+        var c = Color.fromUint(color);
+
+        colors = new Array();
+        for (i in 0...points.length)
+            colors[i] = c.clone();
+    }
+
+    override public function alloc(c:Context3D)
+    {
+        dispose();
+        ibuf = c.createIndexBuffer(idx.length);
+        ibuf.uploadFromVector(flash.Vector.ofArray(idx), 0, idx.length);
+        var size = 3;
+        if (uvs != null) size +=2;
+        if (normals != null)
+            size += 3;
+        if (colors != null) size+=4;
+
+        vbuf = c.createVertexBuffer(points.length, size);
+        var buf = new flash.Vector<Float>();
+        var i = 0;
+        for (k in 0...points.length)
+        {
+            var p = points[k];
+            buf[i++] = p.x;
+            buf[i++] = p.y;
+            buf[i++] = p.z;
+            if (uvs != null)
+            {
+                var t = uvs[k];
+                buf[i++] = t.u;
+                buf[i++] = t.v;
+            }
+            if (normals != null)
+            {
+                var n = normals[k];
+                buf[i++] = n.x;
+                buf[i++] = n.y;
+                buf[i++] = n.z;
+            }
+            if (tangents != null)
+            {
+                var t = tangents[k];
+                buf[i++] = t.x;
+                buf[i++] = t.y;
+                buf[i++] = t.z;
+            }
+            if (colors != null)
+            {
+                var t = colors[k];
+                buf[i++] = t.r;
+                buf[i++] = t.g;
+                buf[i++] = t.b;
+                buf[i++] = t.a;
+            }
+        }
+        vbuf.uploadFromVector(buf, 0, points.length);
+    }
+
+}
