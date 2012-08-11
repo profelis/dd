@@ -1,5 +1,7 @@
 package deep.hxd.utils;
+
 import flash.display3D.Context3DBlendFactor;
+
 class BlendMode
 {
     public static var NONE:BlendMode = new BlendMode(Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);

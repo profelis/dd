@@ -1,3 +1,6 @@
+import deep.hxd.texture.Texture2D;
+import flash.display.BitmapData;
+import deep.hxd.display.Sprite2D;
 import flash.events.MouseEvent;
 import deep.hxd.utils.Color;
 import deep.hxd.utils.BlendMode;
@@ -14,6 +17,8 @@ import flash.events.Event;
 import mt.m3d.Camera;
 import flash.display3D.Context3D;
 
+@:bitmap("1.jpg") class Image extends BitmapData {}
+
 class Main
 {
 
@@ -22,6 +27,8 @@ class Main
 
     var q:Quad2D;
     var q2:Quad2D;
+
+    var sp:Sprite2D;
 
     public function new()
     {
@@ -37,8 +44,8 @@ class Main
 		world.antialiasing = 2;
 		world.x = 200;
         world.bgColor = new Color(0.0, 0.5, 0.0);
-	
-	
+
+
         world.scene.addChild(q = new Quad2D(Geometry.create(300, 300)));
         q.alpha = 0.5;
         q.update();
@@ -62,6 +69,11 @@ class Main
         //world.scene.addChild(sprite = new PerlinSprite());
         //sprite.blendMode = BlendMode.FILTER;
 
+        world.scene.addChild(sp = new Sprite2D(Geometry.create(150, 150, true)));
+        sp.texture = Texture2D.fromBitmap(new Image(0, 0));
+        sp.x = 100;
+        sp.y = 100;
+
         s.addEventListener(Event.ENTER_FRAME, onRender);
 
         s.addEventListener(MouseEvent.CLICK, onClick);
@@ -74,6 +86,7 @@ class Main
 
     function onRender(_)
     {
+        sp.rotationX += 0.5;
         q2.rotationY = q2.rotationY + 0.5;
         q.rotationZ ++;
         q.scaleX *= 0.995;

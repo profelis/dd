@@ -1,4 +1,5 @@
 package deep.hxd.geometry;
+
 import mt.m3d.UV;
 import deep.hxd.utils.Color;
 import flash.display3D.VertexBuffer3D;
@@ -20,12 +21,30 @@ class Geometry
         needUpdate = true;
     }
 
-    static public function create(w:Float, h:Float):Geometry
+    public function resize(w:Float, h:Float)
+    {
+        p = createPoly(w, h, textured);
+        needUpdate = true;
+    }
+
+    var textured:Bool;
+
+    static public function create(w:Float, h:Float, textured:Bool = false):Geometry
     {
         var res = new Geometry();
+        res.textured = textured;
+        res.p = createPoly(w, h, textured);
 
-        res.p = new Poly2D([new Vector( 0, 0, 0), new Vector(w, 0, 0), new Vector( 0, h, 0), new Vector(w, h, 0)], [0, 1, 2, 1, 3, 2]);
+        return res;
+    }
 
+    static function createPoly(w, h, textured)
+    {
+        var res = new Poly2D([new Vector( 0, 0, 0), new Vector(w, 0, 0), new Vector( 0, h, 0), new Vector(w, h, 0)], [0, 1, 2, 1, 3, 2]);
+        if (textured)
+        {
+            res.tcoords = [new UV(0, 0), new UV(1, 0), new UV(0, 1), new UV(1, 1)];
+        }
         return res;
     }
 
@@ -81,7 +100,7 @@ class Poly2D extends Polygon
 
     public function setColors(color:UInt):Void
     {
-        var c = Color.fromUint(color);
+        var c = new Color().fromUint(color);
 
         colors = new Array();
         for (i in 0...points.length)
@@ -95,8 +114,8 @@ class Poly2D extends Polygon
         ibuf.uploadFromVector(flash.Vector.ofArray(idx), 0, idx.length);
         var size = 3;
         if (uvs != null) size +=2;
-        if (normals != null)
-            size += 3;
+        if (normals != null) size += 3;
+        if (tcoords != null) size += 2;
         if (colors != null) size+=4;
 
         vbuf = c.createVertexBuffer(points.length, size);
@@ -127,6 +146,12 @@ class Poly2D extends Polygon
                 buf[i++] = t.x;
                 buf[i++] = t.y;
                 buf[i++] = t.z;
+            }
+            if( tcoords != null )
+            {
+                var t = tcoords[k];
+                buf[i++] = t.u;
+                buf[i++] = t.v;
             }
             if (colors != null)
             {

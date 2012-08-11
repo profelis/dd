@@ -1,4 +1,5 @@
 package deep.hxd.display;
+
 import deep.hxd.World2D;
 import flash.geom.Vector3D;
 import deep.hxd.utils.BlendMode;
@@ -16,7 +17,7 @@ class Node2D
         transform = new Matrix3D();
         worldTransform = new Matrix3D();
 
-        rotationX = 0;
+        //rotationX = 0;
         rotationY = 0;
         rotationZ = 0;
         x = 0;
@@ -60,6 +61,7 @@ class Node2D
         c.invalidateWorldTransform = true;
         c.parent = this;
         if (scene != null) c.setScene(scene);
+        if (ctx != null) c.init(ctx);
     }
 
     public function removeChild(c:Node2D):Void
@@ -141,7 +143,7 @@ class Node2D
     {
         pivot = v;
         invalidateTransform = true;
-        return pivot;
+        return v;
     }
 
     // transform
@@ -150,7 +152,7 @@ class Node2D
     public var y(default, set_y):Float = 0;
     public var z(default, set_z):Float = 0;
 
-    public var rotationX(default, set_rotationX):Float;
+    public var rotationX(default, set_rotationX):Float = 0;
     public var rotationY(default, set_rotationY):Float;
     public var rotationZ(default, set_rotationZ):Float;
 
@@ -162,62 +164,62 @@ class Node2D
     {
         x = v;
         invalidateTransform = true;
-        return x;
+        return v;
     }
 
     function set_y(v:Float)
     {
         y = v;
         invalidateTransform = true;
-        return y;
+        return v;
     }
 
     function set_z(v:Float)
     {
         z = v;
         invalidateTransform = true;
-        return z;
+        return v;
     }
 
     function set_rotationX(v:Float)
     {
         rotationX = v;
         invalidateTransform = true;
-        return rotationX;
+        return v;
     }
 
     function set_rotationY(v:Float)
     {
         rotationY = v;
         invalidateTransform = true;
-        return rotationY;
+        return v;
     }
 
     function set_rotationZ(v:Float)
     {
         rotationZ = v;
         invalidateTransform = true;
-        return rotationZ;
+        return v;
     }
 
     function set_scaleX(v:Float)
     {
         scaleX = v;
         invalidateTransform = true;
-        return scaleX;
+        return v;
     }
 
     function set_scaleY(v:Float)
     {
         scaleY = v;
         invalidateTransform = true;
-        return scaleY;
+        return v;
     }
 
     function set_scaleZ(v:Float)
     {
         scaleZ = v;
         invalidateTransform = true;
-        return scaleZ;
+        return v;
     }
 }

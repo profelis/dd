@@ -1,5 +1,6 @@
 package deep.hxd.material;
 
+import flash.display3D.Context3D;
 import format.hxsl.Shader;
 import deep.hxd.display.DisplayNode2D;
 import deep.hxd.camera.Camera2D;
@@ -11,9 +12,17 @@ class Quad2DMaterial extends Material
         super(QuadShader);
     }
 
+    override public function init(ctx:Context3D)
+    {
+        super.init(ctx);
+        quadShader = cast(shader, QuadShader);
+    }
+
+    var quadShader:QuadShader;
+
     override public function draw(sprite:DisplayNode2D, camera:Camera2D)
     {
-        cast(shader, QuadShader).init({ mpos : sprite.worldTransform, mproj : camera.proj }, {});
+        quadShader.init({ mpos : sprite.worldTransform, mproj : camera.proj }, {});
 
         super.draw(sprite, camera);
     }
@@ -22,7 +31,6 @@ class Quad2DMaterial extends Material
 
 class QuadShader extends Shader
 {
-
     static var SRC = {
         var input : {
             pos : Float3,
