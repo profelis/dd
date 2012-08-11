@@ -44,7 +44,7 @@ class Main
         q2.color = 0x00FF20;
         q2.alpha = 0.5;
 
-
+        //world.scene.removeChild(q);
         q2.addChild(q);
         q.x = 150;
         q.y = 150;
@@ -58,6 +58,8 @@ class Main
     {
         q2.rotationY = q2.rotationY + 0.5;
         q.rotationZ ++;
+        trace(q.scene);
+        q.scaleX *= 0.995;
         //q2.transform.prependRotation(0.5, Vector3D.X_AXIS);
         //q2.transform.appendTranslation(0, 5, 0);
         //q.transform.appendRotation(0.2, Vector3D.X_AXIS);

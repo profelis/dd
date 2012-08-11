@@ -109,6 +109,7 @@ class Node2D
 
             transform.identity();
             if (pivot != null) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
+            transform.appendScale(scaleX, scaleY, scaleZ);
             transform.appendRotation(rotationZ, Vector3D.Z_AXIS);
             transform.appendRotation(rotationY, Vector3D.Y_AXIS);
             transform.appendRotation(rotationX, Vector3D.X_AXIS);
