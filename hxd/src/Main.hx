@@ -1,4 +1,5 @@
 import deep.hxd.utils.BlendMode;
+import flash.geom.Rectangle;
 import flash.geom.Vector3D;
 import deep.hxd.display.Quad2D;
 import flash.display.StageAlign;
@@ -29,10 +30,15 @@ class Main
         world = new World2D(Context3DRenderMode.AUTO);
 
         world.scene = new Scene2D();
-
-
+		
+		world.bounds = new Rectangle(20, 20, 400, 400);
+		world.antialiasing = 2;
+		world.x = 200;
+	
+	
         world.scene.addChild(q = new Quad2D(Geometry.create(300, 300)));
         q.geometry.colors[0].r = 1;
+        q.geometry.colors[0].g = 0;
         q.geometry.colors[0].b = 0;
         q.geometry.needUpdate = true;
         //q.blendMode = BlendMode.ADD_PREMULTIPLIED_ALPHA;
@@ -44,7 +50,7 @@ class Main
         q2.color = 0x00FF20;
         q2.alpha = 0.5;
 
-        //world.scene.removeChild(q);
+
         q2.addChild(q);
         q.x = 150;
         q.y = 150;
@@ -58,8 +64,6 @@ class Main
     {
         q2.rotationY = q2.rotationY + 0.5;
         q.rotationZ ++;
-        trace(q.scene);
-        q.scaleX *= 0.995;
         //q2.transform.prependRotation(0.5, Vector3D.X_AXIS);
         //q2.transform.appendTranslation(0, 5, 0);
         //q.transform.appendRotation(0.2, Vector3D.X_AXIS);

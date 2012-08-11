@@ -1,4 +1,5 @@
 package deep.hxd.material;
+
 import format.hxsl.Shader;
 import deep.hxd.display.Sprite2D;
 import deep.hxd.camera.Camera2D;
