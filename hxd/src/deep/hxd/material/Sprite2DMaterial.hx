@@ -7,7 +7,7 @@ import deep.hxd.material.Quad2DMaterial;
 import flash.display3D.Context3D;
 import format.hxsl.Shader;
 
-class SpriteMaterial extends Material
+class Sprite2DMaterial extends Material
 {
     public function new()
     {
