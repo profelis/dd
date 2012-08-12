@@ -79,13 +79,7 @@ class Texture2D
 	
 	public function dispose():Void
 	{
-        trace("dispose texture");
-        if (useCount > 0)
-        {
-            trace("can't dispose texture, useCount=" + useCount);
-            return;
-        }
-
+        if (useCount > 0) return;
 
         if (texture == null)
         {

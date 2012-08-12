@@ -69,13 +69,11 @@ class Node2D
 	
 	public function dispose():Void
 	{
-        trace("dispose node");
 		if (parent != null)
 		{
 			parent.removeChild(this);
 		}
 
-        trace("dispose children");
 		for (child in children.copy())
 		{
 			child.dispose();

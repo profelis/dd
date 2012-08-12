@@ -91,12 +91,16 @@ class Main
     {
         world.bounds = world.autoResize ? new Rectangle(200, 20, 400, 400) : null;
 
-        sp2.dispose();
+        if (sp2 != null)
+        {
+            sp2.dispose();
+            sp2 = null;
+        }
     }
 
     function onRender(_)
     {
-        sp2.rotationX += 0.05;
+        if (sp2 != null) sp2.rotationX += 0.05;
         q2.rotationY = q2.rotationY + 0.5;
         q.rotationZ ++;
         q.scaleX *= 0.995;

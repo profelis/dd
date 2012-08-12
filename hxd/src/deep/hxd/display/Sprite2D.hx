@@ -30,7 +30,7 @@ class Sprite2D extends DisplayNode2D
 	override public function dispose():Void 
 	{
 		super.dispose();
-        trace("dispose sprite " + texture);
+
 		if (texture != null)
         {
             texture.useCount --;

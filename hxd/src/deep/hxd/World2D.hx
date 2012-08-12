@@ -15,8 +15,9 @@ import flash.geom.Rectangle;
 
 class World2D
 {
-    var _stageId:Int;
-    var _context3DRenderMode:Context3DRenderMode;
+    public var stageId(default, null):Int;
+
+    public var context3DRenderMode(default, null):Context3DRenderMode;
 
     var stage:Stage;
     var st3d:Stage3D;
@@ -47,10 +48,10 @@ class World2D
     {
         stage = flash.Lib.current.stage;
 
-        _context3DRenderMode = context3DRenderMode;
+        this.context3DRenderMode = context3DRenderMode;
         this.bounds =  bounds;
         this.antialiasing = antialiasing;
-        _stageId = stageId;
+        this.stageId = stageId;
 
         cache = new Cache(this);
 
@@ -58,9 +59,9 @@ class World2D
 
         camera = new Camera2D();
 
-        st3d = stage.stage3Ds[_stageId];
+        st3d = stage.stage3Ds[stageId];
         st3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);
-        st3d.requestContext3D(Std.string(_context3DRenderMode));
+        st3d.requestContext3D(Std.string(context3DRenderMode));
     }
 
     function onContext(_)
@@ -123,19 +124,26 @@ class World2D
 		stage.removeEventListener(Event.ENTER_FRAME, onRender);
         stage.removeEventListener(Event.RESIZE, onResize);
 		
-		_context3DRenderMode = null;
-        Reflect.setField(this, "bounds", null);
+        if (camera != null)
+        {
+            camera.dispose();
+		    camera = null;
+        }
+		if (scene != null)
+        {
+            scene.dispose();
+		    scene = null;
+        }
+
+        context3DRenderMode = null;
         bgColor = null;
-        if (camera != null) camera.dispose();
-		camera = null;
-		if (scene != null) scene.dispose();
-		scene = null;
-		
 		stage = null;
 		st3d = null;
 
         if (disposeContext3D) ctx.dispose();
         ctx = null;
+
+        Reflect.setField(this, "bounds", null);
 	}
 
     function set_scene(s:Scene2D)

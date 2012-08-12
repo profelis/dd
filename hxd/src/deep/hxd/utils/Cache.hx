@@ -52,37 +52,31 @@ class Cache
     {
         if (!bmpUseCount.exists(bmp)) return;
 
-        trace("release bmp " + bmp);
         var count = bmpUseCount.get(bmp);
         if (count <= 1)
         {
             if (autoDisposeBitmaps)
             {
-                trace("auto dispose bmp " + bmp);
                 bmpUseCount.delete(bmp);
                 bmpCache.delete(Type.getClass(bmp));
                 bmp.dispose();
             }
             else
             {
-                trace("keep unused bmp " + bmp);
                 bmpUseCount.set(bmp, 0);
             }
         }
         else
         {
-            trace("bmp use count ", count - 1);
             bmpUseCount.set(bmp, count - 1);
         }
     }
 
     public function getBitmap(ref:Class<BitmapData>):BitmapData
     {
-        trace("get bitmap " + ref);
         var res = bmpCache.get(ref);
         if (res != null) return res;
 
-        trace("create new bitmap " + ref);
         res = Type.createInstance(ref, [0, 0]);
         bmpCache.set(ref, res);
         bmpUseCount.set(res, 0);
@@ -108,11 +102,9 @@ class Cache
 
     public function getBitmapTexture(bmp:BitmapData):Texture2D
     {
-        trace("get bmp texture");
         var res = bmpTextureCache.get(bmp);
         if (res != null) return res;
 
-        trace("create new bmp texture " + bmp);
         if (bmpUseCount.exists(bmp))
             bmpUseCount.set(bmp, bmpUseCount.get(bmp) + 1);
 

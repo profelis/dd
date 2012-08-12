@@ -38,12 +38,10 @@ class Material
         if (useShaderCache)
         {
             shader = shaderCache.get(ctx).get(key);
-            if (shader != null) trace("shader from cache " + shader);
         }
         if (shader == null)
         {
             shaderCache.get(ctx).set(key, shader = Type.createInstance(shaderRef, [ctx]));
-            trace("create new shader " + shader);
         }
     }
 
