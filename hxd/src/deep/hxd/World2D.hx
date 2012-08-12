@@ -55,14 +55,16 @@ class World2D
 
         st3d = stage.stage3Ds[_stageId];
         st3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);
-
         st3d.requestContext3D(Std.string(_context3DRenderMode));
     }
 
     function onContext(_)
     {
         ctx = st3d.context3D;
+		
+		#if debug
         ctx.enableErrorChecking = true;
+		#end
 
         scene.init(ctx);
 
@@ -109,6 +111,26 @@ class World2D
 
         ctx.present();
     }
+	
+	function dispose():Void
+	{
+		st3d.removeEventListener(Event.CONTEXT3D_CREATE, onContext);
+		stage.removeEventListener(Event.ENTER_FRAME, onRender);
+        stage.removeEventListener(Event.RESIZE, onResize);
+		
+		_context3DRenderMode = null;
+        this.bounds =  null;
+        bgColor = null;
+        if (camera != null) camera.dispose();
+		camera = null;
+		if (scene != null) scene.dispose();
+		scene = null;
+		
+		stage = null;
+		st3d = null;
+		
+		// TODO: do we need to dispose Context3D too?
+	}
 
     function set_scene(s:Scene2D)
     {

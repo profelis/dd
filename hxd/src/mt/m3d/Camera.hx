@@ -101,5 +101,15 @@ class Camera {
 
         return m;
     }
+	
+	public function dispose():Void
+	{
+		mproj = null;
+		mcam = null;
+		m = null;
+		pos = null;
+		up = null;
+		target = null;
+	}
 
 }

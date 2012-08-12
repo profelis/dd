@@ -59,6 +59,25 @@ class Node2D
         c.parent = null;
         c.setScene(null);
     }
+	
+	public function dispose():Void
+	{
+		if (parent != null)
+		{
+			parent.removeChild(this);
+		}
+		
+		for (child in children)
+		{
+			removeChild(child);
+			child.dispose();
+		}
+		
+		children = null;
+		transform = null;
+		worldTransform = null;
+		blendMode = null;
+	}
 
     function setScene(s:Scene2D):Void
     {

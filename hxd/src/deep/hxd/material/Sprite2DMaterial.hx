@@ -29,6 +29,12 @@ class Sprite2DMaterial extends Material
 
         super.draw(sprite, camera);
     }
+	
+	override public function dispose():Void 
+	{
+		super.dispose();
+		spriteShader = null;
+	}
 
 }
 

@@ -10,6 +10,12 @@ class Scene2D extends Node2D
 
         scene = this;
     }
+	
+	override public function dispose():Void 
+	{
+		super.dispose();
+		world = null;
+	}
 
     public var world(default, null):World2D;
 }
