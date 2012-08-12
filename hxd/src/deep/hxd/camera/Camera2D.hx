@@ -44,4 +44,11 @@ class Camera2D
 
         proj = c.m.toMatrix();
     }
+	
+	public function dispose():Void
+	{
+		if (c != null) c.dispose();
+		c = null;
+		proj = null;
+	}
 }

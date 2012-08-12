@@ -43,4 +43,11 @@ class Material
 
         shader.draw(sprite.geometry.vbuf, sprite.geometry.ibuf);
     }
+	
+	public function dispose():Void
+	{
+		if (!useShaderCache && shader != null) shader.dispose();
+		shader = null;
+		ctx = null;
+	}
 }

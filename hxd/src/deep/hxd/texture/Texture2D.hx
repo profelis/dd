@@ -9,7 +9,10 @@ import flash.display3D.textures.Texture;
 
 class Texture2D
 {
-    public function new()
+    
+	// TODO: Do we need to add TextureCache?
+	
+	public function new()
     {
     }
 
@@ -60,9 +63,17 @@ class Texture2D
             // TODO: mipmaping
         }
     }
+	
+	public function dispose():Void
+	{
+		// TODO: do we need to dispose Texture's bitmapData also?
+		bitmapData = null;
+		region = null;
+		if (texture != null) texture.dispose();
+		texture = null;
+	}
 
     public var texture(default, null):Texture;
-
 
     public static function getNextPowerOfTwo(number:Int):Int
     {

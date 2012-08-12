@@ -38,6 +38,15 @@ class DisplayNode2D extends Node2D
 
         super.draw(camera);
     }
+	
+	override public function dispose():Void 
+	{
+		super.dispose();
+		if (geometry != null) geometry.dispose();
+		geometry = null;
+		if (material != null) material.dispose();
+		material = null;
+	}
 
     function set_geometry(g:Geometry):Geometry
     {

@@ -26,6 +26,12 @@ class Quad2DMaterial extends Material
 
         super.draw(sprite, camera);
     }
+	
+	override public function dispose():Void 
+	{
+		super.dispose();
+		quadShader = null;
+	}
 
 }
 

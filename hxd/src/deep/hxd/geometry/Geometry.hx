@@ -70,6 +70,15 @@ class Geometry
             needUpdate = false;
         }
     }
+	
+	public function dispose():Void
+	{
+		p.dispose();
+		if (ibuf != null) ibuf.dispose();
+		ibuf = null;
+		if (vbuf != null) vbuf.dispose();
+		vbuf = null;
+	}
 
     public function setColor(color:Int):Void
     {
@@ -108,7 +117,9 @@ class Poly2D extends Polygon
 
     override public function alloc(c:Context3D)
     {
-        dispose();
+        var tempColors = colors;
+		dispose();
+		if (tempColors != null) colors = tempColors;
         ibuf = c.createIndexBuffer(idx.length);
         ibuf.uploadFromVector(flash.Vector.ofArray(idx), 0, idx.length);
         var size = 3;
@@ -163,5 +174,12 @@ class Poly2D extends Polygon
         }
         vbuf.uploadFromVector(buf, 0, points.length);
     }
+	
+	override public function dispose():Dynamic 
+	{
+		super.dispose();
+		uvs = null;
+		colors = null;
+	}
 
 }

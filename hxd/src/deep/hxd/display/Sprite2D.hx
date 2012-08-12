@@ -26,6 +26,13 @@ class Sprite2D extends DisplayNode2D
             super.draw(camera);
         }
     }
+	
+	override public function dispose():Void 
+	{
+		super.dispose();
+		if (texture != null) texture.dispose();
+		texture = null;
+	}
 
     public var texture(default, set_texture):Texture2D;
 
