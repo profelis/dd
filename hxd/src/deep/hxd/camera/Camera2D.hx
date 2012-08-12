@@ -19,8 +19,11 @@ class Camera2D
         c.zFar = 10000;
     }
 
+    public var needUpdate:Bool = false;
+
     public function update()
     {
+        needUpdate = false;
     }
 
     public var proj:Matrix3D;

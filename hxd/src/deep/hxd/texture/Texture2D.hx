@@ -44,12 +44,14 @@ class Texture2D
     var tw:Int;
     var th:Int;
 
-    public var region(get_region, null):Vector3D;
+    public var needUpdate:Bool = false;
 
-    function get_region():Vector3D
+    public function update()
     {
-        return region;
+        needUpdate = false;
     }
+
+    public var region(default, null):Vector3D;
 
     public function init(ctx:Context3D)
     {

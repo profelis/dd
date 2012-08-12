@@ -106,7 +106,7 @@ class World2D
         if (pause) return;
 		if (invalidateSize) updateSize();
 
-        camera.update();
+        if (camera.needUpdate) camera.update();
 
         ctx.setCulling(Context3DTriangleFace.NONE);
         ctx.setDepthTest(false, Context3DCompareMode.ALWAYS);

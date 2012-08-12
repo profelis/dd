@@ -23,6 +23,7 @@ class Sprite2D extends DisplayNode2D
     {
         if (texture != null)
         {
+            if (texture.needUpdate) texture.update();
             super.draw(camera);
         }
     }
