@@ -28,7 +28,7 @@ class Main
     var q:Quad2D;
     var q2:Quad2D;
 
-    var sp:Sprite2D;
+    var sp2:Sprite2D;
 
     public function new()
     {
@@ -39,7 +39,7 @@ class Main
         world = new World2D(Context3DRenderMode.AUTO);
 
         world.scene = new Scene2D();
-		
+
 		world.bounds = new Rectangle(20, 20, 400, 400);
 		world.antialiasing = 2;
 		world.x = 200;
@@ -69,10 +69,18 @@ class Main
         //world.scene.addChild(sprite = new PerlinSprite());
         //sprite.blendMode = BlendMode.FILTER;
 
-        world.scene.addChild(sp = new Sprite2D(Geometry.create(150, 150, true)));
-        sp.texture = Texture2D.fromBitmap(new Image(0, 0));
-        sp.x = 100;
-        sp.y = 100;
+        world.scene.addChild(sp2 = new Sprite2D());
+        var sp:Sprite2D;
+        for (x in 0...3)
+            for (y in 0...3)
+            {
+                sp2.addChild(sp = new Sprite2D(Geometry.create(150, 150, true)));
+                sp.texture = world.cache.getTexture(Image);
+                sp.x = x * 150;
+                sp.y = y * 100;
+                sp.scaleX = 0.5;
+                sp.scaleY = 0.5;
+            }
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 
@@ -82,11 +90,13 @@ class Main
     function onClick(_)
     {
         world.bounds = world.autoResize ? new Rectangle(200, 20, 400, 400) : null;
+
+        sp2.dispose();
     }
 
     function onRender(_)
     {
-        sp.rotationX += 0.5;
+        sp2.rotationX += 0.05;
         q2.rotationY = q2.rotationY + 0.5;
         q.rotationZ ++;
         q.scaleX *= 0.995;

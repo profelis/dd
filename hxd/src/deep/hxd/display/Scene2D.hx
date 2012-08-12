@@ -17,5 +17,8 @@ class Scene2D extends Node2D
 		world = null;
 	}
 
-    public var world(default, null):World2D;
+    override function get_world():World2D
+    {
+        return world;
+    }
 }

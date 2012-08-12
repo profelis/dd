@@ -26,7 +26,7 @@ class Node2D
 
     public var world(get_world, null):World2D;
 
-    function get_world()
+    function get_world():World2D
     {
         return scene != null ? scene.world : null;
     }
@@ -69,11 +69,13 @@ class Node2D
 	
 	public function dispose():Void
 	{
+        trace("dispose node");
 		if (parent != null)
 		{
 			parent.removeChild(this);
 		}
-		
+
+        trace("dispose children");
 		for (child in children.copy())
 		{
 			child.dispose();
@@ -82,9 +84,10 @@ class Node2D
         ctx = null;
 		children = null;
 		transform = null;
-        pivot = null;
 		worldTransform = null;
 		blendMode = null;
+
+        Reflect.setField(this, "pivot", null);
 	}
 
     function setScene(s:Scene2D):Void

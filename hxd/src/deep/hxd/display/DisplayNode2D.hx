@@ -42,10 +42,19 @@ class DisplayNode2D extends Node2D
 	override public function dispose():Void 
 	{
 		super.dispose();
-		if (geometry != null) geometry.dispose();
-		geometry = null;
-		if (material != null) material.dispose();
-		material = null;
+
+        if (geometry != null)
+        {
+            geometry.dispose();
+            Reflect.setField(this, "geometry", null);
+        }
+
+		if (material != null)
+        {
+            material.useCount --;
+            material.dispose();
+            Reflect.setField(this, "material", null);
+        }
 	}
 
     function set_geometry(g:Geometry):Geometry
@@ -58,9 +67,15 @@ class DisplayNode2D extends Node2D
 
     function set_material(m:Material):Material
     {
-        material = m;
-        if (material != null && ctx != null) material.init(ctx);
+        if (material != null) material.useCount --;
 
+        material = m;
+
+        if (material != null)
+        {
+            if (ctx != null) material.init(ctx);
+            material.useCount ++;
+        }
         return m;
     }
 

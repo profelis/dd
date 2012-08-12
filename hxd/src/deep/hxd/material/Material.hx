@@ -1,5 +1,6 @@
 package deep.hxd.material;
 
+import flash.utils.TypedDictionary;
 import deep.hxd.display.DisplayNode2D;
 import deep.hxd.camera.Camera2D;
 import deep.hxd.geometry.Geometry;
@@ -18,22 +19,31 @@ class Material
         this.useShaderCache = useShaderCache;
     }
 
+    /**
+     * @private
+    **/
+    public var useCount:Int = 0;
+
     var shader:Shader;
     var ctx:Context3D;
 
-    static var shaderCache:Hash<Shader> = new Hash();
+    static var shaderCache:TypedDictionary<Context3D, Hash<Shader>> = new TypedDictionary();
 
     public function init(ctx:Context3D)
     {
         this.ctx = ctx;
+        if (!shaderCache.exists(ctx)) shaderCache.set(ctx, new Hash());
         var key = Type.getClassName(shaderRef);
+
         if (useShaderCache)
         {
-            shader = shaderCache.get(key);
+            shader = shaderCache.get(ctx).get(key);
+            if (shader != null) trace("shader from cache " + shader);
         }
         if (shader == null)
         {
-            shaderCache.set(key, shader = Type.createInstance(shaderRef, [ctx]));
+            shaderCache.get(ctx).set(key, shader = Type.createInstance(shaderRef, [ctx]));
+            trace("create new shader " + shader);
         }
     }
 
@@ -46,6 +56,8 @@ class Material
 	
 	public function dispose():Void
 	{
+        if (useCount > 0) return;
+
 		if (!useShaderCache && shader != null) shader.dispose();
 		shader = null;
 		ctx = null;

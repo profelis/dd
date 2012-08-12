@@ -1,5 +1,6 @@
 package deep.hxd.texture;
 
+import deep.hxd.utils.Cache;
 import flash.geom.Vector3D;
 import flash.geom.Point;
 import flash.display3D.Context3DTextureFormat;
@@ -10,8 +11,6 @@ import flash.display3D.textures.Texture;
 class Texture2D
 {
     
-	// TODO: Do we need to add TextureCache?
-	
 	public function new()
     {
     }
@@ -25,6 +24,12 @@ class Texture2D
 
         return res;
     }
+
+    /**
+     * @private
+    **/
+    public var useCount:Int = 0;
+    public var cache:Cache;
 
     var bitmapData:BitmapData;
 
@@ -61,30 +66,53 @@ class Texture2D
 
             texture.uploadFromBitmapData(b);
             // TODO: mipmaping
+
+            if (tw != bw || th != bh) b.dispose();
+
+            if (cache != null)
+            {
+                cache.releaseBitmap(bitmapData);
+                bitmapData = null;
+            }
         }
     }
 	
 	public function dispose():Void
 	{
-		// TODO: do we need to dispose Texture's bitmapData also?
+        trace("dispose texture");
+        if (useCount > 0)
+        {
+            trace("can't dispose texture, useCount=" + useCount);
+            return;
+        }
+
+
+        if (texture == null)
+        {
+            if (cache != null) cache.releaseBitmap(bitmapData);
+        }
+        else
+        {
+            texture.dispose();
+            texture = null;
+        }
 		bitmapData = null;
 		region = null;
-		if (texture != null) texture.dispose();
-		texture = null;
+        cache = null;
 	}
 
     public var texture(default, null):Texture;
 
-    public static function getNextPowerOfTwo(number:Int):Int
+    public static function getNextPowerOfTwo(n:Int):Int
     {
-        if (number > 0 && (number & (number - 1)) == 0) // see: http://goo.gl/D9kPj
+        if (n > 0 && (n & (n - 1)) == 0) // see: http://goo.gl/D9kPj
         {
-            return number;
+            return n;
         }
         else
         {
             var result = 1;
-            while (result < number) result <<= 1;
+            while (result < n) result <<= 1;
             return result;
         }
     }

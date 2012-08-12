@@ -30,17 +30,24 @@ class Sprite2D extends DisplayNode2D
 	override public function dispose():Void 
 	{
 		super.dispose();
-		if (texture != null) texture.dispose();
-		texture = null;
+        trace("dispose sprite " + texture);
+		if (texture != null)
+        {
+            texture.useCount --;
+            texture.dispose();
+            Reflect.setField(this, "texture", null);
+        }
 	}
 
     public var texture(default, set_texture):Texture2D;
 
     function set_texture(tex:Texture2D):Texture2D
     {
+        if (texture != null) texture.useCount --;
         texture = tex;
         if (texture != null)
         {
+            texture.useCount ++;
             if (ctx != null) texture.init(ctx);
             if (geometry != null) geometry.resize(texture.bw, texture.bh);
         }

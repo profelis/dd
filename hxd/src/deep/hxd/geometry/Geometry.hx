@@ -75,10 +75,20 @@ class Geometry
 	public function dispose():Void
 	{
 		p.dispose();
-		if (ibuf != null) ibuf.dispose();
-		ibuf = null;
-		if (vbuf != null) vbuf.dispose();
-		vbuf = null;
+        p = null;
+
+		if (ibuf != null)
+        {
+            ibuf.dispose();
+		    ibuf = null;
+        }
+		if (vbuf != null)
+        {
+            vbuf.dispose();
+		    vbuf = null;
+        }
+
+        colors = null;
 	}
 
     public function setColor(color:Int):Void

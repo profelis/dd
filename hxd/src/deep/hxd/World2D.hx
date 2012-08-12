@@ -1,4 +1,5 @@
 package deep.hxd;
+import deep.hxd.utils.Cache;
 import deep.hxd.utils.Color;
 import flash.display3D.Context3DRenderMode;
 import deep.hxd.display.Scene2D;
@@ -40,6 +41,8 @@ class World2D
 
     public var bgColor:Color;
 
+    public var cache(default, null):Cache;
+
     public function new(context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stageId:Int = 0)
     {
         stage = flash.Lib.current.stage;
@@ -48,6 +51,8 @@ class World2D
         this.bounds =  bounds;
         this.antialiasing = antialiasing;
         _stageId = stageId;
+
+        cache = new Cache(this);
 
         bgColor = new Color(1, 1, 1);
 
@@ -119,7 +124,7 @@ class World2D
         stage.removeEventListener(Event.RESIZE, onResize);
 		
 		_context3DRenderMode = null;
-        this.bounds =  null;
+        Reflect.setField(this, "bounds", null);
         bgColor = null;
         if (camera != null) camera.dispose();
 		camera = null;
@@ -135,8 +140,15 @@ class World2D
 
     function set_scene(s:Scene2D)
     {
+        if (scene != null)
+        {
+            Reflect.setProperty(scene, "world", null);
+        }
         scene = s;
-        Reflect.setProperty(scene, "world", this);
+        if (scene != null)
+        {
+            Reflect.setProperty(scene, "world", this);
+        }
         return s;
     }
 
