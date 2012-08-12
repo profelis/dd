@@ -23,9 +23,9 @@ class World2D
     public var ctx(default, null):Context3D;
 
     public var autoResize(default, null):Bool;
-	var invalidateSize:Bool = true;
 	public var bounds(default, set_bounds):Rectangle;
-	
+    var invalidateSize:Bool = true;
+
 	public var antialiasing(default, set_antialiasing):UInt;
 
 	public var x(get_x, set_x):Float;
@@ -112,7 +112,7 @@ class World2D
         ctx.present();
     }
 	
-	function dispose():Void
+	function dispose(disposeContext3D:Bool = true):Void
 	{
 		st3d.removeEventListener(Event.CONTEXT3D_CREATE, onContext);
 		stage.removeEventListener(Event.ENTER_FRAME, onRender);
@@ -128,8 +128,9 @@ class World2D
 		
 		stage = null;
 		st3d = null;
-		
-		// TODO: do we need to dispose Context3D too?
+
+        if (disposeContext3D) ctx.dispose();
+        ctx = null;
 	}
 
     function set_scene(s:Scene2D)

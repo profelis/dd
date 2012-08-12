@@ -67,14 +67,15 @@ class Node2D
 			parent.removeChild(this);
 		}
 		
-		for (child in children)
+		for (child in children.copy())
 		{
-			removeChild(child);
 			child.dispose();
 		}
-		
+
+        ctx = null;
 		children = null;
 		transform = null;
+        pivot = null;
 		worldTransform = null;
 		blendMode = null;
 	}

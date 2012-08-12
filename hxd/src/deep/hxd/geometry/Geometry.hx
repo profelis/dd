@@ -22,6 +22,7 @@ class Geometry
 
     public function resize(w:Float, h:Float)
     {
+        // TODO: optimize
         p = createPoly(w, h, textured);
         needUpdate = true;
     }
@@ -96,11 +97,8 @@ class Geometry
 
 class Poly2D extends Polygon
 {
-    public var uvs:Array<UV>;
-
-    public function new(points, idx, ?uvs)
+    public function new(points, idx)
     {
-        this.uvs = uvs;
         super(points, idx);
     }
 
@@ -123,7 +121,6 @@ class Poly2D extends Polygon
         ibuf = c.createIndexBuffer(idx.length);
         ibuf.uploadFromVector(flash.Vector.ofArray(idx), 0, idx.length);
         var size = 3;
-        if (uvs != null) size +=2;
         if (normals != null) size += 3;
         if (tcoords != null) size += 2;
         if (colors != null) size+=4;
@@ -137,12 +134,6 @@ class Poly2D extends Polygon
             buf[i++] = p.x;
             buf[i++] = p.y;
             buf[i++] = p.z;
-            if (uvs != null)
-            {
-                var t = uvs[k];
-                buf[i++] = t.u;
-                buf[i++] = t.v;
-            }
             if (normals != null)
             {
                 var n = normals[k];
@@ -178,7 +169,6 @@ class Poly2D extends Polygon
 	override public function dispose():Dynamic 
 	{
 		super.dispose();
-		uvs = null;
 		colors = null;
 	}
 
