@@ -55,12 +55,9 @@ class SpriteShader extends Shader
         function fragment(tex:Texture, region:Float4)
         {
             var t = tuv;
-            //t.xy *= 2;
-
             t.xy *= region.zw;
             t.xy += region.xy;
-
-            out = tex.get(t, wrap, linear, mm_no);
+            out = tex.get(t, wrap, linear, mm_linear);
         }
     };
 }

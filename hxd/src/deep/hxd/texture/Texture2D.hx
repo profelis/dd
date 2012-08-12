@@ -1,5 +1,7 @@
 package deep.hxd.texture;
 
+import flash.geom.Matrix;
+import flash.geom.Rectangle;
 import deep.hxd.utils.Cache;
 import flash.geom.Vector3D;
 import flash.geom.Point;
@@ -10,14 +12,16 @@ import flash.display3D.textures.Texture;
 
 class Texture2D
 {
-    
-	public function new()
+    public var options(default, null):UInt;
+
+	public function new(options:UInt)
     {
+        this.options = options;
     }
 
-    public static function fromBitmap(bmp:BitmapData):Texture2D
+    public static function fromBitmap(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
     {
-        var res = new Texture2D();
+        var res = new Texture2D(options);
         res.bitmapData = bmp;
         res.bw = bmp.width;
         res.bh = bmp.height;
@@ -30,6 +34,8 @@ class Texture2D
     **/
     public var useCount:Int = 0;
     public var cache:Cache;
+
+    public var releaseBitmap:Bool = true;
 
     var bitmapData:BitmapData;
 
@@ -56,7 +62,8 @@ class Texture2D
             region = new Vector3D(0, 0, 1, 1);
 
             var b = bitmapData;
-            if (tw != bw || th != bh)
+            var rescale = tw != bw || th != bh;
+            if (rescale)
             {
                 b = new BitmapData(tw, th, true, 0x00000000);
                 b.copyPixels(bitmapData, bitmapData.rect, new Point());
@@ -65,11 +72,39 @@ class Texture2D
             }
 
             texture.uploadFromBitmapData(b);
-            // TODO: mipmaping
 
-            if (tw != bw || th != bh) b.dispose();
+            if ((options & Texture2DOptions.MIPMAP_LINEAR) | (options & Texture2DOptions.MIPMAP_NEAREST) > 0)
+            {
+                var w:Int = tw >> 1;
+                var h:Int = th >> 1;
+                var l = 0;
+                var r = new Rectangle();
+                var t = new Matrix();
 
-            if (cache != null)
+                var tmp = b.clone();
+
+                while (w >= 1 || h >= 1)
+                {
+                    l ++;
+                    r.width = w;
+                    r.height = h;
+                    t.scale(0.5, 0.5);
+
+                    tmp.fillRect(r, 0x00000000);
+                    tmp.draw(b, t, null, null, null, true);
+
+                    texture.uploadFromBitmapData(tmp, l);
+
+                    w >>= 1;
+                    h >>= 1;
+                }
+
+                tmp.dispose();
+            }
+
+            if (rescale) b.dispose();
+
+            if (releaseBitmap && cache != null)
             {
                 cache.releaseBitmap(bitmapData);
                 bitmapData = null;
@@ -110,4 +145,28 @@ class Texture2D
             return result;
         }
     }
+}
+
+// ND2D thanks
+class Texture2DOptions
+{
+
+    // defines how and if mip mapping should be used
+    public static inline var MIPMAP_DISABLE = 1;
+    public static inline var MIPMAP_NEAREST = 2;
+    public static inline var MIPMAP_LINEAR = 4;
+
+    // texture filtering methods
+    public static inline var FILTERING_NEAREST = 8;
+    public static inline var FILTERING_LINEAR = 16;
+
+    // texture repeat
+    public static inline var REPEAT_NORMAL = 32;
+    public static inline var REPEAT_CLAMP = 64;
+
+    // predefined presets
+    public static inline var QUALITY_LOW = MIPMAP_DISABLE | FILTERING_NEAREST | REPEAT_NORMAL;
+    public static inline var QUALITY_MEDIUM = MIPMAP_DISABLE | FILTERING_LINEAR | REPEAT_NORMAL;
+    public static inline var QUALITY_HIGH = MIPMAP_NEAREST | FILTERING_LINEAR | REPEAT_NORMAL;
+    public static inline var QUALITY_ULTRA = MIPMAP_LINEAR | FILTERING_LINEAR | REPEAT_NORMAL;
 }

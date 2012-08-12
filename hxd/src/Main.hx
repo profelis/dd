@@ -81,6 +81,9 @@ class Main
                 //sp.scaleX = 0.5;
                 //sp.scaleY = 0.5;
             }
+        sp2.pivot = new Vector3D(160, 100, 0);
+        sp2.x = 160;
+        sp2.y = 100;
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 
@@ -100,7 +103,7 @@ class Main
 
     function onRender(_)
     {
-        //if (sp2 != null) sp2.rotationX += 0.05;
+        if (sp2 != null) sp2.rotationX += 0.5;
         q2.rotationY = q2.rotationY + 0.5;
         q.rotationZ ++;
         q.scaleX *= 0.995;
