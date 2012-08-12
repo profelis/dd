@@ -71,15 +71,15 @@ class Main
 
         world.scene.addChild(sp2 = new Sprite2D());
         var sp:Sprite2D;
-        for (x in 0...3)
-            for (y in 0...3)
+        for (x in 0...1)
+            for (y in 0...1)
             {
                 sp2.addChild(sp = new Sprite2D(Geometry.create(150, 150, true)));
                 sp.texture = world.cache.getTexture(Image);
                 sp.x = x * 150;
                 sp.y = y * 100;
-                sp.scaleX = 0.5;
-                sp.scaleY = 0.5;
+                //sp.scaleX = 0.5;
+                //sp.scaleY = 0.5;
             }
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
@@ -93,14 +93,14 @@ class Main
 
         if (sp2 != null)
         {
-            sp2.dispose();
-            sp2 = null;
+            //sp2.dispose();
+            //sp2 = null;
         }
     }
 
     function onRender(_)
     {
-        if (sp2 != null) sp2.rotationX += 0.05;
+        //if (sp2 != null) sp2.rotationX += 0.05;
         q2.rotationY = q2.rotationY + 0.5;
         q.rotationZ ++;
         q.scaleX *= 0.995;
