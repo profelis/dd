@@ -24,6 +24,13 @@ class Node2D
 
     public var scene(default, null):Scene2D;
 
+    public var world(get_world, null):World2D;
+
+    function get_world()
+    {
+        return scene != null ? scene.world : null;
+    }
+
     var children:Array<Node2D>;
 
     public var transform(get_transform, null):Matrix3D;
