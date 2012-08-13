@@ -83,7 +83,10 @@ class Cache
 
         res = Type.createInstance(ref, [0, 0]);
         bmpCache.set(ref, res);
-        bmpUseCount.set(res, 0);
+        if (!bmpUseCount.exists(res))
+		{
+			bmpUseCount.set(res, 0);
+		}
         return res;
     }
 
@@ -98,6 +101,15 @@ class Cache
     }
 
     var bmpTextureCache:TypedDictionary<BitmapData, Hash<Texture2D>>;
+	
+	public function reinitBitmapTextureCache():Void
+	{
+		bmpTextureCache = new TypedDictionary();
+		for (key in bmpUseCount.keys())
+		{
+			bmpUseCount.set(key, 0);
+		}
+	}
 
     public function getTexture(ref:Class<BitmapData>):Texture2D
     {
@@ -119,7 +131,9 @@ class Cache
         }
 
         if (bmpUseCount.exists(bmp))
-            bmpUseCount.set(bmp, bmpUseCount.get(bmp) + 1);
+        {
+			bmpUseCount.set(bmp, bmpUseCount.get(bmp) + 1);
+		}
 
         res = Texture2D.fromBitmap(bmp);
         res.cache = this;

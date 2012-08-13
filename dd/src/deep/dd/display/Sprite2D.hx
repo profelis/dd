@@ -16,7 +16,10 @@ class Sprite2D extends DisplayNode2D
     override public function init(ctx:Context3D):Void
     {
         super.init(ctx);
-        if (texture != null) texture.init(ctx);
+        if (texture != null) 
+		{
+			texture.init(ctx);
+		}
     }
 
     override public function draw(camera:Camera2D):Void
@@ -27,6 +30,19 @@ class Sprite2D extends DisplayNode2D
             super.draw(camera);
         }
     }
+	
+	override public function handleDeviceLoss(context:Context3D):Void 
+	{
+		if (texture != null)
+		{
+			if (texture.texture != null) 
+			{
+				texture.texture.dispose();
+				Reflect.setField(texture, "texture", null);
+			}
+		}
+		super.handleDeviceLoss(context);
+	}
 	
 	override public function dispose():Void 
 	{
