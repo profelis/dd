@@ -72,11 +72,6 @@ class Geometry
         }
     }
 	
-	public function handleDeviceLoss(context:Context3D):Void
-	{
-		init(context);
-	}
-	
 	public function dispose():Void
 	{
 		p.dispose();

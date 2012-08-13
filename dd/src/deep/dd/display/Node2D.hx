@@ -67,16 +67,6 @@ class Node2D
         c.setScene(null);
     }
 	
-	public function handleDeviceLoss(context:Context3D):Void 
-	{
-		this.init(context);
-		for (child in children) 
-		{
-			child.handleDeviceLoss(context);
-		}
-		// extend in extended classes
-	}
-	
 	public function dispose():Void
 	{
 		if (parent != null)

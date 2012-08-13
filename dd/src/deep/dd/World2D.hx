@@ -12,10 +12,9 @@ import flash.display3D.Context3DTriangleFace;
 import flash.display3D.Context3DCompareMode;
 import flash.display.Stage3D;
 import flash.events.Event;
-import flash.events.EventDispatcher;
 import flash.geom.Rectangle;
 
-class World2D extends EventDispatcher
+class World2D
 {
     public var stageId(default, null):Int;
 
@@ -52,8 +51,7 @@ class World2D extends EventDispatcher
 
     public function new(context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stageId:Int = 0)
     {
-        super();
-		stage = flash.Lib.current.stage;
+        stage = flash.Lib.current.stage;
 
         this.context3DRenderMode = context3DRenderMode;
         this.bounds =  bounds;
@@ -88,8 +86,6 @@ class World2D extends EventDispatcher
 		
 		if (deviceInitialized) deviceWasLost = true;
 		deviceInitialized = true;
-		
-		dispatchEvent(new Event(Event.INIT));
     }
 
     function onResize(?_)
@@ -125,7 +121,7 @@ class World2D extends EventDispatcher
 			{
 				Material.reinitShaderCache();
 				cache.reinitBitmapTextureCache();
-				scene.handleDeviceLoss(ctx);
+				scene.init(ctx);
 				deviceWasLost = false;
 				invalidateSize = true;
 			}

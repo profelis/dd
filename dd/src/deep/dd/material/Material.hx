@@ -57,11 +57,6 @@ class Material
         shader.draw(sprite.geometry.vbuf, sprite.geometry.ibuf);
     }
 	
-	public function handleDeviceLoss(context:Context3D):Void
-	{
-		init(context);
-	}
-	
 	public function dispose():Void
 	{
         if (useCount > 0) return;

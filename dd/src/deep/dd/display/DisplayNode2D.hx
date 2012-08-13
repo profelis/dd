@@ -39,19 +39,6 @@ class DisplayNode2D extends Node2D
         super.draw(camera);
     }
 	
-	override public function handleDeviceLoss(context:Context3D):Void 
-	{
-		if (material != null)
-		{
-			material.handleDeviceLoss(context);
-		}
-		if (geometry != null)
-		{
-			geometry.handleDeviceLoss(context);
-		}
-		super.handleDeviceLoss(context);
-	}
-	
 	override public function dispose():Void 
 	{
 		super.dispose();
