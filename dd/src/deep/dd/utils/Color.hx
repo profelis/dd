@@ -1,4 +1,4 @@
-package deep.hxd.utils;
+package deep.dd.utils;
 
 class Color
 {

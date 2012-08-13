@@ -1,8 +1,8 @@
-package deep.hxd.display;
+package deep.dd.display;
 
-import deep.hxd.camera.Camera2D;
-import deep.hxd.material.Quad2DMaterial;
-import deep.hxd.geometry.Geometry;
+import deep.dd.camera.Camera2D;
+import deep.dd.material.Quad2DMaterial;
+import deep.dd.geometry.Geometry;
 
 class Quad2D extends DisplayNode2D
 {

@@ -1,8 +1,8 @@
-package deep.hxd.texture;
+package deep.dd.texture;
 
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
-import deep.hxd.utils.Cache;
+import deep.dd.utils.Cache;
 import flash.geom.Vector3D;
 import flash.geom.Point;
 import flash.display3D.Context3DTextureFormat;

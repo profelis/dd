@@ -1,4 +1,4 @@
-package deep.hxd.utils;
+package deep.dd.utils;
 
 import flash.display3D.Context3DBlendFactor;
 

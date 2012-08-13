@@ -2,11 +2,11 @@ package ;
 
 import flash.geom.Vector3D;
 import flash.display3D.Context3D;
-import deep.hxd.camera.Camera2D;
-import deep.hxd.geometry.Geometry;
-import deep.hxd.material.Material;
+import deep.dd.camera.Camera2D;
+import deep.dd.geometry.Geometry;
+import deep.dd.material.Material;
 import mt.m3d.PerlinShader;
-import deep.hxd.display.DisplayNode2D;
+import deep.dd.display.DisplayNode2D;
 import mt.m3d.Vector;
 import mt.m3d.Polygon;
 

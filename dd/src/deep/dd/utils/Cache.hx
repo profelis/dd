@@ -1,7 +1,7 @@
-package deep.hxd.utils;
+package deep.dd.utils;
 
-import deep.hxd.texture.Texture2D;
-import deep.hxd.World2D;
+import deep.dd.texture.Texture2D;
+import deep.dd.World2D;
 import flash.utils.TypedDictionary;
 import flash.display.BitmapData;
 

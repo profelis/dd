@@ -1,11 +1,12 @@
-package deep.hxd;
-import deep.hxd.utils.Cache;
-import deep.hxd.utils.Color;
-import flash.display3D.Context3DRenderMode;
-import deep.hxd.display.Scene2D;
-import deep.hxd.camera.Camera2D;
+package deep.dd;
+
+import deep.dd.utils.Cache;
+import deep.dd.utils.Color;
+import deep.dd.display.Scene2D;
+import deep.dd.camera.Camera2D;
 import flash.display.Stage;
 import flash.display3D.Context3D;
+import flash.display3D.Context3DRenderMode;
 import flash.display3D.Context3DTriangleFace;
 import flash.display3D.Context3DCompareMode;
 import flash.display.Stage3D;

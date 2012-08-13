@@ -1,13 +1,10 @@
-package deep.hxd.camera;
+package deep.dd.camera;
+
 import mt.m3d.Matrix;
 import flash.geom.Matrix3D;
 import mt.m3d.Vector;
 import mt.m3d.Camera;
 
-/**
- * Простая 2д камера, использует Николаса камеру для проекции, только выставляет ее на нужную высоту
- * и выравнивает по верхнему левому краю
-**/
 class Camera2D
 {
     var c:Camera;

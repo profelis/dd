@@ -1,10 +1,10 @@
-package deep.hxd.display;
+package deep.dd.display;
 
-import deep.hxd.camera.Camera2D;
+import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
-import deep.hxd.texture.Texture2D;
-import deep.hxd.material.Sprite2DMaterial;
-import deep.hxd.geometry.Geometry;
+import deep.dd.texture.Texture2D;
+import deep.dd.material.Sprite2DMaterial;
+import deep.dd.geometry.Geometry;
 
 class Sprite2D extends DisplayNode2D
 {

@@ -1,6 +1,6 @@
-package deep.hxd.display;
+package deep.dd.display;
 
-import deep.hxd.World2D;
+import deep.dd.World2D;
 
 class Scene2D extends Node2D
 {

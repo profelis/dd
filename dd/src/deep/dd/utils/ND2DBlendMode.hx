@@ -1,4 +1,5 @@
-package deep.hxd.utils;
+package deep.dd.utils;
+
 class ND2DBlendMode
 {
     public static var BLEND:BlendMode = new BlendMode(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);

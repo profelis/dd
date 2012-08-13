@@ -1,9 +1,9 @@
-package deep.hxd.material;
+package deep.dd.material;
 
 import flash.utils.TypedDictionary;
-import deep.hxd.display.DisplayNode2D;
-import deep.hxd.camera.Camera2D;
-import deep.hxd.geometry.Geometry;
+import deep.dd.display.DisplayNode2D;
+import deep.dd.camera.Camera2D;
+import deep.dd.geometry.Geometry;
 import format.hxsl.Shader;
 import flash.display3D.Context3D;
 

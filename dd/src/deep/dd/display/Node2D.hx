@@ -1,10 +1,10 @@
-package deep.hxd.display;
+package deep.dd.display;
 
-import deep.hxd.World2D;
+import deep.dd.World2D;
 import flash.geom.Vector3D;
-import deep.hxd.utils.BlendMode;
+import deep.dd.utils.BlendMode;
 import flash.geom.Matrix3D;
-import deep.hxd.camera.Camera2D;
+import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
 
 class Node2D

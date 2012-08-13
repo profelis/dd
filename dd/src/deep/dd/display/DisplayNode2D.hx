@@ -1,8 +1,8 @@
-package deep.hxd.display;
+package deep.dd.display;
 
-import deep.hxd.geometry.Geometry;
-import deep.hxd.material.Material;
-import deep.hxd.camera.Camera2D;
+import deep.dd.geometry.Geometry;
+import deep.dd.material.Material;
+import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
 import format.hxsl.Shader;
 import mt.m3d.Polygon;
