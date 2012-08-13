@@ -46,13 +46,13 @@ class Main
         world.bgColor = new Color(0.0, 0.5, 0.0);
 
 
-        world.scene.addChild(q = new Quad2D(Geometry.create(false, 300, 300)));
+        world.scene.addChild(q = new Quad2D(Geometry.createSolid(300, 300)));
         q.alpha = 0.5;
         q.update();
         q.geometry.setVertexColor(0, 0xFF0000, 0.8);
         //q.blendMode = BlendMode.ADD_PREMULTIPLIED_ALPHA;
 
-        world.scene.addChild(q2 = new Quad2D(Geometry.create(false, 300, 300)));
+        world.scene.addChild(q2 = new Quad2D(Geometry.createSolid(300, 300)));
         q2.x = 300;
         q2.y = 300;
         q2.pivot = new Vector3D(150, 150, 0);
@@ -71,7 +71,7 @@ class Main
         for (x in 0...1)
             for (y in 0...1)
             {
-                sp2.addChild(sp = new Sprite2D(Geometry.create(true, 150, 150, 0, 0, 10, 4)));
+                sp2.addChild(sp = new Sprite2D(Geometry.createTextured(150, 150, 0, 0, 10, 4)));
                 sp.texture = world.cache.getTexture(Image);
                 sp.x = x * 150;
                 sp.y = y * 100;
