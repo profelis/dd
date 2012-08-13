@@ -41,9 +41,8 @@ class Main
 
         world.scene = new Scene2D();
 
-		world.bounds = new Rectangle(20, 20, 400, 400);
+		//world.bounds = new Rectangle(20, 20, 400, 400);
 		world.antialiasing = 2;
-		world.x = 200;
         world.bgColor = new Color(0.0, 0.5, 0.0);
 
 
@@ -90,13 +89,15 @@ class Main
 
     function onClick(_)
     {
-        world.bounds = world.autoResize ? new Rectangle(200, 20, 400, 400) : null;
+        //world.bounds = world.autoResize ? new Rectangle(200, 20, 400, 400) : null;
 
-        if (sp2 != null)
+        /*if (sp2 != null)
         {
             //sp2.dispose();
             //sp2 = null;
-        }
+        }*/
+
+        world.ctx.dispose();
     }
 
     function onRender(_)

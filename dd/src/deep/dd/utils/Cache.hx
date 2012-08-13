@@ -42,16 +42,16 @@ class Cache
         }
     }
 
-    public var autoDisposeBitmaps:Bool = true;
+    /**
+    * if true then all bitmapDatas will be deleted, can't be restored after context loss
+    **/
+    public var autoDisposeBitmaps:Bool = false;
 
     var w:World2D;
 
     var bmpCache:TypedDictionary<Class<BitmapData>, BitmapData>;
     var bmpUseCount:TypedDictionary<BitmapData, Int>;
 
-    /**
-    *  Auto dispose cached bitmaps
-    **/
     public function releaseBitmap(bmp:BitmapData)
     {
         if (!bmpUseCount.exists(bmp)) return;

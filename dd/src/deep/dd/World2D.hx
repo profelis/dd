@@ -24,15 +24,12 @@ class World2D
     var st3d:Stage3D;
 
     public var ctx(default, null):Context3D;
+    public var isHW(default, null):Bool = false;
 
     public var autoResize(default, null):Bool;
 	public var bounds(default, set_bounds):Rectangle;
     var invalidateSize:Bool = true;
 	
-	// Context loss vars
-	var deviceInitialized:Bool = false;
-	var deviceWasLost:Bool = false;
-
 	public var antialiasing(default, set_antialiasing):UInt;
 
 	public var x(get_x, set_x):Float;
@@ -67,11 +64,22 @@ class World2D
         st3d = stage.stage3Ds[stageId];
         st3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);
         st3d.requestContext3D(Std.string(context3DRenderMode));
+
+        if (st3d.context3D != null && st3d.context3D.driverInfo != "Disposed") onContext(null);
     }
 
     function onContext(_)
     {
+        if (ctx == st3d.context3D) return;
+
+        if (ctx != null)
+        {
+            Material.freeContextCache(ctx);
+            cache.reinitBitmapTextureCache();
+        }
         ctx = st3d.context3D;
+
+        isHW = ctx.driverInfo.toLowerCase().indexOf("software") == -1;
 		
 		#if debug
         ctx.enableErrorChecking = true;
@@ -82,15 +90,18 @@ class World2D
         stage.addEventListener(Event.ENTER_FRAME, onRender);
         stage.addEventListener(Event.RESIZE, onResize);
 
-        onResize();
-		
-		if (deviceInitialized) deviceWasLost = true;
-		deviceInitialized = true;
+        //onResize();
+        invalidateSize = true;
+    }
+
+    inline function ctxExist():Bool
+    {
+        return ctx != null && ctx.driverInfo != "Disposed";
     }
 
     function onResize(?_)
     {
-		if (ctx == null || ctx.driverInfo == "Disposed") return;
+		if (!ctxExist()) return;
 		
 		if (autoResize)
         {
@@ -113,19 +124,10 @@ class World2D
 
     function onRender(_)
     {
-        if (scene != null && ctx != null && ctx.driverInfo != "Disposed") 
+        if (ctxExist())
 		{
 			if (pause) return;
-			
-			if (deviceWasLost) 
-			{
-				Material.reinitShaderCache();
-				cache.reinitBitmapTextureCache();
-				scene.init(ctx);
-				deviceWasLost = false;
-				invalidateSize = true;
-			}
-			
+
 			if (invalidateSize) updateSize();
 
 			if (camera.needUpdate) camera.update();
@@ -216,8 +218,9 @@ class World2D
 		if (bounds.x != val)
 		{
 			bounds.x = val;
-			invalidateSize = true;
-		}
+            invalidateSize = true;
+            autoResize = false;
+        }
 		return val;
 	}
 	
@@ -232,6 +235,7 @@ class World2D
 		{
 			bounds.y = val;
 			invalidateSize = true;
+            autoResize = false;
 		}
 		return val;
 	}

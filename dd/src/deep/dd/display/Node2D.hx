@@ -105,8 +105,11 @@ class Node2D
 
     public function init(ctx:Context3D):Void
     {
-        this.ctx = ctx;
-        for (i in children) i.init(ctx);
+        if (this.ctx != ctx)
+        {
+            this.ctx = ctx;
+            for (i in children) i.init(ctx);
+        }
     }
 
     public function drawStep(camera:Camera2D):Void

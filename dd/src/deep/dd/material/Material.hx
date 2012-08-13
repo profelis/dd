@@ -29,15 +29,20 @@ class Material
 
     static var shaderCache:TypedDictionary<Context3D, Hash<Shader>> = new TypedDictionary();
 	
-	public static function reinitShaderCache():Void
+	public static function freeContextCache(ctx:Context3D):Void
 	{
-		shaderCache = new TypedDictionary();
+        shaderCache.delete(ctx);
 	}
 
     public function init(ctx:Context3D)
     {
+        if (this.ctx == ctx) return;
+
+        if (shader != null) shader.dispose();
+
         this.ctx = ctx;
         if (!shaderCache.exists(ctx)) shaderCache.set(ctx, new Hash());
+
         var key = Type.getClassName(shaderRef);
 
         if (useShaderCache)

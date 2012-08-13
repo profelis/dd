@@ -35,7 +35,16 @@ class Texture2D
     public var useCount:Int = 0;
     public var cache:Cache;
 
-    public var releaseBitmap:Bool = false;
+
+    public var releaseBitmap(default, #if debug set_releaseBitmap #else default #end):Bool = false;
+
+    #if debug
+    function set_releaseBitmap(v)
+    {
+        if (cache != null) throw "releaseBitmap conflict with cache";
+        return releaseBitmap = v;
+    }
+    #end
 
     var bitmapData:BitmapData;
 
@@ -53,70 +62,76 @@ class Texture2D
 
     public var region(default, null):Vector3D;
 
+    var ctx:Context3D;
+
     public function init(ctx:Context3D)
     {
-		if (texture != null) 
+        if (this.ctx == ctx) return;
+
+        this.ctx = ctx;
+
+		if (texture != null)
 		{
 			texture.dispose();
 			texture = null;
 		}
-		
-		if (texture == null)
+
+        tw = getNextPowerOfTwo(bw);
+        th = getNextPowerOfTwo(bh);
+
+        texture = ctx.createTexture(tw, th, Context3DTextureFormat.BGRA, false);
+        region = new Vector3D(0, 0, 1, 1);
+
+        var b = bitmapData;
+        var rescale = tw != bw || th != bh;
+        if (rescale)
         {
-			tw = getNextPowerOfTwo(bw);
-            th = getNextPowerOfTwo(bh);
+            b = new BitmapData(tw, th, true, 0x00000000);
+            b.copyPixels(bitmapData, bitmapData.rect, new Point());
+            region.z = bw / tw;
+            region.w = bh / th;
+        }
 
-            texture = ctx.createTexture(tw, th, Context3DTextureFormat.BGRA, false);
-            region = new Vector3D(0, 0, 1, 1);
+        texture.uploadFromBitmapData(b);
 
-            var b = bitmapData;
-            var rescale = tw != bw || th != bh;
-            if (rescale)
+        if ((options & Texture2DOptions.MIPMAP_LINEAR) | (options & Texture2DOptions.MIPMAP_NEAREST) > 0)
+        {
+            var w:Int = tw >> 1;
+            var h:Int = th >> 1;
+            var l = 0;
+            var r = new Rectangle();
+            var t = new Matrix();
+
+            var tmp = b.clone();
+
+            while (w >= 1 || h >= 1)
             {
-                b = new BitmapData(tw, th, true, 0x00000000);
-                b.copyPixels(bitmapData, bitmapData.rect, new Point());
-                region.z = bw / tw;
-                region.w = bh / th;
+                l ++;
+                r.width = w;
+                r.height = h;
+                t.scale(0.5, 0.5);
+
+                tmp.fillRect(r, 0x00000000);
+                tmp.draw(b, t, null, null, null, true);
+
+                texture.uploadFromBitmapData(tmp, l);
+
+                w >>= 1;
+                h >>= 1;
             }
 
-            texture.uploadFromBitmapData(b);
+            tmp.dispose();
+        }
 
-            if ((options & Texture2DOptions.MIPMAP_LINEAR) | (options & Texture2DOptions.MIPMAP_NEAREST) > 0)
-            {
-                var w:Int = tw >> 1;
-                var h:Int = th >> 1;
-                var l = 0;
-                var r = new Rectangle();
-                var t = new Matrix();
+        if (rescale) b.dispose();
 
-                var tmp = b.clone();
-
-                while (w >= 1 || h >= 1)
-                {
-                    l ++;
-                    r.width = w;
-                    r.height = h;
-                    t.scale(0.5, 0.5);
-
-                    tmp.fillRect(r, 0x00000000);
-                    tmp.draw(b, t, null, null, null, true);
-
-                    texture.uploadFromBitmapData(tmp, l);
-
-                    w >>= 1;
-                    h >>= 1;
-                }
-
-                tmp.dispose();
-            }
-
-            if (rescale) b.dispose();
-
-            if (releaseBitmap && cache != null)
-            {
-                cache.releaseBitmap(bitmapData);
-                bitmapData = null;
-            }
+        if (cache != null)
+        {
+            cache.releaseBitmap(bitmapData);
+        }
+        else if (releaseBitmap)
+        {
+            bitmapData.dispose();
         }
     }
 	

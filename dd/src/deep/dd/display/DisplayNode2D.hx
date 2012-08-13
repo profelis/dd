@@ -22,10 +22,12 @@ class DisplayNode2D extends Node2D
 
     override public function init(ctx:Context3D):Void
     {
+        if (this.ctx != ctx)
+        {
+            if (material != null) material.init(ctx);
+            if (geometry != null) geometry.init(ctx);
+        }
         super.init(ctx);
-
-        if (material != null) material.init(ctx);
-        if (geometry != null) geometry.init(ctx);
     }
 
     override public function draw(camera:Camera2D):Void
