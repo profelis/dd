@@ -1,5 +1,6 @@
 package deep.dd;
 
+import deep.dd.material.Material;
 import deep.dd.utils.Cache;
 import deep.dd.utils.Color;
 import deep.dd.display.Scene2D;
@@ -11,7 +12,6 @@ import flash.display3D.Context3DTriangleFace;
 import flash.display3D.Context3DCompareMode;
 import flash.display.Stage3D;
 import flash.events.Event;
-import flash.display.Sprite;
 import flash.geom.Rectangle;
 
 class World2D
@@ -28,6 +28,10 @@ class World2D
     public var autoResize(default, null):Bool;
 	public var bounds(default, set_bounds):Rectangle;
     var invalidateSize:Bool = true;
+	
+	// Context loss vars
+	var deviceInitialized:Bool = false;
+	var deviceWasLost:Bool = false;
 
 	public var antialiasing(default, set_antialiasing):UInt;
 
@@ -79,10 +83,15 @@ class World2D
         stage.addEventListener(Event.RESIZE, onResize);
 
         onResize();
+		
+		if (deviceInitialized) deviceWasLost = true;
+		deviceInitialized = true;
     }
 
     function onResize(?_)
     {
+		if (ctx == null || ctx.driverInfo == "Disposed") return;
+		
 		if (autoResize)
         {
             bounds.width = Std.int(stage.stageWidth);
@@ -104,19 +113,32 @@ class World2D
 
     function onRender(_)
     {
-        if (pause) return;
-		if (invalidateSize) updateSize();
+        if (scene != null && ctx != null && ctx.driverInfo != "Disposed") 
+		{
+			if (pause) return;
+			
+			if (deviceWasLost) 
+			{
+				Material.reinitShaderCache();
+				cache.reinitBitmapTextureCache();
+				scene.init(ctx);
+				deviceWasLost = false;
+				invalidateSize = true;
+			}
+			
+			if (invalidateSize) updateSize();
 
-        if (camera.needUpdate) camera.update();
+			if (camera.needUpdate) camera.update();
 
-        ctx.setCulling(Context3DTriangleFace.NONE);
-        ctx.setDepthTest(false, Context3DCompareMode.ALWAYS);
+			ctx.setCulling(Context3DTriangleFace.NONE);
+			ctx.setDepthTest(false, Context3DCompareMode.ALWAYS);
 
-        ctx.clear(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+			ctx.clear(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 
-        scene.drawStep(camera);
+			scene.drawStep(camera);
 
-        ctx.present();
+			ctx.present();
+		}
     }
 	
 	function dispose(disposeContext3D:Bool = true):Void

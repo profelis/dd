@@ -35,7 +35,7 @@ class Texture2D
     public var useCount:Int = 0;
     public var cache:Cache;
 
-    public var releaseBitmap:Bool = true;
+    public var releaseBitmap:Bool = false;
 
     var bitmapData:BitmapData;
 
@@ -55,9 +55,15 @@ class Texture2D
 
     public function init(ctx:Context3D)
     {
-        if (texture == null)
+		if (texture != null) 
+		{
+			texture.dispose();
+			texture = null;
+		}
+		
+		if (texture == null)
         {
-            tw = getNextPowerOfTwo(bw);
+			tw = getNextPowerOfTwo(bw);
             th = getNextPowerOfTwo(bh);
 
             texture = ctx.createTexture(tw, th, Context3DTextureFormat.BGRA, false);

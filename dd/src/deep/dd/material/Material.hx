@@ -28,6 +28,11 @@ class Material
     var ctx:Context3D;
 
     static var shaderCache:TypedDictionary<Context3D, Hash<Shader>> = new TypedDictionary();
+	
+	public static function reinitShaderCache():Void
+	{
+		shaderCache = new TypedDictionary();
+	}
 
     public function init(ctx:Context3D)
     {
