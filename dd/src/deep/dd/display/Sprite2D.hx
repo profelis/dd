@@ -15,18 +15,6 @@ class Sprite2D extends DisplayNode2D
 
     override public function init(ctx:Context3D):Void
     {
-		if (this.ctx != ctx)
-		{
-			if (texture != null)
-			{
-				if (texture.texture != null) 
-				{
-					texture.texture.dispose();
-					Reflect.setField(texture, "texture", null);
-				}
-			}
-		}
-		
 		super.init(ctx);
         if (texture != null) 
 		{

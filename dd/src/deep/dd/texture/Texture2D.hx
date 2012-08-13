@@ -55,10 +55,14 @@ class Texture2D
 
     public function init(ctx:Context3D)
     {
-        trace("1");
+		if (texture != null) 
+		{
+			texture.dispose();
+			texture = null;
+		}
+		
 		if (texture == null)
         {
-			trace("2");
 			tw = getNextPowerOfTwo(bw);
             th = getNextPowerOfTwo(bh);
 
