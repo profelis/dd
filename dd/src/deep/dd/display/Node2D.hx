@@ -39,6 +39,8 @@ class Node2D
     public var worldTransform(get_worldTransform, null):Matrix3D;
     var invalidateWorldTransform:Bool;
 
+    public var visible:Bool = true;
+
     public function addChild(c:Node2D):Void
     {
         if (c.parent != null)
@@ -111,7 +113,7 @@ class Node2D
     {
         draw(camera);
 
-        for (i in children) i.drawStep(camera);
+        for (i in children) if (i.visible) i.drawStep(camera);
     }
 
     public function draw(camera:Camera2D):Void

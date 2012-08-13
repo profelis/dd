@@ -1,6 +1,6 @@
 package deep.dd.utils;
 
-class Color
+@:final class Color
 {
     public var a:Float;
     public var r:Float;
@@ -20,27 +20,31 @@ class Color
         return x > 1 ? 1 : (x < 0) ? 0 : x;
     }
 
-    public function fromUint(c:UInt):Color
+    inline public function fromUInt(c:UInt)
     {
         a = clamp(((c >> 24) & 0xFF) / 0xFF);
         r = clamp(((c >> 16) & 0xFF) / 0xFF);
         g = clamp(((c >> 8) & 0xFF) / 0xFF);
         b = clamp((c & 0xFF) / 0xFF);
-
-        return this;
     }
 
-    public function fromInt(c:Int, alpha:Float = 1):Color
+    inline public function fromInt(c:Int, alpha:Float = 1)
     {
         r = clamp(((c >> 16) & 0xFF) / 0xFF);
         g = clamp(((c >> 8) & 0xFF) / 0xFF);
         b = clamp((c & 0xFF) / 0xFF);
         a = alpha;
-
-        return this;
     }
 
-    public function clone():Color
+    inline public function fromColor(c:Color)
+    {
+        a = c.a;
+        r = c.r;
+        g = c.g;
+        b = c.b;
+    }
+
+    inline public function clone():Color
     {
         return new Color(r, g, b, a);
     }

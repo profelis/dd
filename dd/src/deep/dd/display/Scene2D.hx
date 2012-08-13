@@ -1,5 +1,7 @@
 package deep.dd.display;
 
+import haxe.Timer;
+import deep.dd.camera.Camera2D;
 import deep.dd.World2D;
 
 class Scene2D extends Node2D
@@ -9,9 +11,19 @@ class Scene2D extends Node2D
         super();
 
         scene = this;
+
+        time = flash.Lib.getTimer() * 0.001;
     }
-	
-	override public function dispose():Void 
+
+    public var time(default, null):Float;
+
+    override public function draw(camera:Camera2D):Void
+    {
+        time = flash.Lib.getTimer() * 0.001 - time;
+        super.draw(camera);
+    }
+
+    override public function dispose():Void
 	{
 		super.dispose();
 		world = null;

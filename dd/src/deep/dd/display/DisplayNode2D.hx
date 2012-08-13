@@ -32,7 +32,7 @@ class DisplayNode2D extends Node2D
     {
         if (material != null && geometry != null)
         {
-            geometry.draw();
+            if (geometry.needUpdate) geometry.update();
             material.draw(this, camera);
         }
 
