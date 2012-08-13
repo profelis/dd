@@ -41,7 +41,7 @@ class Main
 
         world.scene = new Scene2D();
 
-		//world.bounds = new Rectangle(20, 20, 400, 400);
+		world.bounds = new Rectangle(20, 20, 400, 400);
 		world.antialiasing = 2;
         world.bgColor = new Color(0.0, 0.5, 0.0);
 
@@ -71,7 +71,7 @@ class Main
         for (x in 0...1)
             for (y in 0...1)
             {
-                sp2.addChild(sp = new Sprite2D(Geometry.createTextured(150, 150, 0, 0, 10, 4)));
+                sp2.addChild(sp = new Sprite2D(Geometry.createTextured(150, 150, 20, 10)));
                 sp.texture = world.cache.getTexture(Image);
                 sp.x = x * 150;
                 sp.y = y * 100;
@@ -106,7 +106,7 @@ class Main
         q2.rotationY = q2.rotationY + 0.5;
         q.rotationZ ++;
         q.scaleX *= 0.995;
-        if (q2.geometry.height < 1000) q2.geometry.resize(q2.geometry.width, q2.geometry.height + 1);
+        //if (q2.geometry.height < 1000) q2.geometry.resize(q2.geometry.width, q2.geometry.height + 1);
     }
 
 

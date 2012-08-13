@@ -72,17 +72,17 @@ class Geometry
         }
     }
 
-    static public function createTextured(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, dx = 0.0, dy = 0.0):Geometry
+    static public function createTextured(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
     {
-        return create(true, width, height, stepsX, stepsY, dx, dy);
+        return create(true, width, height, stepsX, stepsY, offsetX, offsetY);
     }
 
-    static public function createSolid(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, dx = 0.0, dy = 0.0):Geometry
+    static public function createSolid(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
     {
-        return create(false, width, height, stepsX, stepsY, dx, dy);
+        return create(false, width, height, stepsX, stepsY, offsetX, offsetY);
     }
 
-    static public function create(textured:Bool, width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, dx = 0.0, dy = 0.0):Geometry
+    static public function create(textured:Bool, width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
     {
         #if debug
         if (width < 0) throw "width < 0";
@@ -98,10 +98,10 @@ class Geometry
         res.height = height;
         res.stepsX = stepsX;
         res.stepsY = stepsY;
-        res.offsetX = dx;
-        res.offsetY = dy;
+        res.offsetX = offsetX;
+        res.offsetY = offsetY;
         res.textured = textured;
-        res.poly = createPoly(textured, width, height, dx, dy, stepsX, stepsY);
+        res.poly = createPoly(textured, width, height, offsetX, offsetY, stepsX, stepsY);
 
         return res;
     }
@@ -129,6 +129,7 @@ class Geometry
             {
                 var x = i * sx;
                 var y = j * sy;
+                trace(x + " " + y);
 
                 v = new Vector(x * w + dx, y * h + dy, 0.0);
                 vs.push(v);
@@ -165,14 +166,14 @@ class Geometry
 
         var kx = width / this.width;
         var ky = height / this.height;
-        trace(kx + " " + ky);
 
+        trace(poly.points);
         for (i in poly.points)
         {
             i.x *= kx;
             i.y *= ky;
         }
-
+        trace(poly.points);
         this.width = width;
         this.height = height;
 
