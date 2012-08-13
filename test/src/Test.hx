@@ -1,3 +1,4 @@
+package ;
 import flash.events.MouseEvent;
 import mt.m3d.Vector;
 import mt.m3d.Cube;

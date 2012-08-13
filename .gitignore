@@ -2,5 +2,5 @@
 
 .idea
 *.iml
-dd/bin
+bin
 out

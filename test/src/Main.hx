@@ -1,3 +1,4 @@
+package ;
 import deep.dd.texture.Texture2D;
 import flash.display.BitmapData;
 import deep.dd.display.Sprite2D;

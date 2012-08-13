@@ -5,6 +5,8 @@
 -main Main
 -lib format
 -cp src
+-cp test
+-cp ../dd/src
 #-D shaderDebug
 #-debug
 #-D fdb
