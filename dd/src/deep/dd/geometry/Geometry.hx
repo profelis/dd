@@ -129,7 +129,6 @@ class Geometry
             {
                 var x = i * sx;
                 var y = j * sy;
-                trace(x + " " + y);
 
                 v = new Vector(x * w + dx, y * h + dy, 0.0);
                 vs.push(v);
@@ -167,13 +166,12 @@ class Geometry
         var kx = width / this.width;
         var ky = height / this.height;
 
-        trace(poly.points);
         for (i in poly.points)
         {
             i.x *= kx;
             i.y *= ky;
         }
-        trace(poly.points);
+
         this.width = width;
         this.height = height;
 
