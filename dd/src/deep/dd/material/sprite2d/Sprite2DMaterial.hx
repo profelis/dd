@@ -30,7 +30,7 @@ class Sprite2DMaterial extends Material
         #end
         var sp:Sprite2D = cast sprite;
         var tex = sp.texture;
-        spriteShader.init({mpos:sprite.worldTransform, mproj:camera.proj, region:tex.region}, {tex:tex.texture});
+        spriteShader.init({mpos:sprite.worldTransform, mproj:camera.proj}, {tex:tex.texture, region:tex.region});
 
         super.draw(sprite, camera);
     }
