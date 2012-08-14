@@ -11,12 +11,12 @@ function vertex(mpos:M44, mproj:M44)
     tuv = uv;
 }
 
-function fragment(tex:Texture, region:Float4)
+function fragment(tex:Texture, cTrans:Float4, region:Float4)
 {
     var t = tuv;
     t.xy *= region.zw;
     t.xy += region.xy;
-    out = texture(tex, t);
+    out = texture(tex, t) * cTrans;
 }
 
 /*

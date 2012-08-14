@@ -15,7 +15,7 @@ package mt.m3d;
         this.b = clamp(b);
     }
 
-    inline function clamp(x:Float)
+    inline static public function clamp(x:Float)
     {
         return x > 1 ? 1 : (x < 0) ? 0 : x;
     }
@@ -44,6 +44,14 @@ package mt.m3d;
         b = c.b;
     }
 
+    public function concat(c:Color)
+    {
+        a *= c.a;
+        r *= c.r;
+        g *= c.g;
+        b *= c.b;
+    }
+
     inline public function copy():Color
     {
         return new Color(r, g, b, a);
@@ -52,4 +60,5 @@ package mt.m3d;
     public function toString() {
         return "{Color "+Std.int(a * 0xFF)+","+Std.int(r * 0xFF)+","+Std.int(g * 0xFF)+","+Std.int(b * 0xFF)+"}";
     }
+
 }

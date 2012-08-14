@@ -21,11 +21,11 @@ class Quad2DMaterial extends Material
 
     var quadShader:QuadShader;
 
-    override public function draw(sprite:DisplayNode2D, camera:Camera2D)
+    override public function draw(node:DisplayNode2D, camera:Camera2D)
     {
-        quadShader.init({ mpos : sprite.worldTransform, mproj : camera.proj }, {});
+        quadShader.init({ mpos : node.worldTransform, mproj : camera.proj }, {cTrans:node.worldColorTransform});
 
-        super.draw(sprite, camera);
+        super.draw(node, camera);
     }
 	
 	override public function dispose():Void 
@@ -50,9 +50,9 @@ class QuadShader extends Shader
             c = color;
         }
 
-        function fragment()
+        function fragment(cTrans:Float4)
         {
-            out = c;
+            out = c * cTrans;
         }
     };
 }

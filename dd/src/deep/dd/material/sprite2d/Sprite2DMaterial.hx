@@ -24,13 +24,13 @@ class Sprite2DMaterial extends Material
         shaderRef = SHADERS.get(texOpt & 0x60).get(texOpt & 0x18).get(texOpt & 0x7);
     }
 
-    override public function draw(sprite:DisplayNode2D, camera:Camera2D)
+    override public function draw(node:DisplayNode2D, camera:Camera2D)
     {
         #if debug
-        if (!Std.is(sprite, Sprite2D)) throw "can't draw " + sprite;
+        if (!Std.is(node, Sprite2D)) throw "can't draw " + node;
         #end
 
-        var sp:Sprite2D = cast sprite;
+        var sp:Sprite2D = cast node;
         var tex = sp.texture;
 
         if (texOpt != tex.options)   // TODO : optimize
@@ -40,9 +40,9 @@ class Sprite2DMaterial extends Material
             updateShader();
         }
 
-        untyped shader.init({mpos:sprite.worldTransform, mproj:camera.proj}, {tex:tex.texture, region:tex.region});
+        untyped shader.init({mpos:node.worldTransform, mproj:camera.proj}, {tex:tex.texture, cTrans:node.worldColorTransform, region:tex.region});
 
-        super.draw(sprite, camera);
+        super.draw(node, camera);
     }
 	
     public static var SHADERS(default, null):IntHash<IntHash<IntHash<Class<Shader>>>> = initSHADERS();

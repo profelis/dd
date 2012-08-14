@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import mt.m3d.Color;
 import deep.dd.World2D;
 import flash.geom.Vector3D;
 import deep.dd.utils.BlendMode;
@@ -22,7 +23,13 @@ class Node2D
     var invalidateTransform:Bool = true;
 
     public var worldTransform(get_worldTransform, null):Matrix3D;
-    var invalidateWorldTransform:Bool;
+    var invalidateWorldTransform:Bool = true;
+
+    public var colorTransform(default, set_colorTransform):Color;
+    public var worldColorTransform(get_worldColorTransform, null):Vector3D;
+    var invalidateWorldColorTransform:Bool;
+
+    public var alpha(default, set_alpha):Float = 1;
 
     public var visible:Bool = true;
 
@@ -36,7 +43,11 @@ class Node2D
 
         children = new Array();
         transform = new Matrix3D();
+
+        worldColorTransform = new Vector3D();
         worldTransform = new Matrix3D();
+
+        colorTransform = null;
     }
 
     public function dispose():Void
@@ -243,5 +254,49 @@ class Node2D
         }
 
         return worldTransform;
+    }
+
+    // color transform
+
+    function set_colorTransform(c)
+    {
+        if (c == null) c = new Color(1, 1, 1, 1);
+
+        colorTransform = c;
+        invalidateWorldColorTransform = true;
+        for (i in children) i.invalidateWorldColorTransform = true;
+
+        return c;
+    }
+
+    function get_worldColorTransform()
+    {
+        if (invalidateWorldColorTransform)
+        {
+            worldColorTransform.setTo(colorTransform.r, colorTransform.g, colorTransform.b);
+            worldColorTransform.w = colorTransform.a;
+
+            if (parent != null)
+            {
+                var p = parent.worldColorTransform;
+                worldColorTransform.x *= p.x;
+                worldColorTransform.y *= p.y;
+                worldColorTransform.z *= p.z;
+                worldColorTransform.w *= p.w;
+            }
+
+            invalidateWorldColorTransform = false;
+        }
+
+        return worldColorTransform;
+    }
+
+    function set_alpha(v:Float):Float
+    {
+        v = Color.clamp(v);
+        colorTransform.a = v;
+
+        colorTransform = colorTransform;
+        return v;
     }
 }

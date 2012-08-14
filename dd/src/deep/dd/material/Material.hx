@@ -60,11 +60,11 @@ class Material
         }
     }
 
-    public function draw(sprite:DisplayNode2D, camera:Camera2D)
+    public function draw(node:DisplayNode2D, camera:Camera2D)
     {
-        ctx.setBlendFactors(sprite.blendMode.src, sprite.blendMode.dst);
+        ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 
-        shader.draw(sprite.geometry.vbuf, sprite.geometry.ibuf);
+        shader.draw(node.geometry.vbuf, node.geometry.ibuf);
     }
 	
 	public function dispose():Void

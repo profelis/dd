@@ -43,7 +43,7 @@ class Main
 
 		//world.bounds = new Rectangle(20, 20, 400, 400);
 		world.antialiasing = 2;
-        world.bgColor = new Color(0.0, 0.5, 0.0);
+        world.bgColor.fromInt(0x666666);
 
 
         world.scene.addChild(q = new Quad2D(Geometry.createSolid(300, 300)));
@@ -57,7 +57,7 @@ class Main
         q2.y = 300;
         q2.pivot = new Vector3D(150, 150, 0);
         q2.color = 0x00FF20;
-        //q2.alpha = 0.5;
+        q2.alpha = 0.6;
 
 
         q2.addChild(q);
@@ -75,6 +75,7 @@ class Main
                 sp.texture = world.cache.getTexture(Image, Texture2DOptions.QUALITY_LOW);
                 sp.x = x * 150;
                 sp.y = y * 100;
+                sp.colorTransform = new Color(1, 0.5, 0.5, 0.5);
                 //sp.scaleX = 0.5;
                 //sp.scaleY = 0.5;
             }
