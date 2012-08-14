@@ -26,7 +26,7 @@ class Sprite2D extends DisplayNode2D
     {
         if (texture != null)
         {
-            if (texture.needUpdate) texture.update();
+            if (texture.needUpdate) texture.update(scene.time);
             super.draw(camera);
         }
     }
@@ -55,7 +55,7 @@ class Sprite2D extends DisplayNode2D
         {
             texture.useCount ++;
             if (ctx != null) texture.init(ctx);
-            if (geometry != null) geometry.resize(texture.bw, texture.bh);
+            if (geometry != null) geometry.resize(texture.width, texture.height);
         }
 
         return tex;
@@ -70,7 +70,7 @@ class Sprite2D extends DisplayNode2D
         #end
 
         super.set_geometry(g);
-        if (geometry != null && texture != null) geometry.resize(texture.bw, texture.bh);
+        if (geometry != null && texture != null) geometry.resize(texture.width, texture.height);
 
         return geometry;
     }

@@ -1,4 +1,5 @@
 package ;
+import deep.dd.texture.SpriteSheetTexture2D;
 import deep.dd.texture.Texture2D;
 import flash.display.BitmapData;
 import deep.dd.display.Sprite2D;
@@ -18,7 +19,7 @@ import flash.events.Event;
 import mt.m3d.Camera;
 import flash.display3D.Context3D;
 
-@:bitmap("1.jpg") class Image extends BitmapData {}
+@:bitmap("metalslug_monster39x40.png") class Image extends BitmapData {}
 
 class Main
 {
@@ -26,10 +27,8 @@ class Main
     var world:World2D;
     var sprite:PerlinSprite;
 
-    var q:Quad2D;
-    var q2:Quad2D;
 
-    var sp2:Sprite2D;
+    var sp:Sprite2D;
 
     public function new()
     {
@@ -45,43 +44,10 @@ class Main
 		world.antialiasing = 2;
         world.bgColor.fromInt(0x666666);
 
+        sp = new Sprite2D(Geometry.createTextured(100, 100));
+        world.scene.addChild(sp);
 
-        world.scene.addChild(q = new Quad2D(Geometry.createSolid(300, 300)));
-        q.alpha = 0.5;
-        q.update();
-        q.geometry.setVertexColor(0, 0xFF0000, 0.8);
-        //q.blendMode = BlendMode.ADD_PREMULTIPLIED_ALPHA;
-
-        world.scene.addChild(q2 = new Quad2D(Geometry.createSolid(300, 300)));
-        q2.x = 300;
-        q2.y = 300;
-        q2.pivot = new Vector3D(150, 150, 0);
-        q2.color = 0x00FF20;
-        q2.alpha = 0.6;
-
-
-        q2.addChild(q);
-        q.x = 150;
-        q.y = 150;
-        //world.scene.addChild(sprite = new PerlinSprite());
-        //sprite.blendMode = BlendMode.FILTER;
-
-        world.scene.addChild(sp2 = new Sprite2D());
-        var sp:Sprite2D;
-        for (x in 0...1)
-            for (y in 0...1)
-            {
-                sp2.addChild(sp = new Sprite2D(Geometry.createTextured(150, 150, 20, 10)));
-                sp.texture = world.cache.getTexture(Image, Texture2DOptions.QUALITY_LOW);
-                sp.x = x * 150;
-                sp.y = y * 100;
-                sp.colorTransform = new Color(1, 0.5, 0.5, 0.5);
-                //sp.scaleX = 0.5;
-                //sp.scaleY = 0.5;
-            }
-        sp2.pivot = new Vector3D(160, 100, 0);
-        sp2.x = 160;
-        sp2.y = 100;
+        sp.texture = SpriteSheetTexture2D.fromBitmap(new Image(0,0), 39, 40);
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 
@@ -90,25 +56,12 @@ class Main
 
     function onClick(_)
     {
-        //world.bounds = world.autoResize ? new Rectangle(200, 20, 400, 400) : null;
 
-        /*if (sp2 != null)
-        {
-            //sp2.dispose();
-            //sp2 = null;
-        }*/
-
-        //world.ctx.dispose();
-        sp2.dispose();
     }
 
     function onRender(_)
     {
-        if (sp2 != null) sp2.rotationX += 0.5;
-        q2.rotationY = q2.rotationY + 0.5;
-        q.rotationZ ++;
-        q.scaleX *= 0.995;
-        //if (q2.geometry.height < 1000) q2.geometry.resize(q2.geometry.width, q2.geometry.height + 1);
+
     }
 
 

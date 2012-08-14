@@ -17,14 +17,20 @@ class Texture2D
 	public function new(options:UInt)
     {
         this.options = options;
+        region = new Vector3D(0, 0, 1, 1);
     }
 
     public static function fromBitmap(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
     {
         var res = new Texture2D(options);
         res.bitmapData = bmp;
-        res.bw = bmp.width;
-        res.bh = bmp.height;
+        res.width = res.bw = bmp.width;
+        res.height = res.bh = bmp.height;
+        res.tw = getNextPowerOfTwo(res.bw);
+        res.th = getNextPowerOfTwo(res.bh);
+
+        res.region.z = res.bw / res.tw;
+        res.region.w = res.bh / res.th;
 
         return res;
     }
@@ -48,14 +54,16 @@ class Texture2D
 
     var bitmapData:BitmapData;
 
-    public var bw(default, null):Int;
-    public var bh(default, null):Int;
+    public var width(default, null):Float;
+    public var height(default, null):Float;
+    var bw:Int;
+    var bh:Int;
     var tw:Int;
     var th:Int;
 
     public var needUpdate:Bool = false;
 
-    public function update()
+    public function update(time:Float)
     {
         needUpdate = false;
     }
@@ -76,11 +84,7 @@ class Texture2D
 			texture = null;
 		}
 
-        tw = getNextPowerOfTwo(bw);
-        th = getNextPowerOfTwo(bh);
-
         texture = ctx.createTexture(tw, th, Context3DTextureFormat.BGRA, false);
-        region = new Vector3D(0, 0, 1, 1);
 
         var b = bitmapData;
         var rescale = tw != bw || th != bh;
@@ -88,8 +92,6 @@ class Texture2D
         {
             b = new BitmapData(tw, th, true, 0x00000000);
             b.copyPixels(bitmapData, bitmapData.rect, new Point());
-            region.z = bw / tw;
-            region.w = bh / th;
         }
 
         texture.uploadFromBitmapData(b);
