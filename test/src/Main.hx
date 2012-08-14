@@ -29,6 +29,7 @@ class Main
 
 
     var sp:Sprite2D;
+    var sp2:Sprite2D;
 
     public function new()
     {
@@ -46,8 +47,26 @@ class Main
 
         sp = new Sprite2D(Geometry.createTextured(100, 100));
         world.scene.addChild(sp);
+        sp.x = 100;
+        sp.y = 100;
+        sp.scaleY = sp.scaleX = 4;
 
-        sp.texture = SpriteSheetTexture2D.fromBitmap(new Image(0,0), 39, 40);
+        var t = SpriteSheetTexture2D.fromBitmap(new Image(0,0), 39, 40);
+        t.fps = 8;
+        sp.texture = t;
+
+        // ignore border test
+
+        sp2 = new Sprite2D(Geometry.createTextured(100, 100));
+        world.scene.addChild(sp2);
+        sp2.x = 500;
+        sp2.y = 100;
+        sp2.scaleY = sp2.scaleX = 4;
+        sp2.scaleX *= -1;
+
+        var t = SpriteSheetTexture2D.fromBitmap(new Image(0,0), 39, 40, 0.5);
+        t.fps = 8;
+        sp2.texture = t;
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 

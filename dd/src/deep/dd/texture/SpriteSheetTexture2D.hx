@@ -13,15 +13,29 @@ class SpriteSheetTexture2D extends Texture2D
         needUpdate = true;
     }
 
+    override public function dispose():Void
+    {
+        super.dispose();
+
+        frames = null;
+    }
+
+    var ignoreBorder:Float;
     var frames:Array<Vector3D>;
 
-    var fps = 5;
+    public var fps:UInt = 30;
 
-    public static function fromBitmap(bmp:BitmapData, itemWidth:Float, itemHeight:Float, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
+    var frameTime:Float = 0;
+    var currentFrame:Int = -1;
+
+    var prevTime:Float = 0;
+
+    public static function fromBitmap(bmp:BitmapData, itemWidth:Float, itemHeight:Float, ignoreBorder = 0.0, options:UInt = Texture2DOptions.QUALITY_ULTRA):SpriteSheetTexture2D
     {
-        /*#if debug
-        if (iw < 0 || ih < 0) throw "item size < 0";
-        #end */
+        #if debug
+        if (itemWidth < 0 || itemHeight < 0) throw "item size < 0";
+        if (ignoreBorder < 0) throw "ignoreBorder < 0";
+        #end
 
         var res = new SpriteSheetTexture2D(options);
         res.bitmapData = bmp;
@@ -33,6 +47,7 @@ class SpriteSheetTexture2D extends Texture2D
         res.width = itemWidth;
         res.height = itemHeight;
 
+        res.ignoreBorder = ignoreBorder;
         res.parse();
 
         return res;
@@ -42,8 +57,12 @@ class SpriteSheetTexture2D extends Texture2D
     {
         var x = 0.0;
         var y = 0.0;
-        var w = width / tw;
-        var h = height / th;
+
+        var kx = 1 / tw;
+        var ky = 1 / th;
+
+        var w = (width - ignoreBorder * 2) * kx;
+        var h = (height - ignoreBorder * 2) * ky;
 
         frames = new Array();
         while (x < bw)
@@ -52,19 +71,12 @@ class SpriteSheetTexture2D extends Texture2D
             while (y < bh)
             {
                 trace(x + " " + y);
-                frames.push(new Vector3D(x / tw, y / th, w, h));
+                frames.push(new Vector3D((x+ignoreBorder) * kx, (y+ignoreBorder) * ky, w, h));
                 y += height;
             }
             x += width;
         }
-
-        region = frames[0];
     }
-
-    var frameTime:Float = 0;
-    var frame:Int = -1;
-
-    var prevTime:Float = 0;
 
     override public function update(time:Float)
     {
@@ -74,8 +86,8 @@ class SpriteSheetTexture2D extends Texture2D
         if (frameTime > 1)
         {
             frameTime = 0;
-            frame++;
-            region = frames[frame % frames.length];
+            currentFrame++;
+            region = frames[currentFrame % frames.length];
         }
     }
 
