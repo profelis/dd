@@ -6,7 +6,7 @@
 -lib format
 -cp src
 -cp ../dd/src
+
 #-D shaderDebug
 #-debug
 #-D fdb
---no-inline
