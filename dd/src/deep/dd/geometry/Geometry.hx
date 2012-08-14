@@ -1,7 +1,7 @@
 package deep.dd.geometry;
 
 import mt.m3d.UV;
-import deep.dd.utils.Color;
+import mt.m3d.Color;
 import flash.display3D.VertexBuffer3D;
 import flash.display3D.IndexBuffer3D;
 import mt.m3d.Vector;
@@ -219,7 +219,7 @@ class Geometry
         {
             var colors = new Array<Color>();
             for (i in 0...poly.points.length)
-                colors[i] = c.clone();
+                colors[i] = c.copy();
 
             poly.colors = colors;
         }

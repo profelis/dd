@@ -3,7 +3,7 @@ import deep.dd.texture.Texture2D;
 import flash.display.BitmapData;
 import deep.dd.display.Sprite2D;
 import flash.events.MouseEvent;
-import deep.dd.utils.Color;
+import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;

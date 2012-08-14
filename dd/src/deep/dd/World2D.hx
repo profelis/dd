@@ -2,7 +2,7 @@ package deep.dd;
 
 import deep.dd.material.Material;
 import deep.dd.utils.Cache;
-import deep.dd.utils.Color;
+import mt.m3d.Color;
 import deep.dd.display.Scene2D;
 import deep.dd.camera.Camera2D;
 import flash.display.Stage;

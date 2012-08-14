@@ -24,7 +24,11 @@ class Sprite2DMaterial extends Material
 
     override public function draw(sprite:DisplayNode2D, camera:Camera2D)
     {
-        var tex = cast(sprite, Sprite2D).texture;
+        #if debug
+        if (!Std.is(sprite, Sprite2D)) throw "can't draw " + sprite;
+        #end
+        var sp:Sprite2D = cast sprite;
+        var tex = sp.texture;
         spriteShader.init({mpos:sprite.worldTransform, mproj:camera.proj}, {tex:tex.texture, region:tex.region});
 
         super.draw(sprite, camera);

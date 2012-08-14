@@ -1,4 +1,4 @@
-package deep.dd.utils;
+package mt.m3d;
 
 @:final class Color
 {
@@ -44,8 +44,12 @@ package deep.dd.utils;
         b = c.b;
     }
 
-    inline public function clone():Color
+    inline public function copy():Color
     {
         return new Color(r, g, b, a);
+    }
+
+    public function toString() {
+        return "{Color "+Std.int(a * 0xFF)+","+Std.int(r * 0xFF)+","+Std.int(g * 0xFF)+","+Std.int(b * 0xFF)+"}";
     }
 }
