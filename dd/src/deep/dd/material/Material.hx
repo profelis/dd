@@ -29,6 +29,7 @@ class Material
     var ctx:Context3D;
 
     static var shaderCache:TypedDictionary<Context3D, Hash<Shader>> = new TypedDictionary();
+    static var shaderUseCount:TypedDictionary<Context3D, TypedDictionary<Shader, Int>> = new TypedDictionary();
 	
 	public static function freeContextCache(ctx:Context3D):Void
 	{
@@ -41,22 +42,62 @@ class Material
 
         this.ctx = ctx;
 
+        releaseShader();
         updateShader();
     }
 
     inline function updateShader()
     {
-        if (!shaderCache.exists(ctx)) shaderCache.set(ctx, new Hash());
-
-        var key = Type.getClassName(shaderRef);
-
-        if (useShaderCache)
+        if (shaderRef != null)
         {
-            shader = shaderCache.get(ctx).get(key);
+            if (!shaderCache.exists(ctx)) shaderCache.set(ctx, new Hash());
+            if (!shaderUseCount.exists(ctx)) shaderUseCount.set(ctx, new TypedDictionary());
+
+            var useCount = shaderUseCount.get(ctx);
+
+            var key = Type.getClassName(shaderRef);
+
+            if (useShaderCache)
+            {
+                shader = shaderCache.get(ctx).get(key);
+                useCount.set(shader, useCount.get(shader) + 1);
+            }
+            if (shader == null)
+            {
+                shaderCache.get(ctx).set(key, shader = Type.createInstance(shaderRef, [ctx]));
+                useCount.set(shader, 1);
+            }
+            trace(shader + " " + useCount.get(shader));
         }
-        if (shader == null)
+    }
+
+    inline function releaseShader()
+    {
+        if (shader != null && useShaderCache)
         {
-            shaderCache.get(ctx).set(key, shader = Type.createInstance(shaderRef, [ctx]));
+            var useCount = shaderUseCount.get(ctx);
+
+            if (useCount.exists(shader))
+            {
+                if (useCount.get(shader) <= 1)
+                {
+                    useCount.delete(shader);
+                    var s = shaderCache.get(ctx);
+                    for (i in s.keys())
+                    {
+                        if (s.get(i) == shader)
+                        {
+                            s.remove(i);
+                            break;
+                        }
+                    }
+                    shader.dispose();
+                }
+                else
+                {
+                    useCount.set(shader, useCount.get(shader) - 1);
+                }
+            }
         }
     }
 
@@ -71,7 +112,10 @@ class Material
 	{
         if (useCount > 0) return;
 
-		if (!useShaderCache && shader != null) shader.dispose();
+        if (useShaderCache)
+            releaseShader();
+		else if (shader != null) shader.dispose();
+
 		shader = null;
 		ctx = null;
 	}

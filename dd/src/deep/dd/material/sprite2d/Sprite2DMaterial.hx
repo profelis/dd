@@ -14,7 +14,7 @@ class Sprite2DMaterial extends Material
 {
     public function new()
     {
-        super(WrapLinearLinear);
+        super(null);
     }
 
     var texOpt:UInt = 0;

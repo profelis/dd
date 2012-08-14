@@ -98,7 +98,8 @@ class Main
             //sp2 = null;
         }*/
 
-        world.ctx.dispose();
+        //world.ctx.dispose();
+        sp2.dispose();
     }
 
     function onRender(_)
