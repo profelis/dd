@@ -41,10 +41,10 @@ class Material
 
         this.ctx = ctx;
 
-        updateShader(ctx);
+        updateShader();
     }
 
-    inline function updateShader(ctx:Context3D)
+    inline function updateShader()
     {
         if (!shaderCache.exists(ctx)) shaderCache.set(ctx, new Hash());
 
