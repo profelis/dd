@@ -3,7 +3,7 @@ package deep.dd.display;
 import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
 import deep.dd.texture.Texture2D;
-import deep.dd.material.Sprite2DMaterial;
+import deep.dd.material.sprite2d.Sprite2DMaterial;
 import deep.dd.geometry.Geometry;
 
 class Sprite2D extends DisplayNode2D

@@ -1,4 +1,4 @@
-package deep.dd.material;
+package deep.dd.material.sprite2d;
 
 import deep.dd.display.Sprite2D;
 import deep.dd.camera.Camera2D;
@@ -29,7 +29,7 @@ class Sprite2DMaterial extends Material
         #end
         var sp:Sprite2D = cast sprite;
         var tex = sp.texture;
-        spriteShader.init({mpos:sprite.worldTransform, mproj:camera.proj}, {tex:tex.texture, region:tex.region});
+        spriteShader.init({mpos:sprite.worldTransform, mproj:camera.proj, region:tex.region}, {tex:tex.texture});
 
         super.draw(sprite, camera);
     }
@@ -45,23 +45,12 @@ class Sprite2DMaterial extends Material
 class SpriteShader extends Shader
 {
     static var SRC = {
-        var input : {
-            pos : Float3,
-            uv: Float2
-        };
-        var tuv:Float2;
-        function vertex(mpos:M44, mproj:M44)
-        {
-            out = pos.xyzw * mpos * mproj;
-            tuv = uv;
-        }
 
-        function fragment(tex:Texture, region:Float4)
+        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+
+        function texture(t:Texture, uv:Float2)
         {
-            var t = tuv;
-            t.xy *= region.zw;
-            t.xy += region.xy;
-            out = tex.get(t, wrap, linear, mm_linear);
+            return t.get(uv, wrap, linear, mm_linear);
         }
     };
 }
