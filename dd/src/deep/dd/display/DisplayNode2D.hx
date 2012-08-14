@@ -20,6 +20,9 @@ class DisplayNode2D extends Node2D
 
     public var material(default, set_material):Material;
 
+    public var width(get_width, set_width):Float;
+    public var height(get_height, set_height):Float;
+
     override public function init(ctx:Context3D):Void
     {
         if (this.ctx != ctx)
@@ -83,6 +86,28 @@ class DisplayNode2D extends Node2D
             material.useCount ++;
         }
         return m;
+    }
+
+    function get_width():Float
+    {
+        return geometry.width * scaleX;
+    }
+
+    function set_width(v:Float):Float
+    {
+        scaleX = v / geometry.width;
+        return v;
+    }
+
+    function get_height():Float
+    {
+        return geometry.height * scaleX;
+    }
+
+    function set_height(v:Float):Float
+    {
+        scaleY = v / geometry.height;
+        return v;
     }
 
 }
