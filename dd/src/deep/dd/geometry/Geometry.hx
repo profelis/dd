@@ -152,13 +152,13 @@ class Geometry
 
                 if (i > 0 && j > 0)
                 {
-                    ix.push((i-1) * stepsY + j-1);
-                    ix.push((i-1) * stepsY + j);
-                    ix.push((i) * stepsY + j-1);
+                    ix.push((i-1) * stepsY + j-1); // 0
+                    ix.push((i-1) * stepsY + j);   // 1
+                    ix.push((i) * stepsY + j);     // 2
 
-                    ix.push((i-1) * stepsY + j);
-                    ix.push((i) * stepsY + j);
-                    ix.push((i) * stepsY + j-1);
+                    ix.push((i-1) * stepsY + j-1); // 0
+                    ix.push((i) * stepsY + j);     // 2
+                    ix.push((i) * stepsY + j-1);   // 3
                 }
             }
         }

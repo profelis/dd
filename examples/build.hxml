@@ -1,0 +1,12 @@
+-swf9 bin/dd_examples.swf
+-swf-header 800:600:40:FFFFFF
+--flash-strict
+-swf-version 11
+-main Main
+-lib format
+-cp src
+-cp ../dd/src
+
+#-D shaderDebug
+#-debug
+#-D fdb

@@ -77,7 +77,7 @@ class Material
         {
             var useCount = shaderUseCount.get(ctx);
 
-            if (useCount.exists(shader))
+            if (useCount != null && useCount.exists(shader))
             {
                 if (useCount.get(shader) <= 1)
                 {
