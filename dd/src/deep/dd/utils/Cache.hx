@@ -111,9 +111,9 @@ class Cache
 		}
 	}
 
-    public function getTexture(ref:Class<BitmapData>):Texture2D
+    public function getTexture(ref:Class<BitmapData>, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
     {
-        return getBitmapTexture(getBitmap(ref));
+        return getBitmapTexture(getBitmap(ref), options);
     }
 
     public function getBitmapTexture(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
@@ -135,7 +135,7 @@ class Cache
 			bmpUseCount.set(bmp, bmpUseCount.get(bmp) + 1);
 		}
 
-        res = Texture2D.fromBitmap(bmp);
+        res = Texture2D.fromBitmap(bmp, options);
         res.cache = this;
         h.set(key(options), res);
 

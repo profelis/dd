@@ -14,6 +14,7 @@ class Quad2DMaterial extends Material
 
     override public function init(ctx:Context3D)
     {
+        if (this.ctx == ctx) return;
         super.init(ctx);
         quadShader = cast(shader, QuadShader);
     }

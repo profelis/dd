@@ -72,7 +72,7 @@ class Main
             for (y in 0...1)
             {
                 sp2.addChild(sp = new Sprite2D(Geometry.createTextured(150, 150, 20, 10)));
-                sp.texture = world.cache.getTexture(Image);
+                sp.texture = world.cache.getTexture(Image, Texture2DOptions.QUALITY_LOW);
                 sp.x = x * 150;
                 sp.y = y * 100;
                 //sp.scaleX = 0.5;

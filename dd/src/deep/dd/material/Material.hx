@@ -1,5 +1,6 @@
 package deep.dd.material;
 
+import flash.display3D.Context3D;
 import flash.utils.TypedDictionary;
 import deep.dd.display.DisplayNode2D;
 import deep.dd.camera.Camera2D;
@@ -38,9 +39,13 @@ class Material
     {
         if (this.ctx == ctx) return;
 
-        if (shader != null) shader.dispose();
-
         this.ctx = ctx;
+
+        updateShader(ctx);
+    }
+
+    inline function updateShader(ctx:Context3D)
+    {
         if (!shaderCache.exists(ctx)) shaderCache.set(ctx, new Hash());
 
         var key = Type.getClassName(shaderRef);
