@@ -47,6 +47,8 @@ class Sprite2D extends DisplayNode2D
 
     function set_texture(tex:Texture2D):Texture2D
     {
+        if (tex == texture) return tex;
+
         if (texture != null) texture.useCount --;
         texture = tex;
         if (texture != null)
@@ -61,6 +63,12 @@ class Sprite2D extends DisplayNode2D
 
     override function set_geometry(g:Geometry):Geometry
     {
+        if (g == geometry) return g;
+
+        #if debug
+        if (!g.textured) throw "geometry.textured != true";
+        #end
+
         super.set_geometry(g);
         if (geometry != null && texture != null) geometry.resize(texture.bw, texture.bh);
 

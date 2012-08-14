@@ -20,7 +20,7 @@ class Geometry
         this.poly = p;
     }
 
-    var normal:Bool = false;
+    public var normal(default, null):Bool = false;
 
     public var textured(default, null):Bool = false;
 
@@ -41,6 +41,17 @@ class Geometry
     {
         if (this.ctx != ctx)
         {
+            if (ibuf != null)
+            {
+                ibuf.dispose();
+                ibuf = null;
+            }
+            if (vbuf != null)
+            {
+                vbuf.dispose();
+                vbuf = null;
+            }
+
             this.ctx = ctx;
             needUpdate = true;
         }

@@ -61,6 +61,8 @@ class DisplayNode2D extends Node2D
 
     function set_geometry(g:Geometry):Geometry
     {
+        if (g == geometry) return g;
+
         geometry = g;
         if (geometry != null && ctx != null) geometry.init(ctx);
 
@@ -69,6 +71,8 @@ class DisplayNode2D extends Node2D
 
     function set_material(m:Material):Material
     {
+        if (m == material) return m;
+
         if (material != null) material.useCount --;
 
         material = m;

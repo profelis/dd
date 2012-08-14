@@ -52,4 +52,14 @@ class Quad2D extends DisplayNode2D
 
         needUpdateColor = false;
     }
+
+    override function set_geometry(g:Geometry):Geometry
+    {
+        if (g == geometry) return g;
+
+        super.set_geometry(g);
+        if (geometry != null) needUpdateColor = true;
+
+        return geometry;
+    }
 }

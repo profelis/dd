@@ -41,7 +41,7 @@ class Main
 
         world.scene = new Scene2D();
 
-		world.bounds = new Rectangle(20, 20, 400, 400);
+		//world.bounds = new Rectangle(20, 20, 400, 400);
 		world.antialiasing = 2;
         world.bgColor = new Color(0.0, 0.5, 0.0);
 
