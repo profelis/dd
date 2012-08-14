@@ -18,3 +18,10 @@ function fragment(tex:Texture, region:Float4)
     t.xy += region.xy;
     out = texture(tex, t);
 }
+
+/*
+function texture(t:Texture, uv:Float2)
+{
+    return t.get(uv);
+}
+*/
