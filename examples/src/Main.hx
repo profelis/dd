@@ -1,4 +1,4 @@
-package;
+package ;
 import flash.display.Sprite;
 import flash.text.TextFormat;
 import mt.m3d.Color;
