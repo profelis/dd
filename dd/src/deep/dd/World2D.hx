@@ -84,8 +84,15 @@ class World2D
 		#if debug
         ctx.enableErrorChecking = true;
 		#end
-
-        scene.init(ctx);
+		
+        if (scene != null) 
+		{
+			scene.init(ctx);
+		}
+		else
+		{
+			pause = true;
+		}
 
         stage.addEventListener(Event.ENTER_FRAME, onRender);
         stage.addEventListener(Event.RESIZE, onResize);
@@ -182,6 +189,11 @@ class World2D
         {
             Reflect.setProperty(scene, "world", this);
         }
+		else
+		{
+			pause = true;
+		}
+		scene.init(ctx);
         return s;
     }
 
