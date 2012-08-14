@@ -1,5 +1,6 @@
 package deep.dd.material.sprite2d;
 
+import deep.dd.material.Material;
 import deep.dd.display.Sprite2D;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.DisplayNode2D;
