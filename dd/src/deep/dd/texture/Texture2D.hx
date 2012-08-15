@@ -39,7 +39,7 @@ class Texture2D
     /**
      * @private
     **/
-    public var useCount:Int = 0;
+    public var useCount(default, null):Int = 0;
     public var cache(default, null):Cache;
 
 
@@ -71,18 +71,35 @@ class Texture2D
     public var region(default, null):Vector3D;
 
     // transparent border (xy - px offset)
-    public var border(default, null):Rectangle;
+    public var border(default, set_border):Rectangle;
     public var borderMatrix(default, null):Matrix3D;
 
     public var texture(default, null):Texture;
 
-    function updateFrameMatrix()
+    function updateBorderMatrix()
     {
         if (borderMatrix == null) borderMatrix = new Matrix3D();
         else borderMatrix.identity();
 
         borderMatrix.appendScale(width / border.width, height / border.width, 1);
         borderMatrix.appendTranslation(border.x, border.y, 0);
+    }
+
+    public function set_border(b:Rectangle)
+    {
+        border = b;
+        if (border == null)
+        {
+            borderMatrix = null;
+        }
+        else
+        {
+            updateBorderMatrix();
+            width = border.width;
+            height = border.height;
+        }
+
+        return border;
     }
 
     var ctx:Context3D;

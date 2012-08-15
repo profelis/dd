@@ -5,6 +5,9 @@ import flash.geom.Vector3D;
 import flash.geom.Point;
 import deep.dd.texture.atlas.AtlasTexture2D;
 
+/**
+* Parser for https://github.com/scriptum/Cheetah-Texture-Packer
+**/
 class CheetahParser implements IAtlasParser
 {
     var data:String;

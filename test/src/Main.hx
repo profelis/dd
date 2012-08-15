@@ -1,4 +1,6 @@
 package ;
+import deep.dd.texture.atlas.animation.Animator;
+import deep.dd.display.MovieClip2D;
 import deep.dd.display.Node2D;
 import deep.dd.texture.atlas.parser.CheetahParser;
 import flash.utils.ByteArray;
@@ -24,6 +26,8 @@ import flash.events.Event;
 import mt.m3d.Camera;
 import flash.display3D.Context3D;
 
+@:bitmap("metalslug_monster39x40.png") class SpriteSheet extends BitmapData {}
+
 @:bitmap("atlas1/text.png") class Image extends BitmapData {}
 @:file("atlas1/text.atlas") class Atlas extends ByteArray {}
 
@@ -36,6 +40,8 @@ class Main
 
     var sp:Sprite2D;
     var sp2:Node2D;
+
+    var mc:MovieClip2D;
 
     public function new()
     {
@@ -73,6 +79,12 @@ class Main
             sp.x = dx;
             dx += sp.width;
         }
+
+        mc = new MovieClip2D(new Animator(15));
+        mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40));
+        mc.y = 200;
+
+        world.scene.addChild(mc);
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 

@@ -11,7 +11,7 @@ class AtlasTexture2D extends SubTexture2D
 
     public var frames(default, null):Array<Frame>;
 
-    public var frame(default, null):Frame;
+    public var frame(default, set_frame):Frame;
 
     public function new(texture:Texture2D, parser:IAtlasParser)
     {
@@ -29,7 +29,7 @@ class AtlasTexture2D extends SubTexture2D
             region = frame.region;
             border = frame.border;
 
-            if (border != null) updateFrameMatrix();
+            if (border != null) updateBorderMatrix();
         }
     }
 
@@ -49,19 +49,23 @@ class AtlasTexture2D extends SubTexture2D
     function getTextureByFrame(f:Frame):Texture2D
     {
         var res = new SubTexture2D(baseTexture);
-        res.region = f.region;
         res.width = f.width;
         res.height = f.height;
 
-        if (f.border != null)
-        {
-            res.border = f.border;
-            res.updateFrameMatrix();
-            res.width = res.border.width;
-            res.height = res.border.height;
-        }
+        res.region = f.region;
+        res.border = f.border;
 
         return res;
+    }
+
+    public function set_frame(f:Frame)
+    {
+        frame = f;
+
+        region = f.region;
+        border = f.border;
+
+        return f;
     }
 
 }
@@ -82,8 +86,8 @@ class SubTexture2D extends Texture2D
         height = baseTexture.height;
 
         region = baseTexture.region;
+
         border = baseTexture.border;
-        borderMatrix = baseTexture.borderMatrix;
     }
 
     public var baseTexture(default, null):Texture2D;

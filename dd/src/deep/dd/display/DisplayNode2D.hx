@@ -61,7 +61,7 @@ class DisplayNode2D extends Node2D
 
 		if (material != null)
         {
-            material.useCount --;
+            Reflect.setField(material, "useCount", material.useCount - 1);
             material.dispose();
             Reflect.setField(this, "material", null);
         }
@@ -81,14 +81,14 @@ class DisplayNode2D extends Node2D
     {
         if (m == material) return m;
 
-        if (material != null) material.useCount --;
+        if (material != null) Reflect.setField(material, "useCount", material.useCount - 1);
 
         material = m;
 
         if (material != null)
         {
             if (ctx != null) material.init(ctx);
-            material.useCount ++;
+            Reflect.setField(material, "useCount", material.useCount + 1);
         }
         return m;
     }

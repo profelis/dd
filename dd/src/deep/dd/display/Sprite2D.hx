@@ -11,7 +11,7 @@ class Sprite2D extends DisplayNode2D
 {
     public function new(geometry:Geometry = null)
     {
-        super(geometry, new Sprite2DMaterial());
+        super(geometry != null ? geometry : Geometry.createTextured(), new Sprite2DMaterial());
     }
 
     override public function init(ctx:Context3D):Void
@@ -46,7 +46,7 @@ class Sprite2D extends DisplayNode2D
 
 		if (texture != null)
         {
-            texture.useCount --;
+            Reflect.setField(texture, "useCount", texture.useCount - 1);
             texture.dispose();
             Reflect.setField(this, "texture", null);
         }
@@ -58,11 +58,11 @@ class Sprite2D extends DisplayNode2D
     {
         if (tex == texture) return tex;
 
-        if (texture != null) texture.useCount --;
+        if (texture != null) Reflect.setField(texture, "useCount", texture.useCount - 1);
         texture = tex;
         if (texture != null)
         {
-            texture.useCount ++;
+            Reflect.setField(texture, "useCount", texture.useCount + 1);
             if (ctx != null) texture.init(ctx);
             if (geometry != null) geometry.resize(texture.width, texture.height);
         }

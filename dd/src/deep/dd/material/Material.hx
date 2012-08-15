@@ -23,7 +23,7 @@ class Material
     /**
      * @private
     **/
-    public var useCount:Int = 0;
+    public var useCount(default, null):Int = 0;
 
     var shader:Shader;
     var ctx:Context3D;
@@ -67,7 +67,6 @@ class Material
                 shaderCache.get(ctx).set(key, shader = Type.createInstance(shaderRef, [ctx]));
                 useCount.set(shader, 1);
             }
-            trace(shader + " " + useCount.get(shader));
         }
     }
 
