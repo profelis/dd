@@ -141,18 +141,20 @@ class Texture2D
 	{
         if (useCount > 0) return;
 
-        if (texture == null)
+        if (cache == null)
         {
-            if (cache != null) cache.releaseBitmap(bitmapData);
+            bitmapData = null;
+            region = null;
         }
         else
         {
-            texture.dispose();
-            texture = null;
+            if (texture != null)
+            {
+                texture.dispose();
+                texture = null;
+            }
+            ctx = null;
         }
-		bitmapData = null;
-		region = null;
-        cache = null;
 	}
 
     public var texture(default, null):Texture;

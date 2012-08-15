@@ -1,5 +1,4 @@
 package ;
-import com.fermmmtools.debug.Stats;
 import flash.display.Sprite;
 import flash.text.TextFormat;
 import mt.m3d.Color;
@@ -13,10 +12,11 @@ import flash.events.KeyboardEvent;
 import flash.Lib;
 import flash.text.TextField;
 import flash.ui.Keyboard;
+import tests.GeometryTest;
 import tests.QuadTest;
 import tests.Test;
 
-class Main extends Sprite
+class MainTest extends Sprite
 {
 
     var world:World2D;
@@ -45,12 +45,9 @@ class Main extends Sprite
 		sceneText.defaultTextFormat = tf;
 		addChild(sceneText);
 		
-		scenes = [QuadTest];
+		scenes = [QuadTest, GeometryTest, GeometryTest];
 		activeSceneIdx = 0;
 		changeScene(activeSceneIdx);
-		
-		var stats:Stats = new Stats();
-		addChild(stats);
 		
         s.addEventListener(Event.ENTER_FRAME, onRender);
 		s.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
@@ -114,6 +111,6 @@ class Main extends Sprite
 
     static function main()
     {
-        new Main();
+        new MainTest();
     }
 }

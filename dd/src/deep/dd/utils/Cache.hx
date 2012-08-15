@@ -42,6 +42,15 @@ class Cache
         }
     }
 
+    public function reinitBitmapTextureCache():Void
+    {
+        bmpTextureCache = new TypedDictionary();
+        for (key in bmpUseCount.keys())
+        {
+            bmpUseCount.set(key, 0);
+        }
+    }
+
     /**
     * if true then all bitmapDatas will be deleted, can't be restored after context loss
     **/
@@ -102,15 +111,6 @@ class Cache
 
     var bmpTextureCache:TypedDictionary<BitmapData, Hash<Texture2D>>;
 	
-	public function reinitBitmapTextureCache():Void
-	{
-		bmpTextureCache = new TypedDictionary();
-		for (key in bmpUseCount.keys())
-		{
-			bmpUseCount.set(key, 0);
-		}
-	}
-
     public function getTexture(ref:Class<BitmapData>, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
     {
         return getBitmapTexture(getBitmap(ref), options);
