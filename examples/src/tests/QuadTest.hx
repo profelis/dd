@@ -1,6 +1,7 @@
 package tests;
 import deep.dd.display.Quad2D;
 import deep.dd.geometry.Geometry;
+import deep.dd.World2D;
 import flash.Lib;
 
 /**
@@ -12,9 +13,9 @@ class QuadTest extends Test
 {
 	var quad:Quad2D;
 	
-	public function new() 
+	public function new(wrld:World2D) 
 	{
-		super();
+		super(wrld);
 		quad = new Quad2D(Geometry.createSolid(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight));
 		quad.geometry.setColor(0xffffff);
 		addChild(quad);
