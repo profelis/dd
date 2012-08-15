@@ -10,3 +10,4 @@
 #-D shaderDebug
 #-debug
 #-D fdb
+#--no-inline

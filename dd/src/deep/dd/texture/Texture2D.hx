@@ -24,13 +24,13 @@ class Texture2D
     {
         var res = new Texture2D(options);
         res.bitmapData = bmp;
-        res.width = res.bw = bmp.width;
-        res.height = res.bh = bmp.height;
-        res.tw = getNextPowerOfTwo(res.bw);
-        res.th = getNextPowerOfTwo(res.bh);
+        res.width = res.bitmapWidth = bmp.width;
+        res.height = res.bitmapHeight = bmp.height;
+        res.textureWidth = getNextPowerOfTwo(res.bitmapWidth);
+        res.textureHeight = getNextPowerOfTwo(res.bitmapHeight);
 
-        res.region.z = res.bw / res.tw;
-        res.region.w = res.bh / res.th;
+        res.region.z = res.bitmapWidth / res.textureWidth;
+        res.region.w = res.bitmapHeight / res.textureHeight;
 
         return res;
     }
@@ -56,19 +56,19 @@ class Texture2D
 
     public var width(default, null):Float;
     public var height(default, null):Float;
-    var bw:Int;
-    var bh:Int;
-    var tw:Int;
-    var th:Int;
+    public var bitmapWidth(default, null):Int;
+    public var bitmapHeight(default, null):Int;
+    public var textureWidth(default, null):Int;
+    public var textureHeight(default, null):Int;
 
-    public var needUpdate:Bool = false;
+    public var needUpdate(default, null):Bool = false;
 
     public function update(time:Float)
     {
-        needUpdate = false;
     }
 
     public var region(default, null):Vector3D;
+    public var frame(default, null):Rectangle;
 
     var ctx:Context3D;
 
@@ -84,13 +84,13 @@ class Texture2D
 			texture = null;
 		}
 
-        texture = ctx.createTexture(tw, th, Context3DTextureFormat.BGRA, false);
+        texture = ctx.createTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, false);
 
         var b = bitmapData;
-        var rescale = tw != bw || th != bh;
+        var rescale = textureWidth != bitmapWidth || textureHeight != bitmapHeight;
         if (rescale)
         {
-            b = new BitmapData(tw, th, true, 0x00000000);
+            b = new BitmapData(textureWidth, textureHeight, true, 0x00000000);
             b.copyPixels(bitmapData, bitmapData.rect, new Point());
         }
 
@@ -98,8 +98,8 @@ class Texture2D
 
         if ((options & Texture2DOptions.MIPMAP_LINEAR) | (options & Texture2DOptions.MIPMAP_NEAREST) > 0)
         {
-            var w:Int = tw >> 1;
-            var h:Int = th >> 1;
+            var w:Int = textureWidth >> 1;
+            var h:Int = textureHeight >> 1;
             var l = 0;
             var r = new Rectangle();
             var t = new Matrix();

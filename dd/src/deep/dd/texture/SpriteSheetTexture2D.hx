@@ -39,10 +39,10 @@ class SpriteSheetTexture2D extends Texture2D
 
         var res = new SpriteSheetTexture2D(options);
         res.bitmapData = bmp;
-        res.bw = bmp.width;
-        res.bh = bmp.height;
-        res.tw = Texture2D.getNextPowerOfTwo(res.bw);
-        res.th = Texture2D.getNextPowerOfTwo(res.bh);
+        res.bitmapWidth = bmp.width;
+        res.bitmapHeight = bmp.height;
+        res.textureWidth = Texture2D.getNextPowerOfTwo(res.bitmapWidth);
+        res.textureHeight = Texture2D.getNextPowerOfTwo(res.bitmapHeight);
 
         res.width = itemWidth;
         res.height = itemHeight;
@@ -58,17 +58,17 @@ class SpriteSheetTexture2D extends Texture2D
         var x = 0.0;
         var y = 0.0;
 
-        var kx = 1 / tw;
-        var ky = 1 / th;
+        var kx = 1 / textureWidth;
+        var ky = 1 / textureHeight;
 
         var w = (width - ignoreBorder * 2) * kx;
         var h = (height - ignoreBorder * 2) * ky;
 
         frames = new Array();
-        while (x < bw)
+        while (x < bitmapWidth)
         {
             y = 0.0;
-            while (y < bh)
+            while (y < bitmapHeight)
             {
                 trace(x + " " + y);
                 frames.push(new Vector3D((x+ignoreBorder) * kx, (y+ignoreBorder) * ky, w, h));

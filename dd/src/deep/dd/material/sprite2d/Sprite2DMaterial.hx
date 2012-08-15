@@ -1,5 +1,6 @@
 package deep.dd.material.sprite2d;
 
+import flash.geom.Matrix3D;
 import deep.dd.material.sprite2d.Sprite2DMaterial;
 import deep.dd.texture.Texture2D;
 import deep.dd.material.Material;
@@ -40,7 +41,16 @@ class Sprite2DMaterial extends Material
             updateShader();
         }
 
-        untyped shader.init({mpos:node.worldTransform, mproj:camera.proj}, {tex:tex.texture, cTrans:node.worldColorTransform, region:tex.region});
+        var m = node.worldTransform;
+        if (tex.frame != null)
+        {
+            var f = new Matrix3D();
+            f.appendTranslation(tex.frame.x, tex.frame.y, 0);
+            f.append(m);
+            m = f;
+        }
+
+        untyped shader.init({mpos:m, mproj:camera.proj}, {tex:tex.texture, cTrans:node.worldColorTransform, region:tex.region});
 
         super.draw(node, camera);
     }
