@@ -2,7 +2,7 @@
 -swf-header 800:600:60:FFFFFF
 --flash-strict
 -swf-version 11
--main MainTest
+-main Main
 -lib format
 -cp src
 -cp test

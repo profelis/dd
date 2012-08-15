@@ -18,6 +18,11 @@ class SpriteSheetParser implements IAtlasParser
         border = ignoreBorder;
     }
 
+    public function getPreferredSize():Point
+    {
+        return new Point(iw, ih);
+    }
+
     public function parse(a:AtlasTexture2D):Array<Frame>
     {
         var frames:Array<Frame> = [];
@@ -40,7 +45,7 @@ class SpriteSheetParser implements IAtlasParser
             y = 0.0;
             while (y < bh)
             {
-                frames.push(new Frame(new Vector3D((x+border) * kx, (y+border) * ky, w, h), new Rectangle(0, 0, iw, ih)));
+                frames.push(new Frame(iw, ih, new Vector3D((x+border) * kx, (y+border) * ky, w, h)));
                 y += ih;
             }
             x += iw;

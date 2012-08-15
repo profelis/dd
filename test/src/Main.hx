@@ -1,4 +1,7 @@
 package ;
+import deep.dd.display.Node2D;
+import deep.dd.texture.atlas.parser.CheetahParser;
+import flash.utils.ByteArray;
 import deep.dd.texture.atlas.parser.SpriteSheetParser;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.texture.SpriteSheetTexture2D;
@@ -21,7 +24,8 @@ import flash.events.Event;
 import mt.m3d.Camera;
 import flash.display3D.Context3D;
 
-@:bitmap("metalslug_monster39x40.png") class Image extends BitmapData {}
+@:bitmap("atlas1/text.png") class Image extends BitmapData {}
+@:file("atlas1/text.atlas") class Atlas extends ByteArray {}
 
 class Main
 {
@@ -31,7 +35,7 @@ class Main
 
 
     var sp:Sprite2D;
-    var sp2:Sprite2D;
+    var sp2:Node2D;
 
     public function new()
     {
@@ -46,22 +50,29 @@ class Main
 		world.antialiasing = 2;
         world.bgColor.fromInt(0x666666);
 
-        var scale = 5;
+        sp2 = new Node2D();
+        world.scene.addChild(sp2);
 
-        var q = new Quad2D(Geometry.createSolid(39, 40));
+        var q = new Quad2D(Geometry.createSolid(128, 128));
         q.color = 0xFF0000;
-        q.scaleX = q.scaleY = scale;
-        world.scene.addChild(q);
+        //q.x = 10;
+        //q.y = 10;
+        sp2.addChild(q);
 
-        sp = new Sprite2D(Geometry.createTextured(100, 100));
-        world.scene.addChild(sp);
-        //sp.x = 100;
-        //sp.y = 100;
-        sp.scaleY = sp.scaleX = scale;
 
-        var t = new AtlasTexture2D(world.cache.getTexture(Image), new SpriteSheetParser(39, 40));
-        //t.fps = 8;
-        sp.texture = t;
+
+        var t = new AtlasTexture2D(world.cache.getTexture(Image),new CheetahParser(Std.string(new Atlas())));
+        var dx = 0.0;
+        for (i in 0...t.frames.length)
+        {
+            trace(t.frames[i]);
+            sp = new Sprite2D(Geometry.createTextured(100, 100));
+            sp2.addChild(sp);
+
+            sp.texture = t.getTextureById(i);
+            sp.x = dx;
+            dx += sp.width;
+        }
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 
@@ -75,7 +86,7 @@ class Main
 
     function onRender(_)
     {
-
+        sp2.rotationY += 0.05;
     }
 
 

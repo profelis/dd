@@ -10,7 +10,6 @@ class SpriteSheetTexture2D extends Texture2D
     public function new(options:UInt)
     {
         super(options);
-        needUpdate = true;
     }
 
     override public function dispose():Void
@@ -77,7 +76,7 @@ class SpriteSheetTexture2D extends Texture2D
             x += width;
         }
     }
-
+    /*
     override public function update(time:Float)
     {
         trace(time + " " + prevTime);
@@ -89,7 +88,7 @@ class SpriteSheetTexture2D extends Texture2D
             currentFrame++;
             region = frames[currentFrame % frames.length];
         }
-    }
+    } */
 
 
 }

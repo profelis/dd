@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import flash.geom.Matrix3D;
 import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
 import deep.dd.texture.Texture2D;
@@ -26,7 +27,15 @@ class Sprite2D extends DisplayNode2D
     {
         if (texture != null)
         {
-            if (texture.needUpdate) texture.update(scene.time);
+            if (texture.border != null)  // TODO: optimize!!!
+            {
+                drawTransform = texture.borderMatrix.clone();
+                drawTransform.append(worldTransform);
+            }
+            else
+            {
+                drawTransform = worldTransform;
+            }
             super.draw(camera);
         }
     }
@@ -74,4 +83,14 @@ class Sprite2D extends DisplayNode2D
 
         return geometry;
     }
+
+    var invalidateFrame:Bool;
+
+    /*
+    override function get_worldTransform()
+    {
+        if (invalidateWorldTransform) invalidateFrame = true;
+        return super.get_worldTransform();
+    }
+    */
 }

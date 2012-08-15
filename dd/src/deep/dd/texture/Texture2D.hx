@@ -1,5 +1,6 @@
 package deep.dd.texture;
 
+import flash.geom.Matrix3D;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import deep.dd.utils.Cache;
@@ -39,7 +40,7 @@ class Texture2D
      * @private
     **/
     public var useCount:Int = 0;
-    public var cache:Cache;
+    public var cache(default, null):Cache;
 
 
     public var releaseBitmap(default, #if debug set_releaseBitmap #else default #end):Bool = false;
@@ -54,21 +55,35 @@ class Texture2D
 
     var bitmapData:BitmapData;
 
+    // preferred size
     public var width(default, null):Float;
     public var height(default, null):Float;
+
+    // bitmap texture size
     public var bitmapWidth(default, null):Int;
     public var bitmapHeight(default, null):Int;
+
+    // texture size 2^n
     public var textureWidth(default, null):Int;
     public var textureHeight(default, null):Int;
 
-    public var needUpdate(default, null):Bool = false;
-
-    public function update(time:Float)
-    {
-    }
-
+    // region of bitmap texture
     public var region(default, null):Vector3D;
-    public var frame(default, null):Rectangle;
+
+    // transparent border (xy - px offset)
+    public var border(default, null):Rectangle;
+    public var borderMatrix(default, null):Matrix3D;
+
+    public var texture(default, null):Texture;
+
+    function updateFrameMatrix()
+    {
+        if (borderMatrix == null) borderMatrix = new Matrix3D();
+        else borderMatrix.identity();
+
+        borderMatrix.appendScale(width / border.width, height / border.width, 1);
+        borderMatrix.appendTranslation(border.x, border.y, 0);
+    }
 
     var ctx:Context3D;
 
@@ -156,8 +171,6 @@ class Texture2D
             ctx = null;
         }
 	}
-
-    public var texture(default, null):Texture;
 
     public static function getNextPowerOfTwo(n:Int):Int
     {

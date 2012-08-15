@@ -6,14 +6,69 @@ import flash.geom.Vector3D;
 import flash.display3D.Context3D;
 import deep.dd.texture.Texture2D;
 
-class AtlasTexture2D extends Texture2D
+class AtlasTexture2D extends SubTexture2D
 {
-    public var baseTexture(default, null):Texture2D;
+
     public var frames(default, null):Array<Frame>;
 
-    public var currentFrame(default, null):Frame;
+    public var frame(default, null):Frame;
 
     public function new(texture:Texture2D, parser:IAtlasParser)
+    {
+        super(texture);
+
+        frames = parser.parse(this);
+
+        var s = parser.getPreferredSize();
+        width = s.x;
+        height = s.y;
+
+        frame = frames.length > 0 ? frames[0] : null;
+        if (frame != null)
+        {
+            region = frame.region;
+            border = frame.border;
+
+            if (border != null) updateFrameMatrix();
+        }
+    }
+
+    public function getTextureById(id:Int):Texture2D
+    {
+        return getTextureByFrame(frames[id]);
+    }
+
+    public function getTextureByName(name:String):Texture2D
+    {
+        for (f in frames)
+            if (f.name == name) return getTextureByFrame(f);
+
+        return null;
+    }
+
+    function getTextureByFrame(f:Frame):Texture2D
+    {
+        var res = new SubTexture2D(baseTexture);
+        res.region = f.region;
+        res.width = f.width;
+        res.height = f.height;
+
+        if (f.border != null)
+        {
+            res.border = f.border;
+            res.updateFrameMatrix();
+            res.width = res.border.width;
+            res.height = res.border.height;
+        }
+
+        return res;
+    }
+
+}
+
+class SubTexture2D extends Texture2D
+{
+    function new (texture:Texture2D)
     {
         baseTexture = texture;
         super(baseTexture.options);
@@ -23,25 +78,15 @@ class AtlasTexture2D extends Texture2D
         textureWidth = baseTexture.textureWidth;
         textureHeight = baseTexture.textureHeight;
 
-        needUpdate = true;
+        width = baseTexture.width;
+        height = baseTexture.height;
 
-        frames = parser.parse(this);
-
-        currentFrame = frames.length > 0 ? frames[0] : null;
-        if (currentFrame != null)
-        {
-            region = currentFrame.region;
-            frame = currentFrame.frame;
-
-            width = frame.width;
-            height = frame.height;
-        }
+        region = baseTexture.region;
+        border = baseTexture.border;
+        borderMatrix = baseTexture.borderMatrix;
     }
 
-    override public function update(time:Float)
-    {
-        if (baseTexture.needUpdate) baseTexture.update(time);
-    }
+    public var baseTexture(default, null):Texture2D;
 
     override public function init(ctx:Context3D)
     {
@@ -61,18 +106,32 @@ class AtlasTexture2D extends Texture2D
 class Frame
 {
     public var name:String;
-    public var region:Vector3D;
-    public var frame:Rectangle;
 
-    public function new (region, ?frame, ?name)
+    public var width:Float;
+    public var height:Float;
+
+    public var region:Vector3D;
+
+    public var border:Rectangle;
+
+    public function new (width, height, region, ?frame, ?name)
     {
+        this.width = width;
+        this.height = height;
         this.region = region;
-        this.frame = frame;
+        this.border = frame;
         this.name = name;
+    }
+
+    public function toString()
+    {
+        return "{Frame: " + width + ", " + height + (border != null ? ", " + border : "") + (name != null ? " ~ " + name : "") + "}";
     }
 }
 
 interface IAtlasParser
 {
     function parse(a:AtlasTexture2D):Array<Frame>;
+
+    function getPreferredSize():Point;
 }
