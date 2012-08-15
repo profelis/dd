@@ -46,7 +46,7 @@ class Main
 		world.antialiasing = 2;
         world.bgColor.fromInt(0x666666);
 
-        var scale = 1;
+        var scale = 5;
 
         var q = new Quad2D(Geometry.createSolid(39, 40));
         q.color = 0xFF0000;
@@ -58,7 +58,6 @@ class Main
         //sp.x = 100;
         //sp.y = 100;
         sp.scaleY = sp.scaleX = scale;
-        sp.colorTransform = new Color(1, 0, 0, 1);
 
         var t = new AtlasTexture2D(world.cache.getTexture(Image), new SpriteSheetParser(39, 40));
         //t.fps = 8;

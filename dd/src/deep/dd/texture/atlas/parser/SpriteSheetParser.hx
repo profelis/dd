@@ -40,7 +40,7 @@ class SpriteSheetParser implements IAtlasParser
             y = 0.0;
             while (y < bh)
             {
-                frames.push(new Frame(new Vector3D((x+border) * kx, (y+border) * ky, w, h), new Rectangle(0, 40, iw, ih)));
+                frames.push(new Frame(new Vector3D((x+border) * kx, (y+border) * ky, w, h), new Rectangle(0, 0, iw, ih)));
                 y += ih;
             }
             x += iw;
