@@ -13,7 +13,6 @@ import flash.events.KeyboardEvent;
 import flash.Lib;
 import flash.text.TextField;
 import flash.ui.Keyboard;
-import tests.GeometryTest;
 import tests.QuadTest;
 import tests.Test;
 
@@ -46,7 +45,7 @@ class Main extends Sprite
 		sceneText.defaultTextFormat = tf;
 		addChild(sceneText);
 		
-		scenes = [QuadTest, GeometryTest, GeometryTest];
+		scenes = [QuadTest];
 		activeSceneIdx = 0;
 		changeScene(activeSceneIdx);
 		
