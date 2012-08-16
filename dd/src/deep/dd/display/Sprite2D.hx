@@ -14,6 +14,20 @@ class Sprite2D extends DisplayNode2D
         super(geometry != null ? geometry : Geometry.createTextured(), new Sprite2DMaterial());
     }
 
+    public var drawTransform(default, null):Matrix3D;
+
+    override public function dispose():Void
+    {
+        super.dispose();
+
+        if (texture != null)
+        {
+            Reflect.setField(texture, "useCount", texture.useCount - 1);
+            texture.dispose();
+            Reflect.setField(this, "texture", null);
+        }
+    }
+
     override public function init(ctx:Context3D):Void
     {
         if (this.ctx != ctx && texture != null)
@@ -23,34 +37,40 @@ class Sprite2D extends DisplayNode2D
         super.init(ctx);
     }
 
+    override public function drawStep(camera:Camera2D):Void
+    {
+        if (invalidateWorldTransform) invalidateDrawTransform = true;
+
+        super.drawStep(camera);
+    }
+
+
     override public function draw(camera:Camera2D):Void
     {
+        if (invalidateDrawTransform) updateDrawTransform();
+
         if (texture != null)
         {
-            if (texture.border != null)  // TODO: optimize!!!
-            {
-                drawTransform = texture.borderMatrix.clone();
-                drawTransform.append(worldTransform);
-            }
-            else
-            {
-                drawTransform = worldTransform;
-            }
             super.draw(camera);
         }
     }
-	
-	override public function dispose():Void 
-	{
-		super.dispose();
 
-		if (texture != null)
+    function updateDrawTransform()
+    {
+        if (texture.border == null)
         {
-            Reflect.setField(texture, "useCount", texture.useCount - 1);
-            texture.dispose();
-            Reflect.setField(this, "texture", null);
+            drawTransform = worldTransform;
         }
-	}
+        else
+        {
+            drawTransform = texture.borderMatrix.clone();
+            drawTransform.append(worldTransform);
+        }
+
+        invalidateDrawTransform = false;
+    }
+
+    var invalidateDrawTransform:Bool;
 
     public var texture(default, set_texture):Texture2D;
 
@@ -58,16 +78,31 @@ class Sprite2D extends DisplayNode2D
     {
         if (tex == texture) return tex;
 
-        if (texture != null) Reflect.setField(texture, "useCount", texture.useCount - 1);
+        if (texture != null)
+        {
+            texture.borderChange.remove(onBorderChange);
+            Reflect.setField(texture, "useCount", texture.useCount - 1);
+        }
+
         texture = tex;
+
         if (texture != null)
         {
             Reflect.setField(texture, "useCount", texture.useCount + 1);
+            texture.borderChange.add(onBorderChange);
             if (ctx != null) texture.init(ctx);
             if (geometry != null) geometry.resize(texture.width, texture.height);
         }
 
+        invalidateDrawTransform = true;
+
         return tex;
+    }
+
+    function onBorderChange()
+    {
+        invalidateDrawTransform = true;
+        geometry.resize(texture.width, texture.height);
     }
 
     override function set_geometry(g:Geometry):Geometry
@@ -84,13 +119,4 @@ class Sprite2D extends DisplayNode2D
         return geometry;
     }
 
-    var invalidateFrame:Bool;
-
-    /*
-    override function get_worldTransform()
-    {
-        if (invalidateWorldTransform) invalidateFrame = true;
-        return super.get_worldTransform();
-    }
-    */
 }

@@ -34,7 +34,7 @@ class Sprite2DMaterial extends Material
         var sp:Sprite2D = cast node;
         var tex = sp.texture;
 
-        if (texOpt != tex.options)   // TODO : optimize
+        if (texOpt != tex.options)
         {
             texOpt = tex.options;
             updateShaderRef();

@@ -4,6 +4,7 @@
 -swf-version 11
 -main Main
 -lib format
+-lib msignal
 -cp src
 -cp test
 -cp ../dd/src

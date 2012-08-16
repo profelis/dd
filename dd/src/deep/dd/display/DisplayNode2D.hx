@@ -15,8 +15,6 @@ class DisplayNode2D extends Node2D
         super();
         this.geometry = geometry;
         this.material = material;
-
-        drawTransform = worldTransform;
     }
 
     public var geometry(default, set_geometry):Geometry;
@@ -26,7 +24,6 @@ class DisplayNode2D extends Node2D
     public var width(get_width, set_width):Float;
     public var height(get_height, set_height):Float;
 
-    public var drawTransform(default, null):Matrix3D;
 
     override public function init(ctx:Context3D):Void
     {

@@ -1,5 +1,6 @@
 package deep.dd.texture;
 
+import msignal.Signal;
 import flash.geom.Matrix3D;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
@@ -15,9 +16,35 @@ class Texture2D
 {
     public var options(default, null):UInt;
 
+    var bitmapData:BitmapData;
+
+    // preferred size
+    public var width(default, null):Float;
+    public var height(default, null):Float;
+
+    // bitmap texture size
+    public var bitmapWidth(default, null):Int;
+    public var bitmapHeight(default, null):Int;
+
+    // texture size 2^n
+    public var textureWidth(default, null):Int;
+    public var textureHeight(default, null):Int;
+
+    // region of bitmap texture
+    public var region(default, null):Vector3D;
+
+    // transparent border (xy - px offset)
+    public var border(default, set_border):Rectangle;
+    public var borderMatrix(default, null):Matrix3D;
+
+    public var texture(default, null):Texture;
+
+    public var borderChange(default, null):Signal0;
+
 	public function new(options:UInt)
     {
         this.options = options;
+        borderChange = new Signal0();
         region = new Vector3D(0, 0, 1, 1);
     }
 
@@ -49,31 +76,10 @@ class Texture2D
     }
     #end
 
-    var bitmapData:BitmapData;
-
-    // preferred size
-    public var width(default, null):Float;
-    public var height(default, null):Float;
-
-    // bitmap texture size
-    public var bitmapWidth(default, null):Int;
-    public var bitmapHeight(default, null):Int;
-
-    // texture size 2^n
-    public var textureWidth(default, null):Int;
-    public var textureHeight(default, null):Int;
-
-    // region of bitmap texture
-    public var region(default, null):Vector3D;
-
-    // transparent border (xy - px offset)
-    public var border(default, set_border):Rectangle;
-    public var borderMatrix(default, null):Matrix3D;
-
-    public var texture(default, null):Texture;
-
     public function set_border(b:Rectangle)
     {
+        if (border != null && border.equals(b)) return border;
+
         border = b;
         if (border == null)
         {
@@ -90,6 +96,8 @@ class Texture2D
             width = border.width;
             height = border.height;
         }
+
+         borderChange.dispatch();
 
         return border;
     }
