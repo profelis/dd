@@ -14,7 +14,7 @@ class MovieClip2D extends Sprite2D
         super(geometry, anim = new Animator());
     }
 
-    public var fps(default, set_fps):Int;
+    public var fps(default, set_fps):Float;
 
     function set_fps(v)
     {

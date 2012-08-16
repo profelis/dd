@@ -53,8 +53,9 @@ class StarlingParser implements IAtlasParser
 						
 						if (width != frameWidth || height != frameHeight)
 						{
-							border = new Rectangle(frameX * kx, frameY * ky, frameWidth, frameHeight);
+							border = new Rectangle(-frameX, -frameY, frameWidth, frameHeight);
 						}
+                        //border = null;
 						
 						frames.push(new Frame(width, height, new Vector3D(x * kx, y * ky, width * kx, height * ky), border, name));
 					}

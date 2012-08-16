@@ -6,7 +6,7 @@ import deep.dd.display.Sprite2D;
 
 class Animator extends AnimatorBase
 {
-    public var fps:UInt = 30;
+    public var fps:Float = 30;
 	public var currentFrame(default, null):Int = -1;
 	public var currentFrameLabel(get_currentFrameLabel, null):String;
 	public var isPlaying(default, null):Bool = true;
@@ -18,7 +18,7 @@ class Animator extends AnimatorBase
     var frameTime:Float = 0;
     var prevTime:Float = 0;
 
-    public function new(fps:UInt = 30)
+    public function new(fps:Float = 30)
     {
         super();
         this.fps = fps;
