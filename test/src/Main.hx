@@ -79,9 +79,17 @@ class Main
             dx += sp.width;
         }
 
-        mc = new MovieClip2D(new Animator(15));
-        mc.scaleX = mc.scaleY = 4;
+        mc = new MovieClip2D(new Animator(5));
+        mc.scaleX = mc.scaleY = 5;
         mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 0.5));
+        mc.y = 200;
+
+        world.scene.addChild(mc);
+
+        mc = new MovieClip2D(new Animator(5));
+        mc.scaleX = mc.scaleY = 5;
+        mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 5));
+        mc.colorTransform = new Color(1, 0, 0, 1);
         mc.y = 200;
 
         world.scene.addChild(mc);

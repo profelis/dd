@@ -9,19 +9,21 @@ class SpriteSheetParser implements IAtlasParser
 {
     var iw:Float;
     var ih:Float;
-    var border:Float;
+    var padding:Float;
 
-    public function new(itemWidth:Float, itemHeight:Float, ignoreBorder = 0.0)
+    public function new(itemWidth:Float, itemHeight:Float, padding = 0.0)
     {
         iw = itemWidth;
         ih = itemHeight;
-        border = ignoreBorder;
+        this.padding = padding;
     }
 
     public function getPreferredSize():Point
     {
-        return new Point(iw, ih);
+        return size;
     }
+
+    var size:Point;
 
     public function parse(a:AtlasTexture2D):Array<Frame>
     {
@@ -33,23 +35,30 @@ class SpriteSheetParser implements IAtlasParser
         var kx = 1 / a.textureWidth;
         var ky = 1 / a.textureHeight;
 
-        var w = (iw - border * 2) * kx;
-        var h = (ih - border * 2) * ky;
+        var w = iw - padding * 2;
+        var h = ih - padding * 2;
+
+        var rw = w * kx;
+        var rh = h * ky;
 
         frames = new Array();
         var bw = a.bitmapWidth;
         var bh = a.bitmapHeight;
 
+        var border:Rectangle = padding > 0 ? new Rectangle(padding, padding, iw, ih) : null;
         while (x < bw)
         {
             y = 0.0;
             while (y < bh)
             {
-                frames.push(new Frame(iw, ih, new Vector3D((x+border) * kx, (y+border) * ky, w, h)));
+                frames.push(new Frame(w, h, new Vector3D((x+padding) * kx, (y+padding) * ky, rw, rh), border));
                 y += ih;
             }
             x += iw;
         }
+
+        var f = frames[0];
+        size = new Point(f.width, f.height);
 
         return frames;
     }

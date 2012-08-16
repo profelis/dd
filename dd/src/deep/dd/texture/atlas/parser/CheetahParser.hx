@@ -15,7 +15,6 @@ class CheetahParser implements IAtlasParser
     public function new(data:String)
     {
         this.data = data;
-        trace(data);
     }
 
     inline function q(v:String)
@@ -59,7 +58,7 @@ class CheetahParser implements IAtlasParser
         }
 
         var f = frames[0];
-        size = (f.border != null) ? new Point(f.border.width, f.border.height) : new Point(f.width, f.height);
+        size = new Point(f.width, f.height);
 
         return frames;
     }

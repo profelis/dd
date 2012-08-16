@@ -58,6 +58,8 @@ class AtlasTexture2D extends SubTexture2D
         #end
 
         frame = f;
+        width = f.width;
+        height = f.height;
 
         region = f.region;
         border = f.border;
