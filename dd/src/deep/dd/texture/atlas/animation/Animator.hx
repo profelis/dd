@@ -26,11 +26,18 @@ class Animator extends AnimatorBase
         if (frameTime > 1)
         {
             frameTime = 0;
-            currentFrame++;
 
             var atlas = cast(sprite.texture, AtlasTexture2D);
-            atlas.frame = atlas.frames[currentFrame % atlas.frames.length];
+            currentFrame = (currentFrame+1) % atlas.frames.length;
+            atlas.frame = atlas.frames[currentFrame];
         }
+    }
+
+    override public function copy():AnimatorBase
+    {
+        var res = new Animator(fps);
+
+        return res;
     }
 
 }

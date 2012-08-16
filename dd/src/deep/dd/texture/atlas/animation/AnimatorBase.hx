@@ -17,6 +17,12 @@ class AnimatorBase
 
     }
 
+    public function copy():AnimatorBase
+    {
+        throw "not implemented";
+        return null;
+    }
+
     public function dispose():Void
     {
         sprite = null;
