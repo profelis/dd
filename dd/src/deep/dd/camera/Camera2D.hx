@@ -99,18 +99,4 @@ class Camera2D
 		needUpdate = true;
 		return val;
 	}
-	
-	public var angle(get_angle, set_angle):Float;
-	
-	function get_angle():Float
-	{
-		return c.angle;
-	}
-	
-	function set_angle(val:Float):Float
-	{
-		c.angle = val;
-		needUpdate = true;
-		return val;
-	}
 }

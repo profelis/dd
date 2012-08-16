@@ -107,7 +107,6 @@ class Main extends Sprite
     function onRender(_)
     {
         currentScene.update();
-		world.camera.angle += 0.01;
 		var t:Float = Lib.getTimer() / 1000;
 		world.camera.scale = Math.abs(Math.sin(t * 0.2));
 		world.camera.x = Math.cos(t) * world.width;
