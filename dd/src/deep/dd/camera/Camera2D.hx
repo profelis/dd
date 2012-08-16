@@ -21,12 +21,18 @@ class Camera2D
 
     public function update()
     {
-        if (needUpdate)
-		{
-			c.update();
-			proj = c.m.toMatrix();
-		}
-		needUpdate = false;
+        c.w = w;
+        c.h = h;
+        c.ratio = w / h;
+        c.pos.z = w * 0.5 / Math.tan(c.fov * Math.PI / 360);
+        c.pos.x = c.target.x = w * 0.5 + x;
+        c.pos.y = c.target.y = h * 0.5 + y;
+
+        c.update();
+
+        proj = c.m.toMatrix();
+
+        needUpdate = false;
     }
 
     public var proj:Matrix3D;
@@ -38,17 +44,7 @@ class Camera2D
     {
         this.w = w;
         this.h = h;
-
-        c.w = w;
-        c.h = h;
-        c.ratio = w / h;
-        c.pos.z = w * 0.5 / Math.tan(c.fov * Math.PI / 360);
-        c.pos.x = c.target.x = w * 0.5;
-        c.pos.y = c.target.y = h * 0.5;
-
-        c.update();
-
-        proj = c.m.toMatrix();
+        needUpdate = true;
     }
 	
 	public function dispose():Void
@@ -58,32 +54,19 @@ class Camera2D
 		proj = null;
 	}
 	
-	public var x(get_x, set_x):Float;
-	
-	function get_x():Float
-	{
-		return c.pos.x;
-	}
-	
+	public var x(default, set_x):Float = 0;
+    public var y(default, set_y):Float = 0;
+
 	function set_x(val:Float):Float
 	{
-		c.pos.x = c.target.x = val;
 		needUpdate = true;
-		return val;
-	}
-	
-	public var y(get_y, set_y):Float;
-	
-	function get_y():Float
-	{
-		return c.pos.y;
+		return x = val;
 	}
 	
 	function set_y(val:Float):Float
 	{
-		c.pos.y = c.target.y = val;
 		needUpdate = true;
-		return val;
+		return y = val;
 	}
 	
 	public var scale(get_scale, set_scale):Float;

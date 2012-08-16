@@ -20,7 +20,7 @@ class World2D
 
     public var context3DRenderMode(default, null):Context3DRenderMode;
 
-    var stage:Stage;
+    public var stage(default, null):Stage;
     var st3d:Stage3D;
 
     public var ctx(default, null):Context3D;

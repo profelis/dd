@@ -106,6 +106,9 @@ class Main
 
     function onRender(_)
     {
+        world.camera.x = -world.stage.mouseX;
+        world.camera.y = -world.stage.mouseY;
+        world.camera.scale += (Math.random()-0.5) * 0.003;
         sp2.rotationY += 0.05;
     }
 
