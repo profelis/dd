@@ -5,16 +5,15 @@ var input : {
 
 var tuv:Float2;
 
-function vertex(mpos:M44, mproj:M44)
+function vertex(mpos:M44, mproj:M44, region:Float4)
 {
     out = pos.xyzw * mpos * mproj;
-    tuv = uv;
+    tuv = uv * region.zw + region.xy;
 }
 
-function fragment(tex:Texture, cTrans:Float4, region:Float4)
+function fragment(tex:Texture, cTrans:Float4)
 {
-    var t = tuv * region.zw + region.xy;
-    out = texture(tex, t) * cTrans;
+    out = texture(tex, tuv) * cTrans;
 }
 
 /*

@@ -41,7 +41,7 @@ class Sprite2DMaterial extends Material
             updateShader();
         }
 
-        untyped shader.init({mpos:node.drawTransform, mproj:camera.proj, region:tex.region}, {tex:tex.texture, cTrans:node.worldColorTransform});
+        untyped shader.init({mpos:node.drawTransform, mproj:camera.proj}, {tex:tex.texture, cTrans:node.worldColorTransform, region:tex.region});
 
         super.draw(node, camera);
     }
@@ -90,7 +90,7 @@ class Sprite2DMaterial extends Material
 class WrapNearestNo extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, nearest, mm_no);
@@ -100,7 +100,7 @@ class WrapNearestNo extends Shader
 class WrapNearestNearest extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, nearest, mm_near);
@@ -110,7 +110,7 @@ class WrapNearestNearest extends Shader
 class WrapNearestLinear extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, nearest, mm_linear);
@@ -120,7 +120,7 @@ class WrapNearestLinear extends Shader
 class WrapLinearNo extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, linear, mm_no);
@@ -130,7 +130,7 @@ class WrapLinearNo extends Shader
 class WrapLinearNearest extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, linear, mm_near);
@@ -140,7 +140,7 @@ class WrapLinearNearest extends Shader
 class WrapLinearLinear extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, linear, mm_linear);
@@ -150,7 +150,7 @@ class WrapLinearLinear extends Shader
 class ClampNearestNo extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, nearest, mm_no);
@@ -160,7 +160,7 @@ class ClampNearestNo extends Shader
 class ClampNearestNearest extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, nearest, mm_near);
@@ -170,7 +170,7 @@ class ClampNearestNearest extends Shader
 class ClampNearestLinear extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, nearest, mm_linear);
@@ -180,7 +180,7 @@ class ClampNearestLinear extends Shader
 class ClampLinearNo extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, linear, mm_no);
@@ -190,7 +190,7 @@ class ClampLinearNo extends Shader
 class ClampLinearNearest extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, linear, mm_near);
@@ -200,7 +200,7 @@ class ClampLinearNearest extends Shader
 class ClampLinearLinear extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, linear, mm_linear);

@@ -6,9 +6,9 @@ import deep.dd.geometry.Geometry;
 
 class Quad2D extends DisplayNode2D
 {
-    public function new(geometry:Geometry)
+    public function new(geometry:Geometry = null)
     {
-        super(geometry, new Quad2DMaterial());
+        super(geometry != null ? geometry : Geometry.createSolid(), new Quad2DMaterial());
     }
 
     var needUpdateColor:Bool = true;
