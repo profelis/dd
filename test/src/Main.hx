@@ -3,6 +3,7 @@ import deep.dd.texture.atlas.animation.Animator;
 import deep.dd.display.MovieClip2D;
 import deep.dd.display.Node2D;
 import deep.dd.texture.atlas.parser.CheetahParser;
+import deep.dd.texture.atlas.parser.StarlingParser;
 import flash.utils.ByteArray;
 import deep.dd.texture.atlas.parser.SpriteSheetParser;
 import deep.dd.texture.atlas.AtlasTexture2D;
@@ -10,6 +11,7 @@ import deep.dd.texture.Texture2D;
 import flash.display.BitmapData;
 import deep.dd.display.Sprite2D;
 import flash.events.MouseEvent;
+import flash.xml.XML;
 import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
 import flash.geom.Rectangle;
@@ -28,14 +30,16 @@ import flash.display3D.Context3D;
 @:bitmap("metalslug_monster39x40.png") class SpriteSheet extends BitmapData {}
 
 @:bitmap("atlas1/text.png") class Image extends BitmapData {}
-@:file("atlas1/text.atlas") class Atlas extends ByteArray {}
+@:file("atlas1/text.atlas") class Atlas extends ByteArray { }
+
+@:bitmap("starlingAtlas/atlas.png") class StarlingAtlasImage extends BitmapData {}
+@:file("starlingAtlas/atlas.xml") class StarlingAtlasData extends ByteArray {}
 
 class Main
 {
 
     var world:World2D;
     var sprite:PerlinSprite;
-
 
     var sp:Sprite2D;
     var sp2:Node2D;
@@ -64,8 +68,6 @@ class Main
         //q.y = 10;
         sp2.addChild(q);
 
-
-
         var t = new AtlasTexture2D(world.cache.getTexture(Image),new CheetahParser(Std.string(new Atlas())));
         var dx = 0.0;
         for (i in 0...t.frames.length)
@@ -83,13 +85,19 @@ class Main
         mc.fps = 5;
         mc.scaleX = mc.scaleY = 5;
         mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 0.5));
-		cast(mc.texture, AtlasTexture2D).addAnimation("idle", [0]);
+	//	cast(mc.texture, AtlasTexture2D).addAnimation("idle", [0]);
 	//	cast(mc.animator, Animator).playAnimation("idle", 0);
-		cast(mc.animator, Animator).playAnimation(null, 3, false);
+	//	cast(mc.animator, Animator).playAnimation(null, 3, false);
 		
-		cast(mc.animator, Animator).gotoFrame(5);
+	//	cast(mc.animator, Animator).gotoFrame(5);
         mc.y = 200;
-
+		
+		var mc2 = new MovieClip2D();
+		mc2.fps = 10;
+		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
+		mc2.texture = st;
+		world.scene.addChild(mc2);
+		
         world.scene.addChild(mc);
 
        /* mc = new MovieClip2D();
@@ -118,8 +126,6 @@ class Main
         world.camera.y = -world.stage.mouseY;
     //    world.camera.scale += (Math.random()-0.5) * 0.003;
         sp2.rotationY += 0.05;
-		
-		trace(cast(mc.animator, Animator).isPlaying);
     }
 
 
