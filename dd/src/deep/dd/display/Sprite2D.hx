@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import deep.dd.texture.atlas.animation.AnimatorBase;
 import flash.geom.Matrix3D;
 import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
@@ -9,12 +10,18 @@ import deep.dd.geometry.Geometry;
 
 class Sprite2D extends DisplayNode2D
 {
-    public function new(geometry:Geometry = null)
+    public function new(geometry:Geometry = null, animator:AnimatorBase = null)
     {
+        this.animator = animator;
         super(geometry != null ? geometry : Geometry.createTextured(), new Sprite2DMaterial());
     }
 
+    public var animator(default, set_animator):AnimatorBase;
+
+    var invalidateDrawTransform:Bool;
     public var drawTransform(default, null):Matrix3D;
+
+    public var texture(default, set_texture):Texture2D;
 
     override public function dispose():Void
     {
@@ -25,6 +32,11 @@ class Sprite2D extends DisplayNode2D
             Reflect.setField(texture, "useCount", texture.useCount - 1);
             texture.dispose();
             Reflect.setField(this, "texture", null);
+        }
+        if (animator != null)
+        {
+            animator.dispose();
+            animator = null;
         }
     }
 
@@ -49,6 +61,8 @@ class Sprite2D extends DisplayNode2D
     {
         if (invalidateDrawTransform) updateDrawTransform();
 
+        if (animator != null) animator.draw(scene.time);
+
         if (texture != null)
         {
             super.draw(camera);
@@ -69,10 +83,6 @@ class Sprite2D extends DisplayNode2D
 
         invalidateDrawTransform = false;
     }
-
-    var invalidateDrawTransform:Bool;
-
-    public var texture(default, set_texture):Texture2D;
 
     function set_texture(tex:Texture2D):Texture2D
     {
@@ -103,6 +113,17 @@ class Sprite2D extends DisplayNode2D
     {
         invalidateDrawTransform = true;
         geometry.resize(texture.width, texture.height);
+    }
+
+    function set_animator(v)
+    {
+        if (animator != null) animator.sprite = null;
+
+        animator = v;
+
+        if (animator != null) animator.sprite = this;
+
+        return animator;
     }
 
     override function set_geometry(g:Geometry):Geometry
