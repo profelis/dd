@@ -308,6 +308,8 @@ class Node2D
 
     function set_colorTransform(c)
     {
+        if (colorTransform != null && colorTransform.eqauls(c)) return colorTransform;
+
         if (c == null) c = new Color(1, 1, 1, 1);
 
         colorTransform = c;

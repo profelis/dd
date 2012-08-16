@@ -13,13 +13,15 @@ class Scene2D extends Node2D
         scene = this;
     }
 
+    public var timeScale:Float = 1;
+
     public var time(default, null):Float;
 
     override public function draw(camera:Camera2D):Void
     {
         if (!visible) return;
 
-        time = flash.Lib.getTimer() * 0.001;
+        time = flash.Lib.getTimer() * 0.001 * timeScale;
         super.draw(camera);
     }
 

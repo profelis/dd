@@ -117,10 +117,6 @@ class SubTexture2D extends Texture2D
         width = baseTexture.width;
         height = baseTexture.height;
 
-        region = baseTexture.region;
-
-        border = baseTexture.border;
-
         baseTexture.useCount ++;
     }
 

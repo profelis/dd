@@ -41,6 +41,8 @@ class Texture2D
 
     public var borderChange(default, null):Signal0;
 
+    var ctx:Context3D;
+
 	public function new(options:UInt)
     {
         this.options = options;
@@ -101,8 +103,6 @@ class Texture2D
 
         return border;
     }
-
-    var ctx:Context3D;
 
     public function init(ctx:Context3D)
     {
