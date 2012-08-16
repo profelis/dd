@@ -45,18 +45,16 @@ class StarlingParser implements IAtlasParser
 						var y:Int = q(nodeChild.get("y"));
 						var width:Int = q(nodeChild.get("width"));
 						var height:Int = q(nodeChild.get("height"));
-						var frameX:Int = q(nodeChild.get("frameX"));
-						var frameY:Int = q(nodeChild.get("frameY"));
 						var frameWidth:Int = q(nodeChild.get("frameWidth"));
 						var frameHeight:Int = q(nodeChild.get("frameHeight"));
 						var border:Rectangle = null;
 						
 						if (width != frameWidth || height != frameHeight)
 						{
-							border = new Rectangle(-frameX, -frameY, frameWidth, frameHeight);
+                            var frameX:Int = -q(nodeChild.get("frameX"));
+                            var frameY:Int = -q(nodeChild.get("frameY"));
+							border = new Rectangle(frameX, frameY, frameWidth, frameHeight);
 						}
-                        //border = null;
-						
 						frames.push(new Frame(width, height, new Vector3D(x * kx, y * ky, width * kx, height * ky), border, name));
 					}
 				}

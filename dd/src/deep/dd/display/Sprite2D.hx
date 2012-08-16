@@ -59,9 +59,9 @@ class Sprite2D extends DisplayNode2D
 
     override public function draw(camera:Camera2D):Void
     {
-        if (invalidateDrawTransform) updateDrawTransform();
-
         if (animator != null) animator.draw(scene.time);
+
+        if (invalidateDrawTransform) updateDrawTransform();
 
         if (texture != null)
         {

@@ -70,7 +70,7 @@ class Main
 	//	cast(mc.animator, Animator).gotoFrame(5);
 
 		var mc2 = new MovieClip2D();
-		mc2.fps = 0.5;
+		mc2.fps = 25;
 		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc2.texture = st;
 		world.scene.addChild(mc2);
