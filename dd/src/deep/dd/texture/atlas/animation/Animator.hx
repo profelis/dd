@@ -7,12 +7,15 @@ import deep.dd.display.Sprite2D;
 class Animator extends AnimatorBase
 {
     public var fps:UInt = 30;
+	public var currentFrame(default, null):Int = -1;
+	public var currentFrameLabel(get_currentFrameLabel, null):String;
+	public var isPlaying(default, null):Bool = true;
+	public var totalFrames(get_totalFrames, null):Int;
+	public var currentAnimationFrames(get_currentAnimationFrames, null):Int;
 	
-	public var loop:Bool = true;
+	var loop:Bool = true;
 
     var frameTime:Float = 0;
-    var currentFrame:Int = -1;
-
     var prevTime:Float = 0;
 
     public function new(fps:UInt = 30)
@@ -30,11 +33,19 @@ class Animator extends AnimatorBase
             frameTime = 0;
 
             var atlas = cast(sprite.texture, AtlasTexture2D);
-			var numFrames:Int = (activeAnimation != null) ? activeAnimation.frames.length : atlas.frames.length;
+			var numFrames:Int = currentAnimationFrames;
 			var nextFrame:Int = currentFrame + 1;
-			if (loop || nextFrame < numFrames) 
+			if (isPlaying)
 			{
-				currentFrame = nextFrame % numFrames;
+				if (loop || nextFrame < numFrames) 
+				{
+					currentFrame = nextFrame % numFrames;
+					isPlaying = true;
+				}
+				else
+				{
+					isPlaying = false;
+				}
 			}
 			
             atlas.frame = atlas.frames[currentFrame];
@@ -48,8 +59,9 @@ class Animator extends AnimatorBase
 	 * @param	loop		set looping of animation. If true then animation will be repeating all the time
 	 * @param	restart		this parameter will force animation to restart
 	 */
-	override public function playAnimation(name:String, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
+	override public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
 	{
+		isPlaying = true;
 		var atlas:AtlasTexture2D = cast(sprite.texture, AtlasTexture2D);
 		
 		if (name == null) 
@@ -87,15 +99,78 @@ class Animator extends AnimatorBase
 		}
 	}
 	
-	// TODO: current frame getter
-	// TODO: current frame label getter
-	// TODO: isPlaying
-	// TODO: totalFrames or currentAnimationFrames (or both)
-	// TODO: stop()
-	// TODO: nextFrame()
-	// TODO: prevFrame()
+	override public function stop():Void
+	{
+		if (currentFrame < 0) currentFrame = 0;
+		isPlaying = false;
+	}
+	
+	override public function nextFrame():Void 
+	{
+		super.nextFrame();
+		gotoFrame(currentFrame + 1);
+	}
+	
+	override public function prevFrame():Void 
+	{
+		super.prevFrame();
+		gotoFrame(currentFrame - 1);
+	}
+	
+	
+	override public function gotoFrame(frame:Dynamic):Void 
+	{
+		super.gotoFrame(frame);
+		
+		if (Std.is(frame, Int))
+		{
+			if (frame > 0 && frame < currentAnimationFrames) currentFrame = frame;
+		}
+		else
+		{
+			// Assume that frame is String
+			var frames:Array<Frame> = (activeAnimation != null) ? activeAnimation.frames : cast(sprite.texture, AtlasTexture2D).frames;
+			
+			var frameFound:Bool = false;
+			for (i in 0...(frames.length))
+			{
+				if (frames[i].name == frame)
+				{
+					frameFound = true;
+					currentFrame = i;
+				}
+			}
+			
+			#if debug
+			if (!frameFound) throw ("This animation doesn't contain frame " + frame);
+			#end
+		}
+
+		stop();
+	}
+	
 	// TODO: gotoFrame() (analogue of gotoAndStop())
-	// TODO: need to set animation to null
+	
+	function get_currentFrameLabel():String
+	{
+		var frameNum:Int = (currentFrame < 0) ? 0 : currentFrame;
+		return cast(sprite.texture, AtlasTexture2D).frames[frameNum].name;
+	}
+	
+	function get_totalFrames():Int
+	{
+		return cast(sprite.texture, AtlasTexture2D).frames.length;
+	}
+	
+	function get_currentAnimationFrames():Int
+	{
+		if (activeAnimation != null)
+		{
+			return activeAnimation.frames.length;
+		}
+		
+		return totalFrames;
+	}
 
     override public function copy():AnimatorBase
     {

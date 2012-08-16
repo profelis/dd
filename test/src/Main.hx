@@ -84,20 +84,22 @@ class Main
         mc.scaleX = mc.scaleY = 5;
         mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 0.5));
 		cast(mc.texture, AtlasTexture2D).addAnimation("idle", [0]);
-		cast(mc.animator, Animator).playAnimation("idle", 0);
-		cast(mc.animator, Animator).playAnimation(null, 3);
+	//	cast(mc.animator, Animator).playAnimation("idle", 0);
+		cast(mc.animator, Animator).playAnimation(null, 3, false);
+		
+		cast(mc.animator, Animator).gotoFrame(5);
         mc.y = 200;
 
         world.scene.addChild(mc);
 
-        mc = new MovieClip2D();
+       /* mc = new MovieClip2D();
         mc.fps = 5;
         mc.scaleX = mc.scaleY = 5;
         mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 5));
         mc.colorTransform = new Color(1, 0, 0, 1);
         mc.y = 200;
 
-        world.scene.addChild(mc);
+        world.scene.addChild(mc);*/
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 
@@ -106,15 +108,18 @@ class Main
 
     function onClick(_)
     {
-        world.ctx.dispose();
+        //world.ctx.dispose();
+		mc.animator.playAnimation(null);
     }
 
     function onRender(_)
     {
         world.camera.x = -world.stage.mouseX;
         world.camera.y = -world.stage.mouseY;
-        world.camera.scale += (Math.random()-0.5) * 0.003;
+    //    world.camera.scale += (Math.random()-0.5) * 0.003;
         sp2.rotationY += 0.05;
+		
+		trace(cast(mc.animator, Animator).isPlaying);
     }
 
 

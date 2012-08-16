@@ -18,7 +18,27 @@ class AnimatorBase
 
     }
 	
-	public function playAnimation(name:String, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
+	public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
+	{
+		
+	}
+	
+	public function stop():Void
+	{
+		
+	}
+	
+	public function nextFrame():Void
+	{
+		
+	}
+	
+	public function prevFrame():Void
+	{
+		
+	}
+	
+	public function gotoFrame(frame:Dynamic):Void
 	{
 		
 	}
