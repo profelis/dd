@@ -36,12 +36,8 @@ class Texture2D
         return res;
     }
 
-    /**
-     * @private
-    **/
     public var useCount(default, null):Int = 0;
     public var cache(default, null):Cache;
-
 
     public var releaseBitmap(default, #if debug set_releaseBitmap #else default #end):Bool = false;
 
@@ -76,15 +72,6 @@ class Texture2D
 
     public var texture(default, null):Texture;
 
-    function updateBorderMatrix()
-    {
-        if (borderMatrix == null) borderMatrix = new Matrix3D();
-        else borderMatrix.identity();
-
-        borderMatrix.appendScale(width / border.width, height / border.width, 1);
-        borderMatrix.appendTranslation(border.x, border.y, 0);
-    }
-
     public function set_border(b:Rectangle)
     {
         border = b;
@@ -94,7 +81,12 @@ class Texture2D
         }
         else
         {
-            updateBorderMatrix();
+            if (borderMatrix == null) borderMatrix = new Matrix3D();
+            else borderMatrix.identity();
+
+            borderMatrix.appendScale(width / border.width, height / border.width, 1);
+            borderMatrix.appendTranslation(border.x, border.y, 0);
+
             width = border.width;
             height = border.height;
         }
@@ -175,8 +167,11 @@ class Texture2D
 
         if (cache == null)
         {
+            if (bitmapData != null && releaseBitmap) bitmapData.dispose();
             bitmapData = null;
             region = null;
+            borderMatrix = null;
+            Reflect.setField(this, "border", null);
         }
         else
         {

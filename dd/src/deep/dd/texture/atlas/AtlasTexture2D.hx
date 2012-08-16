@@ -23,14 +23,7 @@ class AtlasTexture2D extends SubTexture2D
         width = s.x;
         height = s.y;
 
-        frame = frames.length > 0 ? frames[0] : null;
-        if (frame != null)
-        {
-            region = frame.region;
-            border = frame.border;
-
-            if (border != null) updateBorderMatrix();
-        }
+        frame = frames[0];
     }
 
     public function getTextureById(id:Int):Texture2D
@@ -46,7 +39,7 @@ class AtlasTexture2D extends SubTexture2D
         return null;
     }
 
-    function getTextureByFrame(f:Frame):Texture2D
+    public function getTextureByFrame(f:Frame):Texture2D
     {
         var res = new SubTexture2D(baseTexture);
         res.width = f.width;
@@ -60,6 +53,10 @@ class AtlasTexture2D extends SubTexture2D
 
     public function set_frame(f:Frame)
     {
+        #if debug
+        if (f == null) throw "frame is null";
+        #end
+
         frame = f;
 
         region = f.region;
@@ -68,43 +65,6 @@ class AtlasTexture2D extends SubTexture2D
         return f;
     }
 
-}
-
-class SubTexture2D extends Texture2D
-{
-    function new (texture:Texture2D)
-    {
-        baseTexture = texture;
-        super(baseTexture.options);
-
-        bitmapWidth = baseTexture.bitmapWidth;
-        bitmapHeight = baseTexture.bitmapHeight;
-        textureWidth = baseTexture.textureWidth;
-        textureHeight = baseTexture.textureHeight;
-
-        width = baseTexture.width;
-        height = baseTexture.height;
-
-        region = baseTexture.region;
-
-        border = baseTexture.border;
-    }
-
-    public var baseTexture(default, null):Texture2D;
-
-    override public function init(ctx:Context3D)
-    {
-        baseTexture.init(ctx);
-
-        texture = baseTexture.texture;
-    }
-
-    override public function dispose():Void
-    {
-        if (useCount > 0) return;
-
-        baseTexture.dispose();
-    }
 }
 
 class Frame
@@ -138,4 +98,45 @@ interface IAtlasParser
     function parse(a:AtlasTexture2D):Array<Frame>;
 
     function getPreferredSize():Point;
+}
+
+class SubTexture2D extends Texture2D
+{
+    function new (texture:Texture2D)
+    {
+        baseTexture = texture;
+        super(baseTexture.options);
+
+        bitmapWidth = baseTexture.bitmapWidth;
+        bitmapHeight = baseTexture.bitmapHeight;
+        textureWidth = baseTexture.textureWidth;
+        textureHeight = baseTexture.textureHeight;
+
+        width = baseTexture.width;
+        height = baseTexture.height;
+
+        region = baseTexture.region;
+
+        border = baseTexture.border;
+
+        baseTexture.useCount ++;
+    }
+
+    public var baseTexture(default, null):Texture2D;
+
+    override public function init(ctx:Context3D)
+    {
+        baseTexture.init(ctx);
+
+        texture = baseTexture.texture;
+    }
+
+    override public function dispose():Void
+    {
+        if (useCount > 0) return;
+
+        baseTexture.useCount --;
+        baseTexture.dispose();
+
+    }
 }

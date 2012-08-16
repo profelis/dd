@@ -1,14 +1,14 @@
 package deep.dd.display;
 
+import deep.dd.texture.atlas.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.geometry.Geometry;
-import deep.dd.texture.atlas.animation.Animator;
 
 class MovieClip2D extends Sprite2D
 {
-    public var animator(default, set_animator):Animator;
+    public var animator(default, set_animator):AnimatorBase;
 
-    public function new(animator:Animator, geometry:Geometry = null)
+    public function new(animator:AnimatorBase, geometry:Geometry = null)
     {
         this.animator = animator;
 

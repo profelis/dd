@@ -6,7 +6,6 @@ import deep.dd.texture.atlas.parser.CheetahParser;
 import flash.utils.ByteArray;
 import deep.dd.texture.atlas.parser.SpriteSheetParser;
 import deep.dd.texture.atlas.AtlasTexture2D;
-import deep.dd.texture.SpriteSheetTexture2D;
 import deep.dd.texture.Texture2D;
 import flash.display.BitmapData;
 import deep.dd.display.Sprite2D;

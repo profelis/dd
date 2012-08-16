@@ -4,10 +4,8 @@ import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.display.MovieClip2D;
 import deep.dd.display.Sprite2D;
 
-class Animator
+class Animator extends AnimatorBase
 {
-    public var sprite:Sprite2D;
-
     public var fps:UInt = 30;
 
     var frameTime:Float = 0;
@@ -17,10 +15,11 @@ class Animator
 
     public function new(fps:UInt = 30)
     {
+        super();
         this.fps = fps;
     }
 
-    public function draw(time:Float)
+    override public function draw(time:Float)
     {
         frameTime += fps * (time - prevTime);
         prevTime = time;
@@ -34,7 +33,7 @@ class Animator
         }
     }
 
-    public function dispose()
+    override public function dispose()
     {
         sprite = null;
     }

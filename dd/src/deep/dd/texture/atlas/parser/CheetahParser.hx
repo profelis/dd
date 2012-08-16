@@ -30,7 +30,7 @@ class CheetahParser implements IAtlasParser
         var frames = [];
 
         var ls = data.split("\n");
-        ls.shift();
+        if (StringTools.startsWith(ls[0], "textures:")) ls.shift();
 
         var kx = 1 / a.textureWidth;
         var ky = 1 / a.textureHeight;
@@ -58,7 +58,8 @@ class CheetahParser implements IAtlasParser
             frames.push(new Frame(iw, ih, new Vector3D(x*kx, y*ky, iw*kx, ih*ky), border, d[0]));
         }
 
-        size = new Point(frames[0].width, frames[0].height);
+        var f = frames[0];
+        size = (f.border != null) ? new Point(f.border.width, f.border.height) : new Point(f.width, f.height);
 
         return frames;
     }
