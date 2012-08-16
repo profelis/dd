@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import msignal.Signal;
 import mt.m3d.Color;
 import deep.dd.World2D;
 import flash.geom.Vector3D;
@@ -10,7 +11,6 @@ import flash.display3D.Context3D;
 
 class Node2D
 {
-
     public var blendMode:BlendMode;
 
     public var parent(default, null):Node2D;
@@ -19,15 +19,15 @@ class Node2D
 
     public var world(get_world, null):World2D;
 
-    public var transform(get_transform, null):Matrix3D;
+    public var transform(default, null):Matrix3D;
     var invalidateTransform:Bool = true;
 
-    public var worldTransform(get_worldTransform, null):Matrix3D;
+    public var worldTransform(default, null):Matrix3D;
     var invalidateWorldTransform:Bool = true;
 
     public var colorTransform(default, set_colorTransform):Color;
-    public var worldColorTransform(get_worldColorTransform, null):Vector3D;
-    var invalidateWorldColorTransform:Bool;
+    public var worldColorTransform(default, null):Vector3D;
+    var invalidateColorTransform:Bool;
 
     public var alpha(default, set_alpha):Float = 1;
 
@@ -37,9 +37,15 @@ class Node2D
 
     var ctx:Context3D;
 
+    public var transformChange(default, null):Signal0;
+    public var colorTransformChange(default, null):Signal0;
+
     public function new()
     {
         blendMode = BlendMode.NORMAL;
+
+        transformChange = new Signal0();
+        colorTransformChange = new Signal0();
 
         children = new Array();
         transform = new Matrix3D();
@@ -71,6 +77,35 @@ class Node2D
         Reflect.setField(this, "pivot", null);
     }
 
+    function setParent(p:Node2D)
+    {
+        if (parent != null)
+        {
+            parent.transformChange.remove(onParentTransformChange);
+            parent.colorTransformChange.remove(onParentColorChange);
+        }
+
+        parent = p;
+        invalidateWorldTransform = true;
+        invalidateColorTransform = true;
+
+        if (parent != null)
+        {
+            parent.transformChange.add(onParentTransformChange);
+            parent.colorTransformChange.add(onParentColorChange);
+        }
+    }
+
+    function onParentColorChange()
+    {
+        invalidateColorTransform = true;
+    }
+
+    function onParentTransformChange()
+    {
+        invalidateWorldTransform = true;
+    }
+
     public function addChild(c:Node2D):Void
     {
         if (c.parent != null)
@@ -85,8 +120,7 @@ class Node2D
             c.parent.removeChild(c);
         }
         children.push(c);
-        c.invalidateWorldTransform = true;
-        c.parent = this;
+        c.setParent(this);
         if (scene != null) c.setScene(scene);
         if (ctx != null) c.init(ctx);
     }
@@ -96,6 +130,7 @@ class Node2D
         children.remove(c);
         c.invalidateWorldTransform = true;
         c.parent = null;
+        c.setParent(null);
         c.setScene(null);
     }
 	
@@ -126,14 +161,61 @@ class Node2D
 
     public function drawStep(camera:Camera2D):Void
     {
+        if (invalidateTransform) updateTransform();
+        if (invalidateWorldTransform) updateWorldTransform();
+        if (invalidateColorTransform) updateWorldColor();
+
         draw(camera);
 
         for (i in children) if (i.visible) i.drawStep(camera);
     }
 
+    public function updateWorldColor()
+    {
+        worldColorTransform.setTo(colorTransform.r, colorTransform.g, colorTransform.b);
+        worldColorTransform.w = colorTransform.a;
+
+        if (parent != null)
+        {
+            var p = parent.worldColorTransform;
+            worldColorTransform.x *= p.x;
+            worldColorTransform.y *= p.y;
+            worldColorTransform.z *= p.z;
+            worldColorTransform.w *= p.w;
+        }
+
+        invalidateColorTransform = false;
+
+        colorTransformChange.dispatch();
+    }
+
+    public function updateWorldTransform()
+    {
+        worldTransform.identity();
+        worldTransform.append(this.transform);
+
+        if (parent != null) worldTransform.append(parent.worldTransform);
+        invalidateWorldTransform = false;
+    }
+
+    public function updateTransform()
+    {
+        transform.identity();
+        if (pivot != null) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
+        transform.appendScale(scaleX, scaleY, scaleZ);
+        transform.appendRotation(rotationZ, Vector3D.Z_AXIS);
+        transform.appendRotation(rotationY, Vector3D.Y_AXIS);
+        transform.appendRotation(rotationX, Vector3D.X_AXIS);
+        transform.appendTranslation(x, y, z);
+
+        invalidateTransform = false;
+        invalidateWorldTransform = true;
+
+        transformChange.dispatch();
+    }
+
     public function draw(camera:Camera2D):Void
     {
-
     }
 
     // transform
@@ -222,81 +304,29 @@ class Node2D
         return v;
     }
 
-    function get_transform()
-    {
-        if (invalidateTransform)
-        {
-            invalidateTransform = false;
-
-            transform.identity();
-            if (pivot != null) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
-            transform.appendScale(scaleX, scaleY, scaleZ);
-            transform.appendRotation(rotationZ, Vector3D.Z_AXIS);
-            transform.appendRotation(rotationY, Vector3D.Y_AXIS);
-            transform.appendRotation(rotationX, Vector3D.X_AXIS);
-            transform.appendTranslation(x, y, z);
-
-            for (i in children) i.invalidateWorldTransform = true;
-        }
-
-        return transform;
-    }
-
-    function get_worldTransform()
-    {
-        if (invalidateTransform || invalidateWorldTransform)
-        {
-            invalidateWorldTransform = false;
-            worldTransform.identity();
-            worldTransform.append(this.transform);
-
-            if (parent != null) worldTransform.append(parent.worldTransform);
-        }
-
-        return worldTransform;
-    }
-
     // color transform
 
     function set_colorTransform(c)
     {
+        if (colorTransform != null && colorTransform.eqauls(c)) return colorTransform;
+
         if (c == null) c = new Color(1, 1, 1, 1);
 
         colorTransform = c;
-        invalidateWorldColorTransform = true;
-        for (i in children) i.invalidateWorldColorTransform = true;
+        invalidateColorTransform = true;
 
         return c;
-    }
-
-    function get_worldColorTransform()
-    {
-        if (invalidateWorldColorTransform)
-        {
-            worldColorTransform.setTo(colorTransform.r, colorTransform.g, colorTransform.b);
-            worldColorTransform.w = colorTransform.a;
-
-            if (parent != null)
-            {
-                var p = parent.worldColorTransform;
-                worldColorTransform.x *= p.x;
-                worldColorTransform.y *= p.y;
-                worldColorTransform.z *= p.z;
-                worldColorTransform.w *= p.w;
-            }
-
-            invalidateWorldColorTransform = false;
-        }
-
-        return worldColorTransform;
     }
 
     function set_alpha(v:Float):Float
     {
         v = Color.clamp(v);
-        colorTransform.a = v;
+        if (v != colorTransform.a)
+        {
+            colorTransform.a = v;
+            invalidateColorTransform = true;
+        }
 
-        colorTransform = colorTransform;
         return v;
     }
 }

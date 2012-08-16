@@ -1,5 +1,7 @@
 package deep.dd.texture;
 
+import msignal.Signal;
+import flash.geom.Matrix3D;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import deep.dd.utils.Cache;
@@ -14,27 +16,57 @@ class Texture2D
 {
     public var options(default, null):UInt;
 
+    var bitmapData:BitmapData;
+
+    // preferred size
+    public var width(default, null):Float;
+    public var height(default, null):Float;
+
+    // bitmap texture size
+    public var bitmapWidth(default, null):Int;
+    public var bitmapHeight(default, null):Int;
+
+    // texture size 2^n
+    public var textureWidth(default, null):Int;
+    public var textureHeight(default, null):Int;
+
+    // region of bitmap texture
+    public var region(default, null):Vector3D;
+
+    // transparent border (xy - px offset)
+    public var border(default, set_border):Rectangle;
+    public var borderMatrix(default, null):Matrix3D;
+
+    public var texture(default, null):Texture;
+
+    public var borderChange(default, null):Signal0;
+
+    var ctx:Context3D;
+
 	public function new(options:UInt)
     {
         this.options = options;
+        borderChange = new Signal0();
+        region = new Vector3D(0, 0, 1, 1);
     }
 
     public static function fromBitmap(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
     {
         var res = new Texture2D(options);
         res.bitmapData = bmp;
-        res.bw = bmp.width;
-        res.bh = bmp.height;
+        res.width = res.bitmapWidth = bmp.width;
+        res.height = res.bitmapHeight = bmp.height;
+        res.textureWidth = getNextPowerOfTwo(res.bitmapWidth);
+        res.textureHeight = getNextPowerOfTwo(res.bitmapHeight);
+
+        res.region.z = res.bitmapWidth / res.textureWidth;
+        res.region.w = res.bitmapHeight / res.textureHeight;
 
         return res;
     }
 
-    /**
-     * @private
-    **/
-    public var useCount:Int = 0;
-    public var cache:Cache;
-
+    public var useCount(default, null):Int = 0;
+    public var cache(default, null):Cache;
 
     public var releaseBitmap(default, #if debug set_releaseBitmap #else default #end):Bool = false;
 
@@ -46,23 +78,31 @@ class Texture2D
     }
     #end
 
-    var bitmapData:BitmapData;
-
-    public var bw(default, null):Int;
-    public var bh(default, null):Int;
-    var tw:Int;
-    var th:Int;
-
-    public var needUpdate:Bool = false;
-
-    public function update()
+    public function set_border(b:Rectangle)
     {
-        needUpdate = false;
+        if (border != null && border.equals(b)) return border;
+
+        border = b;
+        if (border == null)
+        {
+            borderMatrix = null;
+        }
+        else
+        {
+            if (borderMatrix == null) borderMatrix = new Matrix3D();
+            else borderMatrix.identity();
+
+            borderMatrix.appendScale(width / border.width, height / border.width, 1);
+            borderMatrix.appendTranslation(border.x, border.y, 0);
+
+            width = border.width;
+            height = border.height;
+        }
+
+         borderChange.dispatch();
+
+        return border;
     }
-
-    public var region(default, null):Vector3D;
-
-    var ctx:Context3D;
 
     public function init(ctx:Context3D)
     {
@@ -76,28 +116,22 @@ class Texture2D
 			texture = null;
 		}
 
-        tw = getNextPowerOfTwo(bw);
-        th = getNextPowerOfTwo(bh);
-
-        texture = ctx.createTexture(tw, th, Context3DTextureFormat.BGRA, false);
-        region = new Vector3D(0, 0, 1, 1);
+        texture = ctx.createTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, false);
 
         var b = bitmapData;
-        var rescale = tw != bw || th != bh;
+        var rescale = textureWidth != bitmapWidth || textureHeight != bitmapHeight;
         if (rescale)
         {
-            b = new BitmapData(tw, th, true, 0x00000000);
+            b = new BitmapData(textureWidth, textureHeight, true, 0x00000000);
             b.copyPixels(bitmapData, bitmapData.rect, new Point());
-            region.z = bw / tw;
-            region.w = bh / th;
         }
 
         texture.uploadFromBitmapData(b);
 
         if ((options & Texture2DOptions.MIPMAP_LINEAR) | (options & Texture2DOptions.MIPMAP_NEAREST) > 0)
         {
-            var w:Int = tw >> 1;
-            var h:Int = th >> 1;
+            var w:Int = textureWidth >> 1;
+            var h:Int = textureHeight >> 1;
             var l = 0;
             var r = new Rectangle();
             var t = new Matrix();
@@ -141,8 +175,11 @@ class Texture2D
 
         if (cache == null)
         {
+            if (bitmapData != null && releaseBitmap) bitmapData.dispose();
             bitmapData = null;
             region = null;
+            borderMatrix = null;
+            Reflect.setField(this, "border", null);
         }
         else
         {
@@ -154,8 +191,6 @@ class Texture2D
             ctx = null;
         }
 	}
-
-    public var texture(default, null):Texture;
 
     public static function getNextPowerOfTwo(n:Int):Int
     {

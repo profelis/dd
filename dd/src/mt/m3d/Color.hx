@@ -57,6 +57,11 @@ package mt.m3d;
         return new Color(r, g, b, a);
     }
 
+    public function eqauls(c:Color)
+    {
+        return c.a == a && c.r == r && c.g == g && c.b == b;
+    }
+
     public function toString() {
         return "{Color "+Std.int(a * 0xFF)+","+Std.int(r * 0xFF)+","+Std.int(g * 0xFF)+","+Std.int(b * 0xFF)+"}";
     }

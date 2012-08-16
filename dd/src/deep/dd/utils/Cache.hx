@@ -136,7 +136,7 @@ class Cache
 		}
 
         res = Texture2D.fromBitmap(bmp, options);
-        res.cache = this;
+        Reflect.setField(res, "cache", this);
         h.set(key(options), res);
 
         return res;

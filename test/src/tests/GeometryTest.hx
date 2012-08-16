@@ -29,8 +29,8 @@ class GeometryTest extends Test
 		world.cache.autoDisposeBitmaps = false;
 		grid.texture = texture;
 		trace(grid.texture.texture != null);
-		grid.scaleX = world.width / grid.texture.bw;
-		grid.scaleY = world.height / grid.texture.bh;
+		grid.scaleX = world.width / grid.texture.bitmapWidth;
+		grid.scaleY = world.height / grid.texture.bitmapHeight;
 		addChild(grid);
 	}
 	

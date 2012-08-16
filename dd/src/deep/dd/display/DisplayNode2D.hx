@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import flash.geom.Matrix3D;
 import deep.dd.geometry.Geometry;
 import deep.dd.material.Material;
 import deep.dd.camera.Camera2D;
@@ -22,6 +23,7 @@ class DisplayNode2D extends Node2D
 
     public var width(get_width, set_width):Float;
     public var height(get_height, set_height):Float;
+
 
     override public function init(ctx:Context3D):Void
     {
@@ -56,7 +58,7 @@ class DisplayNode2D extends Node2D
 
 		if (material != null)
         {
-            material.useCount --;
+            Reflect.setField(material, "useCount", material.useCount - 1);
             material.dispose();
             Reflect.setField(this, "material", null);
         }
@@ -76,14 +78,14 @@ class DisplayNode2D extends Node2D
     {
         if (m == material) return m;
 
-        if (material != null) material.useCount --;
+        if (material != null) Reflect.setField(material, "useCount", material.useCount - 1);
 
         material = m;
 
         if (material != null)
         {
             if (ctx != null) material.init(ctx);
-            material.useCount ++;
+            Reflect.setField(material, "useCount", material.useCount + 1);
         }
         return m;
     }

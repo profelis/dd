@@ -1,119 +1,114 @@
 package ;
-
-import flash.display.Sprite;
-import flash.text.TextFormat;
+import deep.dd.texture.atlas.animation.Animator;
+import deep.dd.display.MovieClip2D;
+import deep.dd.display.Node2D;
+import deep.dd.texture.atlas.parser.CheetahParser;
+import flash.utils.ByteArray;
+import deep.dd.texture.atlas.parser.SpriteSheetParser;
+import deep.dd.texture.atlas.AtlasTexture2D;
+import deep.dd.texture.Texture2D;
+import flash.display.BitmapData;
+import deep.dd.display.Sprite2D;
+import flash.events.MouseEvent;
 import mt.m3d.Color;
-import flash.display.StageScaleMode;
+import deep.dd.utils.BlendMode;
+import flash.geom.Rectangle;
+import flash.geom.Vector3D;
+import deep.dd.display.Quad2D;
 import flash.display.StageAlign;
-import flash.display.StageDisplayState;
+import flash.display.StageScaleMode;
+import deep.dd.display.Scene2D;
 import flash.display3D.Context3DRenderMode;
 import deep.dd.World2D;
+import deep.dd.geometry.Geometry;
 import flash.events.Event;
-import flash.events.KeyboardEvent;
-import flash.Lib;
-import flash.text.TextField;
-import flash.ui.Keyboard;
-import tests.GeometryTest;
-import tests.QuadTest;
-import tests.Test;
+import mt.m3d.Camera;
+import flash.display3D.Context3D;
 
-class Main extends Sprite
+@:bitmap("metalslug_monster39x40.png") class SpriteSheet extends BitmapData {}
+
+@:bitmap("atlas1/text.png") class Image extends BitmapData {}
+@:file("atlas1/text.atlas") class Atlas extends ByteArray {}
+
+class Main
 {
 
     var world:World2D;
-	var scenes:Array<Class<Test>>;
-	var activeSceneIdx:Int = 0;
-	
-	var currentScene:Test;
-	
-	var sceneText:TextField;
+    var sprite:PerlinSprite;
+
+
+    var sp:Sprite2D;
+    var sp2:Node2D;
+
+    var mc:MovieClip2D;
 
     public function new()
     {
-        super();
-		
-		var s = flash.Lib.current.stage;
+        var s = flash.Lib.current.stage;
         s.scaleMode = StageScaleMode.NO_SCALE;
         s.align = StageAlign.TOP_LEFT;
-		s.addChild(this);
 
         world = new World2D(Context3DRenderMode.AUTO);
-		world.bgColor = new Color();
-		
-		var tf:TextFormat = new TextFormat("Arial", 11, 0xFFFFFF, true);
-		sceneText = new TextField();
-		sceneText.width = Lib.current.stage.stageWidth;
-		sceneText.defaultTextFormat = tf;
-		addChild(sceneText);
-		
-		scenes = [QuadTest, GeometryTest];
-		activeSceneIdx = 0;
-		changeScene(activeSceneIdx);
-		
+
+        world.scene = new Scene2D();
+
+		world.antialiasing = 2;
+        world.bgColor.fromInt(0x666666);
+
+        sp2 = new Node2D();
+        world.scene.addChild(sp2);
+
+        var q = new Quad2D(Geometry.createSolid(128, 128));
+        q.color = 0xFF0000;
+        //q.x = 10;
+        //q.y = 10;
+        sp2.addChild(q);
+
+
+
+        var t = new AtlasTexture2D(world.cache.getTexture(Image),new CheetahParser(Std.string(new Atlas())));
+        var dx = 0.0;
+        for (i in 0...t.frames.length)
+        {
+            trace(t.frames[i]);
+            sp = new Sprite2D(Geometry.createTextured(100, 100));
+            sp2.addChild(sp);
+
+            sp.texture = t.getTextureById(i);
+            sp.x = dx;
+            dx += sp.width;
+        }
+
+        mc = new MovieClip2D(new Animator(5));
+        mc.scaleX = mc.scaleY = 5;
+        mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 0.5));
+        mc.y = 200;
+
+        world.scene.addChild(mc);
+
+        mc = new MovieClip2D(new Animator(5));
+        mc.scaleX = mc.scaleY = 5;
+        mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 5));
+        mc.colorTransform = new Color(1, 0, 0, 1);
+        mc.y = 200;
+
+        world.scene.addChild(mc);
+
         s.addEventListener(Event.ENTER_FRAME, onRender);
-		s.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+
+        s.addEventListener(MouseEvent.CLICK, onClick);
     }
-	
-	function onKeyUp(e:KeyboardEvent):Void 
-	{
-		if (e.keyCode == Keyboard.D)
-		{
-			world.ctx.dispose();
-		}
-		else if (e.keyCode == Keyboard.SPACE || e.keyCode == Keyboard.RIGHT)
-		{
-			nextDemo();
-		}
-		else if (e.keyCode == Keyboard.LEFT)
-		{
-			prevDemo();
-		}
-	}
-	
-	private function prevDemo() 
-	{
-		changeScene(activeSceneIdx - 1);
-	}
-	
-	private function nextDemo() 
-	{
-		changeScene(activeSceneIdx + 1);
-	}
-	
-	function changeScene(sceneIndex:Int):Void
-	{
-		if (currentScene != null)
-		{
-			currentScene.dispose();
-		}
-		
-		if (sceneIndex < 0)
-		{
-			activeSceneIdx = scenes.length - 1;
-		}
-		else if (sceneIndex >= scenes.length)
-		{
-			activeSceneIdx = 0;
-		}
-		else
-		{
-			activeSceneIdx = sceneIndex;
-		}
-		
-		sceneText.text = "(" + (activeSceneIdx + 1) + "/" + scenes.length + ") " + Type.getClassName(scenes[activeSceneIdx]) + " // hit space or right = next test, left = prev test, d = device loss";
-		currentScene = Type.createInstance(scenes[activeSceneIdx], [world]);
-	}
+
+    function onClick(_)
+    {
+        world.ctx.dispose();
+    }
 
     function onRender(_)
     {
-        currentScene.update();
-		var t:Float = Lib.getTimer() / 1000;
-		world.camera.scale = Math.abs(Math.sin(t * 0.2));
-		world.camera.x = Math.cos(t) * world.width;
-	//	world.camera.x += 0.2;
-	//	world.camera.scale += 0.005;
-	//	world.camera.x += 2;
+        sp2.rotationY += 0.05;
     }
+
 
     static function main()
     {

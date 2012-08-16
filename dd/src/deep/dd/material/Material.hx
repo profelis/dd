@@ -10,9 +10,17 @@ import flash.display3D.Context3D;
 
 class Material
 {
+    static var shaderCache:TypedDictionary<Context3D, Hash<Shader>> = new TypedDictionary();
+    static var shaderUseCount:TypedDictionary<Context3D, TypedDictionary<Shader, Int>> = new TypedDictionary();
+
+    public var useCount(default, null):Int = 0;
+
     var shaderRef:Class<Shader>;
+    var shader:Shader;
 
     var useShaderCache:Bool;
+
+    var ctx:Context3D;
 
     public function new(shaderRef:Class<Shader>, useShaderCache:Bool = true)
     {
@@ -20,17 +28,6 @@ class Material
         this.useShaderCache = useShaderCache;
     }
 
-    /**
-     * @private
-    **/
-    public var useCount:Int = 0;
-
-    var shader:Shader;
-    var ctx:Context3D;
-
-    static var shaderCache:TypedDictionary<Context3D, Hash<Shader>> = new TypedDictionary();
-    static var shaderUseCount:TypedDictionary<Context3D, TypedDictionary<Shader, Int>> = new TypedDictionary();
-	
 	public static function freeContextCache(ctx:Context3D):Void
 	{
         shaderCache.delete(ctx);
@@ -67,7 +64,6 @@ class Material
                 shaderCache.get(ctx).set(key, shader = Type.createInstance(shaderRef, [ctx]));
                 useCount.set(shader, 1);
             }
-            trace(shader + " " + useCount.get(shader));
         }
     }
 
