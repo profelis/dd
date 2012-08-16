@@ -59,7 +59,7 @@ class Main
         world.scene.addChild(sp2);
 
         var q = new Quad2D(Geometry.createSolid(128, 128));
-        q.color = 0xFF0000;
+        q.color = 0xFFFF0000;
         //q.x = 10;
         //q.y = 10;
         sp2.addChild(q);
@@ -83,6 +83,9 @@ class Main
         mc.fps = 5;
         mc.scaleX = mc.scaleY = 5;
         mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 0.5));
+		cast(mc.texture, AtlasTexture2D).addAnimation("idle", [0]);
+		cast(mc.animator, Animator).playAnimation("idle", 0);
+		cast(mc.animator, Animator).playAnimation(null, 3);
         mc.y = 200;
 
         world.scene.addChild(mc);

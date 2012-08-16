@@ -5,6 +5,7 @@ import deep.dd.display.Sprite2D;
 class AnimatorBase
 {
     public var sprite:Sprite2D;
+	public var activeAnimation:Animation;
 
     // private constructor
     function new()
@@ -16,6 +17,11 @@ class AnimatorBase
     {
 
     }
+	
+	public function playAnimation(name:String, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
+	{
+		
+	}
 
     public function copy():AnimatorBase
     {
@@ -26,5 +32,6 @@ class AnimatorBase
     public function dispose():Void
     {
         sprite = null;
+		activeAnimation = null;
     }
 }
