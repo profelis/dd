@@ -19,6 +19,6 @@ class AnimatorBase
 
     public function dispose():Void
     {
-
+        sprite = null;
     }
 }

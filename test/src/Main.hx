@@ -80,7 +80,8 @@ class Main
         }
 
         mc = new MovieClip2D(new Animator(15));
-        mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40));
+        mc.scaleX = mc.scaleY = 4;
+        mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 0.5));
         mc.y = 200;
 
         world.scene.addChild(mc);

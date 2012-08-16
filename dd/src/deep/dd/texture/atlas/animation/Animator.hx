@@ -33,8 +33,4 @@ class Animator extends AnimatorBase
         }
     }
 
-    override public function dispose()
-    {
-        sprite = null;
-    }
 }
