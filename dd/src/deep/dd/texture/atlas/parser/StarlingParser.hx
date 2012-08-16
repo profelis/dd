@@ -19,7 +19,7 @@ class StarlingParser implements IAtlasParser
 
     inline function q(v:String)
     {
-        return Std.int(Math.abs(Std.parseInt(v)));
+       return Std.parseInt(v);
     }
 
     var size:Point;
@@ -53,7 +53,7 @@ class StarlingParser implements IAtlasParser
 						
 						if (width != frameWidth || height != frameHeight)
 						{
-							border = new Rectangle(frameX, frameY, frameWidth, frameHeight);
+							border = new Rectangle(frameX * kx, frameY * ky, frameWidth, frameHeight);
 						}
 						
 						frames.push(new Frame(width, height, new Vector3D(x * kx, y * ky, width * kx, height * ky), border, name));
