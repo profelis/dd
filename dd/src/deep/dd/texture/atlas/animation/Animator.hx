@@ -30,15 +30,13 @@ class Animator extends AnimatorBase
             frameTime = 0;
 
             var atlas = cast(sprite.texture, AtlasTexture2D);
-			// TODO: take loop value into account
-			if (activeAnimation != null)
+			var numFrames:Int = (activeAnimation != null) ? activeAnimation.frames.length : atlas.frames.length;
+			var nextFrame:Int = currentFrame + 1;
+			if (loop || nextFrame < numFrames) 
 			{
-				currentFrame = (currentFrame + 1) % activeAnimation.frames.length;
+				currentFrame = nextFrame % numFrames;
 			}
-			else
-			{
-				currentFrame = (currentFrame + 1) % atlas.frames.length;
-			}
+			
             atlas.frame = atlas.frames[currentFrame];
         }
     }
@@ -64,6 +62,7 @@ class Animator extends AnimatorBase
 			}
 			#end
 			if (restart) currentFrame = startIdx - 1;
+			this.loop = loop;
 			return;
 		}
 		
