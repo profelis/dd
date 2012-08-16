@@ -173,6 +173,7 @@ class Geometry
         #if debug
         if (!normal) throw "can't resize unnormal geometry";
         #end
+        if (this.width == width && this.height == height) return;
 
         var kx = width / this.width;
         var ky = height / this.height;

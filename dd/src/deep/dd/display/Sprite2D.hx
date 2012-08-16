@@ -51,7 +51,7 @@ class Sprite2D extends DisplayNode2D
 
     override public function drawStep(camera:Camera2D):Void
     {
-        if (invalidateWorldTransform) invalidateDrawTransform = true;
+        if (invalidateWorldTransform || invalidateTransform) invalidateDrawTransform = true;
 
         super.drawStep(camera);
     }
