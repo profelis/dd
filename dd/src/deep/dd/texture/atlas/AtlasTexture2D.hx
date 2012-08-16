@@ -1,5 +1,6 @@
 package deep.dd.texture.atlas;
 
+import deep.dd.texture.atlas.animation.Animation;
 import flash.geom.Rectangle;
 import flash.geom.Point;
 import flash.geom.Vector3D;
@@ -12,6 +13,8 @@ class AtlasTexture2D extends SubTexture2D
     public var frames(default, null):Array<Frame>;
 
     public var frame(default, set_frame):Frame;
+	
+	var animationMap:Hash<Animation>;
 
     public function new(texture:Texture2D, parser:IAtlasParser)
     {
@@ -24,6 +27,8 @@ class AtlasTexture2D extends SubTexture2D
         height = s.y;
 
         frame = frames[0];
+		
+		animationMap = new Hash<Animation>();
     }
 
     public function getTextureById(id:Int):Texture2D
@@ -66,6 +71,60 @@ class AtlasTexture2D extends SubTexture2D
 
         return f;
     }
+	
+	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Void
+	{
+		#if debug
+		if (animationMap.exists(name)) throw ("Animation " + name + "  already exist");
+		#end
+		
+		var framesToAdd:Array<Frame> = [];
+		var numFrames:Int = keyFrames.length;
+		for (i in 0...(numFrames))
+		{
+			if (Std.is(keyFrames[i], Int))
+			{
+				framesToAdd.push(frames[keyFrames[i]]);
+				#if debug
+				if (frames[keyFrames[i]] == null) throw "There is no frame with " + keyFrames[i] + " index";
+				#end
+			}
+			else
+			{
+				// we have string key
+				var frameFound:Bool = false;
+				for (fr in frames)
+				{
+					if (fr.name == keyFrames[i])
+					{
+						framesToAdd.push(fr);
+						frameFound = true;
+					}
+				}
+				#if debug
+				if (!frameFound) throw "There is no frame with " + keyFrames[i] + " name";
+				#end
+			}
+		}
+		
+		animationMap.set(name, new Animation(framesToAdd));
+	}
+	
+	public function getAnimation(name:String):Animation
+	{
+		return animationMap.get(name);
+	}
+	
+	override public function dispose():Void 
+	{
+		super.dispose();
+		
+		for (anim in animationMap)
+		{
+			anim.dispose();
+		}
+		animationMap = null;
+	}
 
 }
 

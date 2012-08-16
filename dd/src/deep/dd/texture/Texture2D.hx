@@ -80,8 +80,6 @@ class Texture2D
 
     public function set_border(b:Rectangle)
     {
-        if (border != null && border.equals(b)) return border;
-
         border = b;
         if (border == null)
         {
