@@ -20,6 +20,9 @@ class Camera {
     public var w:Int;
     public var h:Int;
     public var perspective:Bool;
+	
+	var rMat:Matrix;
+	public var angle:Float = 0;
 
     public function new( fov = 60., zoom = 1., ratio = 1.333333, zNear = 0.02, zFar = 40. ) {
         this.fov = fov;
@@ -33,6 +36,9 @@ class Camera {
         m = new Matrix();
         mcam = new Matrix();
         perspective = true;
+		
+		rMat = new Matrix();
+		
         update();
     }
 
@@ -65,7 +71,23 @@ class Camera {
         mcam._44 = 1;
         if (perspective) mproj = makeFrustumMatrix();
         else mproj = makeOrtographicMatrix();
+		
+		var halfWidth:Float = w / 2;
+		var halfHeight:Float = h / 2;
+		var x:Float = -halfWidth;
+		var y:Float = -halfHeight;
+		var s:Float = Math.sin(angle);
+        var c:Float = Math.cos(angle);
+        var tempX:Float = x;
+		x = tempX * c - y * s + halfWidth;
+		y = tempX * s + y * c + halfHeight;
+		mcam.translate(x, y, 0);
+		
         m.multiply4x4(mcam, mproj);
+		
+		rMat.zero();
+		rMat.initRotateZ(angle);
+		m.multiply4x4(rMat, m);
     }
 
     public function moveAxis( dx : Float, dy : Float ) {
