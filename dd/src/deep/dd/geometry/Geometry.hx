@@ -83,6 +83,37 @@ class Geometry
         }
     }
 
+    static public function createTexturedBatch(size:Int, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):Geometry
+    {
+        var g = createTextured(width, height, 1, 1, offsetX, offsetY);
+        var p = g.poly;
+
+        var ps = p.points.copy();
+        var ts = p.tcoords.copy();
+        var is = p.idx.copy();
+        var sup:Array<Float> = [0, 0, 0, 0];
+
+        for (n in 1...size)
+        {
+            p.points = p.points.concat(ps);
+            p.tcoords = p.tcoords.concat(ts);
+            sup.push(n);
+            sup.push(n);
+            sup.push(n);
+            sup.push(n);
+            for (i in is) p.idx.push(Std.int(n * 4 + i));
+        }
+
+        p.sup = sup;
+        g.normal = false;
+
+        trace(p.points);
+        trace(sup);
+        trace(p.idx);
+
+        return g;
+    }
+
     static public function createTextured(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
     {
         return create(true, width, height, stepsX, stepsY, offsetX, offsetY);
@@ -270,6 +301,8 @@ class Poly2D extends Polygon
 
     public var colors:Array<Color>;
 
+    public var sup:Array<Float>;
+
     override public function alloc(c:Context3D)
     {
         var tempColors = colors;
@@ -280,6 +313,7 @@ class Poly2D extends Polygon
         var size = 3;
         if (tcoords != null) size += 2;
         if (colors != null) size+=4;
+        if (sup != null) size+=1;
 
         vbuf = c.createVertexBuffer(points.length, size);
         var buf = new flash.Vector<Float>();
@@ -304,6 +338,10 @@ class Poly2D extends Polygon
                 buf[i++] = t.g;
                 buf[i++] = t.b;
                 buf[i++] = t.a;
+            }
+            if (sup != null)
+            {
+                buf[i++] = sup[k];
             }
         }
         vbuf.uploadFromVector(buf, 0, points.length);

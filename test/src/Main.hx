@@ -1,31 +1,18 @@
 package ;
-import deep.dd.texture.atlas.animation.Animator;
-import deep.dd.display.MovieClip2D;
-import deep.dd.display.Node2D;
-import deep.dd.texture.atlas.parser.CheetahParser;
-import deep.dd.texture.atlas.parser.StarlingParser;
-import flash.utils.ByteArray;
-import deep.dd.texture.atlas.parser.SpriteSheetParser;
-import deep.dd.texture.atlas.AtlasTexture2D;
-import deep.dd.texture.Texture2D;
-import flash.display.BitmapData;
-import deep.dd.display.Sprite2D;
-import flash.events.MouseEvent;
-import flash.xml.XML;
 import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
-import flash.geom.Rectangle;
-import flash.geom.Vector3D;
-import deep.dd.display.Quad2D;
+import deep.dd.display.Sprite2D;
+import deep.dd.display.Batch2D;
+import flash.utils.ByteArray;
+import deep.dd.texture.Texture2D;
+import flash.display.BitmapData;
+import flash.events.MouseEvent;
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
 import deep.dd.display.Scene2D;
 import flash.display3D.Context3DRenderMode;
 import deep.dd.World2D;
-import deep.dd.geometry.Geometry;
 import flash.events.Event;
-import mt.m3d.Camera;
-import flash.display3D.Context3D;
 
 @:bitmap("metalslug_monster39x40.png") class SpriteSheet extends BitmapData {}
 
@@ -40,12 +27,6 @@ class Main
 
     var world:World2D;
     var scene:Scene2D;
-    var sprite:PerlinSprite;
-
-    var sp:Sprite2D;
-    var sp2:Node2D;
-
-    var mc:MovieClip2D;
 
     public function new()
     {
@@ -73,15 +54,28 @@ class Main
 	//	cast(mc.texture, AtlasTexture2D).addAnimation("idle", [0]);
 	//	cast(mc.animator, Animator).playAnimation("idle", 0);
 	//	cast(mc.animator, Animator).playAnimation(null, 3, false);
-		
-	//	cast(mc.animator, Animator).gotoFrame(5);
 
+	//	cast(mc.animator, Animator).gotoFrame(5);
+        /*
 		var mc2 = new MovieClip2D();
 		mc2.fps = 25;
 		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc2.texture = st;
-		world.scene.addChild(mc2);
+		world.scene.addChild(mc2); */
 
+        var b = new Batch2D();
+        scene.addChild(b);
+        b.texture = world.cache.getTexture(Image);
+        var rots = [0.0, 30, 60, 90, 120];
+        for (i in 0...5)
+        {
+            var s = new Sprite2D();
+            b.addChild(s);
+            s.x = i * 128;
+            //s.y = i * 50;
+            //s.rotationZ = rots[i];
+            //s.colorTransform = new Color(Math.random(),Math.random(),Math.random(), 1);
+        }
 
        /* mc = new MovieClip2D();
         mc.fps = 5;
@@ -105,8 +99,8 @@ class Main
 
     function onRender(_)
     {
-        //world.camera.x = -world.stage.mouseX;
-        //world.camera.y = -world.stage.mouseY;
+        world.camera.x = -world.stage.mouseX;
+        world.camera.y = -world.stage.mouseY;
     //    world.camera.scale += (Math.random()-0.5) * 0.003;
         //sp2.rotationY += 0.05;
     }

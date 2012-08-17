@@ -9,5 +9,10 @@ class UV {
 		this.u = u;
 		this.v = v;
 	}
+
+    public function toString()
+    {
+        return "{UV: " + u + ", " + v + "}";
+    }
 	
 }

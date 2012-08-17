@@ -10,11 +10,17 @@ import mt.m3d.Polygon;
 
 class DisplayNode2D extends Node2D
 {
-    public function new(geometry:Geometry = null, material:Material = null)
+    public function new(material:Material = null)
     {
         super();
-        this.geometry = geometry;
         this.material = material;
+
+        createGeometry();
+    }
+
+    function createGeometry()
+    {
+
     }
 
     public var geometry(default, null):Geometry;

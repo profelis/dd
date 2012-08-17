@@ -1,23 +1,24 @@
 var input : {
     pos : Float3,
     uv: Float2,
-    index:FLoat
+    index:Float
 };
 
 var tuv:Float2;
 var cTrans:Float4;
 
-function vertex(mpos:Array<M44>, mproj:M44, cTransArr:Array<Float4>, regions:Array<Float4>)
+function vertex(mpos:M44<5>, mproj:Matrix, cTransArr:Float4<5>)
 {
-    out = pos.xyzw * mpos[index.x] * mproj;
-    var region = regions[index.z];
-    tuv = uv * region.zw + region.xy;
-    cTrans = cTransArr[index.y];
+    out = pos.xyzw * mpos[index*4] * mproj;
+
+    tuv = uv;
+    cTrans = cTransArr[index];
 }
 
-function fragment(tex:Texture)
+function fragment(tex:Texture, region:Float4)
 {
-    out = texture(tex, tuv) * cTrans;
+    var t = tuv * region.zw + region.xy;
+    out = texture(tex, t) * cTrans + [0, 0, 0, 0.1];
 }
 
 /*

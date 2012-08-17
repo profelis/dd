@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import deep.dd.material.Material;
 import deep.dd.texture.atlas.animation.AnimatorBase;
 import flash.geom.Matrix3D;
 import deep.dd.camera.Camera2D;
@@ -10,19 +11,22 @@ import deep.dd.geometry.Geometry;
 
 class Sprite2D extends DisplayNode2D
 {
-    public function new()
+    public function new(material:Material = null)
     {
-        drawMatrix = new Matrix3D();
+        drawTransform = new Matrix3D();
 
-        super(new Sprite2DMaterial());
+        super(material != null ? material : new Sprite2DMaterial());
+    }
 
+    override function createGeometry()
+    {
         setGeometry(Geometry.createTextured(_width = 1, _height = 1));
     }
 
     public var animator(default, set_animator):AnimatorBase;
 
     var invalidateDrawTransform:Bool;
-    public var drawMatrix(default, null):Matrix3D;
+    public var drawTransform(default, null):Matrix3D;
 
     public var texture(default, set_texture):Texture2D;
 
@@ -54,14 +58,17 @@ class Sprite2D extends DisplayNode2D
 
     override public function drawStep(camera:Camera2D):Void
     {
-        if (animator != null) animator.draw(scene.time);
-
-        if (texture != null && texture.needUpdate)
+        if (texture != null)
         {
-            texture.update();
-            invalidateDrawTransform = true;
-            _width = texture.width;
-            _height = texture.height;
+            if (animator != null) animator.draw(scene.time);
+
+            if (texture.needUpdate)
+            {
+                texture.update();
+                invalidateDrawTransform = true;
+                _width = texture.width;
+                _height = texture.height;
+            }
         }
 
         if (invalidateWorldTransform || invalidateTransform) invalidateDrawTransform = true;
@@ -79,10 +86,10 @@ class Sprite2D extends DisplayNode2D
         super.draw(camera);
     }
 
-    function updateDrawTransform()
+    public function updateDrawTransform()
     {
-        drawMatrix.rawData = texture.drawMatrix.rawData;
-        drawMatrix.append(worldTransform);
+        drawTransform.rawData = texture.drawMatrix.rawData;
+        drawTransform.append(worldTransform);
 
         invalidateDrawTransform = false;
     }

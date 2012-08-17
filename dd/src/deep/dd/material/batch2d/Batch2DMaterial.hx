@@ -1,5 +1,8 @@
-package deep.dd.material.sprite2d;
+package deep.dd.material.batch2d;
 
+import flash.Vector;
+import deep.dd.display.DisplayNode2D;
+import flash.geom.Vector3D;
 import flash.geom.Matrix3D;
 import deep.dd.material.sprite2d.Sprite2DMaterial;
 import deep.dd.texture.Texture2D;
@@ -11,12 +14,14 @@ import deep.dd.material.Quad2DMaterial;
 import flash.display3D.Context3D;
 import format.hxsl.Shader;
 
-class Sprite2DMaterial extends Material
+class Batch2DMaterial extends Material
 {
     public function new()
     {
         super(null);
     }
+
+    static inline var SIZE = 20;
 
     var texOpt:UInt = 0;
 
@@ -25,15 +30,8 @@ class Sprite2DMaterial extends Material
         shaderRef = SHADERS.get(texOpt & 0x60).get(texOpt & 0x18).get(texOpt & 0x7);
     }
 
-    override public function draw(node:DisplayNode2D, camera:Camera2D)
+    public function drawBatch(node:DisplayNode2D, camera:Camera2D, tex:Texture2D, mpos:Vector<Matrix3D>, cTrans:Vector<Vector3D>)
     {
-        #if debug
-        if (!Std.is(node, Sprite2D)) throw "can't draw " + node;
-        #end
-
-        var sp:Sprite2D = cast node;
-        var tex = sp.texture;
-
         if (texOpt != tex.options)
         {
             texOpt = tex.options;
@@ -41,11 +39,19 @@ class Sprite2DMaterial extends Material
             updateShader();
         }
 
-        untyped shader.init({mpos:node.drawTransform, mproj:camera.proj}, {tex:tex.texture, cTrans:node.worldColorTransform, region:tex.region});
+        untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans}, {tex:tex.texture, region:tex.frame.region});
 
-        super.draw(node, camera);
+        //super.draw(node, camera);
+
+        trace(untyped shader.getVertexConstants({mpos:mpos, mproj:camera.proj, cTransArr:cTrans}));
+
+        ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
+
+        shader.bind(node.geometry.vbuf);
+        ctx.drawTriangles(node.geometry.ibuf, 0, mpos.length * 2);
+        shader.unbind();
     }
-	
+
     public static var SHADERS(default, null):IntHash<IntHash<IntHash<Class<Shader>>>> = initSHADERS();
 
     static function initSHADERS()
