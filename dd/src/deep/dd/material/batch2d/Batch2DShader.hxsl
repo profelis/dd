@@ -7,20 +7,20 @@ var input : {
 var tuv:Float2;
 var cTrans:Float4;
 
-function vertex(cTransArr:Float4<24>, mpos:M44<24>, mproj:Matrix)
+function vertex(mpos:M44<5>, mproj:Matrix, cTransArr:Float4<5>)
 {
+    // http://code.google.com/p/hxformat/issues/detail?id=28#c8 - no exit
     var i = pos.xyzw;
-    i.x = index*4;
+    i.x = index.x * 4;
     out = pos.xyzw * mpos[i.x] * mproj;
-
     tuv = uv;
-    cTrans = cTransArr[index];
+    cTrans = cTransArr[index.x];
 }
 
 function fragment(tex:Texture, region:Float4)
 {
     var t = tuv * region.zw + region.xy;
-    out = texture(tex, t) * cTrans;
+    out = texture(tex, t) * cTrans + [0, 0, 0, 0.1];
 }
 
 /*

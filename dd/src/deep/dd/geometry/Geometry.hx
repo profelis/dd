@@ -107,10 +107,6 @@ class Geometry
         p.sup = sup;
         g.normal = false;
 
-        trace(p.points);
-        trace(sup);
-        trace(p.idx);
-
         return g;
     }
 
@@ -344,6 +340,7 @@ class Poly2D extends Polygon
                 buf[i++] = sup[k];
             }
         }
+        trace(buf);
         vbuf.uploadFromVector(buf, 0, points.length);
     }
 	

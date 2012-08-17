@@ -24,7 +24,7 @@ class Batch2D extends Sprite2D
 
     override function createGeometry()
     {
-        setGeometry(Geometry.createTexturedBatch(maxSize*10, _width = 1, _height = 1));
+        setGeometry(Geometry.createTexturedBatch(maxSize, _width = 1, _height = 1));
     }
 
     override public function drawStep(camera:Camera2D):Void
