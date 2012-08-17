@@ -1,7 +1,7 @@
 package deep.dd.display;
 
+import deep.dd.material.Material;
 import deep.dd.texture.atlas.animation.AnimatorBase;
-import deep.dd.texture.atlas.AtlasTexture2D;
 import flash.geom.Matrix3D;
 import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
@@ -11,10 +11,16 @@ import deep.dd.geometry.Geometry;
 
 class Sprite2D extends DisplayNode2D
 {
-    public function new(geometry:Geometry = null, animator:AnimatorBase = null)
+    public function new(material:Material = null)
     {
-        this.animator = animator;
-        super(geometry != null ? geometry : Geometry.createTextured(), new Sprite2DMaterial());
+        drawTransform = new Matrix3D();
+
+        super(material != null ? material : new Sprite2DMaterial());
+    }
+
+    override function createGeometry()
+    {
+        setGeometry(Geometry.createTextured(_width = 1, _height = 1));
     }
 
     public var animator(default, set_animator):AnimatorBase;
@@ -52,6 +58,19 @@ class Sprite2D extends DisplayNode2D
 
     override public function drawStep(camera:Camera2D):Void
     {
+        if (texture != null)
+        {
+            if (animator != null) animator.draw(scene.time);
+
+            if (texture.needUpdate)
+            {
+                texture.update();
+                invalidateDrawTransform = true;
+                _width = texture.width;
+                _height = texture.height;
+            }
+        }
+
         if (invalidateWorldTransform || invalidateTransform) invalidateDrawTransform = true;
 
         super.drawStep(camera);
@@ -60,27 +79,17 @@ class Sprite2D extends DisplayNode2D
 
     override public function draw(camera:Camera2D):Void
     {
-        if (animator != null) animator.draw(scene.time);
+        if (texture == null) return;
 
         if (invalidateDrawTransform) updateDrawTransform();
 
-        if (texture != null)
-        {
-            super.draw(camera);
-        }
+        super.draw(camera);
     }
 
-    function updateDrawTransform()
+    public function updateDrawTransform()
     {
-        if (texture.border == null)
-        {
-            drawTransform = worldTransform;
-        }
-        else
-        {
-            drawTransform = texture.borderMatrix.clone();
-            drawTransform.append(worldTransform);
-        }
+        drawTransform.rawData = texture.drawMatrix.rawData;
+        drawTransform.append(worldTransform);
 
         invalidateDrawTransform = false;
     }
@@ -91,7 +100,6 @@ class Sprite2D extends DisplayNode2D
 
         if (texture != null)
         {
-            texture.borderChange.remove(onBorderChange);
             Reflect.setField(texture, "useCount", texture.useCount - 1);
         }
 
@@ -100,47 +108,25 @@ class Sprite2D extends DisplayNode2D
         if (texture != null)
         {
             Reflect.setField(texture, "useCount", texture.useCount + 1);
-            texture.borderChange.add(onBorderChange);
             if (ctx != null) texture.init(ctx);
-            if (geometry != null) geometry.resize(texture.width, texture.height);
-			
-			if (Std.is(texture, AtlasTexture2D) && animator != null) animator.atlas = cast(texture, AtlasTexture2D);
-        }
+            _width = texture.width;
+            _height = texture.height;
 
-        invalidateDrawTransform = true;
+            invalidateDrawTransform = true;
+        }
 
         return tex;
     }
 
-    function onBorderChange()
-    {
-        invalidateDrawTransform = true;
-        geometry.resize(texture.width, texture.height);
-    }
-
     function set_animator(v)
     {
-        //if (animator != null) animator.sprite = null;
+        if (animator != null) animator.sprite = null;
 
         animator = v;
 
-        if (animator != null && Std.is(texture, AtlasTexture2D)) animator.atlas = cast(texture, AtlasTexture2D);
+        if (animator != null) animator.sprite = this;
 
         return animator;
-    }
-
-    override function set_geometry(g:Geometry):Geometry
-    {
-        if (g == geometry) return g;
-
-        #if debug
-        if (!g.textured) throw "geometry.textured != true";
-        #end
-
-        super.set_geometry(g);
-        if (geometry != null && texture != null) geometry.resize(texture.width, texture.height);
-
-        return geometry;
     }
 
 }

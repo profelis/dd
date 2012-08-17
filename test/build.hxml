@@ -1,4 +1,4 @@
--swf9 bin/app.swf
+-swf bin/app.swf
 -swf-header 800:600:60:FFFFFF
 --flash-strict
 -swf-version 11
@@ -8,7 +8,9 @@
 -cp src
 -cp test
 -cp ../dd/src
-#-D shaderDebug
-#-debug
+-D shaderDebug
+#-D shaderCompDebug
+-debug
 #-D fdb
-#--no-inline
+--no-inline
+-D dump

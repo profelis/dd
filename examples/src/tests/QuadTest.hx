@@ -16,7 +16,9 @@ class QuadTest extends Test
 	public function new(wrld:World2D) 
 	{
 		super(wrld);
-		quad = new Quad2D(Geometry.createSolid(Lib.current.stage.stageWidth, Lib.current.stage.stageHeight));
+		quad = new Quad2D();
+        quad.width = Lib.current.stage.stageWidth;
+        quad.height = Lib.current.stage.stageHeight;
 		quad.geometry.setColor(0xffffff);
 		addChild(quad);
 	}

@@ -1,6 +1,5 @@
 package deep.dd.texture;
 
-import msignal.Signal;
 import flash.geom.Matrix3D;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
@@ -30,37 +29,31 @@ class Texture2D
     public var textureWidth(default, null):Int;
     public var textureHeight(default, null):Int;
 
-    // region of bitmap texture
-    public var region(default, null):Vector3D;
+    public var frame(default, set_frame):Frame;
 
-    // transparent border (xy - px offset)
-    public var border(default, set_border):Rectangle;
-    public var borderMatrix(default, null):Matrix3D;
+    public var drawMatrix(default, null):Matrix3D;
 
     public var texture(default, null):Texture;
-
-    public var borderChange(default, null):Signal0;
 
     var ctx:Context3D;
 
 	public function new(options:UInt)
     {
         this.options = options;
-        borderChange = new Signal0();
-        region = new Vector3D(0, 0, 1, 1);
+        drawMatrix = new Matrix3D();
     }
 
     public static function fromBitmap(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
     {
         var res = new Texture2D(options);
         res.bitmapData = bmp;
-        res.width = res.bitmapWidth = bmp.width;
-        res.height = res.bitmapHeight = bmp.height;
+        res.bitmapWidth = bmp.width;
+        res.bitmapHeight = bmp.height;
         res.textureWidth = getNextPowerOfTwo(res.bitmapWidth);
         res.textureHeight = getNextPowerOfTwo(res.bitmapHeight);
 
-        res.region.z = res.bitmapWidth / res.textureWidth;
-        res.region.w = res.bitmapHeight / res.textureHeight;
+        res.frame = new Frame(res.bitmapWidth, res.bitmapHeight,
+                new Vector3D(0, 0, res.bitmapWidth/res.textureWidth, res.bitmapHeight/res.textureHeight));
 
         return res;
     }
@@ -78,28 +71,40 @@ class Texture2D
     }
     #end
 
-    public function set_border(b:Rectangle)
+    public var needUpdate(default, null):Bool = true;
+
+    public function update()
     {
-        border = b;
-        if (border == null)
+        drawMatrix.identity();
+        drawMatrix.appendScale(frame.width, frame.height, 1);
+
+        var b = frame.border;
+        if (b != null)
         {
-            borderMatrix = null;
+            width = b.width;
+            height = b.height;
+            drawMatrix.appendTranslation(b.x, b.y, 0);
         }
         else
         {
-            if (borderMatrix == null) borderMatrix = new Matrix3D();
-            else borderMatrix.identity();
-
-            borderMatrix.appendScale(width / border.width, height / border.width, 1);
-            borderMatrix.appendTranslation(border.x, border.y, 0);
-
-            width = border.width;
-            height = border.height;
+            width = frame.width;
+            height = frame.height;
         }
+        needUpdate = false;
+    }
 
-         borderChange.dispatch();
+    // TODO:
+    // setRegion;
+    // setBorder;
 
-        return border;
+    function set_frame(f:Frame):Frame
+    {
+        #if debug
+        if (f == null) throw "frame is null";
+        #end
+
+        needUpdate = true;
+        return frame = f;
     }
 
     public function init(ctx:Context3D)
@@ -175,9 +180,9 @@ class Texture2D
         {
             if (bitmapData != null && releaseBitmap) bitmapData.dispose();
             bitmapData = null;
-            region = null;
-            borderMatrix = null;
+            drawMatrix = null;
             Reflect.setField(this, "border", null);
+            Reflect.setField(this, "frame", null);
         }
         else
         {
@@ -202,6 +207,32 @@ class Texture2D
             while (result < n) result <<= 1;
             return result;
         }
+    }
+}
+
+class Frame
+{
+    public var name:String;
+
+    public var width:Float;
+    public var height:Float;
+
+    public var region:Vector3D;
+
+    public var border:Rectangle;
+
+    public function new (width, height, region, ?frame, ?name)
+    {
+        this.width = width;
+        this.height = height;
+        this.region = region;
+        this.border = frame;
+        this.name = name;
+    }
+
+    public function toString()
+    {
+        return "{Frame: " + width + ", " + height + (border != null ? ", " + border : "") + (name != null ? " ~ " + name : "") + "}";
     }
 }
 
