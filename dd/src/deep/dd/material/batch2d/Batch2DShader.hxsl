@@ -9,10 +9,12 @@ var cTrans:Float4;
 
 function vertex(mpos:M44<5>, mproj:Matrix, cTransArr:Float4<5>)
 {
-    out = pos.xyzw * mpos[index*4] * mproj;
-
+    // http://code.google.com/p/hxformat/issues/detail?id=28#c8 - no exit
+    var i = pos.xyzw;
+    i.x = index.x * 4;
+    out = pos.xyzw * mpos[i.x] * mproj;
     tuv = uv;
-    cTrans = cTransArr[index];
+    cTrans = cTransArr[index.x];
 }
 
 function fragment(tex:Texture, region:Float4)

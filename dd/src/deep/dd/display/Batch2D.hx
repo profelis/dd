@@ -24,7 +24,7 @@ class Batch2D extends Sprite2D
 
     override function createGeometry()
     {
-        setGeometry(Geometry.createTexturedBatch(maxSize*10, _width = 1, _height = 1));
+        setGeometry(Geometry.createTexturedBatch(maxSize, _width = 1, _height = 1));
     }
 
     override public function drawStep(camera:Camera2D):Void
@@ -87,7 +87,8 @@ class Batch2D extends Sprite2D
                 mpos.push(s.drawTransform);
                 cTrans.push(s.worldColorTransform);
 
-                //trace("draw " + mpos.length + " " +  s.drawTransform.rawData);
+                trace("draw " + mpos.length + " " +  s.drawTransform.rawData);
+                trace(s.worldTransform.rawData);
 
                 if (mpos.length == maxSize)
                 {
@@ -97,16 +98,20 @@ class Batch2D extends Sprite2D
 
                 }
             }
-            /*
+             /*
             if (mpos.length > 0)
             {
+                //mpos.length = maxSize;
+                //cTrans.length = maxSize;
+
                 for (i in mpos.length...maxSize)
                 {
                     mpos.push(emptyMpos);
                     cTrans.push(emptyColor);
                 }
+
                 mat.drawBatch(nodeSprite, camera, nodeSprite.texture, mpos, cTrans);
-            }  */
+            } */
         }
     }
 

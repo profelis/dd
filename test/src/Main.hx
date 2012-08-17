@@ -1,4 +1,5 @@
 package ;
+import deep.dd.display.Quad2D;
 import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
 import deep.dd.display.Sprite2D;
@@ -63,17 +64,21 @@ class Main
 		mc2.texture = st;
 		world.scene.addChild(mc2); */
 
+
         var b = new Batch2D();
+        //b.blendMode = BlendMode.MULTIPLY;
         scene.addChild(b);
         b.texture = world.cache.getTexture(Image);
         var rots = [0.0, 30, 60, 90, 120];
+        var colors = [new Color(1, 0, 0, 1), new Color(0, 1, 0, 1), new Color(0, 0, 1, 1), new Color(1, 1, 0, 1), new Color(1, 0, 1, 1)];
         for (i in 0...5)
         {
             var s = new Sprite2D();
             b.addChild(s);
-            s.x = i * 128;
-            //s.y = i * 50;
-            //s.rotationZ = rots[i];
+            s.x = i * 130;
+            s.y = i * 50;
+            s.rotationZ = rots[i];
+            s.colorTransform = colors[i];
             //s.colorTransform = new Color(Math.random(),Math.random(),Math.random(), 1);
         }
 
