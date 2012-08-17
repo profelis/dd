@@ -4,3 +4,4 @@
 *.iml
 bin
 out
+test/dump
