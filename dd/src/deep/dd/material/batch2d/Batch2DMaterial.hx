@@ -39,15 +39,16 @@ class Batch2DMaterial extends Material
 
         untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans}, {tex:tex.texture, region:tex.frame.region});
 
-        //super.draw(node, camera);
-
-        trace(untyped shader.getVertexConstants({mpos:mpos, mproj:camera.proj, cTransArr:cTrans}));
-
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 
         shader.bind(node.geometry.vbuf);
         ctx.drawTriangles(node.geometry.ibuf, 0, mpos.length * 2);
         shader.unbind();
+    }
+
+    override public function draw(node:DisplayNode2D, camera:Camera2D)
+    {
+        throw "use drawBatch";
     }
 
     public static var SHADERS(default, null):IntHash<IntHash<IntHash<Class<Shader>>>> = initSHADERS();

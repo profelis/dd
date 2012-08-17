@@ -83,6 +83,7 @@ class Batch2D extends Sprite2D
                     s.drawTransform.append(s.worldTransform);
 
                     s.invalidateDrawTransform = false;
+                    trace("update child");
                 }
 
                 mpos.push(s.drawTransform);

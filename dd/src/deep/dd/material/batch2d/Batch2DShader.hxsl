@@ -9,7 +9,7 @@ var cTrans:Float4;
 
 function vertex(mpos:M44<24>, mproj:Matrix, cTransArr:Float4<24>)
 {
-    // http://code.google.com/p/hxformat/issues/detail?id=28#c8 - no exit
+    // http://code.google.com/p/hxformat/issues/detail?id=28#c8
     var i = pos.xyzw;
     i.x = index.x * 4;
     out = pos.xyzw * mpos[i.x] * mproj;
