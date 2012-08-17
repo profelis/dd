@@ -39,6 +39,7 @@ class Main
 {
 
     var world:World2D;
+    var scene:Scene2D;
     var sprite:PerlinSprite;
 
     var sp:Sprite2D;
@@ -54,15 +55,21 @@ class Main
 
         world = new World2D(Context3DRenderMode.AUTO);
 
-        world.scene = new Scene2D();
+        world.scene = scene = new Scene2D();
 
 		world.antialiasing = 2;
         world.bgColor.fromInt(0x666666);
 
-        sp2 = new Node2D();
-        world.scene.addChild(sp2);
+        //sp2 = new Node2D();
+        //scene.addChild(sp2);
 
+        /*var q = new Quad2D();
+        q.color = 0xFF0000;
+        q.width = 100;
+        q.height = 100;
+        scene.addChild(q);  */
 
+        //s.tex
 	//	cast(mc.texture, AtlasTexture2D).addAnimation("idle", [0]);
 	//	cast(mc.animator, Animator).playAnimation("idle", 0);
 	//	cast(mc.animator, Animator).playAnimation(null, 3, false);
@@ -74,7 +81,7 @@ class Main
 		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc2.texture = st;
 		world.scene.addChild(mc2);
-		
+
 
        /* mc = new MovieClip2D();
         mc.fps = 5;
@@ -93,7 +100,7 @@ class Main
     function onClick(_)
     {
         //world.ctx.dispose();
-		mc.animator.playAnimation(null);
+		//mc.animator.playAnimation(null);
     }
 
     function onRender(_)

@@ -1,5 +1,6 @@
 package deep.dd.texture.atlas.animation;
 
+import deep.dd.texture.Texture2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.display.MovieClip2D;
 import deep.dd.display.Sprite2D;

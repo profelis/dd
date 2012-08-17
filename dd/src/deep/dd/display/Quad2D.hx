@@ -6,9 +6,10 @@ import deep.dd.geometry.Geometry;
 
 class Quad2D extends DisplayNode2D
 {
-    public function new(geometry:Geometry = null)
+    public function new()
     {
-        super(geometry != null ? geometry : Geometry.createSolid(), new Quad2DMaterial());
+        super(new Quad2DMaterial());
+        setGeometry(Geometry.createSolid(_width = 1, _height = 1));
     }
 
     var needUpdateColor:Bool = true;
@@ -39,13 +40,11 @@ class Quad2D extends DisplayNode2D
         needUpdateColor = false;
     }
 
-    override function set_geometry(g:Geometry):Geometry
+    override function setGeometry(g:Geometry)
     {
-        if (g == geometry) return g;
+        if (g == geometry) return;
 
-        super.set_geometry(g);
+        super.setGeometry(g);
         if (geometry != null) needUpdateColor = true;
-
-        return geometry;
     }
 }

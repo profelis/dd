@@ -9,9 +9,10 @@ class MovieClip2D extends Sprite2D
 {
     var anim:Animator;
 
-    public function new(geometry:Geometry = null)
+    public function new()
     {
-        super(geometry, anim = new Animator());
+        super();
+        animator = anim = new Animator();
     }
 
     public var fps(default, set_fps):Float;

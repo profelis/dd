@@ -17,9 +17,12 @@ class DisplayNode2D extends Node2D
         this.material = material;
     }
 
-    public var geometry(default, set_geometry):Geometry;
+    public var geometry(default, null):Geometry;
 
     public var material(default, set_material):Material;
+
+    var _width:Float;
+    var _height:Float;
 
     public var width(get_width, set_width):Float;
     public var height(get_height, set_height):Float;
@@ -64,14 +67,12 @@ class DisplayNode2D extends Node2D
         }
 	}
 
-    function set_geometry(g:Geometry):Geometry
+    function setGeometry(g:Geometry)
     {
-        if (g == geometry) return g;
+        if (g == geometry) return;
 
         geometry = g;
         if (geometry != null && ctx != null) geometry.init(ctx);
-
-        return g;
     }
 
     function set_material(m:Material):Material
@@ -92,23 +93,23 @@ class DisplayNode2D extends Node2D
 
     function get_width():Float
     {
-        return geometry.width * scaleX;
+        return _width * scaleX;
     }
 
     function set_width(v:Float):Float
     {
-        scaleX = v / geometry.width;
+        scaleX = v / _width;
         return v;
     }
 
     function get_height():Float
     {
-        return geometry.height * scaleX;
+        return _width * scaleX;
     }
 
     function set_height(v:Float):Float
     {
-        scaleY = v / geometry.height;
+        scaleY = v / _height;
         return v;
     }
 

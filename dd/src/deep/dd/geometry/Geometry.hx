@@ -168,7 +168,7 @@ class Geometry
         return res;
     }
 
-    public function resize(width:Float, height:Float)
+    function resize(width:Float, height:Float)
     {
         #if debug
         if (!normal) throw "can't resize unnormal geometry";
@@ -190,7 +190,7 @@ class Geometry
         needUpdate = true;
     }
 
-    public function offset(dx = 0.0, dy = 0.0)
+    function offset(dx = 0.0, dy = 0.0)
     {
         #if debug
         if (!normal) throw "can't resize unnormal geometry";

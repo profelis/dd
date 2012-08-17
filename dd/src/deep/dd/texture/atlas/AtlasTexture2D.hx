@@ -12,8 +12,6 @@ class AtlasTexture2D extends SubTexture2D
 
     public var frames(default, null):Array<Frame>;
 
-    public var frame(default, set_frame):Frame;
-	
 	var animationMap:Hash<Animation>;
 
     public function new(texture:Texture2D, parser:IAtlasParser)
@@ -47,31 +45,11 @@ class AtlasTexture2D extends SubTexture2D
     public function getTextureByFrame(f:Frame):Texture2D
     {
         var res = new SubTexture2D(baseTexture);
-        res.width = f.width;
-        res.height = f.height;
-
-        res.region = f.region;
-        res.border = f.border;
+        res.frame = f;
 
         return res;
     }
 
-    public function set_frame(f:Frame)
-    {
-        #if debug
-        if (f == null) throw "frame is null";
-        #end
-
-        frame = f;
-        width = f.width;
-        height = f.height;
-
-        region = f.region;
-        border = f.border;
-
-        return f;
-    }
-	
 	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Void
 	{
 		#if debug
@@ -126,32 +104,6 @@ class AtlasTexture2D extends SubTexture2D
 		animationMap = null;
 	}
 
-}
-
-class Frame
-{
-    public var name:String;
-
-    public var width:Float;
-    public var height:Float;
-
-    public var region:Vector3D;
-
-    public var border:Rectangle;
-
-    public function new (width, height, region, ?frame, ?name)
-    {
-        this.width = width;
-        this.height = height;
-        this.region = region;
-        this.border = frame;
-        this.name = name;
-    }
-
-    public function toString()
-    {
-        return "{Frame: " + width + ", " + height + (border != null ? ", " + border : "") + (name != null ? " ~ " + name : "") + "}";
-    }
 }
 
 interface IAtlasParser

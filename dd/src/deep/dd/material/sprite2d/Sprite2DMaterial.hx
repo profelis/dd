@@ -32,7 +32,7 @@ class Sprite2DMaterial extends Material
         #end
 
         var sp:Sprite2D = cast node;
-        var tex = sp.texture;
+        var tex:Texture2D = sp.texture;
 
         if (texOpt != tex.options)
         {
@@ -41,7 +41,7 @@ class Sprite2DMaterial extends Material
             updateShader();
         }
 
-        untyped shader.init({mpos:node.drawTransform, mproj:camera.proj, region:tex.region}, {tex:tex.texture, cTrans:node.worldColorTransform});
+        untyped shader.init({mpos:sp.drawTransform, mproj:camera.proj, region:tex.frame.region}, {tex:tex.texture, cTrans:node.worldColorTransform});
 
         super.draw(node, camera);
     }
