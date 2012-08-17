@@ -12,14 +12,17 @@ class Sprite2D extends DisplayNode2D
 {
     public function new()
     {
+        drawMatrix = new Matrix3D();
+
         super(new Sprite2DMaterial());
+
         setGeometry(Geometry.createTextured(_width = 1, _height = 1));
     }
 
     public var animator(default, set_animator):AnimatorBase;
 
     var invalidateDrawTransform:Bool;
-    public var drawTransform(default, null):Matrix3D;
+    public var drawMatrix(default, null):Matrix3D;
 
     public var texture(default, set_texture):Texture2D;
 
@@ -53,7 +56,7 @@ class Sprite2D extends DisplayNode2D
     {
         if (animator != null) animator.draw(scene.time);
 
-        if (texture.needUpdate)
+        if (texture != null && texture.needUpdate)
         {
             texture.update();
             invalidateDrawTransform = true;
@@ -69,17 +72,17 @@ class Sprite2D extends DisplayNode2D
 
     override public function draw(camera:Camera2D):Void
     {
-        if (invalidateDrawTransform) updateDrawTransform();
-
         if (texture == null) return;
+
+        if (invalidateDrawTransform) updateDrawTransform();
 
         super.draw(camera);
     }
 
     function updateDrawTransform()
     {
-        drawTransform = texture.drawMatrix.clone();
-        drawTransform.append(worldTransform);
+        drawMatrix.rawData = texture.drawMatrix.rawData;
+        drawMatrix.append(worldTransform);
 
         invalidateDrawTransform = false;
     }
@@ -101,9 +104,9 @@ class Sprite2D extends DisplayNode2D
             if (ctx != null) texture.init(ctx);
             _width = texture.width;
             _height = texture.height;
-        }
 
-        invalidateDrawTransform = true;
+            invalidateDrawTransform = true;
+        }
 
         return tex;
     }

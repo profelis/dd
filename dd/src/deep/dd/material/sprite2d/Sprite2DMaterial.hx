@@ -41,7 +41,7 @@ class Sprite2DMaterial extends Material
             updateShader();
         }
 
-        untyped shader.init({mpos:sp.drawTransform, mproj:camera.proj, region:tex.frame.region}, {tex:tex.texture, cTrans:node.worldColorTransform});
+        untyped shader.init({mpos:sp.drawMatrix, mproj:camera.proj, region:tex.frame.region}, {tex:tex.texture, cTrans:node.worldColorTransform});
 
         super.draw(node, camera);
     }
