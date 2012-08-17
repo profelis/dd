@@ -6,7 +6,7 @@ import flash.geom.Point;
 import deep.dd.texture.atlas.AtlasTexture2D;
 
 /**
-* Parser for https://github.com/scriptum/Cheetah-Texture-Packer
+* Parser for texture atlases in Starling format
 **/
 class StarlingParser implements IAtlasParser
 {
