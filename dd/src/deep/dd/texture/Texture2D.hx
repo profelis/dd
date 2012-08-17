@@ -93,9 +93,11 @@ class Texture2D
         needUpdate = false;
     }
 
-    // TODO:
-    // setRegion;
-    // setBorder;
+    public function setBorder(b:Rectangle):Void
+    {
+        frame.border = b;
+        needUpdate = true;
+    }
 
     function set_frame(f:Frame):Frame
     {

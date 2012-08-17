@@ -15,22 +15,31 @@ class Batch2D extends Sprite2D
 {
     var mat:Batch2DMaterial;
 
+    static public inline var MAX_SIZE = 24;
+
     public function new()
     {
-        emptyMpos = new Matrix3D();
+        emptyMatrix = new Matrix3D();
         emptyColor = new Vector3D(0, 0, 0, 0);
+
         super(new Batch2DMaterial());
     }
 
     override function createGeometry()
     {
-        setGeometry(Geometry.createTexturedBatch(maxSize, _width = 1, _height = 1));
+        setGeometry(Geometry.createTexturedBatch(MAX_SIZE, _width = 1, _height = 1));
     }
 
     override public function drawStep(camera:Camera2D):Void
     {
+        if (mat == null)
+        {
+            super.drawStep(camera);
+            return;
+        }
         if (geometry.needUpdate) geometry.update();
 
+        var invalidateTexture:Bool = false;
         if (texture != null)
         {
             if (animator != null) animator.draw(scene.time);
@@ -41,6 +50,7 @@ class Batch2D extends Sprite2D
                 invalidateDrawTransform = true;
                 _width = texture.width;
                 _height = texture.height;
+                invalidateTexture = true;
             }
         }
 
@@ -52,12 +62,10 @@ class Batch2D extends Sprite2D
 
         if (invalidateDrawTransform) updateDrawTransform();
 
-        drawBatch(this, camera);
+        if (texture != null) drawBatch(this, camera, invalidateTexture);
     }
 
-    static inline var maxSize = 24;
-
-    function drawBatch(node:Node2D, camera:Camera2D)
+    function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
     {
         var mpos = new Vector<Matrix3D>();
         var cTrans = new Vector<Vector3D>();
@@ -71,7 +79,7 @@ class Batch2D extends Sprite2D
 
                 if (s == null || !s.visible) continue;
 
-                if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
+                if (invalidateTexture || s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
 
                 if (s.invalidateTransform) s.updateTransform();
                 if (s.invalidateWorldTransform) s.updateWorldTransform();
@@ -83,27 +91,24 @@ class Batch2D extends Sprite2D
                     s.drawTransform.append(s.worldTransform);
 
                     s.invalidateDrawTransform = false;
-                    trace("update child");
                 }
 
                 mpos.push(s.drawTransform);
                 cTrans.push(s.worldColorTransform);
 
-
-                if (mpos.length == maxSize)
+                if (mpos.length == MAX_SIZE)
                 {
                     mat.drawBatch(nodeSprite, camera, nodeSprite.texture, mpos, cTrans);
                     mpos.length = 0;
                     cTrans.length = 0;
-
                 }
             }
 
             if (mpos.length > 0)
             {
-                for (i in mpos.length...maxSize)
+                for (i in mpos.length...MAX_SIZE)
                 {
-                    mpos.push(emptyMpos);
+                    mpos.push(emptyMatrix);
                     cTrans.push(emptyColor);
                 }
                 mat.drawBatch(nodeSprite, camera, nodeSprite.texture, mpos, cTrans);
@@ -111,7 +116,7 @@ class Batch2D extends Sprite2D
         }
     }
 
-    var emptyMpos:Matrix3D;
+    var emptyMatrix:Matrix3D;
     var emptyColor:Vector3D;
 
     override function set_material(m:Material):Material
