@@ -7,7 +7,7 @@ var input : {
 var tuv:Float2;
 var cTrans:Float4;
 
-function vertex(mpos:M44<5>, mproj:Matrix, cTransArr:Float4<5>)
+function vertex(mpos:M44<24>, mproj:Matrix, cTransArr:Float4<24>)
 {
     // http://code.google.com/p/hxformat/issues/detail?id=28#c8 - no exit
     var i = pos.xyzw;
@@ -20,7 +20,7 @@ function vertex(mpos:M44<5>, mproj:Matrix, cTransArr:Float4<5>)
 function fragment(tex:Texture, region:Float4)
 {
     var t = tuv * region.zw + region.xy;
-    out = texture(tex, t) * cTrans + [0, 0, 0, 0.1];
+    out = texture(tex, t) * cTrans;
 }
 
 /*
