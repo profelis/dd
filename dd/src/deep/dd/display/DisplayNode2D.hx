@@ -5,7 +5,6 @@ import deep.dd.geometry.Geometry;
 import deep.dd.material.Material;
 import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
-import format.hxsl.Shader;
 import mt.m3d.Polygon;
 
 class DisplayNode2D extends Node2D

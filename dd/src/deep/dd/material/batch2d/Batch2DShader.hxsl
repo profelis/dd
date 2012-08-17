@@ -7,9 +7,11 @@ var input : {
 var tuv:Float2;
 var cTrans:Float4;
 
-function vertex(mpos:M44<5>, mproj:Matrix, cTransArr:Float4<5>)
+function vertex(cTransArr:Float4<24>, mpos:M44<24>, mproj:Matrix)
 {
-    out = pos.xyzw * mpos[index*4] * mproj;
+    var i = pos.xyzw;
+    i.x = index*4;
+    out = pos.xyzw * mpos[i.x] * mproj;
 
     tuv = uv;
     cTrans = cTransArr[index];
@@ -18,7 +20,7 @@ function vertex(mpos:M44<5>, mproj:Matrix, cTransArr:Float4<5>)
 function fragment(tex:Texture, region:Float4)
 {
     var t = tuv * region.zw + region.xy;
-    out = texture(tex, t) * cTrans + [0, 0, 0, 0.1];
+    out = texture(tex, t) * cTrans;
 }
 
 /*

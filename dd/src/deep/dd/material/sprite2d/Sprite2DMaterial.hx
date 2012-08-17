@@ -9,7 +9,7 @@ import deep.dd.camera.Camera2D;
 import deep.dd.display.DisplayNode2D;
 import deep.dd.material.Quad2DMaterial;
 import flash.display3D.Context3D;
-import format.hxsl.Shader;
+import hxsl.Shader;
 
 class Sprite2DMaterial extends Material
 {

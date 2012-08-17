@@ -55,7 +55,7 @@ class Batch2D extends Sprite2D
         drawBatch(this, camera);
     }
 
-    static inline var maxSize = 5;
+    static inline var maxSize = 24;
 
     function drawBatch(node:Node2D, camera:Camera2D)
     {
@@ -76,6 +76,7 @@ class Batch2D extends Sprite2D
                 if (s.invalidateTransform) s.updateTransform();
                 if (s.invalidateWorldTransform) s.updateWorldTransform();
                 if (s.invalidateColorTransform) s.updateWorldColor();
+
                 if (s.invalidateDrawTransform)
                 {
                     s.drawTransform.rawData = texture.drawMatrix.rawData;
@@ -87,7 +88,6 @@ class Batch2D extends Sprite2D
                 mpos.push(s.drawTransform);
                 cTrans.push(s.worldColorTransform);
 
-                //trace("draw " + mpos.length + " " +  s.drawTransform.rawData);
 
                 if (mpos.length == maxSize)
                 {
@@ -97,7 +97,7 @@ class Batch2D extends Sprite2D
 
                 }
             }
-            /*
+
             if (mpos.length > 0)
             {
                 for (i in mpos.length...maxSize)
@@ -106,7 +106,7 @@ class Batch2D extends Sprite2D
                     cTrans.push(emptyColor);
                 }
                 mat.drawBatch(nodeSprite, camera, nodeSprite.texture, mpos, cTrans);
-            }  */
+            }
         }
     }
 

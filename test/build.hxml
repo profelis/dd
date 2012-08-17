@@ -8,9 +8,9 @@
 -cp src
 -cp test
 -cp ../dd/src
--D shaderDebug
+#-D shaderDebug
 #-D shaderCompDebug
--debug
+#-debug
 #-D fdb
---no-inline
--D dump
+#--no-inline
+#-D dump

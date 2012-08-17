@@ -1,8 +1,14 @@
 package ;
+import com.fermmmtools.debug.Stats;
+import deep.dd.texture.atlas.animation.Animator;
+import deep.dd.display.Batch2D;
+import deep.dd.texture.atlas.parser.StarlingParser;
+import deep.dd.texture.atlas.AtlasTexture2D;
+import deep.dd.display.MovieClip2D;
+import deep.dd.display.Quad2D;
 import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
 import deep.dd.display.Sprite2D;
-import deep.dd.display.Batch2D;
 import flash.utils.ByteArray;
 import deep.dd.texture.Texture2D;
 import flash.display.BitmapData;
@@ -34,6 +40,8 @@ class Main
         s.scaleMode = StageScaleMode.NO_SCALE;
         s.align = StageAlign.TOP_LEFT;
 
+        s.addChild(new Stats());
+
         world = new World2D(Context3DRenderMode.AUTO);
 
         world.scene = scene = new Scene2D();
@@ -43,13 +51,13 @@ class Main
 
         //sp2 = new Node2D();
         //scene.addChild(sp2);
-
-        /*var q = new Quad2D();
+        /*
+        var q = new Quad2D();
         q.color = 0xFF0000;
         q.width = 100;
         q.height = 100;
-        scene.addChild(q);  */
-
+        scene.addChild(q);
+         */
         //s.tex
 	//	cast(mc.texture, AtlasTexture2D).addAnimation("idle", [0]);
 	//	cast(mc.animator, Animator).playAnimation("idle", 0);
@@ -61,21 +69,26 @@ class Main
 		mc2.fps = 25;
 		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc2.texture = st;
-		world.scene.addChild(mc2); */
+		world.scene.addChild(mc2);
 
+        */
         var b = new Batch2D();
         scene.addChild(b);
-        b.texture = world.cache.getTexture(Image);
+        //b.texture = world.cache.getTexture(Image);
+        b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
+        b.animator = new Animator();
         var rots = [0.0, 30, 60, 90, 120];
-        for (i in 0...5)
-        {
-            var s = new Sprite2D();
-            b.addChild(s);
-            s.x = i * 128;
-            //s.y = i * 50;
-            //s.rotationZ = rots[i];
-            //s.colorTransform = new Color(Math.random(),Math.random(),Math.random(), 1);
-        }
+        for (x in 0...10)
+            for (y in 0...10)
+            {
+                var s = new Sprite2D();
+                b.addChild(s);
+                s.x = x * 100;
+                s.y = y * 100;
+                //s.y = i * 50;
+                //s.rotationZ = rots[i];
+                //s.colorTransform = new Color(Math.random(),Math.random(),Math.random(), 1);
+            }
 
        /* mc = new MovieClip2D();
         mc.fps = 5;
@@ -99,8 +112,8 @@ class Main
 
     function onRender(_)
     {
-        world.camera.x = -world.stage.mouseX;
-        world.camera.y = -world.stage.mouseY;
+        //world.camera.x = -world.stage.mouseX;
+        //world.camera.y = -world.stage.mouseY;
     //    world.camera.scale += (Math.random()-0.5) * 0.003;
         //sp2.rotationY += 0.05;
     }
