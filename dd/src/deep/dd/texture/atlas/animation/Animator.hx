@@ -2,7 +2,6 @@ package deep.dd.texture.atlas.animation;
 
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.display.MovieClip2D;
-import deep.dd.display.Sprite2D;
 
 class Animator extends AnimatorBase
 {
@@ -32,7 +31,6 @@ class Animator extends AnimatorBase
         {
             frameTime = 0;
 
-            var atlas = cast(sprite.texture, AtlasTexture2D);
 			var numFrames:Int = currentAnimationFrames;
 			var nextFrame:Int = currentFrame + 1;
 			if (isPlaying)
@@ -62,7 +60,6 @@ class Animator extends AnimatorBase
 	override public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
 	{
 		isPlaying = true;
-		var atlas:AtlasTexture2D = cast(sprite.texture, AtlasTexture2D);
 		
 		if (name == null) 
 		{
@@ -129,7 +126,7 @@ class Animator extends AnimatorBase
 		else
 		{
 			// Assume that frame is String
-			var frames:Array<Frame> = (activeAnimation != null) ? activeAnimation.frames : cast(sprite.texture, AtlasTexture2D).frames;
+			var frames:Array<Frame> = (activeAnimation != null) ? activeAnimation.frames : atlas.frames;
 			
 			var frameFound:Bool = false;
 			for (i in 0...(frames.length))
@@ -154,12 +151,12 @@ class Animator extends AnimatorBase
 	function get_currentFrameLabel():String
 	{
 		var frameNum:Int = (currentFrame < 0) ? 0 : currentFrame;
-		return cast(sprite.texture, AtlasTexture2D).frames[frameNum].name;
+		return atlas.frames[frameNum].name;
 	}
 	
 	function get_totalFrames():Int
 	{
-		return cast(sprite.texture, AtlasTexture2D).frames.length;
+		return atlas.frames.length;
 	}
 	
 	function get_currentAnimationFrames():Int

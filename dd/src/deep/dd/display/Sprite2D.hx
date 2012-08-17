@@ -1,6 +1,7 @@
 package deep.dd.display;
 
 import deep.dd.texture.atlas.animation.AnimatorBase;
+import deep.dd.texture.atlas.AtlasTexture2D;
 import flash.geom.Matrix3D;
 import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
@@ -102,6 +103,8 @@ class Sprite2D extends DisplayNode2D
             texture.borderChange.add(onBorderChange);
             if (ctx != null) texture.init(ctx);
             if (geometry != null) geometry.resize(texture.width, texture.height);
+			
+			if (Std.is(texture, AtlasTexture2D) && animator != null) animator.atlas = cast(texture, AtlasTexture2D);
         }
 
         invalidateDrawTransform = true;
@@ -117,11 +120,11 @@ class Sprite2D extends DisplayNode2D
 
     function set_animator(v)
     {
-        if (animator != null) animator.sprite = null;
+        //if (animator != null) animator.sprite = null;
 
         animator = v;
 
-        if (animator != null) animator.sprite = this;
+        if (animator != null && Std.is(texture, AtlasTexture2D)) animator.atlas = cast(texture, AtlasTexture2D);
 
         return animator;
     }

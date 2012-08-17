@@ -1,10 +1,10 @@
 package deep.dd.texture.atlas.animation;
 
-import deep.dd.display.Sprite2D;
+import deep.dd.texture.atlas.AtlasTexture2D;
 
 class AnimatorBase
 {
-    public var sprite:Sprite2D;
+    public var atlas:AtlasTexture2D;
 	public var activeAnimation:Animation;
 
     // private constructor
@@ -51,7 +51,7 @@ class AnimatorBase
 
     public function dispose():Void
     {
-        sprite = null;
+        atlas = null;
 		activeAnimation = null;
     }
 }
