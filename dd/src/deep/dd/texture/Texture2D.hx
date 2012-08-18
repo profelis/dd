@@ -173,7 +173,6 @@ class Texture2D
         {
             if (bitmapData != null && releaseBitmap) bitmapData.dispose();
             bitmapData = null;
-            Reflect.setField(this, "border", null);
             Reflect.setField(this, "frame", null);
         }
         else

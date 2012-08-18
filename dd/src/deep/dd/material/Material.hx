@@ -99,12 +99,12 @@ class Material
 
     public function draw(node:DisplayNode2D, camera:Camera2D)
     {
-        ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
-
         #if dd_stat
         node.world.statistics.drawCalls ++;
         node.world.statistics.triangles += node.geometry.triangles;
         #end
+
+        ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 
         shader.draw(node.geometry.vbuf, node.geometry.ibuf);
     }

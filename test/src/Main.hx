@@ -60,13 +60,13 @@ class Main
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
         var rots = [0.0, 30, 60, 90, 120];
-        for (x in 0...10)
-            for (y in 0...5)
+        for (x in 0...20)
+            for (y in 0...20)
             {
                 var s = new Sprite2D();
                 c.push(s);
                 b.addChild(s);
-                s.x = x * 100;
+                s.x = x * 50;
                 s.y = y * 100;
             }
 
