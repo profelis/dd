@@ -64,22 +64,22 @@ class Main
 	//	cast(mc.animator, Animator).playAnimation(null, 3, false);
 
 	//	cast(mc.animator, Animator).gotoFrame(5);
-        /*
+          /*
 		var mc2 = new MovieClip2D();
 		mc2.fps = 25;
 		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc2.texture = st;
 		world.scene.addChild(mc2);
+          */
 
-        */
         var b = new Batch2D();
         scene.addChild(b);
         //b.texture = world.cache.getTexture(Image);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
         var rots = [0.0, 30, 60, 90, 120];
-        for (x in 0...15)
-            for (y in 0...15)
+        for (x in 0...7)
+            for (y in 0...5)
             {
                 var s = new Sprite2D();
                 b.addChild(s);

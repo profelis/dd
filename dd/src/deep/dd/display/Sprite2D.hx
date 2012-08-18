@@ -57,18 +57,20 @@ class Sprite2D extends DisplayNode2D
         super.init(ctx);
     }
 
+    var lastFrame:Frame;
+
     override public function drawStep(camera:Camera2D):Void
     {
         if (texture != null)
         {
             if (animator != null) animator.draw(scene.time);
 
-            if (texture.needUpdate)
+            if (lastFrame != texture.frame)
             {
-                texture.update();
                 invalidateDrawTransform = true;
-                _width = texture.width;
-                _height = texture.height;
+                lastFrame = texture.frame;
+                _width = lastFrame.width;
+                _height = lastFrame.height;
             }
         }
 
@@ -89,7 +91,7 @@ class Sprite2D extends DisplayNode2D
 
     public function updateDrawTransform()
     {
-        drawTransform.rawData = texture.drawMatrix.rawData;
+        drawTransform.rawData = lastFrame.drawMatrix.rawData;
         drawTransform.append(worldTransform);
 
         invalidateDrawTransform = false;
