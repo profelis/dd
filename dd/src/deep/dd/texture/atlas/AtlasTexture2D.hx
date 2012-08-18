@@ -90,7 +90,56 @@ class AtlasTexture2D extends SubTexture2D
 	
 	public function getAnimation(name:String):Animation
 	{
-		return animationMap.get(name);
+		var anim:Animation = animationMap.get(name);
+		if (anim != null) return anim;
+		
+		var animFrames:Array<Frame> = [];
+		for (fr in frames)
+		{
+			if (StringTools.startsWith(fr.name, name)) animFrames.push(fr);
+		}
+		
+		if (animFrames.length > 0)
+		{
+			AtlasTexture2D.sortPrefix = name;
+			AtlasTexture2D.sortFramesInAnimation(animFrames);
+			anim = new Animation(animFrames);
+			animationMap.set(name, anim);
+			for (fr in anim.frames)
+			{
+				trace("fr.name = " + fr.name);
+				trace("fr.region = " + fr.region);
+			}
+			return anim;
+		}
+		
+		return null;
+	}
+	
+	static function sortFramesInAnimation(animFrames:Array<Frame>):Array<Frame>
+	{
+		animFrames.sort(AtlasTexture2D.frameSortFunction);
+		return animFrames;
+	}
+	
+	// I know that it is a bad practice to use such global variable, but it makes sorting a lot easier
+	static var sortPrefix:String;
+	
+	static function frameSortFunction(frame1:Frame, frame2:Frame):Int
+	{
+		var num1:Int = Std.parseInt(StringTools.replace(frame1.name, AtlasTexture2D.sortPrefix, ""));
+		var num2:Int = Std.parseInt(StringTools.replace(frame2.name, AtlasTexture2D.sortPrefix, ""));
+		
+		if (num1 > num2)
+		{
+			return 1;
+		}
+		else if (num2 < num1)
+		{
+			return -1;
+		}
+		
+		return 0;
 	}
 	
 	override public function dispose():Void 

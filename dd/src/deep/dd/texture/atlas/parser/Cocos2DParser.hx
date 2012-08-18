@@ -7,7 +7,8 @@ import flash.geom.Point;
 import deep.dd.texture.atlas.AtlasTexture2D;
 
 /**
-* Parser for texture atlases in Starling format
+* Parser for texture atlases in Cocos2D format.
+* Cocos2D-original format isn't supported. So use cocos2D or cocos2D-0.99.4
 **/
 class Cocos2DParser implements IAtlasParser
 {
@@ -212,7 +213,7 @@ class Cocos2DParser implements IAtlasParser
 							}
 							else
 							{
-								throw "Unsupported version of Cocos2D texture atlas format";
+								throw "Cocos2D-original format isn't supported";
 							}
 						}
 					}

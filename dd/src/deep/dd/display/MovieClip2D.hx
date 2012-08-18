@@ -4,6 +4,7 @@ import deep.dd.texture.atlas.animation.Animator;
 import deep.dd.texture.atlas.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.geometry.Geometry;
+import deep.dd.texture.atlas.AtlasTexture2D;
 
 class MovieClip2D extends Sprite2D
 {
@@ -23,6 +24,11 @@ class MovieClip2D extends Sprite2D
         anim = cast v;
         return super.set_animator(v);
     }
+	
+	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Void
+	{
+		cast(texture, AtlasTexture2D).addAnimation(name, keyFrames);
+	}
 	
 	public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
 	{
