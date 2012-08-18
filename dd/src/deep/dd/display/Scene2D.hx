@@ -22,7 +22,6 @@ class Scene2D extends Node2D
         if (!visible) return;
 
         time = flash.Lib.getTimer() * 0.001 * timeScale;
-        super.draw(camera);
     }
 
     override public function dispose():Void

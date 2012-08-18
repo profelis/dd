@@ -50,8 +50,6 @@ class DisplayNode2D extends Node2D
             if (geometry.needUpdate) geometry.update();
             material.draw(this, camera);
         }
-
-        super.draw(camera);
     }
 	
 	override public function dispose():Void 

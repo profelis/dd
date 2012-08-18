@@ -137,6 +137,6 @@ class BatchTest
 
     static function main()
     {
-        new Main();
+        new BatchTest();
     }
 }

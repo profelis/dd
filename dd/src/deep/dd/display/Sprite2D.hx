@@ -78,9 +78,9 @@ class Sprite2D extends DisplayNode2D
                 _width = frame.width;
                 _height = frame.height;
             }
-        }
 
-        if (invalidateWorldTransform || invalidateTransform) invalidateDrawTransform = true;
+            if (invalidateWorldTransform || invalidateTransform) invalidateDrawTransform = true;
+        }
 
         super.drawStep(camera);
     }
@@ -88,11 +88,12 @@ class Sprite2D extends DisplayNode2D
 
     override public function draw(camera:Camera2D):Void
     {
-        if (texture == null) return;
+        if (texture != null)
+        {
+            if (invalidateDrawTransform) updateDrawTransform();
 
-        if (invalidateDrawTransform) updateDrawTransform();
-
-        super.draw(camera);
+            super.draw(camera);
+        }
     }
 
     public function updateDrawTransform()

@@ -225,6 +225,7 @@ class Node2D
 
     public function draw(camera:Camera2D):Void
     {
+        throw "override me";
     }
 
     // transform
