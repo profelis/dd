@@ -10,7 +10,8 @@ import flash.geom.Matrix3D;
 import flash.Vector;
 import deep.dd.camera.Camera2D;
 import deep.dd.material.Material;
-import deep.dd.texture.atlas.animation.AnimatorBase;
+import deep.dd.material.batch2d.Batch2DMaterial;
+import deep.dd.animation.AnimatorBase;
 import deep.dd.geometry.Geometry;
 
 class Batch2D extends Sprite2D
@@ -46,7 +47,7 @@ class Batch2D extends Sprite2D
 
     override public function drawStep(camera:Camera2D):Void
     {
-        if (mat == null || texture == null)
+        if (mat == null)
         {
             super.drawStep(camera);
             return;
@@ -59,7 +60,7 @@ class Batch2D extends Sprite2D
             if (animator != null)
             {
                 animator.draw(scene.time);
-                f = animator.frame;
+                f = animator.textureFrame;
             }
 
             if (frame != f)

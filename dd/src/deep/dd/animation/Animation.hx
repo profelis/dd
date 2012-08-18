@@ -1,5 +1,6 @@
-package deep.dd.texture.atlas.animation;
+package deep.dd.animation;
 
+import deep.dd.texture.Frame;
 import deep.dd.texture.Texture2D;
 /**
  * ...
@@ -10,11 +11,13 @@ class Animation
 {
 	public var frames:Array<Frame>;
 	public var numFrames:Int;
+	public var name:String;
 	
-	public function new(frames:Array<Frame>) 
+	public function new(frames:Array<Frame>, name:String) 
 	{
 		this.frames = frames;
 		this.numFrames = frames.length;
+		this.name = name;
 	}
 	
 	public function dispose():Void

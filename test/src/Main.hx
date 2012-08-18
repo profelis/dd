@@ -1,19 +1,13 @@
 package ;
-
-import deep.dd.display.Cloud2D;
-import flash.geom.Vector3D;
-import deep.dd.texture.atlas.parser.SpriteSheetParser;
-import com.fermmmtools.debug.Stats;
-import deep.dd.texture.atlas.animation.Animator;
-import deep.dd.display.Batch2D;
-import deep.dd.texture.atlas.parser.StarlingParser;
-import deep.dd.texture.atlas.AtlasTexture2D;
+import deep.dd.animation.Animator;
 import deep.dd.display.MovieClip2D;
-import deep.dd.display.Quad2D;
-import deep.dd.utils.GlobalStatistics;
+import deep.dd.texture.atlas.AtlasTexture2D;
+import deep.dd.texture.atlas.parser.Cocos2DParser;
+import deep.dd.texture.atlas.parser.StarlingParser;
 import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
 import deep.dd.display.Sprite2D;
+import deep.dd.display.Batch2D;
 import flash.utils.ByteArray;
 import deep.dd.texture.Texture2D;
 import flash.display.BitmapData;
@@ -30,6 +24,9 @@ import flash.events.Event;
 @:bitmap("atlas1/text.png") class Image extends BitmapData {}
 @:file("atlas1/text.atlas") class Atlas extends ByteArray { }
 
+@:bitmap("otherAtlases/textureatlas_cocos2d_allformats.png") class Cocos2DAtlasImage extends BitmapData {}
+@:file("otherAtlases/textureatlas_cocos2d.plist") class Cocos2DAtlasData extends ByteArray { }
+
 @:bitmap("starlingAtlas/atlas.png") class StarlingAtlasImage extends BitmapData {}
 @:file("starlingAtlas/atlas.xml") class StarlingAtlasData extends ByteArray {}
 
@@ -38,16 +35,14 @@ class Main
 
     var world:World2D;
     var scene:Scene2D;
-
-    var it:Array<Sprite2D>;
+	private var mc2:MovieClip2D;
+	private var mc3:MovieClip2D;
 
     public function new()
     {
         var s = flash.Lib.current.stage;
         s.scaleMode = StageScaleMode.NO_SCALE;
         s.align = StageAlign.TOP_LEFT;
-
-        s.addChild(new Stats());
 
         world = new World2D(Context3DRenderMode.AUTO);
 
@@ -56,29 +51,67 @@ class Main
 		world.antialiasing = 2;
         world.bgColor.fromInt(0x666666);
 
-        var c = new Cloud2D(225);
-        c.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40));
-        c.animator = new Animator(10);
-        scene.addChild(c);
+        //sp2 = new Node2D();
+        //scene.addChild(sp2);
 
-        it = [];
-        for (x in 0...15)
-        for (y in 0...15)
+        /*var q = new Quad2D();
+        q.color = 0xFF0000;
+        q.width = 100;
+        q.height = 100;
+        scene.addChild(q);  */
+
+        //s.tex
+	//	cast(mc.texture, AtlasTexture2D).addAnimation("idle", [0]);
+	//	cast(mc.animator, Animator).playAnimation("idle", 0);
+	//	cast(mc.animator, Animator).playAnimation(null, 3, false);
+
+	//	cast(mc.animator, Animator).gotoFrame(5);
+	
+		mc2 = new MovieClip2D();
+		mc2.fps = 25;
+		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
+		mc2.texture = st;
+		world.scene.addChild(mc2);
+		//cast(mc2.animator, Animator).stop();
+
+		mc3 = new MovieClip2D();
+	//	mc3.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
+		mc3.animator = mc2.animator.copy();
+        mc3.fps = 5;
+        mc3.playAnimation();
+	//	cast(mc3.animator, Animator).stop();
+		mc3.x = 300;
+		world.scene.addChild(mc3);
+		
+		var mc4:MovieClip2D = new MovieClip2D();
+		mc4.fps = 12;
+		var cocosAtlas = new AtlasTexture2D(world.cache.getTexture(Cocos2DAtlasImage), new Cocos2DParser(Xml.parse(Std.string(new Cocos2DAtlasData()))));
+		mc4.texture = cocosAtlas;
+		mc4.y = 200;
+		world.scene.addChild(mc4);
+		
+        /*var b = new Batch2D();
+        scene.addChild(b);
+        b.texture = world.cache.getTexture(Image);
+        var rots = [0.0, 30, 60, 90, 120];
+        for (i in 0...5)
         {
             var s = new Sprite2D();
-            it.push(s);
-            c.addChild(s);
-            s.pivot = new Vector3D(20, 20, 0);
-            s.x = x * 40 + 20;
-            s.y = y * 40 + 20;
-        }
+            b.addChild(s);
+            s.x = i * 128;
+            //s.y = i * 50;
+            //s.rotationZ = rots[i];
+            //s.colorTransform = new Color(Math.random(),Math.random(),Math.random(), 1);
+        }*/
 
-        var q = new Quad2D();
-        q.width = 30;
-        q.height = 30;
-        q.alpha = 0.5;
-        c.addChild(q);
+       /* mc = new MovieClip2D();
+        mc.fps = 5;
+        mc.scaleX = mc.scaleY = 5;
+        mc.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 5));
+        mc.colorTransform = new Color(1, 0, 0, 1);
+        mc.y = 200;
 
+        world.scene.addChild(mc);*/
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 
@@ -88,15 +121,16 @@ class Main
     function onClick(_)
     {
         //world.ctx.dispose();
+		//mc.animator.playAnimation(null);
+		
     }
 
     function onRender(_)
     {
-        for (i in it) i.rotationY ++;
-
-        trace(GlobalStatistics.stats.get(world.ctx));
-        trace(world.statistics);
-        //world.camera.x = -world.stage.mouseX;
+       trace(cast(mc2.animator, Animator).isPlaying);
+       trace(mc2.frame);
+		
+		//world.camera.x = -world.stage.mouseX;
         //world.camera.y = -world.stage.mouseY;
     //    world.camera.scale += (Math.random()-0.5) * 0.003;
         //sp2.rotationY += 0.05;

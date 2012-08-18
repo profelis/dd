@@ -1,9 +1,11 @@
 package deep.dd.display;
 
-import deep.dd.texture.atlas.animation.Animator;
-import deep.dd.texture.atlas.animation.AnimatorBase;
+import deep.dd.animation.Animation;
+import deep.dd.animation.Animator;
+import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.geometry.Geometry;
+import deep.dd.texture.atlas.AtlasTexture2D;
 
 class MovieClip2D extends Sprite2D
 {
@@ -23,6 +25,11 @@ class MovieClip2D extends Sprite2D
         anim = cast v;
         return super.set_animator(v);
     }
+	
+	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Animation
+	{
+		return cast(texture, AtlasTexture2D).addAnimation(name, keyFrames);
+	}
 	
 	public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
 	{
@@ -62,11 +69,11 @@ class MovieClip2D extends Sprite2D
         return anim.fps = fps = v;
     }
 	
-	public var currentFrameLabel(get_currentFrameLabel, null):String;
+	public var frameLabel(get_frameLabel, null):String;
 	
-	function get_currentFrameLabel():String
+	function get_frameLabel():String
 	{
-		return anim.currentFrameLabel;
+		return anim.frameLabel;
 	}
 	
 	public var totalFrames(get_totalFrames, null):Int;
@@ -76,17 +83,24 @@ class MovieClip2D extends Sprite2D
 		return anim.totalFrames;
 	}
 	
-	public var currentAnimationFrames(get_currentAnimationFrames, null):Int;
+	public var animationFrames(get_animationFrames, null):Int;
 	
-	function get_currentAnimationFrames():Int
+	function get_animationFrames():Int
 	{
-		return anim.currentAnimationFrames;
+		return anim.animationFrames;
 	}
 	
-	public var currentFrame(get_currentFrame, null):Int;
+	public var animationName(get_animationName, null):String;
 	
-	function get_currentFrame():Int
+	function get_animationName():String
 	{
-		return anim.currentFrame;
+		return anim.animationName;
+	}
+	
+	public var animationFrame(get_animationFrame, null):Int;
+	
+	function get_animationFrame():Int
+	{
+		return anim.frame;
 	}
 }

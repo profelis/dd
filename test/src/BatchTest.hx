@@ -1,9 +1,9 @@
 package ;
 
+import deep.dd.animation.Animator;
 import flash.geom.Vector3D;
 import deep.dd.texture.atlas.parser.SpriteSheetParser;
 import com.fermmmtools.debug.Stats;
-import deep.dd.texture.atlas.animation.Animator;
 import deep.dd.display.Batch2D;
 import deep.dd.texture.atlas.parser.StarlingParser;
 import deep.dd.texture.atlas.AtlasTexture2D;

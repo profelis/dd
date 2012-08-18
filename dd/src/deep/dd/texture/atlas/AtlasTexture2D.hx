@@ -1,6 +1,6 @@
 package deep.dd.texture.atlas;
 
-import deep.dd.texture.atlas.animation.Animation;
+import deep.dd.animation.Animation;
 import flash.geom.Rectangle;
 import flash.geom.Point;
 import flash.geom.Vector3D;
@@ -9,7 +9,6 @@ import deep.dd.texture.Texture2D;
 
 class AtlasTexture2D extends SubTexture2D
 {
-
     public var frames(default, null):Array<Frame>;
 
 	var animationMap:Hash<Animation>;
@@ -50,7 +49,7 @@ class AtlasTexture2D extends SubTexture2D
         return res;
     }
 
-	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Void
+	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Animation
 	{
 		#if debug
 		if (animationMap.exists(name)) throw ("Animation " + name + "  already exist");
@@ -69,7 +68,7 @@ class AtlasTexture2D extends SubTexture2D
 			}
 			else
 			{
-				// we have string key
+				// we have a string key
 				var frameFound:Bool = false;
 				for (fr in frames)
 				{
@@ -85,12 +84,57 @@ class AtlasTexture2D extends SubTexture2D
 			}
 		}
 		
-		animationMap.set(name, new Animation(framesToAdd));
+		var anim:Animation = new Animation(framesToAdd, name);
+		animationMap.set(name, anim);
+		return anim;
 	}
 	
 	public function getAnimation(name:String):Animation
 	{
-		return animationMap.get(name);
+		var anim:Animation = animationMap.get(name);
+		if (anim != null) return anim;
+		
+		var animFrames:Array<Frame> = [];
+		for (fr in frames)
+		{
+			if (StringTools.startsWith(fr.name, name)) animFrames.push(fr);
+		}
+		
+		if (animFrames.length > 0)
+		{
+			AtlasTexture2D.sortPrefix = name;
+			AtlasTexture2D.sortFramesInAnimation(animFrames);
+			anim = new Animation(animFrames, name);
+			animationMap.set(name, anim);
+		}
+		
+		return anim;
+	}
+	
+	static function sortFramesInAnimation(animFrames:Array<Frame>):Array<Frame>
+	{
+		animFrames.sort(AtlasTexture2D.frameSortFunction);
+		return animFrames;
+	}
+	
+	// I know that it is a bad practice to use such global variable, but it makes sorting a lot easier
+	static var sortPrefix:String;
+	
+	static function frameSortFunction(frame1:Frame, frame2:Frame):Int
+	{
+		var num1:Int = Std.parseInt(StringTools.replace(frame1.name, AtlasTexture2D.sortPrefix, ""));
+		var num2:Int = Std.parseInt(StringTools.replace(frame2.name, AtlasTexture2D.sortPrefix, ""));
+		
+		if (num1 > num2)
+		{
+			return 1;
+		}
+		else if (num2 > num1)
+		{
+			return -1;
+		}
+		
+		return 0;
 	}
 	
 	override public function dispose():Void 

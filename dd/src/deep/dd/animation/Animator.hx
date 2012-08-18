@@ -1,5 +1,6 @@
-package deep.dd.texture.atlas.animation;
+package deep.dd.animation;
 
+import deep.dd.texture.Frame;
 import deep.dd.texture.Texture2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.display.MovieClip2D;
@@ -7,13 +8,14 @@ import deep.dd.display.MovieClip2D;
 class Animator extends AnimatorBase
 {
     public var fps:Float = 30;
-	public var currentFrame(default, null):Int = 0;
-	public var currentFrameLabel(get_currentFrameLabel, null):String;
+	public var frame(default, null):Int = 0;
+	public var frameLabel(get_frameLabel, null):String;
 	public var isPlaying(default, null):Bool = true;
 	public var totalFrames(get_totalFrames, null):Int;
-	public var currentAnimationFrames(get_currentAnimationFrames, null):Int;
-	public var activeAnimation:Animation;
+	public var animationFrames(get_animationFrames, null):Int;
+	public var animationName(get_animationName, null):String;
 	
+	var animation:Animation;
 	var loop:Bool = true;
 
     var frameTime:Float = 0;
@@ -33,13 +35,13 @@ class Animator extends AnimatorBase
         {
             frameTime = 0;
 
-			var numFrames:Int = currentAnimationFrames;
-			var nextFrame:Int = currentFrame + 1;
+			var numFrames:Int = animationFrames;
+			var nextFrame:Int = frame + 1;
 			if (isPlaying)
 			{
 				if (loop || nextFrame < numFrames) 
 				{
-					currentFrame = nextFrame % numFrames;
+					frame = nextFrame % numFrames;
 					isPlaying = true;
 				}
 				else
@@ -48,7 +50,7 @@ class Animator extends AnimatorBase
 				}
 			}
 			
-            frame = atlas.frames[currentFrame];
+            textureFrame = (animation != null) ? animation.frames[frame] : atlas.frames[frame];
         }
     }
 	
@@ -65,14 +67,14 @@ class Animator extends AnimatorBase
 		
 		if (name == null) 
 		{
-			activeAnimation = null;
+			animation = null;
 			#if debug
 			if (atlas.frames.length <= startIdx)
 			{
 				throw "Number of frames in this AtlasTexture2D objects is less or equal to startIdx parameter";
 			}
 			#end
-			if (restart) currentFrame = startIdx;
+			if (restart) frame = startIdx;
 			this.loop = loop;
 			return;
 		}
@@ -90,28 +92,28 @@ class Animator extends AnimatorBase
 		}
 		#end
 		
-		if (restart || activeAnimation != anim)
+		if (restart || animation != anim)
 		{
-			currentFrame = startIdx;
-			activeAnimation = anim;
+			frame = startIdx;
+			animation = anim;
 		}
 		this.loop = loop;
 	}
 	
 	public function stop():Void
 	{
-		if (currentFrame < 0) currentFrame = 0;
+		if (frame < 0) frame = 0;
 		isPlaying = false;
 	}
 	
 	public function nextFrame():Void 
 	{
-		gotoFrame(currentFrame + 1);
+		gotoFrame(frame + 1);
 	}
 	
 	public function prevFrame():Void 
 	{
-		gotoFrame(currentFrame - 1);
+		gotoFrame(frame - 1);
 	}
 	
 	
@@ -119,12 +121,12 @@ class Animator extends AnimatorBase
 	{
 		if (Std.is(frame, Int))
 		{
-			if (frame > 0 && frame < currentAnimationFrames) currentFrame = frame;
+			if (frame > 0 && frame < animationFrames) this.frame = frame;
 		}
 		else
 		{
 			// Assume that frame is String
-			var frames:Array<Frame> = (activeAnimation != null) ? activeAnimation.frames : atlas.frames;
+			var frames:Array<Frame> = (animation != null) ? animation.frames : atlas.frames;
 			
 			var frameFound:Bool = false;
 			for (i in 0...(frames.length))
@@ -132,7 +134,7 @@ class Animator extends AnimatorBase
 				if (frames[i].name == frame)
 				{
 					frameFound = true;
-					currentFrame = i;
+					this.frame = i;
 				}
 			}
 			
@@ -144,9 +146,9 @@ class Animator extends AnimatorBase
 		stop();
 	}
 	
-	function get_currentFrameLabel():String
+	function get_frameLabel():String
 	{
-		return atlas.frames[currentFrame].name;
+		return atlas.frames[frame].name;
 	}
 	
 	function get_totalFrames():Int
@@ -154,22 +156,37 @@ class Animator extends AnimatorBase
 		return atlas.frames.length;
 	}
 	
-	function get_currentAnimationFrames():Int
+	function get_animationFrames():Int
 	{
-		if (activeAnimation != null)
+		if (animation != null)
 		{
-			return activeAnimation.frames.length;
+			return animation.frames.length;
 		}
 		
 		return totalFrames;
+	}
+	
+	function get_animationName():String
+	{
+		return (animation != null) ? animation.name : "";
+	}
+	
+	override private function set_atlas(atl:AtlasTexture2D):AtlasTexture2D 
+	{
+		if (atl != null) animation = null;
+		frame = 0;
+		loop = true;
+		isPlaying = true;
+		return super.set_atlas(atl);
 	}
 
     override public function copy():AnimatorBase
     {
         var res:Animator = new Animator(fps);
 		res.atlas = atlas;
-		res.activeAnimation = activeAnimation;
-		Reflect.setField(res, "currentFrame", currentFrame);
+		res.textureFrame = textureFrame;
+		Reflect.setField(res, "animation", animation);
+		Reflect.setField(res, "frame", frame);
 		Reflect.setField(res, "loop", loop);
 		if (!isPlaying) res.stop();
 
@@ -179,7 +196,7 @@ class Animator extends AnimatorBase
 	override public function dispose():Void 
 	{
 		super.dispose();
-		activeAnimation = null;
+		animation = null;
 	}
 
 }
