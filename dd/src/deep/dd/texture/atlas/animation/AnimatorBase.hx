@@ -5,7 +5,7 @@ import deep.dd.texture.atlas.AtlasTexture2D;
 
 class AnimatorBase
 {
-    public var atlas:AtlasTexture2D;
+    public var atlas(default, set_atlas):AtlasTexture2D;
 
     // override default texture2d frame
     public var frame(default, null):Frame;
@@ -29,6 +29,16 @@ class AnimatorBase
 
     public function dispose():Void
     {
-        atlas = null;
+        Reflect.setField(this, "atlas", null);
     }
+	
+	function set_atlas(atl:AtlasTexture2D):AtlasTexture2D
+	{
+		atlas = atl;
+		if (atl != null)
+		{
+			frame = atl.frames[0];
+		}
+		return atl;
+	}
 }
