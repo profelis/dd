@@ -126,8 +126,18 @@ class Sprite2D extends DisplayNode2D
         //if (animator != null) animator.atlas = null;
 
         animator = v;
-
-        if (animator != null && Std.is(texture, AtlasTexture2D)) animator.atlas = cast(texture, AtlasTexture2D);
+		
+		if (animator != null)
+		{
+			if (animator.atlas != null)
+			{
+				texture = animator.atlas;
+			}
+			else if (Std.is(texture, AtlasTexture2D))
+			{
+				animator.atlas = cast(texture, AtlasTexture2D);
+			}
+		}
 
         return animator;
     }

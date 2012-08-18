@@ -7,11 +7,12 @@ import deep.dd.display.MovieClip2D;
 class Animator extends AnimatorBase
 {
     public var fps:Float = 30;
-	public var currentFrame(default, null):Int = -1;
+	public var currentFrame(default, null):Int = 0;
 	public var currentFrameLabel(get_currentFrameLabel, null):String;
 	public var isPlaying(default, null):Bool = true;
 	public var totalFrames(get_totalFrames, null):Int;
 	public var currentAnimationFrames(get_currentAnimationFrames, null):Int;
+	public var activeAnimation:Animation;
 	
 	var loop:Bool = true;
 
@@ -58,7 +59,7 @@ class Animator extends AnimatorBase
 	 * @param	loop		set looping of animation. If true then animation will be repeating all the time
 	 * @param	restart		this parameter will force animation to restart
 	 */
-	override public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
+	public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
 	{
 		isPlaying = true;
 		
@@ -71,7 +72,7 @@ class Animator extends AnimatorBase
 				throw "Number of frames in this AtlasTexture2D objects is less or equal to startIdx parameter";
 			}
 			#end
-			if (restart) currentFrame = startIdx - 1;
+			if (restart) currentFrame = startIdx;
 			this.loop = loop;
 			return;
 		}
@@ -91,35 +92,31 @@ class Animator extends AnimatorBase
 		
 		if (restart || activeAnimation != anim)
 		{
-			currentFrame = startIdx - 1;
+			currentFrame = startIdx;
 			activeAnimation = anim;
-			this.loop = loop;
 		}
+		this.loop = loop;
 	}
 	
-	override public function stop():Void
+	public function stop():Void
 	{
 		if (currentFrame < 0) currentFrame = 0;
 		isPlaying = false;
 	}
 	
-	override public function nextFrame():Void 
+	public function nextFrame():Void 
 	{
-		super.nextFrame();
 		gotoFrame(currentFrame + 1);
 	}
 	
-	override public function prevFrame():Void 
+	public function prevFrame():Void 
 	{
-		super.prevFrame();
 		gotoFrame(currentFrame - 1);
 	}
 	
 	
-	override public function gotoFrame(frame:Dynamic):Void 
+	public function gotoFrame(frame:Dynamic):Void 
 	{
-		super.gotoFrame(frame);
-		
 		if (Std.is(frame, Int))
 		{
 			if (frame > 0 && frame < currentAnimationFrames) currentFrame = frame;
@@ -147,12 +144,9 @@ class Animator extends AnimatorBase
 		stop();
 	}
 	
-	// TODO: gotoFrame() (analogue of gotoAndStop())
-	
 	function get_currentFrameLabel():String
 	{
-		var frameNum:Int = (currentFrame < 0) ? 0 : currentFrame;
-		return atlas.frames[frameNum].name;
+		return atlas.frames[currentFrame].name;
 	}
 	
 	function get_totalFrames():Int
@@ -172,9 +166,20 @@ class Animator extends AnimatorBase
 
     override public function copy():AnimatorBase
     {
-        var res = new Animator(fps);
+        var res:Animator = new Animator(fps);
+		res.atlas = atlas;
+		res.activeAnimation = activeAnimation;
+		Reflect.setField(res, "currentFrame", currentFrame);
+		Reflect.setField(res, "loop", loop);
+		if (!isPlaying) res.stop();
 
         return res;
     }
+	
+	override public function dispose():Void 
+	{
+		super.dispose();
+		activeAnimation = null;
+	}
 
 }

@@ -14,6 +14,37 @@ class MovieClip2D extends Sprite2D
         super();
         animator = anim = new Animator();
     }
+	
+	public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
+	{
+		anim.playAnimation(name, startIdx, loop, restart);
+	}
+	
+	public function stop():Void
+	{
+		anim.stop();
+	}
+	
+	public function nextFrame():Void 
+	{
+		anim.nextFrame();
+	}
+	
+	public function prevFrame():Void 
+	{
+		anim.prevFrame();
+	}
+	
+	public function gotoFrame(frame:Dynamic):Void 
+	{
+		anim.gotoFrame(frame);
+	}
+	
+	override public function dispose():Void 
+	{
+		super.dispose();
+		anim = null;
+	}
 
     public var fps(default, set_fps):Float;
 
@@ -21,4 +52,32 @@ class MovieClip2D extends Sprite2D
     {
         return anim.fps = fps = v;
     }
+	
+	public var currentFrameLabel(get_currentFrameLabel, null):String;
+	
+	function get_currentFrameLabel():String
+	{
+		return anim.currentFrameLabel;
+	}
+	
+	public var totalFrames(get_totalFrames, null):Int;
+	
+	function get_totalFrames():Int
+	{
+		return anim.totalFrames;
+	}
+	
+	public var currentAnimationFrames(get_currentAnimationFrames, null):Int;
+	
+	function get_currentAnimationFrames():Int
+	{
+		return anim.currentAnimationFrames;
+	}
+	
+	public var currentFrame(get_currentFrame, null):Int;
+	
+	function get_currentFrame():Int
+	{
+		return anim.currentFrame;
+	}
 }
