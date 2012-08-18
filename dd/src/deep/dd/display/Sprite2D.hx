@@ -2,7 +2,7 @@ package deep.dd.display;
 
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.material.Material;
-import deep.dd.texture.atlas.animation.AnimatorBase;
+import deep.dd.animation.AnimatorBase;
 import flash.geom.Matrix3D;
 import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
@@ -67,7 +67,7 @@ class Sprite2D extends DisplayNode2D
             if (animator != null)
             {
                 animator.draw(scene.time);
-                f = animator.frame;
+                f = animator.textureFrame;
             }
 
             if (frame != f)

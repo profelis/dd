@@ -1,6 +1,6 @@
 package deep.dd.texture.atlas;
 
-import deep.dd.texture.atlas.animation.Animation;
+import deep.dd.animation.Animation;
 import flash.geom.Rectangle;
 import flash.geom.Point;
 import flash.geom.Vector3D;
@@ -9,7 +9,6 @@ import deep.dd.texture.Texture2D;
 
 class AtlasTexture2D extends SubTexture2D
 {
-
     public var frames(default, null):Array<Frame>;
 
 	var animationMap:Hash<Animation>;
