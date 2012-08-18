@@ -41,43 +41,14 @@ class Cocos2DParser implements IAtlasParser
 						findMetadata(nodeChild);
 						#end
 						
-						frames = findFrames(a, nodeChild);
+						var kx:Float = 1 / a.textureWidth;
+						var ky:Float = 1 / a.textureHeight;
+						frames = findFrames(nodeChild, kx, ky);
+						break;
 					}
 				}
 			}
 		}
-		
-		var kx = 1 / a.textureWidth;
-        var ky = 1 / a.textureHeight;
-		
-		/*for (node in data.elements())
-		{
-			if (node.nodeName == "TextureAtlas")
-			{
-				for (nodeChild in node.elements())
-				{
-					if (nodeChild.nodeName == "SubTexture")
-					{
-						var name:String = nodeChild.get("name");
-						var x:Int = q(nodeChild.get("x"));
-						var y:Int = q(nodeChild.get("y"));
-						var width:Int = q(nodeChild.get("width"));
-						var height:Int = q(nodeChild.get("height"));
-						var frameWidth:Int = q(nodeChild.get("frameWidth"));
-						var frameHeight:Int = q(nodeChild.get("frameHeight"));
-						var border:Rectangle = null;
-						
-						if (width != frameWidth || height != frameHeight)
-						{
-                            var frameX:Int = -q(nodeChild.get("frameX"));
-                            var frameY:Int = -q(nodeChild.get("frameY"));
-							border = new Rectangle(frameX, frameY, frameWidth, frameHeight);
-						}
-						frames.push(new Frame(width, height, new Vector3D(x * kx, y * ky, width * kx, height * ky), border, name));
-					}
-				}
-			}
-		}*/
 		
 		#if debug
 		if (frames.length == 0) throw "There is no frames in texture atlas";
@@ -89,59 +60,119 @@ class Cocos2DParser implements IAtlasParser
         return frames;
     }
 	
-	private function findFrames(a:AtlasTexture2D, xml:Xml):Array<Frame>
+	private function findFrames(xml:Xml, kx:Float, ky:Float):Array<Frame>
 	{
 		var frames:Array<Frame> = [];
-		
-		var kx:Float = 1 / a.textureWidth;
-        var ky:Float = 1 / a.textureHeight;
-		
 		var framesFound:Bool = false;
 		
 		for (node in xml.elements())
 		{
+			if (node.nodeName == "key" && node.firstChild().toString() == "metadata")
+			{
+				framesFound = false;
+				continue;
+			}
+			
 			if (!framesFound)
 			{
-				if (node.nodeName == "key" && node.firstChild().toString() == "frames")
+				if (node.nodeName == "key" && node.firstChild().toString() == "frames" && node.firstChild().toString() != "metadata")
 				{
 					framesFound = true;
 				}
 			}
 			else
 			{
-				var formatFound:Bool = false;
+				var keyFrameFound:Bool = false;
+				var frameName:String = "";
+				var frame:Frame;
 				for (nodeChild in node.elements())
 				{
-					if (!formatFound)
+					if (!keyFrameFound)
 					{
-						if (nodeChild.nodeName == "key" && nodeChild.firstChild().toString() == "format")
+						if (nodeChild.nodeName == "key")
 						{
-							formatFound = true;
+							keyFrameFound = true;
+							frameName = nodeChild.firstChild().toString();
 						}
 					}
 					else
 					{
-						if (nodeChild.nodeName == "integer")
-						{
-							var version:Int = q(nodeChild.firstChild().toString());
-							
-							if (version == 1 || version == 2) 
-							{
-							//	return;
-							}
-							else
-							{
-								throw "Unsupported version of Cocos2D texture atlas format";
-							}
-						}
+						keyFrameFound = false;
+						frames.push(parseFrameData(nodeChild, kx, ky, frameName));
 					}
 				}
-				
-				break;
 			}
 		}
 		
 		return frames;
+	}
+	
+	private function parseFrameData(xml:Xml, kx:Float, ky:Float, frameName:String):Frame
+	{
+		var frame:Frame;
+		var key:String = "";
+		var frameData:Array<Int> = [];
+		var frameOffset:Array<Int> = [];
+		var sourceSize:Array<Int> = [];
+		
+		for (node in xml.elements())
+		{
+			if (node.nodeName == "key")
+			{
+				key = node.firstChild().toString();
+			}
+			else if (key != "")
+			{
+				switch (key)
+				{
+					case "frame":
+						frameData = getSizeData(node.firstChild().toString());
+					case "offset":
+						frameOffset = getSizeData(node.firstChild().toString());
+					case "rotated":
+						#if debug
+						if (node.nodeName == "true") throw "Rotated elements not supported";
+						#end
+					case "sourceSize":
+						sourceSize = getSizeData(node.firstChild().toString());
+				}
+				
+				key = "";
+			}
+		}
+		
+		var x:Int = frameData[0];
+		var y:Int = frameData[1];
+		var width:Int = frameData[2];
+		var height:Int = frameData[3];
+		
+		var frameWidth:Int = sourceSize[0];
+		var frameHeight:Int = sourceSize[1];
+		
+		var border:Rectangle = null;
+		
+		if (width != frameWidth || height != frameHeight)
+		{
+			var frameX:Int = frameOffset[0];
+			var frameY:Int = frameOffset[1];
+			border = new Rectangle(frameX, frameY, frameWidth, frameHeight);
+		}
+		
+		frame = new Frame(width, height, new Vector3D(x * kx, y * ky, width * kx, height * ky), border, frameName);
+		return frame;
+	}
+	
+	private function getSizeData(str:String):Array<Int>
+	{
+		str = StringTools.replace(str, "{", "");
+		str = StringTools.replace(str, "}", "");
+		var strArr:Array<String> = str.split(",");
+		var intArr:Array<Int> = [];
+		for (i in 0...(strArr.length))
+		{
+			intArr.push(q(strArr[i]));
+		}
+		return intArr;
 	}
 	
 	private function findMetadata(xml:Xml) 
@@ -192,11 +223,6 @@ class Cocos2DParser implements IAtlasParser
 		}
 		
 		throw "Unrecognised XML Format";
-	}
-	
-	private function getDict(name:String, xml:Xml):Xml
-	{
-		return null;
 	}
 
     public function getPreferredSize():Point

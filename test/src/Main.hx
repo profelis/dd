@@ -2,6 +2,7 @@ package ;
 import deep.dd.display.MovieClip2D;
 import deep.dd.texture.atlas.animation.Animator;
 import deep.dd.texture.atlas.AtlasTexture2D;
+import deep.dd.texture.atlas.parser.Cocos2DParser;
 import deep.dd.texture.atlas.parser.StarlingParser;
 import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
@@ -77,11 +78,18 @@ class Main
 	//	mc3.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc3.animator = mc2.animator.copy();
         mc3.fps = 5;
-        cast(mc3.animator, Animator).playAnimation();
+        mc3.playAnimation();
 	//	cast(mc3.animator, Animator).stop();
 		mc3.x = 300;
 		world.scene.addChild(mc3);
-
+		
+		var mc4:MovieClip2D = new MovieClip2D();
+		mc4.fps = 12;
+		var cocosAtlas = new AtlasTexture2D(world.cache.getTexture(Cocos2DAtlasImage), new Cocos2DParser(Xml.parse(Std.string(new Cocos2DAtlasData()))));
+		mc4.texture = cocosAtlas;
+		mc4.y = 200;
+		world.scene.addChild(mc4);
+		
         /*var b = new Batch2D();
         scene.addChild(b);
         b.texture = world.cache.getTexture(Image);
