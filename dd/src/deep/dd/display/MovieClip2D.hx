@@ -14,6 +14,15 @@ class MovieClip2D extends Sprite2D
         super();
         animator = anim = new Animator();
     }
+
+    override function set_animator(v)
+    {
+        #if debug
+        if (!Std.is(v, Animator)) throw "animator must be Animator instance";
+        #end
+        anim = cast v;
+        return super.set_animator(v);
+    }
 	
 	public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
 	{
