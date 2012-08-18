@@ -85,7 +85,7 @@ class AtlasTexture2D extends SubTexture2D
 			}
 		}
 		
-		var anim:Animation = new Animation(framesToAdd);
+		var anim:Animation = new Animation(framesToAdd, name);
 		animationMap.set(name, anim);
 		return anim;
 	}
@@ -105,7 +105,7 @@ class AtlasTexture2D extends SubTexture2D
 		{
 			AtlasTexture2D.sortPrefix = name;
 			AtlasTexture2D.sortFramesInAnimation(animFrames);
-			anim = new Animation(animFrames);
+			anim = new Animation(animFrames, name);
 			animationMap.set(name, anim);
 		}
 		

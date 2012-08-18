@@ -12,8 +12,9 @@ class Animator extends AnimatorBase
 	public var isPlaying(default, null):Bool = true;
 	public var totalFrames(get_totalFrames, null):Int;
 	public var currentAnimationFrames(get_currentAnimationFrames, null):Int;
-	public var activeAnimation:Animation;
+	public var activeAnimationName(get_activeAnimationName, null):String;
 	
+	var activeAnimation:Animation;
 	var loop:Bool = true;
 
     var frameTime:Float = 0;
@@ -164,6 +165,11 @@ class Animator extends AnimatorBase
 		return totalFrames;
 	}
 	
+	function get_activeAnimationName():String
+	{
+		return (activeAnimation != null) ? activeAnimation.name : "";
+	}
+	
 	override private function set_atlas(atl:AtlasTexture2D):AtlasTexture2D 
 	{
 		if (atl != null) activeAnimation = null;
@@ -178,7 +184,7 @@ class Animator extends AnimatorBase
         var res:Animator = new Animator(fps);
 		res.atlas = atlas;
 		res.frame = frame;
-		res.activeAnimation = activeAnimation;
+		Reflect.setField(res, "activeAnimation", activeAnimation);
 		Reflect.setField(res, "currentFrame", currentFrame);
 		Reflect.setField(res, "loop", loop);
 		if (!isPlaying) res.stop();

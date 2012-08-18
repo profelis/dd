@@ -90,6 +90,13 @@ class MovieClip2D extends Sprite2D
 		return anim.currentAnimationFrames;
 	}
 	
+	public var activeAnimationName(get_activeAnimationName, null):String;
+	
+	function get_activeAnimationName():String
+	{
+		return anim.activeAnimationName;
+	}
+	
 	public var currentFrame(get_currentFrame, null):Int;
 	
 	function get_currentFrame():Int
