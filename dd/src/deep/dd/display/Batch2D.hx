@@ -1,5 +1,7 @@
 package deep.dd.display;
 
+import deep.dd.display.Node2D;
+import haxe.FastList;
 import mt.m3d.Color;
 import deep.dd.display.Sprite2D;
 import flash.geom.Vector3D;
@@ -32,7 +34,7 @@ class Batch2D extends Sprite2D
 
     override public function drawStep(camera:Camera2D):Void
     {
-        if (mat == null)
+        if (mat == null || texture == null)
         {
             super.drawStep(camera);
             return;
@@ -66,58 +68,87 @@ class Batch2D extends Sprite2D
         if (invalidateColorTransform) updateWorldColor();
 
         if (invalidateDrawTransform) updateDrawTransform();
-
-        if (texture != null) drawBatch(this, camera, invalidateTexture);
+        drawBatch(this, camera, invalidateTexture);
     }
 
     function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
     {
+        var batchList:FastList<Sprite2D> = new FastList<Sprite2D>();
+        var renderList:FastList<Node2D> = new FastList<Node2D>();
+
+        for (c in node.children)
+        {
+            if (!c.visible) continue;
+
+            if (Std.is(c, Batch2D))
+            {
+                renderList.add(c);
+            }
+            else if (Std.is(c, Sprite2D))
+            {
+                batchList.add(cast(c, Sprite2D));
+            }
+            else
+            {
+                renderList.add(c);
+            }
+        }
+
+        var subNodes:FastList<Sprite2D> = new FastList<Sprite2D>();
         var mpos = new Vector<Matrix3D>();
         var cTrans = new Vector<Vector3D>();
 
-        if (Std.is(node, Sprite2D))
+        for (s in batchList)
         {
-            var nodeSprite:Sprite2D = cast node;
-            for (c in node.children)
+            if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
+
+            if (s.invalidateTransform) s.updateTransform();
+            if (s.invalidateWorldTransform) s.updateWorldTransform();
+            if (s.invalidateColorTransform) s.updateWorldColor();
+
+            if (s.numChildren > 0)
             {
-                var s = cast(c, Sprite2D);
-
-                if (s == null || !s.visible) continue;
-
-                if (invalidateTexture || s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
-
-                if (s.invalidateTransform) s.updateTransform();
-                if (s.invalidateWorldTransform) s.updateWorldTransform();
-                if (s.invalidateColorTransform) s.updateWorldColor();
-
-                if (s.invalidateDrawTransform)
-                {
-                    s.drawTransform.rawData = frame.drawMatrix.rawData;
-                    s.drawTransform.append(s.worldTransform);
-
-                    s.invalidateDrawTransform = false;
-                }
-
-                mpos.push(s.drawTransform);
-                cTrans.push(s.worldColorTransform);
-
-                if (mpos.length == MAX_SIZE)
-                {
-                    mat.drawBatch(nodeSprite, camera, nodeSprite.texture, frame, mpos, cTrans);
-                    mpos.length = 0;
-                    cTrans.length = 0;
-                }
+                subNodes.add(s);
+                continue;
             }
 
-            if (mpos.length > 0)
+            if (invalidateTexture || s.invalidateDrawTransform)
             {
-                for (i in mpos.length...MAX_SIZE)
-                {
-                    mpos.push(emptyMatrix);
-                    cTrans.push(emptyColor);
-                }
-                mat.drawBatch(nodeSprite, camera, nodeSprite.texture, frame, mpos, cTrans);
+                s.drawTransform.rawData = frame.drawMatrix.rawData;
+                s.drawTransform.append(s.worldTransform);
+
+                s.invalidateDrawTransform = false;
             }
+
+            mpos.push(s.drawTransform);
+            cTrans.push(s.worldColorTransform);
+
+            if (mpos.length == MAX_SIZE)
+            {
+                mat.drawBatch(this, camera, this.texture, mpos, cTrans);
+                mpos.length = 0;
+                cTrans.length = 0;
+            }
+        }
+
+        if (mpos.length > 0)
+        {
+            for (i in mpos.length...MAX_SIZE)
+            {
+                mpos.push(emptyMatrix);
+                cTrans.push(emptyColor);
+            }
+            mat.drawBatch(this, camera, this.texture, mpos, cTrans);
+        }
+
+        for (s in renderList)
+        {
+            s.drawStep(camera);
+        }
+
+        for (s in subNodes)
+        {
+            drawBatch(s, camera, invalidateTexture);
         }
     }
 

@@ -35,6 +35,8 @@ class Node2D
 
     var children:Array<Node2D>;
 
+    public var numChildren(get_numChildren, null):UInt;
+
     var ctx:Context3D;
 
     public var transformChange(default, null):Signal0;
@@ -106,6 +108,24 @@ class Node2D
         invalidateWorldTransform = true;
     }
 
+    function setScene(s:Scene2D):Void
+    {
+        scene = s;
+        for (i in children) i.setScene(s);
+    }
+
+    function get_world():World2D
+    {
+        return scene != null ? scene.world : null;
+    }
+
+    // children
+
+    function get_numChildren()
+    {
+        return children.length;
+    }
+
     public function addChild(c:Node2D):Void
     {
         if (c.parent != null)
@@ -137,17 +157,6 @@ class Node2D
     public function iterator():Iterator<Node2D>
     {
         return children.iterator();
-    }
-
-    function setScene(s:Scene2D):Void
-    {
-        scene = s;
-        for (i in children) i.setScene(s);
-    }
-
-    function get_world():World2D
-    {
-        return scene != null ? scene.world : null;
     }
 
     public function init(ctx:Context3D):Void
