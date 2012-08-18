@@ -48,7 +48,7 @@ class Animator extends AnimatorBase
 				}
 			}
 			
-            atlas.frame = atlas.frames[currentFrame];
+            frame = atlas.frames[currentFrame];
         }
     }
 	

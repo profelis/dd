@@ -35,6 +35,7 @@ class Main
     var world:World2D;
     var scene:Scene2D;
 	private var mc2:MovieClip2D;
+	private var mc3:MovieClip2D;
 
     public function new()
     {
@@ -66,17 +67,17 @@ class Main
 	//	cast(mc.animator, Animator).gotoFrame(5);
 	
 		mc2 = new MovieClip2D();
-		mc2.fps = 15;
+		mc2.fps = 25;
 		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc2.texture = st;
 		world.scene.addChild(mc2);
-		cast(mc2.animator, Animator).stop();
-		
-		var mc3:MovieClip2D = new MovieClip2D();
-		mc3.fps = 15;
+		//cast(mc2.animator, Animator).stop();
+
+		mc3 = new MovieClip2D();
 	//	mc3.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc3.animator = mc2.animator.copy();
-		cast(mc3.animator, Animator).playAnimation();
+        mc3.fps = 5;
+        cast(mc3.animator, Animator).playAnimation();
 	//	cast(mc3.animator, Animator).stop();
 		mc3.x = 300;
 		world.scene.addChild(mc3);
@@ -119,10 +120,10 @@ class Main
     function onRender(_)
     {
        trace(cast(mc2.animator, Animator).isPlaying);
-       trace(cast(mc2.animator, Animator).currentFrame);
+       trace(mc2.currentFrame);
 		
-		world.camera.x = -world.stage.mouseX;
-        world.camera.y = -world.stage.mouseY;
+		//world.camera.x = -world.stage.mouseX;
+        //world.camera.y = -world.stage.mouseY;
     //    world.camera.scale += (Math.random()-0.5) * 0.003;
         //sp2.rotationY += 0.05;
     }

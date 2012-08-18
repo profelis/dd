@@ -28,7 +28,7 @@ class Batch2DMaterial extends Material
         shaderRef = SHADERS.get(texOpt & 0x60).get(texOpt & 0x18).get(texOpt & 0x7);
     }
 
-    public function drawBatch(node:DisplayNode2D, camera:Camera2D, tex:Texture2D, mpos:Vector<Matrix3D>, cTrans:Vector<Vector3D>)
+    public function drawBatch(node:DisplayNode2D, camera:Camera2D, tex:Texture2D, frame:Frame, mpos:Vector<Matrix3D>, cTrans:Vector<Vector3D>)
     {
         if (texOpt != tex.options)
         {
@@ -37,7 +37,7 @@ class Batch2DMaterial extends Material
             updateShader();
         }
 
-        untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans}, {tex:tex.texture, region:tex.frame.region});
+        untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans}, {tex:tex.texture, region:frame.region});
 
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 

@@ -1,10 +1,14 @@
 package deep.dd.texture.atlas.animation;
 
+import deep.dd.texture.Texture2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
 
 class AnimatorBase
 {
     public var atlas:AtlasTexture2D;
+
+    // override default texture2d frame
+    public var frame(default, null):Frame;
 
     // private constructor
     function new()

@@ -42,14 +42,20 @@ class Batch2D extends Sprite2D
         var invalidateTexture:Bool = false;
         if (texture != null)
         {
-            if (animator != null) animator.draw(scene.time);
-
-            if (lastFrame != texture.frame)
+            var f = texture.frame;
+            if (animator != null)
             {
+                animator.draw(scene.time);
+                f = animator.frame;
+            }
+
+            if (frame != f)
+            {
+                invalidateTexture = true;
                 invalidateDrawTransform = true;
-                lastFrame = texture.frame;
-                _width = lastFrame.width;
-                _height = lastFrame.height;
+                frame = f;
+                _width = frame.width;
+                _height = frame.height;
             }
         }
 
@@ -86,7 +92,7 @@ class Batch2D extends Sprite2D
 
                 if (s.invalidateDrawTransform)
                 {
-                    s.drawTransform.rawData = lastFrame.drawMatrix.rawData;
+                    s.drawTransform.rawData = frame.drawMatrix.rawData;
                     s.drawTransform.append(s.worldTransform);
 
                     s.invalidateDrawTransform = false;
@@ -97,7 +103,7 @@ class Batch2D extends Sprite2D
 
                 if (mpos.length == MAX_SIZE)
                 {
-                    mat.drawBatch(nodeSprite, camera, nodeSprite.texture, mpos, cTrans);
+                    mat.drawBatch(nodeSprite, camera, nodeSprite.texture, frame, mpos, cTrans);
                     mpos.length = 0;
                     cTrans.length = 0;
                 }
@@ -110,7 +116,7 @@ class Batch2D extends Sprite2D
                     mpos.push(emptyMatrix);
                     cTrans.push(emptyColor);
                 }
-                mat.drawBatch(nodeSprite, camera, nodeSprite.texture, mpos, cTrans);
+                mat.drawBatch(nodeSprite, camera, nodeSprite.texture, frame, mpos, cTrans);
             }
         }
     }
