@@ -1,5 +1,6 @@
 package deep.dd;
 
+import deep.dd.utils.GlobalStatistics;
 import deep.dd.utils.Statistics;
 import deep.dd.material.Material;
 import deep.dd.utils.Cache;
@@ -82,6 +83,9 @@ class World2D
         {
             Material.freeContextCache(ctx);
             cache.reinitBitmapTextureCache();
+            #if dd_stat
+            GlobalStatistics.freeContext(ctx);
+            #end
         }
         ctx = st3d.context3D;
 
