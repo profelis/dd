@@ -163,11 +163,21 @@ class Animator extends AnimatorBase
 		
 		return totalFrames;
 	}
+	
+	override private function set_atlas(atl:AtlasTexture2D):AtlasTexture2D 
+	{
+		if (atl != null) activeAnimation = null;
+		currentFrame = 0;
+		loop = true;
+		isPlaying = true;
+		return super.set_atlas(atl);
+	}
 
     override public function copy():AnimatorBase
     {
         var res:Animator = new Animator(fps);
 		res.atlas = atlas;
+		res.frame = frame;
 		res.activeAnimation = activeAnimation;
 		Reflect.setField(res, "currentFrame", currentFrame);
 		Reflect.setField(res, "loop", loop);
