@@ -1,5 +1,6 @@
 package deep.dd;
 
+import deep.dd.utils.Statistics;
 import deep.dd.material.Material;
 import deep.dd.utils.Cache;
 import mt.m3d.Color;
@@ -46,6 +47,8 @@ class World2D
 
     public var cache(default, null):Cache;
 
+    public var statistics(default, null):Statistics;
+
     public function new(context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stageId:Int = 0)
     {
         stage = flash.Lib.current.stage;
@@ -56,6 +59,9 @@ class World2D
         this.stageId = stageId;
 
         cache = new Cache(this);
+        #if dd_stat
+        statistics = new Statistics(this);
+        #end
 
         bgColor = new Color(1, 1, 1);
 
@@ -133,6 +139,9 @@ class World2D
     {
         if (ctxExist())
 		{
+            #if dd_stat
+            statistics.reset();
+            #end
 			if (pause) return;
 
 			if (invalidateSize) updateSize();
@@ -166,6 +175,14 @@ class World2D
             scene.dispose();
 		    scene = null;
         }
+
+        if (statistics != null)
+        {
+            statistics.dispose();
+            statistics = null;
+        }
+        cache.dispose();
+        cache = null;
 
         context3DRenderMode = null;
         bgColor = null;

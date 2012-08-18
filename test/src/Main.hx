@@ -1,4 +1,5 @@
 package ;
+
 import com.fermmmtools.debug.Stats;
 import deep.dd.texture.atlas.animation.Animator;
 import deep.dd.display.Batch2D;
@@ -6,6 +7,7 @@ import deep.dd.texture.atlas.parser.StarlingParser;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.display.MovieClip2D;
 import deep.dd.display.Quad2D;
+import deep.dd.utils.GlobalStatistics;
 import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
 import deep.dd.display.Sprite2D;
@@ -58,7 +60,7 @@ class Main
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
         var rots = [0.0, 30, 60, 90, 120];
-        for (x in 0...7)
+        for (x in 0...10)
             for (y in 0...5)
             {
                 var s = new Sprite2D();
@@ -83,6 +85,9 @@ class Main
     function onRender(_)
     {
         for (i in c) i.colorTransform = new Color(Math.random(), Math.random(), Math.random(), 1);
+
+        trace(GlobalStatistics.stats.get(world.ctx));
+        trace(world.statistics);
         //world.camera.x = -world.stage.mouseX;
         //world.camera.y = -world.stage.mouseY;
     //    world.camera.scale += (Math.random()-0.5) * 0.003;

@@ -11,6 +11,10 @@ import flash.display.BitmapData;
 import flash.display3D.Context3D;
 import flash.display3D.textures.Texture;
 
+#if dd_stat
+import deep.dd.utils.GlobalStatistics;
+#end
+
 class Texture2D
 {
     public var options(default, null):UInt;
@@ -81,17 +85,25 @@ class Texture2D
         return frame = f;
     }
 
+    public var memory(default, null):UInt = 0;
+
     public function init(ctx:Context3D)
     {
         if (this.ctx == ctx) return;
 
-        this.ctx = ctx;
-
 		if (texture != null)
 		{
+            #if dd_stat
+            if (ctx != null)
+            {
+                GlobalStatistics.removeTexture(ctx, this);
+            }
+            #end
 			texture.dispose();
 			texture = null;
 		}
+
+        this.ctx = ctx;
 
         texture = ctx.createTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, false);
 
@@ -103,6 +115,7 @@ class Texture2D
             b.copyPixels(bitmapData, bitmapData.rect, new Point());
         }
 
+        memory += b.width * b.height * 4;
         texture.uploadFromBitmapData(b);
 
         if ((options & Texture2DOptions.MIPMAP_LINEAR) | (options & Texture2DOptions.MIPMAP_NEAREST) > 0)
@@ -127,6 +140,8 @@ class Texture2D
 
                 texture.uploadFromBitmapData(tmp, l);
 
+                memory += w * h * 4;
+
                 w >>= 1;
                 h >>= 1;
             }
@@ -144,6 +159,10 @@ class Texture2D
         {
             bitmapData.dispose();
         }
+
+        #if dd_stat
+        GlobalStatistics.addTexture(ctx, this);
+        #end
     }
 	
 	public function dispose():Void

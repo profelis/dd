@@ -35,6 +35,8 @@ class Geometry
 
     public var needUpdate(default, null):Bool = true;
 
+    public var triangles:UInt;
+
     var ctx:Context3D;
 
     public function init(ctx:Context3D)
@@ -107,6 +109,8 @@ class Geometry
         p.sup = sup;
         g.normal = false;
 
+        g.triangles *= size;
+
         return g;
     }
 
@@ -140,6 +144,8 @@ class Geometry
         res.offsetY = offsetY;
         res.textured = textured;
         res.poly = createPoly(textured, width, height, offsetX, offsetY, stepsX, stepsY);
+
+        res.triangles = Std.int(res.poly.idx.length / 3);
 
         return res;
     }

@@ -101,6 +101,11 @@ class Material
     {
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 
+        #if dd_stat
+        node.world.statistics.drawCalls ++;
+        node.world.statistics.triangles += node.geometry.triangles;
+        #end
+
         shader.draw(node.geometry.vbuf, node.geometry.ibuf);
     }
 	
