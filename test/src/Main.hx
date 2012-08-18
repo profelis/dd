@@ -84,7 +84,7 @@ class Main
 		world.scene.addChild(mc3);
 		
 		var mc4:MovieClip2D = new MovieClip2D();
-		mc4.fps = 12;
+		mc4.fps = 20;
 		var cocosAtlas = new AtlasTexture2D(world.cache.getTexture(Cocos2DAtlasImage), new Cocos2DParser(Xml.parse(Std.string(new Cocos2DAtlasData()))));
 		mc4.texture = cocosAtlas;
 		mc4.y = 200;
@@ -128,7 +128,7 @@ class Main
     function onRender(_)
     {
        trace(cast(mc2.animator, Animator).isPlaying);
-       trace(mc2.frame);
+       trace(mc2.textureFrame);
 		
 		//world.camera.x = -world.stage.mouseX;
         //world.camera.y = -world.stage.mouseY;

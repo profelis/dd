@@ -9,9 +9,9 @@ import deep.dd.texture.Texture2D;
 
 class Animation 
 {
-	public var frames:Array<Frame>;
-	public var numFrames:Int;
-	public var name:String;
+	public var frames(default, null):Array<Frame>;
+	public var numFrames(default, null):Int;
+	public var name(default, null):String;
 	
 	public function new(frames:Array<Frame>, name:String) 
 	{

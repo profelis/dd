@@ -39,7 +39,7 @@ class Batch2DMaterial extends Material
             updateShader();
         }
 
-        untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans}, {tex:tex.texture, region:node.frame.region});
+        untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans}, {tex:tex.texture, region:node.textureFrame.region});
 
         super.draw(node, camera);
     }

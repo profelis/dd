@@ -22,12 +22,15 @@ class MovieClip2D extends Sprite2D
         #if debug
         if (!Std.is(v, Animator)) throw "animator must be Animator instance";
         #end
-        anim = cast v;
-        return super.set_animator(v);
+
+        return super.set_animator(anim = cast(v, Animator));
     }
 	
 	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Animation
 	{
+        #if debug
+        if (!Std.is(texture, AtlasTexture2D)) throw "texture must be AtlasTexture2D";
+        #end
 		return cast(texture, AtlasTexture2D).addAnimation(name, keyFrames);
 	}
 	
@@ -97,9 +100,9 @@ class MovieClip2D extends Sprite2D
 		return anim.animationName;
 	}
 	
-	public var animationFrame(get_animationFrame, null):Int;
+	public var frame(get_frame, null):Int;
 	
-	function get_animationFrame():Int
+	function get_frame():Int
 	{
 		return anim.frame;
 	}
