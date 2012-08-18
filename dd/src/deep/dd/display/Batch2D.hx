@@ -141,14 +141,14 @@ class Batch2D extends Sprite2D
             mat.drawBatch(this, camera, this.texture, mpos, cTrans);
         }
 
-        for (s in renderList)
-        {
-            s.drawStep(camera);
-        }
-
         for (s in subNodes)
         {
             drawBatch(s, camera, invalidateTexture);
+        }
+
+        for (s in renderList)
+        {
+            s.drawStep(camera);
         }
     }
 
