@@ -1,5 +1,6 @@
 package deep.dd.texture.atlas.parser;
 
+import deep.dd.texture.Frame;
 import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
@@ -23,8 +24,6 @@ class Cocos2DParser implements IAtlasParser
     {
        return Std.parseInt(v);
     }
-
-    var size:Point;
 
     public function parse(a:AtlasTexture2D):Array<Frame>
     {
@@ -54,9 +53,6 @@ class Cocos2DParser implements IAtlasParser
 		#if debug
 		if (frames.length == 0) throw "There is no frames in texture atlas";
 		#end
-		
-		var f = frames[0];
-        size = new Point(f.width, f.height);
 		
         return frames;
     }
@@ -225,9 +221,4 @@ class Cocos2DParser implements IAtlasParser
 		
 		throw "Unrecognised XML Format";
 	}
-
-    public function getPreferredSize():Point
-    {
-        return size;
-    }
 }

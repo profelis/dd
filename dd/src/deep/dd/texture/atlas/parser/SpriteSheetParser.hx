@@ -1,5 +1,6 @@
 package deep.dd.texture.atlas.parser;
 
+import deep.dd.texture.Frame;
 import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
 import flash.geom.Point;
@@ -18,13 +19,6 @@ class SpriteSheetParser implements IAtlasParser
         ih = itemHeight;
         this.padding = padding;
     }
-
-    public function getPreferredSize():Point
-    {
-        return size;
-    }
-
-    var size:Point;
 
     public function parse(a:AtlasTexture2D):Array<Frame>
     {
@@ -57,9 +51,6 @@ class SpriteSheetParser implements IAtlasParser
             }
             x += iw;
         }
-
-        var f = frames[0];
-        size = new Point(f.width, f.height);
 
         return frames;
     }

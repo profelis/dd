@@ -1,5 +1,6 @@
 package deep.dd.texture.atlas.parser;
 
+import deep.dd.texture.Frame;
 import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
@@ -22,8 +23,6 @@ class CheetahParser implements IAtlasParser
     {
         return Std.parseInt(v);
     }
-
-    var size:Point;
 
     public function parse(a:AtlasTexture2D):Array<Frame>
     {
@@ -58,14 +57,6 @@ class CheetahParser implements IAtlasParser
             frames.push(new Frame(iw, ih, new Vector3D(x*kx, y*ky, iw*kx, ih*ky), border, d[0]));
         }
 
-        var f = frames[0];
-        size = new Point(f.width, f.height);
-
         return frames;
-    }
-
-    public function getPreferredSize():Point
-    {
-        return size;
     }
 }

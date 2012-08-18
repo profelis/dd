@@ -1,5 +1,6 @@
 package deep.dd.texture.atlas.parser;
 
+import deep.dd.texture.Frame;
 import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
@@ -22,8 +23,6 @@ class StarlingParser implements IAtlasParser
     {
        return Std.parseInt(v);
     }
-
-    var size:Point;
 
     public function parse(a:AtlasTexture2D):Array<Frame>
     {
@@ -62,13 +61,6 @@ class StarlingParser implements IAtlasParser
 			}
 		}
 
-		var f = frames[0];
-        size = new Point(f.width, f.height);
         return frames;
-    }
-
-    public function getPreferredSize():Point
-    {
-        return size;
     }
 }

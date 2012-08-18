@@ -1,5 +1,6 @@
 package deep.dd.texture.atlas;
 
+import deep.dd.texture.Frame;
 import deep.dd.animation.Animation;
 import flash.geom.Rectangle;
 import flash.geom.Point;
@@ -18,10 +19,6 @@ class AtlasTexture2D extends SubTexture2D
         super(texture);
 
         frames = parser.parse(this);
-
-        var s = parser.getPreferredSize();
-        width = s.x;
-        height = s.y;
 
         frame = frames[0];
 		
@@ -121,7 +118,7 @@ class AtlasTexture2D extends SubTexture2D
 	static var sortPrefix:String;
 	
 	static function frameSortFunction(frame1:Frame, frame2:Frame):Int
-	{
+	{                                        // TODO: frame.name.substr(sortPrefix.length)
 		var num1:Int = Std.parseInt(StringTools.replace(frame1.name, AtlasTexture2D.sortPrefix, ""));
 		var num2:Int = Std.parseInt(StringTools.replace(frame2.name, AtlasTexture2D.sortPrefix, ""));
 		
@@ -153,8 +150,6 @@ class AtlasTexture2D extends SubTexture2D
 interface IAtlasParser
 {
     function parse(a:AtlasTexture2D):Array<Frame>;
-
-    function getPreferredSize():Point;
 }
 
 class SubTexture2D extends Texture2D
