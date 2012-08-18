@@ -128,29 +128,34 @@ class Cloud2D extends Sprite2D
             if (s.geometry.triangles != 2) throw "can't batch complex geometry";
             #end
 
+            var poly = geometry.poly;
+            var sPoly = s.geometry.poly;
 
             var i = idx;
-            var v:Vector3D;
-            for (p in s.geometry.poly.points)
+
+            for (p in sPoly.points)
             {
-                                                      // TODO: inline
-                v = s.drawTransform.transformVector(p.toVector());
-                geometry.poly.points[i++].fromVector(v);
+                var m = s.drawTransform.rawData;
+                poly.points[i++].set(
+                    m[0] * p.x + m[4] * p.y + m[8] * p.z + m[12],
+                    m[1] * p.x + m[5] * p.y + m[9] * p.z + m[13],
+                    m[2] * p.x + m[6] * p.y + m[10] * p.z + m[14]
+                );
             }
 
             i = idx;
             for (o in 0...4)
             {
-                var c = geometry.poly.colors[i++];
+                var c = poly.colors[i++];
                 c.fromVector(s.worldColorTransform);
             }
 
             i = idx;
             var r = frame.region;
-            for (t in s.geometry.poly.tcoords)
+            for (t in sPoly.tcoords)
             {
-                geometry.poly.tcoords[i].u = t.u * r.z + r.x;
-                geometry.poly.tcoords[i].v = t.v * r.w + r.y;
+                poly.tcoords[i].u = t.u * r.z + r.x;
+                poly.tcoords[i].v = t.v * r.w + r.y;
                 i++;
             }
 

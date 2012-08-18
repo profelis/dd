@@ -73,7 +73,7 @@ class Vector {
 		return new flash.geom.Vector3D(x, y, z);
 	}
 
-    public function fromVector(v:flash.geom.Vector3D) {
+    public inline function fromVector(v:flash.geom.Vector3D) {
         x = v.x;
         y = v.y;
         z = v.z;

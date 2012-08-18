@@ -39,6 +39,7 @@ class Main
     var world:World2D;
     var scene:Scene2D;
 
+    var it:Array<Sprite2D>;
 
     public function new()
     {
@@ -60,13 +61,16 @@ class Main
         c.animator = new Animator(10);
         scene.addChild(c);
 
+        it = [];
         for (x in 0...15)
         for (y in 0...15)
         {
             var s = new Sprite2D();
+            it.push(s);
             c.addChild(s);
-            s.x = x * 40;
-            s.y = y * 40;
+            s.pivot = new Vector3D(20, 20, 0);
+            s.x = x * 40 + 20;
+            s.y = y * 40 + 20;
         }
 
         var q = new Quad2D();
@@ -88,6 +92,8 @@ class Main
 
     function onRender(_)
     {
+        for (i in it) i.rotationY ++;
+
         trace(GlobalStatistics.stats.get(world.ctx));
         trace(world.statistics);
         //world.camera.x = -world.stage.mouseX;
