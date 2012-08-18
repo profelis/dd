@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import deep.dd.material.batch2d.Batch2DMaterial;
 import deep.dd.display.Node2D;
 import haxe.FastList;
 import mt.m3d.Color;
@@ -9,7 +10,6 @@ import flash.geom.Matrix3D;
 import flash.Vector;
 import deep.dd.camera.Camera2D;
 import deep.dd.material.Material;
-import deep.dd.material.batch2d.Batch2DMaterial;
 import deep.dd.texture.atlas.animation.AnimatorBase;
 import deep.dd.geometry.Geometry;
 

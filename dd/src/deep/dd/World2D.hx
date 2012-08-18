@@ -94,6 +94,9 @@ class World2D
 		#if debug
         ctx.enableErrorChecking = true;
 		#end
+        #if dd_stat
+        GlobalStatistics.initContext(ctx);
+        #end
 		
         if (scene != null) 
 		{

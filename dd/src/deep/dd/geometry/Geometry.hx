@@ -35,7 +35,7 @@ class Geometry
 
     public var needUpdate(default, null):Bool = true;
 
-    public var triangles:UInt;
+    public var triangles(default, null):UInt;
 
     var ctx:Context3D;
 

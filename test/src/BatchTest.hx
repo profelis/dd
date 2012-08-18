@@ -32,12 +32,17 @@ import flash.events.Event;
 @:bitmap("starlingAtlas/atlas.png") class StarlingAtlasImage extends BitmapData {}
 @:file("starlingAtlas/atlas.xml") class StarlingAtlasData extends ByteArray {}
 
-class Main
+class BatchTest
 {
 
     var world:World2D;
     var scene:Scene2D;
 
+    var c0:Array<Sprite2D>;
+    var c:Array<Sprite2D>;
+
+    var sp0:Sprite2D;
+    var sp1:Sprite2D;
 
     public function new()
     {
@@ -54,6 +59,52 @@ class Main
 		world.antialiasing = 2;
         world.bgColor.fromInt(0x666666);
 
+        var b0 = new Batch2D();
+        scene.addChild(b0);
+
+
+        b0.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40, 0.5));
+        b0.animator = new Animator(10);
+
+        c0 = [];
+        for (i in 0...10)
+        for (j in 0...10)
+        {
+            var s = new Sprite2D();
+            s.pivot = new Vector3D(20, 20);
+            s.y = 20;
+            b0.addChild(s);
+            c0.push(s);
+            s.x = i * 40 + 20;
+            s.y = j * 40 + 20;
+        }
+
+        b0.addChild(sp0 = new Sprite2D());
+        sp0.x = 100;
+        sp0.y = 100;
+
+        sp0.addChild(sp1 = new Sprite2D());
+        sp1.x = 50;
+
+        sp0.addChild(sp1 = new Sprite2D());
+        sp1.x = -50;
+
+        var b = new Batch2D();
+        b.x = 250;
+        b0.addChild(b);
+        //b.texture = world.cache.getTexture(Image);
+        b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
+        b.animator = new Animator(25);
+        c = [];
+        for (x in 0...5)
+            for (y in 0...5)
+            {
+                var s = new Sprite2D();
+                c.push(s);
+                b.addChild(s);
+                s.x = x * 70;
+                s.y = y * 70;
+            }
 
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
@@ -64,10 +115,17 @@ class Main
     function onClick(_)
     {
         //world.ctx.dispose();
+		//mc.animator.playAnimation(null);
     }
 
     function onRender(_)
     {
+        for (i in c) i.colorTransform = new Color(Math.random(), Math.random(), Math.random(), 1);
+        for (i in c0) i.rotationZ ++;
+        sp0.rotationZ ++;
+        sp1.colorTransform = new Color(Math.random(), Math.random(), Math.random(), 1);
+        sp1.rotationZ = -sp0.rotationZ;
+
         trace(GlobalStatistics.stats.get(world.ctx));
         trace(world.statistics);
         //world.camera.x = -world.stage.mouseX;

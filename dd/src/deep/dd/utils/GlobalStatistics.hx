@@ -12,6 +12,11 @@ class GlobalStatistics
 
     static public var stats(default, null):TypedDictionary<Context3D, Stat> = new TypedDictionary();
 
+    static public function initContext(ctx:Context3D)
+    {
+        stats.set(ctx, new Stat());
+    }
+
     static public function freeContext(ctx:Context3D)
     {
         stats.delete(ctx);
@@ -20,18 +25,13 @@ class GlobalStatistics
     static public function removeTexture(ctx:Context3D, text:Texture2D)
     {
         var s:Stat = stats.get(ctx);
-        if (s != null)
-        {
-            s.textures --;
-            s.texturesMemory -= text.memory;
-        }
+        s.textures --;
+        s.texturesMemory -= text.memory;
     }
 
     static public function addTexture(ctx:Context3D, text:Texture2D)
     {
         var s:Stat = stats.get(ctx);
-        if (s == null) stats.set(ctx, s = new Stat());
-
         s.textures ++;
         s.texturesMemory += text.memory;
     }
