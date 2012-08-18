@@ -50,7 +50,7 @@ class AtlasTexture2D extends SubTexture2D
         return res;
     }
 
-	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Void
+	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Animation
 	{
 		#if debug
 		if (animationMap.exists(name)) throw ("Animation " + name + "  already exist");
@@ -69,7 +69,7 @@ class AtlasTexture2D extends SubTexture2D
 			}
 			else
 			{
-				// we have string key
+				// we have a string key
 				var frameFound:Bool = false;
 				for (fr in frames)
 				{
@@ -85,7 +85,9 @@ class AtlasTexture2D extends SubTexture2D
 			}
 		}
 		
-		animationMap.set(name, new Animation(framesToAdd));
+		var anim:Animation = new Animation(framesToAdd);
+		animationMap.set(name, anim);
+		return anim;
 	}
 	
 	public function getAnimation(name:String):Animation
@@ -105,15 +107,9 @@ class AtlasTexture2D extends SubTexture2D
 			AtlasTexture2D.sortFramesInAnimation(animFrames);
 			anim = new Animation(animFrames);
 			animationMap.set(name, anim);
-			for (fr in anim.frames)
-			{
-				trace("fr.name = " + fr.name);
-				trace("fr.region = " + fr.region);
-			}
-			return anim;
 		}
 		
-		return null;
+		return anim;
 	}
 	
 	static function sortFramesInAnimation(animFrames:Array<Frame>):Array<Frame>
@@ -134,7 +130,7 @@ class AtlasTexture2D extends SubTexture2D
 		{
 			return 1;
 		}
-		else if (num2 < num1)
+		else if (num2 > num1)
 		{
 			return -1;
 		}

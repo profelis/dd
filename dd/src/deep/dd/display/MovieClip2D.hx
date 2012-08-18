@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import deep.dd.texture.atlas.animation.Animation;
 import deep.dd.texture.atlas.animation.Animator;
 import deep.dd.texture.atlas.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
@@ -25,9 +26,9 @@ class MovieClip2D extends Sprite2D
         return super.set_animator(v);
     }
 	
-	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Void
+	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Animation
 	{
-		cast(texture, AtlasTexture2D).addAnimation(name, keyFrames);
+		return cast(texture, AtlasTexture2D).addAnimation(name, keyFrames);
 	}
 	
 	public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
