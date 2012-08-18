@@ -44,13 +44,12 @@ class Batch2D extends Sprite2D
         {
             if (animator != null) animator.draw(scene.time);
 
-            if (texture.needUpdate)
+            if (lastFrame != texture.frame)
             {
-                texture.update();
                 invalidateDrawTransform = true;
-                _width = texture.width;
-                _height = texture.height;
-                invalidateTexture = true;
+                lastFrame = texture.frame;
+                _width = lastFrame.width;
+                _height = lastFrame.height;
             }
         }
 
@@ -87,7 +86,7 @@ class Batch2D extends Sprite2D
 
                 if (s.invalidateDrawTransform)
                 {
-                    s.drawTransform.rawData = texture.drawMatrix.rawData;
+                    s.drawTransform.rawData = lastFrame.drawMatrix.rawData;
                     s.drawTransform.append(s.worldTransform);
 
                     s.invalidateDrawTransform = false;

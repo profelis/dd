@@ -31,8 +31,6 @@ class Texture2D
 
     public var frame(default, set_frame):Frame;
 
-    public var drawMatrix(default, null):Matrix3D;
-
     public var texture(default, null):Texture;
 
     var ctx:Context3D;
@@ -40,7 +38,6 @@ class Texture2D
 	public function new(options:UInt)
     {
         this.options = options;
-        drawMatrix = new Matrix3D();
     }
 
     public static function fromBitmap(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
@@ -71,41 +68,16 @@ class Texture2D
     }
     #end
 
-    public var needUpdate(default, null):Bool = true;
-
-    public function update()
-    {
-        drawMatrix.identity();
-        drawMatrix.appendScale(frame.width, frame.height, 1);
-
-        var b = frame.border;
-        if (b != null)
-        {
-            width = b.width;
-            height = b.height;
-            drawMatrix.appendTranslation(b.x, b.y, 0);
-        }
-        else
-        {
-            width = frame.width;
-            height = frame.height;
-        }
-        needUpdate = false;
-    }
-
-    public function setBorder(b:Rectangle):Void
-    {
-        frame.border = b;
-        needUpdate = true;
-    }
-
     function set_frame(f:Frame):Frame
     {
         #if debug
         if (f == null) throw "frame is null";
         #end
 
-        needUpdate = true;
+        frame = f;
+        width = frame.width;
+        height = frame.height;
+
         return frame = f;
     }
 
@@ -182,7 +154,6 @@ class Texture2D
         {
             if (bitmapData != null && releaseBitmap) bitmapData.dispose();
             bitmapData = null;
-            drawMatrix = null;
             Reflect.setField(this, "border", null);
             Reflect.setField(this, "frame", null);
         }
@@ -214,22 +185,58 @@ class Texture2D
 
 class Frame
 {
-    public var name:String;
+    public var name(default, null):String;
 
-    public var width:Float;
-    public var height:Float;
+    public var frameWidth(default, null):Float;
+    public var frameHeight(default, null):Float;
 
-    public var region:Vector3D;
+    public var width(default, null):Float;
+    public var height(default, null):Float;
 
-    public var border:Rectangle;
+    public var region(default, null):Vector3D;
 
-    public function new (width, height, region, ?frame, ?name)
+    public var border(default, null):Rectangle;
+
+    public var drawMatrix(default, null):Matrix3D;
+
+    public function new (width, height, region, ?border, ?name)
     {
-        this.width = width;
-        this.height = height;
+        this.frameWidth = width;
+        this.frameHeight = height;
         this.region = region;
-        this.border = frame;
         this.name = name;
+
+        drawMatrix = new Matrix3D();
+        setBorder(border);
+    }
+
+    public function setBorder(b:Rectangle)
+    {
+        border = b;
+
+        if (border != null)
+        {
+            width = border.width;
+            height = border.height;
+        }
+        else
+        {
+            width = frameWidth;
+            height = frameHeight;
+        }
+
+        updateMatrix();
+    }
+
+    public function updateMatrix()
+    {
+        drawMatrix.identity();
+        drawMatrix.appendScale(frameWidth, frameHeight, 1);
+
+        if (border != null)
+        {
+            drawMatrix.appendTranslation(border.x, border.y, 0);
+        }
     }
 
     public function toString()

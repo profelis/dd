@@ -340,7 +340,7 @@ class Poly2D extends Polygon
                 buf[i++] = sup[k];
             }
         }
-        trace(buf);
+
         vbuf.uploadFromVector(buf, 0, points.length);
     }
 	
