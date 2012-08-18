@@ -13,6 +13,11 @@ class Scene2D extends Node2D
         scene = this;
     }
 
+    override function setParent(n)
+    {
+        throw "scene can't has parent";
+    }
+
     public var timeScale:Float = 1;
 
     public var time(default, null):Float;

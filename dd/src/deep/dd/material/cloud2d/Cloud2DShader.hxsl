@@ -9,7 +9,7 @@ var cTrans:Float4;
 
 function vertex(mproj:Matrix)
 {
-    out = pos * mproj;
+    out = pos.xyzw * mproj;
     tuv = uv;
     cTrans = color;
 }

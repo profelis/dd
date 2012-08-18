@@ -106,6 +106,11 @@ class BatchTest
                 s.y = y * 70;
             }
 
+        var q = new Quad2D();
+        b0.addChild(q);
+        q.width = 100;
+        q.height = 100;
+
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 

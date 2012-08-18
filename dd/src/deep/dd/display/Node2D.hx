@@ -42,6 +42,8 @@ class Node2D
     public var transformChange(default, null):Signal0;
     public var colorTransformChange(default, null):Signal0;
 
+    public var ignoreInBatch:Bool = false;
+
     public function new()
     {
         blendMode = BlendMode.NORMAL;

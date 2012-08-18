@@ -1,4 +1,4 @@
-package deep.dd.material.batch2d;
+package deep.dd.material.cloud2d;
 
 import deep.dd.display.Cloud2D;
 import deep.dd.display.Batch2D;

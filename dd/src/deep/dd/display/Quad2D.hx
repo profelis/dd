@@ -1,14 +1,15 @@
 package deep.dd.display;
 
+import deep.dd.geometry.Geometry;
 import deep.dd.camera.Camera2D;
 import deep.dd.material.Quad2DMaterial;
-import deep.dd.geometry.Geometry;
 
 class Quad2D extends DisplayNode2D
 {
     public function new()
     {
         super(new Quad2DMaterial());
+        ignoreInBatch = true;
         setGeometry(Geometry.createSolid(_width = 1, _height = 1));
     }
 

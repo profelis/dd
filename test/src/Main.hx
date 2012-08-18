@@ -1,5 +1,6 @@
 package ;
 
+import deep.dd.display.Cloud2D;
 import flash.geom.Vector3D;
 import deep.dd.texture.atlas.parser.SpriteSheetParser;
 import com.fermmmtools.debug.Stats;
@@ -54,6 +55,25 @@ class Main
 		world.antialiasing = 2;
         world.bgColor.fromInt(0x666666);
 
+        var c = new Cloud2D(225);
+        c.texture = new AtlasTexture2D(world.cache.getTexture(SpriteSheet), new SpriteSheetParser(39, 40));
+        c.animator = new Animator(10);
+        scene.addChild(c);
+
+        for (x in 0...15)
+        for (y in 0...15)
+        {
+            var s = new Sprite2D();
+            c.addChild(s);
+            s.x = x * 40;
+            s.y = y * 40;
+        }
+
+        var q = new Quad2D();
+        q.width = 30;
+        q.height = 30;
+        q.alpha = 0.5;
+        c.addChild(q);
 
 
         s.addEventListener(Event.ENTER_FRAME, onRender);

@@ -14,5 +14,10 @@ class UV {
     {
         return "{UV: " + u + ", " + v + "}";
     }
+
+    public function copy()
+    {
+        return new UV(u, v);
+    }
 	
 }

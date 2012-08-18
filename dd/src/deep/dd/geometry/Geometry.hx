@@ -10,7 +10,7 @@ import mt.m3d.Polygon;
 
 class Geometry
 {
-    var poly:Poly2D;
+    public var poly(default, null):Poly2D;
 
     public var ibuf(default, null):IndexBuffer3D;
     public var vbuf(default, null):VertexBuffer3D;
@@ -83,6 +83,33 @@ class Geometry
             vbuf.dispose();
             vbuf = null;
         }
+    }
+
+    static public function createTexturedCloud(size:Int, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):Geometry
+    {
+        var g = createTextured(width, height, 1, 1, offsetX, offsetY);
+        g.setColor(0x00000000);
+
+        var p = g.poly;
+
+        var ps = p.points.copy();
+        var ts = p.tcoords.copy();
+        var cs = p.colors.copy();
+        var is = p.idx.copy();
+
+        for (n in 1...size)
+        {
+            for (x in ps) p.points.push(x.copy());
+            for (x in ts) p.tcoords.push(x.copy());
+            for (x in cs) p.colors.push(x.copy());
+            for (i in is) p.idx.push(Std.int(n * 4 + i));
+        }
+
+        g.normal = false;
+
+        g.triangles *= size;
+
+        return g;
     }
 
     static public function createTexturedBatch(size:Int, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):Geometry
@@ -312,6 +339,7 @@ class Poly2D extends Polygon
 		if (tempColors != null) colors = tempColors;
         ibuf = c.createIndexBuffer(idx.length);
         ibuf.uploadFromVector(flash.Vector.ofArray(idx), 0, idx.length);
+
         var size = 3;
         if (tcoords != null) size += 2;
         if (colors != null) size+=4;
@@ -346,7 +374,6 @@ class Poly2D extends Polygon
                 buf[i++] = sup[k];
             }
         }
-
         vbuf.uploadFromVector(buf, 0, points.length);
     }
 	

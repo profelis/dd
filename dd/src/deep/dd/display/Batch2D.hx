@@ -25,11 +25,23 @@ class Batch2D extends Sprite2D
         emptyColor = new Vector3D(0, 0, 0, 0);
 
         super(new Batch2DMaterial());
+
+        ignoreInBatch = true;
     }
 
     override function createGeometry()
     {
         setGeometry(Geometry.createTexturedBatch(MAX_SIZE, _width = 1, _height = 1));
+    }
+
+    override function set_material(m:Material):Material
+    {
+        if (m == material) return m;
+
+        super.set_material(m);
+        if (m != null) mat = cast(m, Batch2DMaterial);
+
+        return m;
     }
 
     override public function drawStep(camera:Camera2D):Void
@@ -39,7 +51,6 @@ class Batch2D extends Sprite2D
             super.drawStep(camera);
             return;
         }
-        if (geometry.needUpdate) geometry.update();
 
         var invalidateTexture:Bool = false;
         if (texture != null)
@@ -59,6 +70,8 @@ class Batch2D extends Sprite2D
                 _width = frame.width;
                 _height = frame.height;
             }
+
+            if (geometry.needUpdate) geometry.update();
         }
 
         if (invalidateWorldTransform || invalidateTransform) invalidateDrawTransform = true;
@@ -68,47 +81,49 @@ class Batch2D extends Sprite2D
         if (invalidateColorTransform) updateWorldColor();
 
         if (invalidateDrawTransform) updateDrawTransform();
+
         drawBatch(this, camera, invalidateTexture);
     }
 
     function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
     {
-        var batchList:FastList<Sprite2D> = new FastList<Sprite2D>();
-        var renderList:FastList<Node2D> = new FastList<Node2D>();
+        var batchList = new FastList<Node2D>();
+        var renderList = new FastList<Node2D>();
 
         for (c in node.children)
         {
             if (!c.visible) continue;
 
-            if (Std.is(c, Batch2D))
+            if (c.ignoreInBatch)
             {
                 renderList.add(c);
-            }
-            else if (Std.is(c, Sprite2D))
-            {
-                batchList.add(cast(c, Sprite2D));
             }
             else
             {
-                renderList.add(c);
+                batchList.add(c);
             }
         }
 
-        var subNodes:FastList<Sprite2D> = new FastList<Sprite2D>();
+        var subNodes = new FastList<Node2D>();
         var mpos = new Vector<Matrix3D>();
         var cTrans = new Vector<Vector3D>();
 
-        for (s in batchList)
+        for (c in batchList)
         {
-            if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
-
-            if (s.invalidateTransform) s.updateTransform();
-            if (s.invalidateWorldTransform) s.updateWorldTransform();
-            if (s.invalidateColorTransform) s.updateWorldColor();
-
-            if (s.numChildren > 0)
+            var s:Sprite2D = null;
+            if (Std.is(c, Sprite2D))
             {
-                subNodes.add(s);
+                s = cast(c, Sprite2D);
+                if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
+            }
+
+            if (c.invalidateTransform) c.updateTransform();
+            if (c.invalidateWorldTransform) c.updateWorldTransform();
+            if (c.invalidateColorTransform) c.updateWorldColor();
+
+            if (c.numChildren > 0 || s == null)
+            {
+                subNodes.add(c);
                 continue;
             }
 
@@ -119,6 +134,10 @@ class Batch2D extends Sprite2D
 
                 s.invalidateDrawTransform = false;
             }
+
+            #if debug
+            if (s.geometry.triangles != 2) throw "Batch2D ignore complex geometry";
+            #end
 
             mpos.push(s.drawTransform);
             cTrans.push(s.worldColorTransform);
@@ -154,14 +173,4 @@ class Batch2D extends Sprite2D
 
     var emptyMatrix:Matrix3D;
     var emptyColor:Vector3D;
-
-    override function set_material(m:Material):Material
-    {
-        if (m == material) return m;
-
-        super.set_material(m);
-        if (m != null) mat = cast(m, Batch2DMaterial);
-
-        return m;
-    }
 }
