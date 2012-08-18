@@ -45,7 +45,7 @@ class DisplayNode2D extends Node2D
 
     override public function draw(camera:Camera2D):Void
     {
-        if (material != null && geometry != null)   // TODO: geometry?
+        if (material != null)
         {
             if (geometry.needUpdate) geometry.update();
             material.draw(this, camera);

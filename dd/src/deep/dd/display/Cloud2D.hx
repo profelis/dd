@@ -9,7 +9,7 @@ import deep.dd.geometry.Geometry;
 
 class Cloud2D extends Sprite2D
 {
-    static inline public var PER_VERTEX:UInt = 9;
+    static inline public var PER_VERTEX:UInt = 9; // xyz, uv, rgba
     static inline public var MAX_SIZE:UInt = Std.int(65536 / PER_VERTEX / 4);
 
     var size:UInt;
@@ -19,7 +19,6 @@ class Cloud2D extends Sprite2D
     public function new(size:UInt)
     {
         if (size > MAX_SIZE) throw "size > MAX_SIZE";
-
         this.size = size;
 
         super(new Cloud2DMaterial());
@@ -37,9 +36,9 @@ class Cloud2D extends Sprite2D
         if (m == material) return m;
 
         super.set_material(m);
-        if (m != null) mat = cast(m, Cloud2DMaterial);
+        if (Std.is(material, Cloud2DMaterial)) mat = cast(material, Cloud2DMaterial);
 
-        return m;
+        return material;
     }
 
     override public function drawStep(camera:Camera2D):Void
@@ -107,6 +106,7 @@ class Cloud2D extends Sprite2D
         #end
 
         var idx = 0;
+        var r = frame.region;
 
         for (s in batchList)
         {
@@ -151,7 +151,6 @@ class Cloud2D extends Sprite2D
             }
 
             i = idx;
-            var r = frame.region;
             for (t in sPoly.tcoords)
             {
                 poly.tcoords[i].u = t.u * r.z + r.x;
@@ -161,6 +160,7 @@ class Cloud2D extends Sprite2D
 
             idx+=4;
         }
+
         geometry.update();
 
         mat.draw(this, camera);

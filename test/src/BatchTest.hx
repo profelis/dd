@@ -90,6 +90,7 @@ class BatchTest
         sp1.x = -50;
 
         var b = new Batch2D();
+        //b.visible = false;
         b.x = 250;
         b0.addChild(b);
         //b.texture = world.cache.getTexture(Image);

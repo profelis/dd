@@ -25,8 +25,11 @@ class GlobalStatistics
     static public function removeTexture(ctx:Context3D, text:Texture2D)
     {
         var s:Stat = stats.get(ctx);
-        s.textures --;
-        s.texturesMemory -= text.memory;
+        if (s != null)
+        {
+            s.textures --;
+            s.texturesMemory -= text.memory;
+        }
     }
 
     static public function addTexture(ctx:Context3D, text:Texture2D)

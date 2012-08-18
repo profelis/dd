@@ -1,5 +1,7 @@
 package deep.dd.utils;
+
 import deep.dd.World2D;
+
 class Statistics
 {
     public var drawCalls:UInt;

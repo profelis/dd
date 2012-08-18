@@ -67,6 +67,9 @@ class Node2D
             parent.removeChild(this);
         }
 
+        transformChange.removeAll();
+        colorTransformChange.removeAll();
+
         for (child in children.copy())
         {
             child.dispose();
@@ -76,9 +79,11 @@ class Node2D
         children = null;
         transform = null;
         worldTransform = null;
+        worldColorTransform = null;
         blendMode = null;
 
         Reflect.setField(this, "pivot", null);
+        Reflect.setField(this, "colorTransform", null);
     }
 
     function setParent(p:Node2D)
@@ -320,7 +325,7 @@ class Node2D
 
     function set_colorTransform(c)
     {
-        if (colorTransform != null && colorTransform.eqauls(c)) return colorTransform;
+        if (c!= null && colorTransform != null && colorTransform.eqauls(c)) return colorTransform;
 
         if (c == null) c = new Color(1, 1, 1, 1);
 

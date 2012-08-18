@@ -39,9 +39,9 @@ class Batch2D extends Sprite2D
         if (m == material) return m;
 
         super.set_material(m);
-        if (m != null) mat = cast(m, Batch2DMaterial);
+        if (Std.is(material, Batch2DMaterial)) mat = cast(material, Batch2DMaterial);
 
-        return m;
+        return material;
     }
 
     override public function drawStep(camera:Camera2D):Void

@@ -28,7 +28,7 @@ class Sprite2DMaterial extends Material
     override public function draw(node:DisplayNode2D, camera:Camera2D)
     {
         #if debug
-        if (!Std.is(node, Sprite2D)) throw "can't draw " + node;
+        if (!Std.is(node, Sprite2D)) throw "Sprite2DMaterial can't draw " + node;
         #end
 
         var sp:Sprite2D = cast node;

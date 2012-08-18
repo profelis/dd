@@ -22,11 +22,17 @@ class Scene2D extends Node2D
 
     public var time(default, null):Float;
 
-    override public function draw(camera:Camera2D):Void
+    override public function drawStep(camera:Camera2D):Void
     {
         if (!visible) return;
 
         time = flash.Lib.getTimer() * 0.001 * timeScale;
+
+        super.drawStep(camera);
+    }
+
+    override public function draw(camera:Camera2D):Void
+    {
     }
 
     override public function dispose():Void

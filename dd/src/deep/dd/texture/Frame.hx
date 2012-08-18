@@ -8,14 +8,18 @@ class Frame
 {
     public var name(default, null):String;
 
+    // clean size
     public var frameWidth(default, null):Float;
     public var frameHeight(default, null):Float;
 
+    // preferred size
     public var width(default, null):Float;
     public var height(default, null):Float;
 
+    // uvOffset & uvScale
     public var region(default, null):Vector3D;
 
+    // offset + border size
     public var border(default, null):Rectangle;
 
     public var drawMatrix(default, null):Matrix3D;
