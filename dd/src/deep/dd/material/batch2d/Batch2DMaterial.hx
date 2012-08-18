@@ -39,11 +39,7 @@ class Batch2DMaterial extends Material
 
         untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans}, {tex:tex.texture, region:frame.region});
 
-        ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
-
-        shader.bind(node.geometry.vbuf);
-        ctx.drawTriangles(node.geometry.ibuf, 0, mpos.length * 2);
-        shader.unbind();
+        super.draw(node, camera);
     }
 
     override public function draw(node:DisplayNode2D, camera:Camera2D)

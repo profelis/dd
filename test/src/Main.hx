@@ -82,11 +82,11 @@ class Main
 		mc3.x = 300;
 		world.scene.addChild(mc3);
 
-        /*var b = new Batch2D();
+        var b = new Batch2D();
         scene.addChild(b);
         b.texture = world.cache.getTexture(Image);
         var rots = [0.0, 30, 60, 90, 120];
-        for (i in 0...5)
+        for (i in 0...7)
         {
             var s = new Sprite2D();
             b.addChild(s);
@@ -94,7 +94,7 @@ class Main
             //s.y = i * 50;
             //s.rotationZ = rots[i];
             //s.colorTransform = new Color(Math.random(),Math.random(),Math.random(), 1);
-        }*/
+        }
 
        /* mc = new MovieClip2D();
         mc.fps = 5;
