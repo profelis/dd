@@ -1,5 +1,6 @@
 package deep.dd.material.batch2d;
 
+import deep.dd.texture.Frame;
 import flash.Vector;
 import deep.dd.display.DisplayNode2D;
 import flash.geom.Vector3D;

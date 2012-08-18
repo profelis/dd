@@ -1,6 +1,7 @@
 package deep.dd.display;
 
 import deep.dd.texture.atlas.AtlasTexture2D;
+import deep.dd.texture.Frame;
 import deep.dd.material.Material;
 import deep.dd.texture.atlas.animation.AnimatorBase;
 import flash.geom.Matrix3D;
