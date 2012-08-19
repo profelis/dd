@@ -10,7 +10,7 @@ import deep.dd.geometry.Geometry;
 class Cloud2D extends Sprite2D
 {
     static inline public var PER_VERTEX:UInt = 9; // xyz, uv, rgba
-    static inline public var MAX_SIZE:UInt = Std.int(65536 / PER_VERTEX / 4);
+    static inline public var MAX_SIZE:UInt = 16383; //65535 / 4;
 
     var size:UInt;
 

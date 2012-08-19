@@ -75,6 +75,8 @@ class BatchTest
             var s = new Sprite2D();
             s.pivot = new Vector3D(20, 20);
             s.y = 20;
+            s.animator = b0.animator.copy();
+            cast(s.animator, Animator).playAnimation(null, (i*j) % 16, true, true);
             b0.addChild(s);
             c0.push(s);
             s.x = i * 40 + 20;
@@ -82,7 +84,7 @@ class BatchTest
         }
 
         sp0 = new Sprite2D();
-        //b0.addChild(sp0);
+        b0.addChild(sp0);
         sp0.x = 100;
         sp0.y = 100;
 
@@ -94,7 +96,7 @@ class BatchTest
 
         var b = new Cloud2D(25);
         b.x = 250;
-        b0.addChild(b);
+        //b0.addChild(b);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
         c = [];
@@ -128,7 +130,7 @@ class BatchTest
     function onRender(_)
     {
         for (i in c) i.colorTransform = new Color(Math.random(), Math.random(), Math.random(), 1);
-        for (i in c0) i.rotationZ ++;
+        //for (i in c0) i.rotationZ ++;
         sp0.rotationZ ++;
         sp1.colorTransform = new Color(Math.random(), Math.random(), Math.random(), 1);
         sp1.rotationZ = -sp0.rotationZ;

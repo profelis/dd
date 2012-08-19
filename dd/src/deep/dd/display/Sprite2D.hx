@@ -78,8 +78,10 @@ class Sprite2D extends DisplayNode2D
                 _width = textureFrame.width;
                 _height = textureFrame.height;
             }
-
-            if (invalidateWorldTransform || invalidateTransform) invalidateDrawTransform = true;
+            else if (invalidateWorldTransform || invalidateTransform)
+            {
+                invalidateDrawTransform = true;
+            }
         }
 
         super.drawStep(camera);
@@ -119,6 +121,7 @@ class Sprite2D extends DisplayNode2D
         {
             Reflect.setField(texture, "useCount", texture.useCount + 1);
             if (ctx != null) texture.init(ctx);
+            textureFrame = texture.frame;
             _width = texture.width;
             _height = texture.height;
 

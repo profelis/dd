@@ -6,18 +6,20 @@ var input : {
 
 var tuv:Float2;
 var cTrans:Float4;
+var region:Float4;
 
-function vertex(mpos:M44<24>, mproj:Matrix, cTransArr:Float4<24>)
+function vertex(mpos:M44<20>, mproj:Matrix, cTransArr:Float4<20>, regions:Float4<20>)
 {
     // http://code.google.com/p/hxformat/issues/detail?id=28#c8
     var i = pos.xyzw;
     i.x = index.x * 4;
     out = pos.xyzw * mpos[i.x] * mproj;
     tuv = uv;
-    cTrans = cTransArr[index.x];
+    cTrans = cTransArr[index];
+    region = regions[index];
 }
 
-function fragment(tex:Texture, region:Float4)
+function fragment(tex:Texture)
 {
     var t = tuv * region.zw + region.xy;
     out = texture(tex, t) * cTrans;

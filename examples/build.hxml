@@ -12,5 +12,5 @@
 -D dd_stat
 
 #-D shaderDebug
-#-debug
+-debug
 #-D fdb
