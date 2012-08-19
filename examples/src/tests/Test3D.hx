@@ -19,6 +19,7 @@ class Test3D extends Test
     inline static var ny = 12;
 
     var r:Node2D;
+    var t:AtlasTexture2D;
 
     public function new(wrld:World2D)
     {
@@ -31,7 +32,7 @@ class Test3D extends Test
         var iw:Float = bmp.width / nx;
         var ih:Float = bmp.height / ny;
 
-        var t = new AtlasTexture2D(world.cache.getBitmapTexture(bmp), new SpriteSheetParser(iw, ih));
+        t = new AtlasTexture2D(world.cache.getBitmapTexture(bmp), new SpriteSheetParser(iw, ih));
 
         var pivot = new Vector3D(iw * 0.5, ih * 0.5);
         for (y in 0...ny)
@@ -66,6 +67,7 @@ class Test3D extends Test
     {
         super.dispose();
         r = null;
+        t.dispose();
     }
 
 

@@ -94,9 +94,9 @@ class Texture2D
 		if (texture != null)
 		{
             #if dd_stat
-            if (ctx != null)
+            if (this.ctx != null)
             {
-                GlobalStatistics.removeTexture(ctx, this);
+                GlobalStatistics.removeTexture(this.ctx, this);
             }
             #end
 			texture.dispose();
@@ -104,6 +104,7 @@ class Texture2D
 		}
 
         this.ctx = ctx;
+        memory = 0;
 
         texture = ctx.createTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, false);
 
@@ -179,6 +180,12 @@ class Texture2D
         {
             if (texture != null)
             {
+                #if dd_stat
+                if (ctx != null)
+                {
+                    GlobalStatistics.removeTexture(ctx, this);
+                }
+                #end
                 texture.dispose();
                 texture = null;
             }

@@ -44,8 +44,8 @@ class Stat
 {
     public function new() {}
 
-    public var textures:UInt = 0;
-    public var texturesMemory:UInt = 0;
+    public var textures:Int = 0;
+    public var texturesMemory:Int = 0;
 
     public function toString()
     {

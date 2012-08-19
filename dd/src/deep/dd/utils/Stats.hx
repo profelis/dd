@@ -177,13 +177,6 @@ class Stats extends Sprite {
             untyped xml.mem = "MEM: " + Math.round(mem);
             untyped xml.memMax = "MAX: " + Math.round(mem_max);
 
-            #if dd_stat
-            untyped xml.tris = "TRIS: " + wrld.statistics.triangles;
-            untyped xml.draws = "DRW: " + wrld.statistics.drawCalls;
-            var s = GlobalStatistics.stats.get(wrld.ctx);
-            untyped xml.tex = "TEX: " + s.textures + " / " + Math.round(s.texturesMemory * 0.000000954 * 100) / 100 + "mb";
-            #end
-
             //reset frame and time counters
             fps = 0;
             ms_prev = timer;
@@ -192,6 +185,13 @@ class Stats extends Sprite {
         }
         //increment number of frames which have occurred in current second
         fps++;
+
+        #if dd_stat
+        untyped xml.tris = "TRIS: " + wrld.statistics.triangles;
+        untyped xml.draws = "DRW: " + wrld.statistics.drawCalls;
+        var s = GlobalStatistics.stats.get(wrld.ctx);
+        untyped xml.tex = "TEX: " + s.textures + " / " + Math.round(s.texturesMemory * 0.000000954 * 100) / 100 + "mb";
+        #end
 
         untyped xml.ms = "MS: " + (timer - ms);
         ms = timer;
