@@ -51,7 +51,7 @@ class Cloud2DMaterial extends Material
 
         #if dd_stat
         node.world.statistics.drawCalls ++;
-        node.world.statistics.triangles += node.geometry.triangles;
+        node.world.statistics.triangles += sp.currentSize*2;
         #end
 
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);

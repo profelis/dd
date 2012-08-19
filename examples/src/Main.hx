@@ -1,5 +1,5 @@
 package ;
-import com.fermmmtools.debug.Stats;
+import deep.dd.utils.Stats;
 import flash.display.Sprite;
 import flash.text.TextFormat;
 import mt.m3d.Color;
@@ -49,7 +49,7 @@ class Main extends Sprite
 		activeSceneIdx = 0;
 		changeScene(activeSceneIdx);
 		
-		var stats:Stats = new Stats();
+		var stats:Stats = new Stats(world);
 		addChild(stats);
 		
         s.addEventListener(Event.ENTER_FRAME, onRender);

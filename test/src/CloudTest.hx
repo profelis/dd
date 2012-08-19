@@ -1,10 +1,10 @@
 package ;
 
+import deep.dd.utils.Stats;
 import deep.dd.display.Cloud2D;
 import deep.dd.animation.Animator;
 import flash.geom.Vector3D;
 import deep.dd.texture.atlas.parser.SpriteSheetParser;
-import com.fermmmtools.debug.Stats;
 import deep.dd.display.Batch2D;
 import deep.dd.texture.atlas.parser.StarlingParser;
 import deep.dd.texture.atlas.AtlasTexture2D;
@@ -46,9 +46,9 @@ class CloudTest
         s.scaleMode = StageScaleMode.NO_SCALE;
         s.align = StageAlign.TOP_LEFT;
 
-        s.addChild(new Stats());
-
         world = new World2D(Context3DRenderMode.AUTO);
+
+        s.addChild(new Stats(world));
 
         world.scene = scene = new Scene2D();
 
@@ -72,7 +72,6 @@ class CloudTest
             }
 
         var q = new Quad2D();
-        b.addChild(q);
         q.width = 100;
         q.height = 100;
 

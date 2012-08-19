@@ -7,6 +7,7 @@
 -lib msignal
 -cp src
 -cp ../dd/src
+-D dd_stat
 
 #-D shaderDebug
 #-debug
