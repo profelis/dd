@@ -51,13 +51,13 @@ class Cloud2DMaterial extends Material
 
         #if dd_stat
         node.world.statistics.drawCalls ++;
-        node.world.statistics.triangles += sp.currentSize*2;
+        node.world.statistics.triangles += sp.currentSize * 2;
         #end
 
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 
         shader.bind(node.geometry.vbuf);
-        ctx.drawTriangles(node.geometry.ibuf, 0, sp.currentSize*2);
+        ctx.drawTriangles(node.geometry.ibuf, 0, sp.currentSize * 2);
         shader.unbind();
     }
 

@@ -107,10 +107,12 @@ class Batch2D extends Sprite2D
         }
 
         var subNodes = new FastList<Node2D>();
-        var mpos = new Vector<Matrix3D>();
-        var cTrans = new Vector<Vector3D>();
-        var regions = new Vector<Vector3D>();
+        var mpos = new Vector<Matrix3D>(MAX_SIZE, true);
+        var cTrans = new Vector<Vector3D>(MAX_SIZE, true);
+        var regions = new Vector<Vector3D>(MAX_SIZE, true);
 
+        var idx = 0;
+        var vectorsFull = false;
         for (c in batchList)
         {
             var s:Sprite2D = null;
@@ -149,34 +151,36 @@ class Batch2D extends Sprite2D
             }
             else if (invalidateTexture || s.textureFrame == null)
             {
-                trace("reasign");
                 s.textureFrame = textureFrame;
             }
 
             if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
 
-            mpos.push(s.drawTransform);
-            cTrans.push(s.worldColorTransform);
-            regions.push(s.textureFrame.region);
+            mpos[idx] = s.drawTransform;
+            cTrans[idx] = s.worldColorTransform;
+            regions[idx] = s.textureFrame.region;
 
-            if (mpos.length == MAX_SIZE)
+            idx ++;
+            if (idx == MAX_SIZE)
             {
-                mat.drawBatch(this, camera, this.texture, mpos, cTrans, regions);
-                mpos.length = 0;
-                cTrans.length = 0;
-                regions.length = 0;
+                mat.drawBatch(this, camera, this.texture, idx, mpos, cTrans, regions);
+                vectorsFull = true;
+                idx = 0;
             }
         }
 
-        if (mpos.length > 0)
+        if (idx > 0)
         {
-            for (i in mpos.length...MAX_SIZE)
+            if (!vectorsFull)
             {
-                mpos.push(emptyMatrix);
-                cTrans.push(emptyVector);
-                regions.push(emptyVector);
+                for (i in idx...MAX_SIZE)
+                {
+                    mpos[i] = emptyMatrix;
+                    cTrans[i] = emptyVector;
+                    regions[i] = emptyVector;
+                }
             }
-            mat.drawBatch(this, camera, this.texture, mpos, cTrans, regions);
+            mat.drawBatch(this, camera, this.texture, idx, mpos, cTrans, regions);
         }
 
         for (s in subNodes)

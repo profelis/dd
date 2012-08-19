@@ -30,7 +30,7 @@ class Batch2DMaterial extends Material
         shaderRef = SHADERS.get(texOpt & 0x60).get(texOpt & 0x18).get(texOpt & 0x7);
     }
 
-    public function drawBatch(node:Batch2D, camera:Camera2D, tex:Texture2D, mpos:Vector<Matrix3D>, cTrans:Vector<Vector3D>, regions:Vector<Vector3D>)
+    public function drawBatch(node:Batch2D, camera:Camera2D, tex:Texture2D, size:Int, mpos:Vector<Matrix3D>, cTrans:Vector<Vector3D>, regions:Vector<Vector3D>)
     {
         if (texOpt != tex.options)
         {
@@ -41,7 +41,16 @@ class Batch2DMaterial extends Material
 
         untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}, {tex:tex.texture});
 
-        super.draw(node, camera);
+        #if dd_stat
+        node.world.statistics.drawCalls ++;
+        node.world.statistics.triangles += size * 2;
+        #end
+
+        ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
+
+        shader.bind(node.geometry.vbuf);
+        ctx.drawTriangles(node.geometry.ibuf, 0, size * 2);
+        shader.unbind();
     }
 
     override public function draw(node:DisplayNode2D, camera:Camera2D)

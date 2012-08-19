@@ -22,7 +22,7 @@ import deep.dd.World2D;
 class Test3D extends Test
 {
     inline static var nx = 18;
-    inline static var ny = 24;
+    inline static var ny = 26;
 
     var c:Sprite2D;
     var t:AtlasTexture2D;
@@ -47,7 +47,7 @@ class Test3D extends Test
             for (x in 0...nx)
             {
                 var s = new Sprite2D();
-                s.texture = t.getTextureById(x * ny + y);
+                s.texture = t.getTextureById(y * nx + x);
                 s.pivot = pivot;
                 s.x = x * iw - bmp.width * 0.5;
                 s.y = y * ih - bmp.height * 0.5;
