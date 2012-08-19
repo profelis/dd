@@ -72,7 +72,7 @@ class Cocos2DParser implements IAtlasParser
 			
 			if (!framesFound)
 			{
-				if (node.nodeName == "key" && node.firstChild().toString() == "frames" && node.firstChild().toString() != "metadata")
+				if (node.nodeName == "key" && node.firstChild().toString() == "frames")
 				{
 					framesFound = true;
 				}
