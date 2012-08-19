@@ -45,7 +45,7 @@ class Sprite2D extends DisplayNode2D
         if (animator != null)
         {
             animator.dispose();
-            animator = null;
+            Reflect.setField(this, "animator", null);
         }
     }
 
