@@ -74,7 +74,7 @@ class Stats extends Sprite {
         this.alignRight = alignRight;
 
         #if dd_stat
-        xml = new XML("<xml><fps>FPS:</fps><ms>MS:</ms><mem>MEM:</mem><memMax>MAX:</memMax><tex>TEX:</tex><tris>TRIS:</tris><draws>DRAWS:</draws></xml>");
+        xml = new XML("<xml><fps>FPS:</fps><ms>MS:</ms><mem>MEM:</mem><memMax>MAX:</memMax><tex>TEX:</tex><tris>TRIS:</tris><draws>DRW:</draws></xml>");
         #else
         xml = new XML("<xml><fps>FPS:</fps><ms>MS:</ms><mem>MEM:</mem><memMax>MAX:</memMax></xml>");
         #end
@@ -178,10 +178,10 @@ class Stats extends Sprite {
             untyped xml.memMax = "MAX: " + Math.round(mem_max);
 
             #if dd_stat
-            untyped xml.tris = "TRIS:" + wrld.statistics.triangles;
-            untyped xml.draws = "DRAWS:" + wrld.statistics.drawCalls;
+            untyped xml.tris = "TRIS: " + wrld.statistics.triangles;
+            untyped xml.draws = "DRW: " + wrld.statistics.drawCalls;
             var s = GlobalStatistics.stats.get(wrld.ctx);
-            untyped xml.tex = "TEX:" + s.textures + " / " + Math.round(s.texturesMemory * 0.000000954 * 100) / 100 + "mb";
+            untyped xml.tex = "TEX: " + s.textures + " / " + Math.round(s.texturesMemory * 0.000000954 * 100) / 100 + "mb";
             #end
 
             //reset frame and time counters
