@@ -109,9 +109,6 @@ class Cloud2D extends Sprite2D
         #end
 
         var idx = 0;
-
-        trace("----");
-
         for (s in batchList)
         {
             #if debug

@@ -57,22 +57,22 @@ class CloudTest
 
 
 
-        var b = new Cloud2D(30);
+        var b = new Cloud2D(100);
         scene.addChild(b);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
 
-        for (x in 0...5)
-            for (y in 0...5)
+        for (x in 0...10)
+            for (y in 0...10)
             {
                 var s = new Sprite2D();
                 b.addChild(s);
                 var an:Animator = cast b.animator.copy();
                 s.animator = an;
-                an.playAnimation(null, x+y, true, true);
+                an.playAnimation(null, x, true, true);
                 //s.playAnimation(null, y, true, true);
-                s.x = x * 140;
-                s.y = y * 140;
+                s.x = x * 70;
+                s.y = y * 70;
             }
 
         var q = new Quad2D();
