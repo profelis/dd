@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import haxe.FastList;
 import msignal.Signal;
 import mt.m3d.Color;
 import deep.dd.World2D;
@@ -33,9 +34,9 @@ class Node2D
 
     public var visible:Bool = true;
 
-    var children:Array<Node2D>;
+    var children:FastList<Node2D>;
 
-    public var numChildren(get_numChildren, null):UInt;
+    public var numChildren(default, null):UInt = 0;
 
     var ctx:Context3D;
 
@@ -51,7 +52,7 @@ class Node2D
         transformChange = new Signal0();
         colorTransformChange = new Signal0();
 
-        children = new Array();
+        children = new FastList<Node2D>();
         transform = new Matrix3D();
 
         worldColorTransform = new Vector3D();
@@ -70,7 +71,7 @@ class Node2D
         transformChange.removeAll();
         colorTransformChange.removeAll();
 
-        for (child in children.copy())
+        for (child in children)
         {
             child.dispose();
         }
@@ -128,11 +129,6 @@ class Node2D
 
     // children
 
-    function get_numChildren()
-    {
-        return children.length;
-    }
-
     public function addChild(c:Node2D):Void
     {
         if (c.parent != null)
@@ -140,25 +136,27 @@ class Node2D
             if (c.parent == this)
             {
                 children.remove(c);  // small optimization
-                children.push(c);
+                children.add(c);
                 return;
             }
 
             c.parent.removeChild(c);
         }
-        children.push(c);
+        children.add(c);
         c.setParent(this);
         if (scene != null) c.setScene(scene);
         if (ctx != null) c.init(ctx);
+        numChildren ++;
     }
 
     public function removeChild(c:Node2D):Void
     {
-        children.remove(c);
+        if (!children.remove(c)) throw "c must be child";
         c.invalidateWorldTransform = true;
         c.parent = null;
         c.setParent(null);
         c.setScene(null);
+        numChildren --;
     }
 	
     public function iterator():Iterator<Node2D>
@@ -186,7 +184,7 @@ class Node2D
         for (i in children) if (i.visible) i.drawStep(camera);
     }
 
-    public function updateWorldColor()
+    inline public function updateWorldColor()
     {
         worldColorTransform.setTo(colorTransform.r, colorTransform.g, colorTransform.b);
         worldColorTransform.w = colorTransform.a;
@@ -205,7 +203,7 @@ class Node2D
         colorTransformChange.dispatch();
     }
 
-    public function updateWorldTransform()
+    inline public function updateWorldTransform()
     {
         worldTransform.identity();
         worldTransform.append(this.transform);
@@ -214,7 +212,7 @@ class Node2D
         invalidateWorldTransform = false;
     }
 
-    public function updateTransform()
+    inline public function updateTransform()
     {
         transform.identity();
         if (pivot != null) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
