@@ -138,11 +138,14 @@ class AtlasTexture2D extends SubTexture2D
 	{
 		super.dispose();
 		
-		for (anim in animationMap)
+		if (animationMap != null)
 		{
-			anim.dispose();
+			for (anim in animationMap)
+			{
+				anim.dispose();
+			}
+			animationMap = null;
 		}
-		animationMap = null;
 	}
 
 }
