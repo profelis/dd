@@ -135,8 +135,6 @@ class BatchTest
         sp1.colorTransform = new Color(Math.random(), Math.random(), Math.random(), 1);
         sp1.rotationZ = -sp0.rotationZ;
 
-        trace(GlobalStatistics.stats.get(world.ctx));
-        trace(world.statistics);
         //world.camera.x = -world.stage.mouseX;
         //world.camera.y = -world.stage.mouseY;
     //    world.camera.scale += (Math.random()-0.5) * 0.003;

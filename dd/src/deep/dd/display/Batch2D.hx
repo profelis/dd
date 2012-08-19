@@ -134,12 +134,11 @@ class Batch2D extends Sprite2D
             if (s.geometry.triangles != 2) throw "Batch2D ignore complex geometry";
             #end
 
-            if (s.textureFrame == null) s.textureFrame = textureFrame;
-
             if (s.animator != null && s.animator != animator)
             {
                 s.animator.draw(scene.time);
                 var frame = s.animator.textureFrame;
+
                 if (frame != s.textureFrame)
                 {
                     s.invalidateDrawTransform = true;
@@ -148,14 +147,12 @@ class Batch2D extends Sprite2D
                     s._height= frame.height;
                 }
             }
-
-            if (invalidateTexture || s.invalidateDrawTransform)
+            else if (invalidateTexture || s.textureFrame == null)
             {
-                s.drawTransform.rawData = s.textureFrame.drawMatrix.rawData;
-                s.drawTransform.append(s.worldTransform);
-
-                s.invalidateDrawTransform = false;
+                s.textureFrame = textureFrame;
             }
+
+            if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
 
             mpos.push(s.drawTransform);
             cTrans.push(s.worldColorTransform);

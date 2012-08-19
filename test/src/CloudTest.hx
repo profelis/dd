@@ -67,12 +67,16 @@ class CloudTest
             {
                 var s = new Sprite2D();
                 b.addChild(s);
-                s.x = x * 70;
-                s.y = y * 70;
+                var an:Animator = cast b.animator.copy();
+                s.animator = an;
+                an.playAnimation(null, x+y, true, true);
+                //s.playAnimation(null, y, true, true);
+                s.x = x * 140;
+                s.y = y * 140;
             }
 
         var q = new Quad2D();
-        b.addChild(q);
+        //b.addChild(q);
         q.width = 100;
         q.height = 100;
 
@@ -91,8 +95,6 @@ class CloudTest
     function onRender(_)
     {
 
-        trace(GlobalStatistics.stats.get(world.ctx));
-        trace(world.statistics);
         //world.camera.x = -world.stage.mouseX;
         //world.camera.y = -world.stage.mouseY;
     //    world.camera.scale += (Math.random()-0.5) * 0.003;

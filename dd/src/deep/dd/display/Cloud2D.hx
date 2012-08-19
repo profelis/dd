@@ -109,36 +109,49 @@ class Cloud2D extends Sprite2D
         #end
 
         var idx = 0;
-        var r = textureFrame.region;
+
+        trace("----");
 
         for (s in batchList)
         {
+            #if debug
+            if (s.geometry.triangles != 2) throw "can't batch complex geometry";
+            #end
+
             if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
 
             if (s.invalidateTransform) s.updateTransform();
             if (s.invalidateWorldTransform) s.updateWorldTransform();
             if (s.invalidateColorTransform) s.updateWorldColor();
 
-            if (invalidateTexture || s.invalidateDrawTransform)
+            if (s.animator != null && s.animator != animator)
             {
-                s.drawTransform.rawData = textureFrame.drawMatrix.rawData;
-                s.drawTransform.append(s.worldTransform);
+                s.animator.draw(scene.time);
+                var frame = s.animator.textureFrame;
 
-                s.invalidateDrawTransform = false;
+                if (frame != s.textureFrame)
+                {
+                    s.invalidateDrawTransform = true;
+                    s.textureFrame = frame;
+                    s._width = frame.width;
+                    s._height= frame.height;
+                }
+            }
+            else if (invalidateTexture || s.textureFrame == null)
+            {
+                s.textureFrame = textureFrame;
             }
 
-            #if debug
-            if (s.geometry.triangles != 2) throw "can't batch complex geometry";
-            #end
+            if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
 
             var poly = geometry.poly;
             var sPoly = s.geometry.poly;
 
             var i = idx;
 
+            var m = s.drawTransform.rawData;
             for (p in sPoly.points)
             {
-                var m = s.drawTransform.rawData;
                 poly.points[i++].set(
                     m[0] * p.x + m[4] * p.y + m[8] * p.z + m[12],
                     m[1] * p.x + m[5] * p.y + m[9] * p.z + m[13],
@@ -153,6 +166,7 @@ class Cloud2D extends Sprite2D
                 c.fromVector(s.worldColorTransform);
             }
 
+            var r = s.textureFrame.region;
             i = idx;
             for (t in sPoly.tcoords)
             {
