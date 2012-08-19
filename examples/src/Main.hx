@@ -1,4 +1,6 @@
 package ;
+
+import com.bit101.components.Style;
 import flash.text.TextFieldAutoSize;
 import tests.Test3D;
 import deep.dd.utils.Stats;
@@ -37,6 +39,10 @@ class Main extends Sprite
         s.scaleMode = StageScaleMode.NO_SCALE;
         s.align = StageAlign.TOP_LEFT;
 		s.addChild(this);
+
+        Style.embedFonts = false;
+        Style.fontSize = 12;
+        Style.setStyle(Style.BLACK);
 
         world = new World2D(Context3DRenderMode.AUTO);
 		world.bgColor = new Color(0.5, 0.5, 0.5, 1);

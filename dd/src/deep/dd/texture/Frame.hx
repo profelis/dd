@@ -66,6 +66,6 @@ class Frame
 
     public function toString()
     {
-        return "{Frame: " + width + ", " + height + (border != null ? ", " + border : "") + (name != null ? " ~ " + name : "") + "}";
+        return "{Frame: " + width + ", " + height + ", " + region + ", "+ (border != null ? ", " + border : "") + (name != null ? " ~ " + name : "") + "}";
     }
 }

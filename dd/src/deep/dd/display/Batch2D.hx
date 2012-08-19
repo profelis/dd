@@ -48,7 +48,7 @@ class Batch2D extends Sprite2D
 
     override public function drawStep(camera:Camera2D):Void
     {
-        if (mat == null)
+        if (mat == null || texture == null)
         {
             super.drawStep(camera);
             return;
@@ -149,6 +149,7 @@ class Batch2D extends Sprite2D
             }
             else if (invalidateTexture || s.textureFrame == null)
             {
+                trace("reasign");
                 s.textureFrame = textureFrame;
             }
 
@@ -163,6 +164,7 @@ class Batch2D extends Sprite2D
                 mat.drawBatch(this, camera, this.texture, mpos, cTrans, regions);
                 mpos.length = 0;
                 cTrans.length = 0;
+                regions.length = 0;
             }
         }
 
