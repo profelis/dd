@@ -107,6 +107,9 @@ class Test3D extends Test
             c.dispose();
         }
         addChild(c = n);
+
+        c.x = world.stage.stageWidth * 0.5;
+        c.y = world.stage.stageHeight * 0.5;
     }
 
     override public function drawStep(camera:Camera2D):Void
@@ -116,12 +119,6 @@ class Test3D extends Test
         {
             i.rotationX += 1.5;
             i.rotationY += 1.5;
-        }
-
-        if (c != null)
-        {
-            c.x = world.stage.stageWidth * 0.5;
-            c.y = world.stage.stageHeight * 0.5;
         }
 
         super.drawStep(camera);
