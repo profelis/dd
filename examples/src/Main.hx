@@ -1,4 +1,5 @@
 package ;
+import flash.text.TextFieldAutoSize;
 import tests.Test3D;
 import deep.dd.utils.Stats;
 import flash.display.Sprite;
@@ -42,7 +43,7 @@ class Main extends Sprite
 		
 		var tf:TextFormat = new TextFormat("Arial", 11, 0xFFFFFF, true);
 		sceneText = new TextField();
-		sceneText.width = Lib.current.stage.stageWidth;
+        sceneText.autoSize = TextFieldAutoSize.LEFT;
 		sceneText.defaultTextFormat = tf;
 		addChild(sceneText);
 
@@ -59,6 +60,14 @@ class Main extends Sprite
 		addChild(stats);
 		
 		s.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+        s.addEventListener(Event.RESIZE, onResize);
+
+        onResize(null);
+    }
+
+    function onResize(_)
+    {
+        sceneText.y = stage.stageHeight - sceneText.height;
     }
 	
 	function onKeyUp(e:KeyboardEvent):Void 
