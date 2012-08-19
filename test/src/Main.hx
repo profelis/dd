@@ -4,6 +4,7 @@ import deep.dd.display.MovieClip2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.texture.atlas.parser.Cocos2DParser;
 import deep.dd.texture.atlas.parser.StarlingParser;
+import deep.dd.texture.atlas.parser.AngelCodeFontParser;
 import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
 import deep.dd.display.Sprite2D;
@@ -28,7 +29,10 @@ import flash.events.Event;
 @:file("otherAtlases/textureatlas_cocos2d.plist") class Cocos2DAtlasData extends ByteArray { }
 
 @:bitmap("starlingAtlas/atlas.png") class StarlingAtlasImage extends BitmapData {}
-@:file("starlingAtlas/atlas.xml") class StarlingAtlasData extends ByteArray {}
+@:file("starlingAtlas/atlas.xml") class StarlingAtlasData extends ByteArray { }
+
+@:bitmap("NavTitle.png") class AngelCodeImage extends BitmapData {}
+@:file("NavTitle.fnt") class AngelCodeData extends ByteArray {}
 
 class Main
 {
@@ -90,6 +94,14 @@ class Main
 		mc4.y = 200;
 		world.scene.addChild(mc4);
 		
+		var mc5:MovieClip2D = new MovieClip2D();
+		mc5.fps = 20;
+		var angelCode:AtlasTexture2D = new AtlasTexture2D(world.cache.getTexture(AngelCodeImage), new AngelCodeFontParser(Xml.parse(Std.string(new AngelCodeData()))));
+		mc5.texture = angelCode;
+		mc5.y = 200;
+		mc5.scaleX = mc5.scaleY = 2;
+		world.scene.addChild(mc5);
+		
         /*var b = new Batch2D();
         scene.addChild(b);
         b.texture = world.cache.getTexture(Image);
@@ -127,8 +139,8 @@ class Main
 
     function onRender(_)
     {
-       trace(cast(mc2.animator, Animator).isPlaying);
-       trace(mc2.textureFrame);
+    //   trace(cast(mc2.animator, Animator).isPlaying);
+    //  trace(mc2.textureFrame);
 		
 		//world.camera.x = -world.stage.mouseX;
         //world.camera.y = -world.stage.mouseY;

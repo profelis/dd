@@ -2,18 +2,16 @@
 -swf-header 800:600:60:FFFFFF
 --flash-strict
 -swf-version 11
--main BatchTest
+-main Main
 -lib format
 -lib msignal
 -cp src
 -cp test
 -cp ../dd/src
--cp ../MinimalCompsHX/Source
---remap nme:flash
 #-D shaderDebug
 #-D shaderCompDebug
 #-debug
 -D dd_stat
 #-D fdb
 #--no-inline
-
+#-D dump
