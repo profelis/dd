@@ -37,7 +37,7 @@ class Cloud2DMaterial extends Material
         if (!Std.is(node, Cloud2D)) throw "Cloud2DMaterial can't draw " + node;
         #end
 
-        var sp:Sprite2D = cast node;
+        var sp = cast(node, Cloud2D);
         var tex:Texture2D = sp.texture;
 
         if (texOpt != tex.options)
@@ -49,7 +49,16 @@ class Cloud2DMaterial extends Material
 
         untyped shader.init({mproj:camera.proj}, {tex:tex.texture});
 
-        super.draw(node, camera);
+        #if dd_stat
+        node.world.statistics.drawCalls ++;
+        node.world.statistics.triangles += node.geometry.triangles;
+        #end
+
+        ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
+
+        shader.bind(node.geometry.vbuf);
+        ctx.drawTriangles(node.geometry.ibuf, 0, sp.currentSize*2);
+        shader.unbind();
     }
 
     public static var SHADERS(default, null):IntHash<IntHash<IntHash<Class<Shader>>>> = initSHADERS();

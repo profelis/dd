@@ -37,9 +37,10 @@ class Material
     {
         if (this.ctx == ctx) return;
 
+        releaseShader();
+
         this.ctx = ctx;
 
-        releaseShader();
         updateShader();
     }
 

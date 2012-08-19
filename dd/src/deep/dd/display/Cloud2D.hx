@@ -56,7 +56,7 @@ class Cloud2D extends Sprite2D
             if (animator != null)
             {
                 animator.draw(scene.time);
-                f = animator.frame;
+                f = animator.textureFrame;
             }
 
             if (textureFrame != f)
@@ -77,14 +77,17 @@ class Cloud2D extends Sprite2D
 
         if (invalidateDrawTransform) updateDrawTransform();
 
+        currentSize = 0;
+
         drawBatch(this, camera, invalidateTexture);
     }
+
+    public var currentSize(default, null):UInt;
 
     function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
     {
         var batchList = new FastList<Sprite2D>();
         var renderList = new FastList<Node2D>();
-        var batchLen:UInt = 0;
 
         for (c in node.children)
         {
@@ -93,7 +96,7 @@ class Cloud2D extends Sprite2D
             if (!c.ignoreInBatch && c.numChildren == 0 && Std.is(c, Sprite2D))
             {
                 batchList.add(cast(c, Sprite2D));
-                batchLen ++;
+                currentSize ++;
             }
             else
             {
@@ -102,7 +105,7 @@ class Cloud2D extends Sprite2D
         }
 
         #if debug
-        if (batchLen > size) throw "Cloud2D maxsize reached";
+        if (currentSize > size) throw "Cloud2D maxsize reached";
         #end
 
         var idx = 0;
@@ -162,9 +165,7 @@ class Cloud2D extends Sprite2D
         }
 
         geometry.update();
-
         mat.draw(this, camera);
-
 
         for (s in renderList)
         {

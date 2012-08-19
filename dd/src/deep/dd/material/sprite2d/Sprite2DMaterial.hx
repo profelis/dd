@@ -31,7 +31,7 @@ class Sprite2DMaterial extends Material
         if (!Std.is(node, Sprite2D)) throw "Sprite2DMaterial can't draw " + node;
         #end
 
-        var sp:Sprite2D = cast node;
+        var sp = cast(node, Sprite2D);
         var tex:Texture2D = sp.texture;
 
         if (texOpt != tex.options)

@@ -12,27 +12,13 @@ class Quad2DMaterial extends Material
         super(QuadShader);
     }
 
-    override public function init(ctx:Context3D)
-    {
-        if (this.ctx == ctx) return;
-        super.init(ctx);
-        quadShader = cast(shader, QuadShader);
-    }
-
-    var quadShader:QuadShader;
-
     override public function draw(node:DisplayNode2D, camera:Camera2D)
     {
-        quadShader.init({ mpos : node.worldTransform, mproj : camera.proj }, {cTrans:node.worldColorTransform});
+        untyped shader.init({ mpos : node.worldTransform, mproj : camera.proj }, {cTrans:node.worldColorTransform});
 
         super.draw(node, camera);
     }
-	
-	override public function dispose():Void 
-	{
-		super.dispose();
-		quadShader = null;
-	}
+
 
 }
 
