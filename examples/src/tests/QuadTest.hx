@@ -1,4 +1,6 @@
 package tests;
+import deep.dd.camera.Camera2D;
+import mt.m3d.Camera;
 import deep.dd.display.Quad2D;
 import deep.dd.geometry.Geometry;
 import deep.dd.World2D;
@@ -23,14 +25,15 @@ class QuadTest extends Test
 		addChild(quad);
 	}
 	
-	override public function update():Void 
+	override public function drawStep(camera:Camera2D):Void
 	{
-		super.update();
 		var time:Float = Lib.getTimer() / 1000;
 		quad.geometry.setVertexColor(0, mixColors(0xFF0000, 0x00FF00, sin0_1(time * 2.2)), 	sin0_1(time * 2.3));
 		quad.geometry.setVertexColor(1, mixColors(0x00FF00, 0x0000FF, sin0_1(time * 2.4)), 	sin0_1(time * 2.5));
 		quad.geometry.setVertexColor(2, mixColors(0xFF00FF, 0xFFFF00, sin0_1(time * 2.6)), 	sin0_1(time * 2.7));
 		quad.geometry.setVertexColor(3, mixColors(0x00FF99, 0x9900FF, sin0_1(time * 2.8)), 	sin0_1(time * 2.9));
+
+        super.drawStep(camera);
 	}
 	
 	override public function dispose():Void 

@@ -58,7 +58,6 @@ class Main extends Sprite
 		var stats:Stats = new Stats(world);
 		addChild(stats);
 		
-        s.addEventListener(Event.ENTER_FRAME, onRender);
 		s.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
     }
 	
@@ -112,11 +111,6 @@ class Main extends Sprite
 	//	world.cache.reinitBitmapTextureCache();
 		currentScene = Type.createInstance(scenes[activeSceneIdx], [world]);
 	}
-
-    function onRender(_)
-    {
-        currentScene.update();
-    }
 
     static function main()
     {

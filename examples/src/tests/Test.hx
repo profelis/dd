@@ -16,10 +16,5 @@ class Test extends Scene2D
 		world = wrld;
 		world.scene = this;
 	}
-	
-	public function update():Void
-	{
-		
-	}
-	
+
 }
