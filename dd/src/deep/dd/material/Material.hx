@@ -71,10 +71,8 @@ class Material
 
     inline function releaseShader()
     {
-        if (ctx != null && shader != null && useShaderCache)
+        if (ctx != null && shader != null && useShaderCache && shaderCache.exists(ctx))
         {
-            if (!shaderCache.exists(ctx)) return;
-
             var useCount = shaderUseCount.get(ctx);
 
             if (useCount != null && useCount.exists(shader))
