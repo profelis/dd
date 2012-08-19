@@ -1,4 +1,5 @@
 package ;
+import tests.Test3D;
 import deep.dd.utils.Stats;
 import flash.display.Sprite;
 import flash.text.TextFormat;
@@ -44,8 +45,13 @@ class Main extends Sprite
 		sceneText.width = Lib.current.stage.stageWidth;
 		sceneText.defaultTextFormat = tf;
 		addChild(sceneText);
-		
-		scenes = [QuadTest];
+
+
+
+		scenes = [QuadTest, Test3D];
+
+
+
 		activeSceneIdx = 0;
 		changeScene(activeSceneIdx);
 		

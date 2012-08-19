@@ -31,6 +31,7 @@ class Material
 	public static function freeContextCache(ctx:Context3D):Void
 	{
         shaderCache.delete(ctx);
+        shaderUseCount.delete(ctx);
 	}
 
     public function init(ctx:Context3D)
@@ -58,7 +59,7 @@ class Material
             if (useShaderCache)
             {
                 shader = shaderCache.get(ctx).get(key);
-                useCount.set(shader, useCount.get(shader) + 1);
+                if (shader != null) useCount.set(shader, useCount.get(shader) + 1);
             }
             if (shader == null)
             {
@@ -70,8 +71,10 @@ class Material
 
     inline function releaseShader()
     {
-        if (shader != null && useShaderCache)
+        if (ctx != null && shader != null && useShaderCache)
         {
+            if (!shaderCache.exists(ctx)) return;
+
             var useCount = shaderUseCount.get(ctx);
 
             if (useCount != null && useCount.exists(shader))
