@@ -72,6 +72,7 @@ class CloudTest
             }
 
         var q = new Quad2D();
+        b.addChild(q);
         q.width = 100;
         q.height = 100;
 

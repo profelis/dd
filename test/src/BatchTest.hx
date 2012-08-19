@@ -1,5 +1,6 @@
 package ;
 
+import deep.dd.display.Cloud2D;
 import deep.dd.utils.Stats;
 import deep.dd.animation.Animator;
 import flash.geom.Vector3D;
@@ -80,7 +81,8 @@ class BatchTest
             s.y = j * 40 + 20;
         }
 
-        b0.addChild(sp0 = new Sprite2D());
+        sp0 = new Sprite2D();
+        //b0.addChild(sp0);
         sp0.x = 100;
         sp0.y = 100;
 
@@ -90,11 +92,9 @@ class BatchTest
         sp0.addChild(sp1 = new Sprite2D());
         sp1.x = -50;
 
-        var b = new Batch2D();
-        //b.visible = false;
+        var b = new Cloud2D(25);
         b.x = 250;
         b0.addChild(b);
-        //b.texture = world.cache.getTexture(Image);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
         c = [];
@@ -109,7 +109,7 @@ class BatchTest
             }
 
         var q = new Quad2D();
-        b0.addChild(q);
+        //b0.addChild(q);
         q.width = 100;
         q.height = 100;
 
