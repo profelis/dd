@@ -84,7 +84,7 @@ class Cloud2D extends Sprite2D
 
     public var currentSize(default, null):UInt;
 
-    function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
+    inline function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
     {
         var batchList = new FastList<Sprite2D>();
         var renderList = new FastList<Node2D>();
