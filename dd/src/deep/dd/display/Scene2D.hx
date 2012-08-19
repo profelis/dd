@@ -31,10 +31,6 @@ class Scene2D extends Node2D
         super.drawStep(camera);
     }
 
-    override public function draw(camera:Camera2D):Void
-    {
-    }
-
     override public function dispose():Void
 	{
 		super.dispose();

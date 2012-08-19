@@ -223,6 +223,7 @@ class Node2D
         transform.appendRotation(rotationY, Vector3D.Y_AXIS);
         transform.appendRotation(rotationX, Vector3D.X_AXIS);
         transform.appendTranslation(x, y, z);
+        if (pivot != null) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
 
         invalidateTransform = false;
         invalidateWorldTransform = true;
@@ -232,7 +233,6 @@ class Node2D
 
     public function draw(camera:Camera2D):Void
     {
-        throw "override me";
     }
 
     // transform

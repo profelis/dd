@@ -35,7 +35,7 @@ class Frame
         setBorder(border);
     }
 
-    public function setBorder(b:Rectangle)
+    function setBorder(b:Rectangle)
     {
         border = b;
 

@@ -14,7 +14,7 @@ import flash.events.KeyboardEvent;
 import flash.Lib;
 import flash.text.TextField;
 import flash.ui.Keyboard;
-import tests.QuadTest;
+import tests.TestQuad;
 import tests.Test;
 
 class Main extends Sprite
@@ -38,7 +38,7 @@ class Main extends Sprite
 		s.addChild(this);
 
         world = new World2D(Context3DRenderMode.AUTO);
-		world.bgColor = new Color();
+		world.bgColor = new Color(0.5, 0.5, 0.5, 1);
 		
 		var tf:TextFormat = new TextFormat("Arial", 11, 0xFFFFFF, true);
 		sceneText = new TextField();
@@ -48,7 +48,7 @@ class Main extends Sprite
 
 
 
-		scenes = [QuadTest, Test3D];
+		scenes = [TestQuad, Test3D];
 
 
 
