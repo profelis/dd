@@ -49,6 +49,6 @@ class Stat
 
     public function toString()
     {
-        return ["textures: ", textures, ", texturesMemory: ", texturesMemory / 1000, " kb"].join("");
+        return Std.format("textures: $textures, $texturesMemory: ${texturesMemory / 1000} kb");
     }
 }

@@ -1,5 +1,6 @@
 package ;
 
+import deep.dd.utils.MouseData;
 import deep.dd.display.Node2D;
 import flash.geom.Rectangle;
 import deep.dd.display.Cloud2D;
@@ -110,22 +111,24 @@ class MouseTest
         s.addEventListener(MouseEvent.CLICK, onClick);
     }
 
-    function onUp(n:Node2D)
+    function onUp(n:Node2D, _)
     {
         n.alpha = 1;
     }
 
-    function onDown(n:Node2D)
+    function onDown(n:Node2D, md:MouseData)
     {
         n.alpha = 0.5;
+        trace(md);
+        trace(cast(n, Sprite2D).texture.frame);
     }
 
-    function onOver(n:Node2D)
+    function onOver(n:Node2D, _)
     {
         n.colorTransform = new Color(1, 0, 0, n.alpha);
     }
 
-    function onOut(n:Node2D)
+    function onOut(n:Node2D, _)
     {
         n.colorTransform = new Color(1, 1, 1, n.alpha);
     }

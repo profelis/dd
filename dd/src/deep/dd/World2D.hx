@@ -1,5 +1,7 @@
 package deep.dd;
 
+import deep.dd.utils.MouseData;
+import deep.dd.display.Node2D;
 import flash.events.TouchEvent;
 import flash.geom.Vector3D;
 import flash.events.MouseEvent;
@@ -139,15 +141,29 @@ class World2D
 
     function onTouchEvent(e:TouchEvent)
     {
-        mouseStep(e.stageX, e.stageY, touchAlias.get(e.type), e.touchPointID);
+        var md:MouseData = new MouseData();
+        md.type = touchAlias.get(e.type);
+        md.pointId = e.touchPointID;
+        md.touch = true;
+        md.shift = e.shiftKey;
+        md.ctrl = e.ctrlKey;
+        md.alt = e.altKey;
+
+        mouseStep(e.stageX, e.stageY, md);
     }
 
     function onMouseEvent(e:MouseEvent)
     {
-        mouseStep(stage.mouseX, stage.mouseY, e.type, -1);
+        var md:MouseData = new MouseData();
+        md.type = e.type;
+        md.shift = e.shiftKey;
+        md.ctrl = e.ctrlKey;
+        md.alt = e.altKey;
+
+        mouseStep(stage.mouseX, stage.mouseY, md);
     }
 
-    inline function mouseStep(mx:Float, my:Float, type:String, point:Int)
+    inline function mouseStep(mx:Float, my:Float, md:MouseData)
     {
         if (bounds.contains(mx, my))
         {
@@ -156,7 +172,7 @@ class World2D
             m.x = (mx - bounds.x) / bounds.width * 2 - 1;
             m.y = -(my - bounds.y) / bounds.height * 2 + 1;
 
-            scene.mouseStep(m, camera, type, point);
+            scene.mouseStep(m, camera, md);
         }
     }
 

@@ -28,6 +28,6 @@ class Statistics
 
     public function toString()
     {
-        return ["triangles: ", triangles, ", drawCalls: ", drawCalls].join("");
+        return Std.format("triangles: $triangles, drawCalls: $drawCalls");
     }
 }

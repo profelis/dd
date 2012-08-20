@@ -1,5 +1,9 @@
 package deep.dd.display;
 
+import deep.dd.utils.MouseData;
+import msignal.Signal;
+import msignal.Signal.Signal1;
+import msignal.Signal.Signal2;
 import flash.events.TouchEvent;
 import flash.events.MouseEvent;
 import msignal.Signal;
@@ -17,13 +21,12 @@ class Node2D
 {
     public var blendMode:BlendMode;
 
-    public var mouseEnabled:Bool = false;
-
     public var parent(default, null):Node2D;
-
     public var scene(default, null):Scene2D;
-
     public var world(get_world, null):World2D;
+
+    var _width:Float = 1;
+    var _height:Float = 1;
 
     public var transform(default, null):Matrix3D;
     var invalidateTransform:Bool = true;
@@ -45,22 +48,35 @@ class Node2D
 
     var ctx:Context3D;
 
-    public var transformChange(default, null):Signal0;
-    public var colorTransformChange(default, null):Signal0;
+    public var mouseEnabled:Bool = false;
+    public var mouseX(default, null):Float;
+    public var mouseY(default, null):Float;
+
+    var oldMouseOver:Bool = false;
+    public var mouseOver(default, null):Bool = false;
+    public var mouseDown(default, null):Bool = false;
+
+    var mouseTransform:Matrix3D;
 
     public var ignoreInBatch:Bool = false;
+
+    public var transformChange(default, null):Signal0;
+    public var colorTransformChange(default, null):Signal0;
+    public var onMouseOver(default, null):Signal2<Node2D, MouseData>;
+    public var onMouseOut(default, null):Signal2<Node2D, MouseData>;
+    public var onMouseDown(default, null):Signal2<Node2D, MouseData>;
+    public var onMouseUp(default, null):Signal2<Node2D, MouseData>;
 
     public function new()
     {
         blendMode = BlendMode.NORMAL;
 
-        onMouseOver = new Signal1<Node2D>();
-        onMouseOut = new Signal1<Node2D>();
-        onMouseDown = new Signal1<Node2D>();
-        onMouseUp = new Signal1<Node2D>();
-
         transformChange = new Signal0();
         colorTransformChange = new Signal0();
+        onMouseOver = new Signal2<Node2D, MouseData>();
+        onMouseOut = new Signal2<Node2D, MouseData>();
+        onMouseDown = new Signal2<Node2D, MouseData>();
+        onMouseUp = new Signal2<Node2D, MouseData>();
 
         children = new FastList<Node2D>();
         transform = new Matrix3D();
@@ -97,6 +113,15 @@ class Node2D
 
         Reflect.setField(this, "pivot", null);
         Reflect.setField(this, "colorTransform", null);
+    }
+
+    public function init(ctx:Context3D):Void
+    {
+        if (this.ctx != ctx)
+        {
+            this.ctx = ctx;
+            for (i in children) i.init(ctx);
+        }
     }
 
     function setParent(p:Node2D)
@@ -176,48 +201,22 @@ class Node2D
         return children.iterator();
     }
 
-    public function init(ctx:Context3D):Void
+    public function mouseStep(pos:Vector3D, camera:Camera2D, md:MouseData)
     {
-        if (this.ctx != ctx)
-        {
-            this.ctx = ctx;
-            for (i in children) i.init(ctx);
-        }
-    }
-
-    var mouseTransform:Matrix3D;
-
-    public var mouseX(default, null):Float;
-    public var mouseY(default, null):Float;
-
-    public var onMouseOver(default, null):Signal1<Node2D>;
-    public var onMouseOut(default, null):Signal1<Node2D>;
-    public var onMouseDown(default, null):Signal1<Node2D>;
-    public var onMouseUp(default, null):Signal1<Node2D>;
-
-    var _width:Float = 1;
-    var _height:Float = 1;
-
-    var oldMouseOver:Bool = false;
-    public var mouseOver(default, null):Bool = false;
-    public var mouseDown(default, null):Bool = false;
-
-    public function mouseStep(pos:Vector3D, camera:Camera2D, type:String, point:Int)
-    {
-        switch (type)
+        switch (md.type)
         {
             case MouseEvent.MOUSE_DOWN:
                 if (mouseOver)
                 {
                     mouseDown = true;
-                    onMouseDown.dispatch(this);
+                    onMouseDown.dispatch(this, md);
                 }
 
             case MouseEvent.MOUSE_UP:
                 if (mouseDown)
                 {
                     mouseDown = false;
-                    onMouseUp.dispatch(this);
+                    onMouseUp.dispatch(this, md);
                 }
 
             case MouseEvent.MOUSE_MOVE:
@@ -242,11 +241,11 @@ class Node2D
 
                 if (mouseOver)
                 {
-                    if (!oldMouseOver) onMouseOver.dispatch(this);
+                    if (!oldMouseOver) onMouseOver.dispatch(this, md);
                 }
                 else
                 {
-                    if (oldMouseOver) onMouseOut.dispatch(this);
+                    if (oldMouseOver) onMouseOut.dispatch(this, md);
                 }
                 oldMouseOver = mouseOver;
         }
@@ -255,7 +254,7 @@ class Node2D
         {
             if (i.mouseEnabled)
             {
-                i.mouseStep(pos, camera, type, point);
+                i.mouseStep(pos, camera, md);
             }
         }
     }

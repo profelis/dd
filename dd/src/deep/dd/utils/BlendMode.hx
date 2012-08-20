@@ -30,6 +30,11 @@ class BlendMode
         src = s;
         dst = d;
     }
+
+    public function toString()
+    {
+        return Std.format("{BlendMode $src - $dst}");
+    }
 }
 
 class ND2DBlendMode

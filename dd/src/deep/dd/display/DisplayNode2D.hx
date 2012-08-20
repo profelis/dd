@@ -10,6 +10,13 @@ import mt.m3d.Polygon;
 
 class DisplayNode2D extends Node2D
 {
+    public var geometry(default, null):Geometry;
+
+    public var material(default, set_material):Material;
+
+    public var width(get_width, set_width):Float;
+    public var height(get_height, set_height):Float;
+
     public function new(material:Material = null)
     {
         super();
@@ -23,13 +30,23 @@ class DisplayNode2D extends Node2D
 
     }
 
-    public var geometry(default, null):Geometry;
+    override public function dispose():Void
+    {
+        super.dispose();
 
-    public var material(default, set_material):Material;
+        if (geometry != null)
+        {
+            geometry.dispose();
+            Reflect.setField(this, "geometry", null);
+        }
 
-    public var width(get_width, set_width):Float;
-    public var height(get_height, set_height):Float;
-
+        if (material != null)
+        {
+            Reflect.setField(material, "useCount", material.useCount - 1);
+            material.dispose();
+            Reflect.setField(this, "material", null);
+        }
+    }
 
     override public function init(ctx:Context3D):Void
     {
@@ -50,24 +67,6 @@ class DisplayNode2D extends Node2D
         }
     }
 	
-	override public function dispose():Void 
-	{
-		super.dispose();
-
-        if (geometry != null)
-        {
-            geometry.dispose();
-            Reflect.setField(this, "geometry", null);
-        }
-
-		if (material != null)
-        {
-            Reflect.setField(material, "useCount", material.useCount - 1);
-            material.dispose();
-            Reflect.setField(this, "material", null);
-        }
-	}
-
     function setGeometry(g:Geometry)
     {
         if (g == geometry) return;
