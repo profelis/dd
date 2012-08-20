@@ -1,5 +1,8 @@
 package deep.dd;
 
+import flash.events.TouchEvent;
+import flash.geom.Vector3D;
+import flash.events.MouseEvent;
 import deep.dd.utils.GlobalStatistics;
 import deep.dd.utils.Statistics;
 import deep.dd.material.Material;
@@ -110,9 +113,55 @@ class World2D
         stage.addEventListener(Event.ENTER_FRAME, onRender);
         stage.addEventListener(Event.RESIZE, onResize);
 
+        stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseEvent);
+        stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseEvent);
+        stage.addEventListener(MouseEvent.MOUSE_UP, onMouseEvent);
+
+        stage.addEventListener(TouchEvent.TOUCH_MOVE, onTouchEvent);
+        stage.addEventListener(TouchEvent.TOUCH_BEGIN, onTouchEvent);
+        stage.addEventListener(TouchEvent.TOUCH_END, onTouchEvent);
+
         //onResize();
         invalidateSize = true;
     }
+
+    static var touchAlias = initTouchAlias();
+
+    static function initTouchAlias()
+    {
+        var res:Hash<String> = new Hash<String>();
+        res.set(TouchEvent.TOUCH_MOVE, MouseEvent.MOUSE_MOVE);
+        res.set(TouchEvent.TOUCH_BEGIN, MouseEvent.MOUSE_DOWN);
+        res.set(TouchEvent.TOUCH_END, MouseEvent.MOUSE_UP);
+
+        return res;
+    }
+
+    function onTouchEvent(e:TouchEvent)
+    {
+        mouseStep(e.stageX, e.stageY, touchAlias.get(e.type), e.touchPointID);
+    }
+
+    function onMouseEvent(e:MouseEvent)
+    {
+        mouseStep(stage.mouseX, stage.mouseY, e.type, -1);
+    }
+
+    inline function mouseStep(mx:Float, my:Float, type:String, point:Int)
+    {
+        if (bounds.contains(mx, my))
+        {
+            trace('mx');
+            var m = new Vector3D(0, 0, 0, 1);
+
+            m.x = (mx - bounds.x) / bounds.width * 2 - 1;
+            m.y = -(my - bounds.y) / bounds.height * 2 + 1;
+
+            scene.mouseStep(m, camera, type, point);
+        }
+    }
+
+
 
     inline function ctxExist():Bool
     {

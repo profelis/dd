@@ -1,5 +1,8 @@
 package deep.dd.display;
 
+import flash.events.TouchEvent;
+import flash.events.MouseEvent;
+import msignal.Signal;
 import haxe.FastList;
 import msignal.Signal;
 import mt.m3d.Color;
@@ -13,6 +16,8 @@ import flash.display3D.Context3D;
 class Node2D
 {
     public var blendMode:BlendMode;
+
+    public var mouseEnabled:Bool = false;
 
     public var parent(default, null):Node2D;
 
@@ -49,11 +54,18 @@ class Node2D
     {
         blendMode = BlendMode.NORMAL;
 
+        onMouseOver = new Signal1<Node2D>();
+        onMouseOut = new Signal1<Node2D>();
+        onMouseDown = new Signal1<Node2D>();
+        onMouseUp = new Signal1<Node2D>();
+
         transformChange = new Signal0();
         colorTransformChange = new Signal0();
 
         children = new FastList<Node2D>();
         transform = new Matrix3D();
+
+        mouseTransform = new Matrix3D();
 
         worldColorTransform = new Vector3D();
         worldTransform = new Matrix3D();
@@ -171,6 +183,86 @@ class Node2D
             this.ctx = ctx;
             for (i in children) i.init(ctx);
         }
+    }
+
+    var mouseTransform:Matrix3D;
+
+    public var mouseX(default, null):Float;
+    public var mouseY(default, null):Float;
+
+    public var onMouseOver(default, null):Signal1<Node2D>;
+    public var onMouseOut(default, null):Signal1<Node2D>;
+    public var onMouseDown(default, null):Signal1<Node2D>;
+    public var onMouseUp(default, null):Signal1<Node2D>;
+
+    var _width:Float = 1;
+    var _height:Float = 1;
+
+    var oldMouseOver:Bool = false;
+    public var mouseOver(default, null):Bool = false;
+    public var mouseDown(default, null):Bool = false;
+
+    public function mouseStep(pos:Vector3D, camera:Camera2D, type:String, point:Int)
+    {
+        switch (type)
+        {
+            case MouseEvent.MOUSE_DOWN:
+                if (mouseOver)
+                {
+                    mouseDown = true;
+                    onMouseDown.dispatch(this);
+                }
+
+            case MouseEvent.MOUSE_UP:
+                if (mouseDown)
+                {
+                    mouseDown = false;
+                    onMouseUp.dispatch(this);
+                }
+
+            case MouseEvent.MOUSE_MOVE:
+
+                mouseTransform.identity();
+                mouseTransform.append(worldTransform);
+                mouseTransform.append(camera.ort);
+                mouseTransform.invert();
+
+                var p = mouseTransform.transformVector(pos);
+
+                var inv = 1 / p.w;
+                p.x *= inv;
+                p.y *= inv;
+                p.z *= inv;
+                p.w = 1;
+
+                mouseX = p.x;
+                mouseY = p.y;
+
+                checkMouseOver(p);
+
+                if (mouseOver)
+                {
+                    if (!oldMouseOver) onMouseOver.dispatch(this);
+                }
+                else
+                {
+                    if (oldMouseOver) onMouseOut.dispatch(this);
+                }
+                oldMouseOver = mouseOver;
+        }
+
+        for (i in children)
+        {
+            if (i.mouseEnabled)
+            {
+                i.mouseStep(pos, camera, type, point);
+            }
+        }
+    }
+
+    function checkMouseOver(p:Vector3D)
+    {
+        mouseOver = p.x >= 0 && p.x <= _width && p.y >= 0 && p.y <= _height;
     }
 
     public function drawStep(camera:Camera2D):Void
@@ -338,7 +430,7 @@ class Node2D
         v = Color.clamp(v);
         if (v != colorTransform.a)
         {
-            colorTransform.a = v;
+            alpha = colorTransform.a = v;
             invalidateColorTransform = true;
         }
 

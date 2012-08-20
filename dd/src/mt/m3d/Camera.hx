@@ -9,9 +9,11 @@ class Camera {
     public var zNear : Float;
     public var zFar : Float;
 
-    public var mproj : Matrix;
+    public var mprojPer : Matrix;
+    public var mprojOrt : Matrix;
     public var mcam : Matrix;
-    public var m : Matrix;
+    public var mProj : Matrix;
+    public var mOrt : Matrix;
 
     public var pos : Vector;
     public var up : Vector;
@@ -19,7 +21,6 @@ class Camera {
 
     public var w:Int;
     public var h:Int;
-    public var perspective:Bool;
 
     public function new( fov = 60., zoom = 1., ratio = 1.333333, zNear = 0.02, zFar = 40. ) {
         this.fov = fov;
@@ -30,9 +31,9 @@ class Camera {
         pos = new Vector(2, 3, 4);
         up = new Vector(0, 0, -1);
         target = new Vector(0, 0, 0);
-        m = new Matrix();
+        mProj = new Matrix();
+        mOrt = new Matrix();
         mcam = new Matrix();
-        perspective = true;
         update();
     }
 
@@ -63,9 +64,11 @@ class Camera {
         mcam._42 = -ay.dot(pos);
         mcam._43 = -az.dot(pos);
         mcam._44 = 1;
-        if (perspective) mproj = makeFrustumMatrix();
-        else mproj = makeOrtographicMatrix();
-        m.multiply4x4(mcam, mproj);
+
+        mprojPer = makeFrustumMatrix();
+        mProj.multiply4x4(mcam, mprojPer);
+        mprojOrt = makeOrtographicMatrix();
+        mOrt.multiply4x4(mcam, mprojOrt);
     }
 
     public function moveAxis( dx : Float, dy : Float ) {
@@ -104,9 +107,11 @@ class Camera {
 	
 	public function dispose():Void
 	{
-		mproj = null;
+		mprojOrt = null;
+		mprojPer = null;
 		mcam = null;
-		m = null;
+		mProj = null;
+		mOrt = null;
 		pos = null;
 		up = null;
 		target = null;

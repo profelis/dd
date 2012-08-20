@@ -30,12 +30,14 @@ class Camera2D
 
         c.update();
 
-        proj = c.m.toMatrix();
+        proj = c.mProj.toMatrix();
+        ort = c.mOrt.toMatrix();
 
         needUpdate = false;
     }
 
     public var proj:Matrix3D;
+    public var ort:Matrix3D;
 
     var w:Int;
     var h:Int;
