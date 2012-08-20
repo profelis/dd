@@ -151,7 +151,6 @@ class World2D
     {
         if (bounds.contains(mx, my))
         {
-            trace('mx');
             var m = new Vector3D(0, 0, 0, 1);
 
             m.x = (mx - bounds.x) / bounds.width * 2 - 1;
