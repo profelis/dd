@@ -29,6 +29,8 @@ class Test3D extends Test
 
     var list:FastList<Sprite2D>;
 
+    var cont:VBox;
+
     public function new(wrld:World2D)
     {
         super(wrld);
@@ -60,7 +62,7 @@ class Test3D extends Test
 
     function initGUI()
     {
-        var cont = new VBox();
+        cont = new VBox();
         cont.y = 40;
         var labels = ["simple", "batch", "cloud"];
         var action = [initSimple, initBatch, initCloud];
@@ -128,6 +130,8 @@ class Test3D extends Test
     {
         super.dispose();
         c = null;
+        t.dispose();
+        flash.Lib.current.removeChild(cont.component);
     }
 
 
