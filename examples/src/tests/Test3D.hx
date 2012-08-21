@@ -95,7 +95,8 @@ class Test3D extends Test
         n.texture = t;
         reInit(n);
 
-        world.stage.addEventListener("click", function (_) { for (i in 0...40) {c.removeChild(list.first()); list.remove(list.first());} });
+        // cloud auto size test
+        // world.stage.addEventListener("click", function (_) { for (i in 0...40) {c.removeChild(list.first()); list.remove(list.first());} });
     }
 
     function reInit(n:Sprite2D)

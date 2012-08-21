@@ -24,7 +24,10 @@ class Cloud2D extends Sprite2D
     **/
     public function new(size:UInt = 20, incSize:UInt = 20)
     {
+        #if debug
         if (size > MAX_SIZE) throw "size > MAX_SIZE";
+        if (incSize == 0) throw "incSize can't be 0";
+        #end
         this.size = size;
         this.incSize = incSize;
 

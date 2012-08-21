@@ -97,12 +97,12 @@ class Geometry
         return g;
     }
 
-    public function resizeCloud(size:Int)
+    public function resizeCloud(size:UInt)
     {
-        var csize = Std.int(triangles / 2);
-        if (csize == size) return;
+        if (size <= 0) size = 1;
+        var csize:UInt = untyped __global__["uint"](triangles / 2);
 
-        trace("resize " + size);
+        if (csize == size) return;
 
         if (csize > size)
         {
