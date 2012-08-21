@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import flash.geom.Vector3D;
 import flash.geom.Matrix3D;
 import deep.dd.geometry.Geometry;
 import deep.dd.material.Material;
@@ -25,9 +26,6 @@ class DisplayNode2D extends Node2D
     public var geometry(default, null):Geometry;
 
     public var material(default, set_material):Material;
-
-    var _width:Float;
-    var _height:Float;
 
     public var width(get_width, set_width):Float;
     public var height(get_height, set_height):Float;

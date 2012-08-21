@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import deep.dd.texture.Frame;
 import deep.dd.material.batch2d.Batch2DMaterial;
 import deep.dd.display.Node2D;
 import haxe.FastList;
@@ -18,12 +19,12 @@ class Batch2D extends Sprite2D
 {
     var mat:Batch2DMaterial;
 
-    static public inline var MAX_SIZE = 24;
+    static public inline var MAX_SIZE = 20;
 
     public function new()
     {
         emptyMatrix = new Matrix3D();
-        emptyColor = new Vector3D(0, 0, 0, 0);
+        emptyVector = new Vector3D(0, 0, 0, 0);
 
         super(new Batch2DMaterial());
 
@@ -47,7 +48,7 @@ class Batch2D extends Sprite2D
 
     override public function drawStep(camera:Camera2D):Void
     {
-        if (mat == null)
+        if (mat == null || texture == null)
         {
             super.drawStep(camera);
             return;
@@ -106,9 +107,12 @@ class Batch2D extends Sprite2D
         }
 
         var subNodes = new FastList<Node2D>();
-        var mpos = new Vector<Matrix3D>();
-        var cTrans = new Vector<Vector3D>();
+        var mpos = new Vector<Matrix3D>(MAX_SIZE, true);
+        var cTrans = new Vector<Vector3D>(MAX_SIZE, true);
+        var regions = new Vector<Vector3D>(MAX_SIZE, true);
 
+        var idx = 0;
+        var vectorsFull = false;
         for (c in batchList)
         {
             var s:Sprite2D = null;
@@ -128,37 +132,55 @@ class Batch2D extends Sprite2D
                 continue;
             }
 
-            if (invalidateTexture || s.invalidateDrawTransform)
-            {
-                s.drawTransform.rawData = textureFrame.drawMatrix.rawData;
-                s.drawTransform.append(s.worldTransform);
-
-                s.invalidateDrawTransform = false;
-            }
-
             #if debug
             if (s.geometry.triangles != 2) throw "Batch2D ignore complex geometry";
             #end
 
-            mpos.push(s.drawTransform);
-            cTrans.push(s.worldColorTransform);
-
-            if (mpos.length == MAX_SIZE)
+            if (s.animator != null && s.animator != animator)
             {
-                mat.drawBatch(this, camera, this.texture, mpos, cTrans);
-                mpos.length = 0;
-                cTrans.length = 0;
+                s.animator.draw(scene.time);
+                var frame = s.animator.textureFrame;
+
+                if (frame != s.textureFrame)
+                {
+                    s.invalidateDrawTransform = true;
+                    s.textureFrame = frame;
+                    s._width = frame.width;
+                    s._height= frame.height;
+                }
+            }
+            else if (invalidateTexture || s.textureFrame == null)
+            {
+                s.textureFrame = textureFrame;
+            }
+
+            if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
+
+            mpos[idx] = s.drawTransform;
+            cTrans[idx] = s.worldColorTransform;
+            regions[idx] = s.textureFrame.region;
+
+            idx ++;
+            if (idx == MAX_SIZE)
+            {
+                mat.drawBatch(this, camera, this.texture, idx, mpos, cTrans, regions);
+                vectorsFull = true;
+                idx = 0;
             }
         }
 
-        if (mpos.length > 0)
+        if (idx > 0)
         {
-            for (i in mpos.length...MAX_SIZE)
+            if (!vectorsFull)
             {
-                mpos.push(emptyMatrix);
-                cTrans.push(emptyColor);
+                for (i in idx...MAX_SIZE)
+                {
+                    mpos[i] = emptyMatrix;
+                    cTrans[i] = emptyVector;
+                    regions[i] = emptyVector;
+                }
             }
-            mat.drawBatch(this, camera, this.texture, mpos, cTrans);
+            mat.drawBatch(this, camera, this.texture, idx, mpos, cTrans, regions);
         }
 
         for (s in subNodes)
@@ -173,5 +195,6 @@ class Batch2D extends Sprite2D
     }
 
     var emptyMatrix:Matrix3D;
-    var emptyColor:Vector3D;
+    var emptyVector:Vector3D;
+
 }

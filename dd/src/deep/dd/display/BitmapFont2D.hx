@@ -12,6 +12,7 @@ class BitmapFont2D extends Node2D
 {
 	var textContainer:Sprite2D;
 	var needUpdate:Bool = true;
+	var spriteStorage:Array<Sprite2D>;
 	
 	public function new(cont:Sprite2D) 
 	{
@@ -23,6 +24,7 @@ class BitmapFont2D extends Node2D
 		}
 		#end
 		
+		spriteStorage = [];
 		textContainer = cont;
 		textContainer.animator = new Animator(1);
 		this.addChild(cont);
@@ -32,7 +34,11 @@ class BitmapFont2D extends Node2D
 	
 	function get_font():FontAtlasTexture2D
 	{
-		return cast(textContainer, FontAtlasTexture2D);
+		if (textContainer.texture != null)
+		{
+			return cast(textContainer.texture, FontAtlasTexture2D);
+		}
+		return null;
 	}
 	
 	function set_font(f:FontAtlasTexture2D):FontAtlasTexture2D
@@ -220,8 +226,11 @@ class BitmapFont2D extends Node2D
 	{
 		super.dispose();
 		textContainer = null;
-		
-		
+		for (s in spriteStorage)
+		{
+			s.dispose();
+		}
+		spriteStorage = null;
 	}
 	
 }
