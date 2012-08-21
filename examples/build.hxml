@@ -9,7 +9,7 @@
 -cp ../dd/src
 -cp ../MinimalCompsHX/Source
 --remap nme:flash
--D dd_stat
+#-D dd_stat
 
 #-D shaderDebug
 #-debug

@@ -33,8 +33,8 @@ class Sprite2DMaterial extends Material
         if (!FastHaxe.is(node, Sprite2D)) throw "Sprite2DMaterial can't draw " + node;
         #end
 
-        var sp = Lib.as(node, Sprite2D);
-        var tex:Texture2D = sp.texture;
+        var sp:Sprite2D = Lib.as(node, Sprite2D);
+        var tex = sp.texture;
 
         if (texOpt != tex.options)
         {

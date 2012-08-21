@@ -108,7 +108,9 @@ class Material
 
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 
-        shader.draw(node.geometry.vbuf, node.geometry.ibuf);
+        shader.bind(node.geometry.vbuf);
+        ctx.drawTriangles(node.geometry.ibuf);
+        shader.unbind();
     }
 	
 	public function dispose():Void

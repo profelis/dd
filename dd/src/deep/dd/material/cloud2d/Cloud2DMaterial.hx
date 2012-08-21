@@ -38,8 +38,8 @@ class Cloud2DMaterial extends Material
         if (!FastHaxe.is(node, Cloud2D)) throw "Cloud2DMaterial can't draw " + node;
         #end
 
-        var sp = flash.Lib.as(node, Cloud2D);
-        var tex:Texture2D = sp.texture;
+        var sp:Cloud2D = flash.Lib.as(node, Cloud2D);
+        var tex = sp.texture;
 
         if (texOpt != tex.options)
         {

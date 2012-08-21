@@ -208,12 +208,13 @@ class World2D
 
     function onRender(_)
     {
+        if (pause) return;
+
         if (ctxExist())
 		{
             #if dd_stat
             statistics.reset();
             #end
-			if (pause) return;
 
 			if (invalidateSize) updateSize();
 
