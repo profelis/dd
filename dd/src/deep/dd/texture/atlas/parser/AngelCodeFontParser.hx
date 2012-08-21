@@ -76,10 +76,10 @@ class AngelCodeFontParser implements IAtlasParser
 					var rw = w * kx;
 					var rh = h * ky;
 					
-					var border:Rectangle = new Rectangle(xoffset, yoffset, xadvance, yoffset + height);
+					var border:Rectangle = new Rectangle(xoffset + padding, yoffset + padding, xadvance, yoffset + height);
 					if (name != " " || (width != 0 && height != 0))
 					{
-						frames.push(new Frame(width, height, new Vector3D((x+padding) * kx, (y+padding) * ky, rw, rh), border, name));
+						if (w > 0 && h > 0) frames.push(new Frame(w, h, new Vector3D((x+padding) * kx, (y+padding) * ky, rw, rh), border, name));
 					}
 					if (name == " ")
 					{
