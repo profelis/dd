@@ -20,7 +20,8 @@ class Geometry
         this.poly = p;
     }
 
-    public var normal(default, null):Bool = false;
+    public var resizable(default, null):Bool = false;
+    public var standart(default, null):Bool = false;
 
     public var textured(default, null):Bool = false;
 
@@ -89,27 +90,46 @@ class Geometry
     {
         var g = createTextured(width, height, 1, 1, offsetX, offsetY);
         g.setColor(0x00000000);
+        g.resizable = false;
 
-        var p = g.poly;
-
-        var ps = p.points.copy();
-        var ts = p.tcoords.copy();
-        var cs = p.colors.copy();
-        var is = p.idx.copy();
-
-        for (n in 1...size)
-        {
-            for (x in ps) p.points.push(x.copy());
-            for (x in ts) p.tcoords.push(x.copy());
-            for (x in cs) p.colors.push(x.copy());
-            for (i in is) p.idx.push(Std.int(n * 4 + i));
-        }
-
-        g.normal = false;
-
-        g.triangles *= size;
+        g.resizeCloud(size);
 
         return g;
+    }
+
+    public function resizeCloud(size:Int)
+    {
+        var csize = Std.int(triangles / 2);
+        if (csize == size) return;
+
+        trace("resize " + size);
+
+        if (csize > size)
+        {
+            poly.points = poly.points.slice(0, size * 4);
+            poly.tcoords = poly.tcoords.slice(0, size * 4);
+            poly.colors = poly.colors.slice(0, size * 4);
+            poly.idx = poly.idx.slice(0, size * 6);
+        }
+        else
+        {
+            var ps = poly.points.slice(0, 4);   // 4
+            var ts = poly.tcoords.slice(0, 4);  // 4
+            var cs = poly.colors.slice(0, 4);   // 4
+            var is = poly.idx.slice(0, 6);      // 6
+
+            for (n in csize...size)
+            {
+                for (x in ps) poly.points.push(x.copy());
+                for (x in ts) poly.tcoords.push(x.copy());
+                for (x in cs) poly.colors.push(x.copy());
+                for (i in is) poly.idx.push(Std.int(n * 4 + i));
+            }
+        }
+
+        triangles = 2 * size;
+
+        needUpdate = true;
     }
 
     static public function createTexturedBatch(size:Int, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):Geometry
@@ -134,7 +154,7 @@ class Geometry
         }
 
         p.sup = sup;
-        g.normal = false;
+        g.resizable = false;
 
         g.triangles *= size;
 
@@ -162,7 +182,7 @@ class Geometry
         stepsY = stepsY < 1 ? 1 : stepsY;
 
         var res = new Geometry();
-        res.normal = true;
+        res.resizable = true;
         res.width = width;
         res.height = height;
         res.stepsX = stepsX;
@@ -173,6 +193,8 @@ class Geometry
         res.poly = createPoly(textured, width, height, offsetX, offsetY, stepsX, stepsY);
 
         res.triangles = Std.int(res.poly.idx.length / 3);
+
+        res.standart = width == 1 && height == 1 && stepsX == 1 && stepsY == 1 && offsetX == 0 && offsetY == 0;
 
         return res;
     }
@@ -231,7 +253,7 @@ class Geometry
     function resize(width:Float, height:Float)
     {
         #if debug
-        if (!normal) throw "can't resize unnormal geometry";
+        if (!resizable) throw "can't resize geometry";
         #end
         if (this.width == width && this.height == height) return;
 
@@ -253,7 +275,7 @@ class Geometry
     function offset(dx = 0.0, dy = 0.0)
     {
         #if debug
-        if (!normal) throw "can't resize unnormal geometry";
+        if (!resizable) throw "can't resize geometry";
         #end
 
         var x = dx - this.offsetX;

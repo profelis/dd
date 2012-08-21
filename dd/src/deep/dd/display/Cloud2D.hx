@@ -13,14 +13,20 @@ class Cloud2D extends Sprite2D
     static inline public var PER_VERTEX:UInt = 9; // xyz, uv, rgba
     static inline public var MAX_SIZE:UInt = 16383; //65535 / 4;
 
-    var size:UInt;
+    public var size(default, null):UInt;
+    public var incSize:UInt;
 
     var mat:Cloud2DMaterial;
 
-    public function new(size:UInt)
+    /**
+    *  @param size - start size
+    *  @param incSize - step of increment/decrement size
+    **/
+    public function new(size:UInt = 20, incSize:UInt = 20)
     {
         if (size > MAX_SIZE) throw "size > MAX_SIZE";
         this.size = size;
+        this.incSize = incSize;
 
         super(new Cloud2DMaterial());
 
@@ -78,12 +84,12 @@ class Cloud2D extends Sprite2D
 
         if (invalidateDrawTransform) updateDrawTransform();
 
-        currentSize = 0;
+        renderSize = 0;
 
         drawBatch(this, camera, invalidateTexture);
     }
 
-    public var currentSize(default, null):UInt;
+    public var renderSize(default, null):UInt;
 
     inline function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
     {
@@ -97,7 +103,7 @@ class Cloud2D extends Sprite2D
             if (!c.ignoreInBatch && c.numChildren == 0 && FastHaxe.is(c, Sprite2D))
             {
                 batchList.add(flash.Lib.as(c, Sprite2D));
-                currentSize ++;
+                renderSize ++;
             }
             else
             {
@@ -106,14 +112,20 @@ class Cloud2D extends Sprite2D
         }
 
         #if debug
-        if (currentSize > size) throw "Cloud2D maxsize reached";
+        if (renderSize > MAX_SIZE) throw "render size > MAX_SIZE";
         #end
+
+        size = Math.ceil(renderSize / incSize) * incSize;
+        if (size > MAX_SIZE) size = renderSize;
+        else if (size == 0) size = 1;
+
+        geometry.resizeCloud(size);
 
         var idx = 0;
         for (s in batchList)
         {
             #if debug
-            if (s.geometry.triangles != 2) throw "can't batch complex geometry";
+            if (!s.geometry.standart) throw "can't batch complex geometry";
             #end
 
             if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
@@ -176,8 +188,11 @@ class Cloud2D extends Sprite2D
             idx+=4;
         }
 
-        geometry.update();
-        mat.draw(this, camera);
+        if (renderSize > 0)
+        {
+            geometry.update();
+            mat.draw(this, camera);
+        }
 
         for (s in renderList)
         {

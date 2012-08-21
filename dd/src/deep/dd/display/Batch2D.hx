@@ -134,7 +134,7 @@ class Batch2D extends Sprite2D
             }
 
             #if debug
-            if (s.geometry.triangles != 2) throw "Batch2D ignore complex geometry";
+            if (!s.geometry.standart) throw "Batch2D ignore complex geometry";
             #end
 
             if (s.animator != null && s.animator != animator)

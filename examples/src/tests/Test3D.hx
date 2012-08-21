@@ -91,9 +91,11 @@ class Test3D extends Test
 
     function initCloud(?_)
     {
-        var n = new Cloud2D(nx*ny);
+        var n = new Cloud2D();
         n.texture = t;
         reInit(n);
+
+        world.stage.addEventListener("click", function (_) { for (i in 0...40) {c.removeChild(list.first()); list.remove(list.first());} });
     }
 
     function reInit(n:Sprite2D)
