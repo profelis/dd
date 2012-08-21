@@ -6,6 +6,7 @@ import deep.dd.material.Material;
 import deep.dd.camera.Camera2D;
 import deep.dd.material.cloud2d.Cloud2DMaterial;
 import deep.dd.geometry.Geometry;
+import deep.dd.utils.FastHaxe;
 
 class Cloud2D extends Sprite2D
 {
@@ -36,7 +37,7 @@ class Cloud2D extends Sprite2D
         if (m == material) return m;
 
         super.set_material(m);
-        if (Std.is(material, Cloud2DMaterial)) mat = cast(material, Cloud2DMaterial);
+        if (FastHaxe.is(material, Cloud2DMaterial)) mat = flash.Lib.as(material, Cloud2DMaterial);
 
         return material;
     }
@@ -93,9 +94,9 @@ class Cloud2D extends Sprite2D
         {
             if (!c.visible) continue;
 
-            if (!c.ignoreInBatch && c.numChildren == 0 && Std.is(c, Sprite2D))
+            if (!c.ignoreInBatch && c.numChildren == 0 && FastHaxe.is(c, Sprite2D))
             {
-                batchList.add(cast(c, Sprite2D));
+                batchList.add(flash.Lib.as(c, Sprite2D));
                 currentSize ++;
             }
             else

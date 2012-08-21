@@ -14,6 +14,7 @@ import deep.dd.display.Sprite2D;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.DisplayNode2D;
 import deep.dd.material.Quad2DMaterial;
+import deep.dd.utils.FastHaxe;
 import flash.display3D.Context3D;
 import hxsl.Shader;
 
@@ -34,10 +35,10 @@ class Cloud2DMaterial extends Material
     override public function draw(node:DisplayNode2D, camera:Camera2D)
     {
         #if debug
-        if (!Std.is(node, Cloud2D)) throw "Cloud2DMaterial can't draw " + node;
+        if (!FastHaxe.is(node, Cloud2D)) throw "Cloud2DMaterial can't draw " + node;
         #end
 
-        var sp = cast(node, Cloud2D);
+        var sp = flash.Lib.as(node, Cloud2D);
         var tex:Texture2D = sp.texture;
 
         if (texOpt != tex.options)

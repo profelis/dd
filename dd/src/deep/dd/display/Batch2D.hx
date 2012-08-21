@@ -14,6 +14,7 @@ import deep.dd.material.Material;
 import deep.dd.material.batch2d.Batch2DMaterial;
 import deep.dd.animation.AnimatorBase;
 import deep.dd.geometry.Geometry;
+import deep.dd.utils.FastHaxe;
 
 class Batch2D extends Sprite2D
 {
@@ -41,7 +42,7 @@ class Batch2D extends Sprite2D
         if (m == material) return m;
 
         super.set_material(m);
-        if (Std.is(material, Batch2DMaterial)) mat = cast(material, Batch2DMaterial);
+        if (FastHaxe.is(material, Batch2DMaterial)) mat = flash.Lib.as(material, Batch2DMaterial);
 
         return material;
     }
@@ -116,9 +117,9 @@ class Batch2D extends Sprite2D
         for (c in batchList)
         {
             var s:Sprite2D = null;
-            if (Std.is(c, Sprite2D))
+            if (FastHaxe.is(c, Sprite2D))
             {
-                s = cast(c, Sprite2D);
+                s = flash.Lib.as(c, Sprite2D);
                 if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
             }
 

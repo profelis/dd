@@ -10,6 +10,7 @@ import flash.display3D.Context3D;
 import deep.dd.texture.Texture2D;
 import deep.dd.material.sprite2d.Sprite2DMaterial;
 import deep.dd.geometry.Geometry;
+import deep.dd.utils.FastHaxe;
 
 class Sprite2D extends DisplayNode2D
 {
@@ -125,7 +126,7 @@ class Sprite2D extends DisplayNode2D
             _width = texture.width;
             _height = texture.height;
 
-            if (Std.is(texture, AtlasTexture2D) && animator != null) animator.atlas = cast(texture, AtlasTexture2D);
+            if (FastHaxe.is(texture, AtlasTexture2D) && animator != null) animator.atlas = flash.Lib.as(texture, AtlasTexture2D);
 
             invalidateDrawTransform = true;
         }
@@ -145,9 +146,9 @@ class Sprite2D extends DisplayNode2D
 			{
 				texture = animator.atlas;
 			}
-			else if (Std.is(texture, AtlasTexture2D))
+			else if (FastHaxe.is(texture, AtlasTexture2D))
 			{
-				animator.atlas = cast(texture, AtlasTexture2D);
+				animator.atlas = flash.Lib.as(texture, AtlasTexture2D);
 			}
 		}
 

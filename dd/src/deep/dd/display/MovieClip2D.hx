@@ -20,18 +20,18 @@ class MovieClip2D extends Sprite2D
     override function set_animator(v)
     {
         #if debug
-        if (!Std.is(v, Animator)) throw "animator must be Animator instance";
+        if (!FastHaxe.is(v, Animator)) throw "animator must be Animator instance";
         #end
 
-        return super.set_animator(anim = cast(v, Animator));
+        return super.set_animator(anim = flash.Lib.as(v, Animator));
     }
 	
 	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Animation
 	{
         #if debug
-        if (!Std.is(texture, AtlasTexture2D)) throw "texture must be AtlasTexture2D";
+        if (!FastHaxe.is(texture, AtlasTexture2D)) throw "texture must be AtlasTexture2D";
         #end
-		return cast(texture, AtlasTexture2D).addAnimation(name, keyFrames);
+		return flash.Lib.as(texture, AtlasTexture2D).addAnimation(name, keyFrames);
 	}
 	
 	public function playAnimation(name:String = null, startIdx:Int = 0, loop:Bool = true, restart:Bool = false):Void
