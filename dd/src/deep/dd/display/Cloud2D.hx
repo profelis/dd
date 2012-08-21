@@ -22,13 +22,15 @@ class Cloud2D extends Sprite2D
     *  @param size - start size
     *  @param incSize - step of increment/decrement size
     **/
-    public function new(size:UInt = 20, incSize:UInt = 20)
+    public function new(startSize:UInt = 20, incSize:UInt = 20)
     {
         #if debug
-        if (size > MAX_SIZE) throw "size > MAX_SIZE";
+        if (startSize > MAX_SIZE) throw "size > MAX_SIZE";
+        if (startSize == 0) throw "startSize can't be 0";
         if (incSize == 0) throw "incSize can't be 0";
         #end
-        this.size = size;
+
+        this.size = startSize;
         this.incSize = incSize;
 
         super(new Cloud2DMaterial());
