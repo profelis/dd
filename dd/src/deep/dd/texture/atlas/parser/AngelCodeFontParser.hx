@@ -18,10 +18,13 @@ import deep.dd.texture.atlas.AtlasTexture2D;
 class AngelCodeFontParser implements IAtlasParser
 {
     var data:Xml;
+	
+	var padding:Float;
 
-    public function new(data:Xml)
+    public function new(data:Xml, padding = 0.0)
     {
         this.data = data;
+        this.padding = padding;
     }
 
     inline function q(v:String)
@@ -67,10 +70,16 @@ class AngelCodeFontParser implements IAtlasParser
 					var xoffset:Int = q(node.get("xoffset"));
 					var yoffset:Int = q(node.get("yoffset"));
 					var xadvance:Int = q(node.get("xadvance"));
+					
+					var w = width - padding * 2;
+					var h = height - padding * 2;
+					var rw = w * kx;
+					var rh = h * ky;
+					
 					var border:Rectangle = new Rectangle(xoffset, yoffset, xadvance, yoffset + height);
 					if (name != " " || (width != 0 && height != 0))
 					{
-						frames.push(new Frame(width, height, new Vector3D(x * kx, y * ky, width * kx, height * ky), border, name));
+						frames.push(new Frame(width, height, new Vector3D((x+padding) * kx, (y+padding) * ky, rw, rh), border, name));
 					}
 					if (name == " ")
 					{
