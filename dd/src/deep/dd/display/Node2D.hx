@@ -201,8 +201,41 @@ class Node2D
         return children.iterator();
     }
 
+    // mouse
+
     public function mouseStep(pos:Vector3D, camera:Camera2D, md:MouseData)
     {
+
+        mouseTransform.identity();
+        mouseTransform.append(worldTransform);
+        mouseTransform.append(camera.ort);
+        mouseTransform.invert();
+
+        var p = mouseTransform.transformVector(pos);
+
+        var inv = 1 / p.w;
+        p.x *= inv;
+        p.y *= inv;
+        p.z *= inv;
+        p.w = 1;
+
+        mouseX = p.x;
+        mouseY = p.y;
+
+        checkMouseOver(p);
+
+        if (mouseOver)
+        {
+            if (!oldMouseOver)
+                onMouseOver.dispatch(this, md);
+        }
+        else
+        {
+            if (oldMouseOver) onMouseOut.dispatch(this, md);
+        }
+        oldMouseOver = mouseOver;
+
+
         switch (md.type)
         {
             case MouseEvent.MOUSE_DOWN:
@@ -218,36 +251,6 @@ class Node2D
                     mouseDown = false;
                     onMouseUp.dispatch(this, md);
                 }
-
-            case MouseEvent.MOUSE_MOVE:
-
-                mouseTransform.identity();
-                mouseTransform.append(worldTransform);
-                mouseTransform.append(camera.ort);
-                mouseTransform.invert();
-
-                var p = mouseTransform.transformVector(pos);
-
-                var inv = 1 / p.w;
-                p.x *= inv;
-                p.y *= inv;
-                p.z *= inv;
-                p.w = 1;
-
-                mouseX = p.x;
-                mouseY = p.y;
-
-                checkMouseOver(p);
-
-                if (mouseOver)
-                {
-                    if (!oldMouseOver) onMouseOver.dispatch(this, md);
-                }
-                else
-                {
-                    if (oldMouseOver) onMouseOut.dispatch(this, md);
-                }
-                oldMouseOver = mouseOver;
         }
 
         for (i in children)
@@ -263,6 +266,8 @@ class Node2D
     {
         mouseOver = p.x >= 0 && p.x <= _width && p.y >= 0 && p.y <= _height;
     }
+
+    // render
 
     public function drawStep(camera:Camera2D):Void
     {
