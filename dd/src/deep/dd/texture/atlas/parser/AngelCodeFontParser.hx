@@ -1,5 +1,6 @@
 package deep.dd.texture.atlas.parser;
 
+import deep.dd.texture.atlas.FontAtlasTexture2D;
 import deep.dd.texture.Frame;
 import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
@@ -67,13 +68,13 @@ class AngelCodeFontParser implements IAtlasParser
 					var yoffset:Int = q(node.get("yoffset"));
 					var xadvance:Int = q(node.get("xadvance"));
 					var border:Rectangle = new Rectangle(xoffset, yoffset, xadvance, yoffset + height);
-					if (name != " ")
+					if (name != " " || (width != 0 && height != 0))
 					{
 						frames.push(new Frame(width, height, new Vector3D(x * kx, y * ky, width * kx, height * ky), border, name));
 					}
-					else
+					if (name == " ")
 					{
-						// TODO: handle space symbol which can have zero width and height (causes error).
+						cast(a, FontAtlasTexture2D).spaceWidth = xadvance;
 					}
 				}
 			}

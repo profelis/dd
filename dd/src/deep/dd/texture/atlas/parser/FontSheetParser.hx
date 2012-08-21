@@ -5,6 +5,7 @@ import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
 import flash.geom.Point;
 import deep.dd.texture.atlas.AtlasTexture2D;
+import deep.dd.texture.atlas.FontAtlasTexture2D;
 import flash.geom.Vector3D;
 
 class FontSheetParser implements IAtlasParser
@@ -167,7 +168,7 @@ class FontSheetParser implements IAtlasParser
 			}
 		}
 		
-		// TODO: we need to set space width somehow
+		cast(a, FontAtlasTexture2D).spaceWidth = characterWidth;
 		
         return frames;
     }

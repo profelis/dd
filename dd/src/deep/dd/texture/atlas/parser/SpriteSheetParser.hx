@@ -41,15 +41,15 @@ class SpriteSheetParser implements IAtlasParser
         var bh = a.bitmapHeight;
 
         var border:Rectangle = padding > 0 ? new Rectangle(padding, padding, iw, ih) : null;
-        while (x < bw)
+        while (y < bh)
         {
-            y = 0.0;
-            while (y < bh)
+            x = 0.0;
+            while (x < bw)
             {
                 frames.push(new Frame(w, h, new Vector3D((x+padding) * kx, (y+padding) * ky, rw, rh), border));
-                y += ih;
+                x += iw;
             }
-            x += iw;
+            y += ih;
         }
 
         return frames;
