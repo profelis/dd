@@ -3,7 +3,6 @@ package deep.dd.texture.atlas.parser;
 import deep.dd.texture.Frame;
 import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
-import flash.geom.Point;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.texture.atlas.FontAtlasTexture2D;
 import flash.geom.Vector3D;
@@ -153,8 +152,11 @@ class FontSheetParser implements IAtlasParser
 		
 		for (c in 0...(charsSet.length))
 		{
-			frames.push(new Frame(w, h, new Vector3D((currentX + padding) * kx, (currentY + padding) * ky, rw, rh), border, charsSet.charAt(c)));
+			var char:String = charsSet.charAt(c);
+			frames.push(new Frame(w, h, new Vector3D((currentX + padding) * kx, (currentY + padding) * ky, rw, rh), border, char));
 			r++;
+			
+			if (char == " ") cast(a, FontAtlasTexture2D).hasSpaceGlyph = true;
 			
 			if (r == characterPerRow)
 			{
@@ -169,6 +171,7 @@ class FontSheetParser implements IAtlasParser
 		}
 		
 		cast(a, FontAtlasTexture2D).spaceWidth = characterWidth;
+		cast(a, FontAtlasTexture2D).fontHeight = characterHeight;
 		
         return frames;
     }

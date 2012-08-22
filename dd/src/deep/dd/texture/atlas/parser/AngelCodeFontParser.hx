@@ -5,7 +5,6 @@ import deep.dd.texture.Frame;
 import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
-import flash.geom.Point;
 import deep.dd.texture.atlas.AtlasTexture2D;
 
 /**
@@ -38,6 +37,8 @@ class AngelCodeFontParser implements IAtlasParser
 		
 		var kx = 1 / a.textureWidth;
         var ky = 1 / a.textureHeight;
+		
+		var maxHeight:Int = 0;
 		
 		var chars:Xml = null;
 		for (node in data.elements())
@@ -76,14 +77,29 @@ class AngelCodeFontParser implements IAtlasParser
 					var rw = w * kx;
 					var rh = h * ky;
 					
+					var symbolHeight:Int = height + yoffset;
+					
 					var border:Rectangle = new Rectangle(xoffset + padding, yoffset + padding, xadvance, yoffset + height);
-					if (name != " " || (width != 0 && height != 0))
+					if (name != " " || (width > 0 && height > 0))
 					{
-						if (w > 0 && h > 0) frames.push(new Frame(w, h, new Vector3D((x+padding) * kx, (y+padding) * ky, rw, rh), border, name));
+						if (w > 0 && h > 0)
+						{
+							frames.push(new Frame(w, h, new Vector3D((x + padding) * kx, (y + padding) * ky, rw, rh), border, name));
+							if (symbolHeight > maxHeight)
+							{
+								maxHeight = symbolHeight;
+							}
+						}
 					}
 					if (name == " ")
 					{
 						cast(a, FontAtlasTexture2D).spaceWidth = xadvance;
+						
+						if (w > 0 && h > 0)
+						{
+							cast(a, FontAtlasTexture2D).hasSpaceGlyph = true;
+							trace("hasSpaceGlyph = true");
+						}
 					}
 				}
 			}
@@ -94,6 +110,8 @@ class AngelCodeFontParser implements IAtlasParser
 			throw "Wrong file format. This isn't AngelCode font";
 		}
 		#end
+		
+		cast(a, FontAtlasTexture2D).fontHeight = maxHeight;
 
         return frames;
     }
