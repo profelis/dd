@@ -6,6 +6,7 @@ import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.geometry.Geometry;
 import deep.dd.texture.atlas.AtlasTexture2D;
+import deep.dd.utils.FastHaxe;
 
 class MovieClip2D extends Sprite2D
 {
