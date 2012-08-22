@@ -13,10 +13,11 @@ import deep.dd.utils.Frame;
 import deep.dd.utils.FastHaxe;
 import haxe.FastList;
 
-class CloudRender implements IRender
+class CloudRender extends RenderBase
 {
-	var size:UInt;
-	var incSize:UInt;
+    public var startSize(default, null):UInt;
+	public var size(default, null):UInt;
+	public var incSize(default, null):UInt;
 
     static inline public var PER_VERTEX:UInt = 9; // xyz, uv, rgba
     static inline public var MAX_SIZE:UInt = 16383; //65535 / 4;
@@ -29,6 +30,7 @@ class CloudRender implements IRender
         if (incSize == 0) throw "incSize can't be 0";
         #end
 
+        this.startSize = startSize;
         this.size = startSize;
         this.incSize = incSize;
 
@@ -37,18 +39,19 @@ class CloudRender implements IRender
         geometry = Geometry.createTexturedCloud(size);
 	}
 
-	public var material(default, null):Material;
+    override public function copy():RenderBase
+    {
+        var res = new CloudRender(startSize, incSize);
+        return res;
+    }
+
     var mat:Cloud2DMaterial;
-
-	public var geometry(default, null):Geometry;
-
-    public var ignoreInBatch(default, null):Bool = true;
 
     var textureFrame:Frame;
     var animator:AnimatorBase;
     var smart:SmartSprite2D;
 
-    public function drawStep(s:SmartSprite2D, camera:Camera2D, invalidateTexture:Bool):Void
+    override public function drawStep(s:SmartSprite2D, camera:Camera2D, invalidateTexture:Bool):Void
     {
         smart = s;
 		renderSize = 0;
@@ -167,6 +170,13 @@ class CloudRender implements IRender
         {
             s.drawStep(camera);
         }
+    }
 
+    override public function dispose()
+    {
+        mat = null;
+        smart = null;
+        textureFrame = null;
+        animator = null;
     }
 }

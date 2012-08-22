@@ -62,6 +62,11 @@ class Cloud2DMaterial extends Material
         shader.unbind();
     }
 
+    override public function draw(node:DisplayNode2D, camera:Camera2D)
+    {
+        throw "use drawCloud";
+    }
+
     public static var SHADERS(default, null):IntHash<IntHash<IntHash<Class<Shader>>>> = initSHADERS();
 
     static function initSHADERS()

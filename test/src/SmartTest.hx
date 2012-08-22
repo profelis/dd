@@ -43,6 +43,7 @@ class SmartTest
     var world:World2D;
     var scene:Scene2D;
 
+    var b:SmartSprite2D;
 
     public function new()
     {
@@ -60,7 +61,7 @@ class SmartTest
         world.bgColor.fromInt(0x666666);
 
 
-        var b = new SmartSprite2D(new BatchRender());
+        b = new SmartSprite2D(new BatchRender());
         //var b = new SmartSprite2D(new SimpleRender());
         //var b = new SmartSprite2D(new CloudRender());
         scene.addChild(b);
@@ -94,6 +95,7 @@ class SmartTest
 
     function onClick(_)
     {
+        b.render = new CloudRender();
         //world.ctx.dispose();
 		//mc.animator.playAnimation(null);
     }

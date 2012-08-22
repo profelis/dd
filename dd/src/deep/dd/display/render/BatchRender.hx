@@ -16,7 +16,7 @@ import deep.dd.utils.Frame;
 import deep.dd.utils.FastHaxe;
 import haxe.FastList;
 
-class BatchRender implements IRender
+class BatchRender extends RenderBase
 {
 
     static public inline var MAX_SIZE = 20;
@@ -31,18 +31,18 @@ class BatchRender implements IRender
         geometry = Geometry.createTexturedBatch(MAX_SIZE);
 	}
 
-	public var material(default, null):Material;
+    override public function copy():RenderBase
+    {
+        return new BatchRender();
+    }
+
     var mat:Batch2DMaterial;
-
-	public var geometry(default, null):Geometry;
-
-    public var ignoreInBatch(default, null):Bool = true;
 
     var textureFrame:Frame;
     var animator:AnimatorBase;
     var smart:SmartSprite2D;
 
-    public function drawStep(s:SmartSprite2D, camera:Camera2D, invalidateTexture:Bool):Void
+    override public function drawStep(s:SmartSprite2D, camera:Camera2D, invalidateTexture:Bool):Void
     {
         smart = s;
 		textureFrame = s.textureFrame;
@@ -160,4 +160,15 @@ class BatchRender implements IRender
 
     var emptyMatrix:Matrix3D;
     var emptyVector:Vector3D;
+
+    override public function dispose()
+    {
+        super.dispose();
+        mat = null;
+        emptyVector = null;
+        emptyMatrix = null;
+        smart = null;
+        textureFrame = null;
+        animator = null;
+    }
 }

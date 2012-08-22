@@ -1,6 +1,6 @@
 package deep.dd.display;
 
-import deep.dd.display.render.IRender;
+import deep.dd.display.render.RenderBase;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.utils.Frame;
 import deep.dd.material.Material;
@@ -15,13 +15,9 @@ import deep.dd.utils.FastHaxe;
 
 class SmartSprite2D extends Sprite2D
 {
-    public function new(render:IRender)
+    public function new(render:RenderBase)
     {
-        drawTransform = new Matrix3D();
-
         super();
-
-        ignoreInBatch = true;
 
         this.render = render;
     }
@@ -30,9 +26,20 @@ class SmartSprite2D extends Sprite2D
     {
     }
 
-    public var render(default, setRender):IRender;
+    override public function dispose():Void
+    {
+        super.dispose();
 
-    function setRender(r:IRender):IRender
+        if (render != null)
+        {
+            render.dispose();
+            Reflect.setField(this, "render", null);
+        }
+    }
+
+    public var render(default, setRender):RenderBase;
+
+    function setRender(r:RenderBase):RenderBase
     {
     	#if debug
     	if (r == null) throw "render can't be null";
@@ -43,8 +50,11 @@ class SmartSprite2D extends Sprite2D
     	render = r;
     	
 		ignoreInBatch = render.ignoreInBatch;
+
 		geometry = render.geometry;
+        if (geometry != null && ctx != null) geometry.init(ctx);
 		material = render.material;
+        if (material != null && ctx != null) material.init(ctx);
 
     	_width = geometry.width;
 		_height = geometry.height;	
@@ -73,11 +83,7 @@ class SmartSprite2D extends Sprite2D
                 textureFrame = f;
                 _width = textureFrame.width;
                 _height = textureFrame.height;
-            }
-            else if (invalidateWorldTransform || invalidateTransform)
-            {
-                invalidateDrawTransform = true;
-            }      
+            }    
         }
 
         if (invalidateWorldTransform || invalidateTransform) invalidateDrawTransform = true;
@@ -89,16 +95,5 @@ class SmartSprite2D extends Sprite2D
         if (invalidateDrawTransform) updateDrawTransform();
         
     	render.drawStep(this, camera, invalidateTexture);
-    }
-
-    override public function draw(camera:Camera2D):Void
-    {
-    	// throw "assert";
-        if (texture != null)
-        {
-            super.draw(camera);
-        }
-    }
-
-    
+    }  
 }

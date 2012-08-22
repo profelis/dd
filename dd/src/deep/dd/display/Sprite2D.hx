@@ -28,6 +28,9 @@ class Sprite2D extends DisplayNode2D
 
     public var animator(default, set_animator):AnimatorBase;
 
+    /**
+    * @private
+    */
     public var invalidateDrawTransform:Bool;
     public var drawTransform(default, null):Matrix3D;
 

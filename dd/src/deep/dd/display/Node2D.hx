@@ -29,16 +29,28 @@ class Node2D
     * @private
     */
     public var _width:Float = 1;
+    /**
+    * @private
+    */
     public var _height:Float = 1;
 
     public var transform(default, null):Matrix3D;
+    /**
+    * @private
+    */
     public var invalidateTransform:Bool = true;
 
     public var worldTransform(default, null):Matrix3D;
+    /**
+    * @private
+    */
     public var invalidateWorldTransform:Bool = true;
 
     public var colorTransform(default, set_colorTransform):Color;
     public var worldColorTransform(default, null):Vector3D;
+    /**
+    * @private
+    */
     public var invalidateColorTransform:Bool;
 
     public var alpha(default, set_alpha):Float = 1;
