@@ -1,5 +1,6 @@
 package deep.dd.display.render;
 
+import deep.dd.display.SmartSprite2D;
 import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;
@@ -17,7 +18,8 @@ class CloudRender implements IRender
 	var size:UInt;
 	var incSize:UInt;
 
-    static public inline var MAX_SIZE:Int = Std.int(65535 / 4);
+    static inline public var PER_VERTEX:UInt = 9; // xyz, uv, rgba
+    static inline public var MAX_SIZE:UInt = 16383; //65535 / 4;
 
 	public function new(startSize:UInt = 20, incSize:UInt = 20)
 	{
@@ -30,19 +32,19 @@ class CloudRender implements IRender
         this.size = startSize;
         this.incSize = incSize;
 
-        material = new Cloud2DMaterial();
+        material = mat = new Cloud2DMaterial();
 
         geometry = Geometry.createTexturedCloud(size);
 	}
 
 	public var material(default, null):Material;
+    var mat:Cloud2DMaterial;
 
 	public var geometry(default, null):Geometry;
 
     public var ignoreInBatch(default, null):Bool = true;
 
     var textureFrame:Frame;
-
     var animator:AnimatorBase;
     var smart:SmartSprite2D;
 
@@ -158,7 +160,7 @@ class CloudRender implements IRender
         if (renderSize > 0)
         {
             geometry.update();
-            material.draw(smart, camera);
+            mat.drawCloud(smart, camera, renderSize);
         }
 
         for (s in renderList)

@@ -196,7 +196,7 @@ class Cloud2D extends Sprite2D
         if (renderSize > 0)
         {
             geometry.update();
-            mat.draw(this, camera);
+            mat.drawCloud(this, camera, renderSize);
         }
 
         for (s in renderList)
