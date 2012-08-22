@@ -1,6 +1,6 @@
 package deep.dd.texture.atlas;
 
-import deep.dd.texture.Frame;
+import deep.dd.utils.Frame;
 import deep.dd.animation.Animation;
 import flash.geom.Rectangle;
 import flash.geom.Point;

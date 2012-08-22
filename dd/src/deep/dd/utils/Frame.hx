@@ -1,4 +1,4 @@
-package deep.dd.texture;
+package deep.dd.utils;
 
 import flash.geom.Vector3D;
 import flash.geom.Rectangle;

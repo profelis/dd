@@ -1,6 +1,6 @@
 package deep.dd.display;
 
-import deep.dd.texture.Frame;
+import deep.dd.utils.Frame;
 import deep.dd.material.batch2d.Batch2DMaterial;
 import deep.dd.display.Node2D;
 import haxe.FastList;
