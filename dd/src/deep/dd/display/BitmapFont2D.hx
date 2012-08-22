@@ -191,7 +191,7 @@ class BitmapFont2D extends Node2D
 	
 	public var numSpacesInTab(default, set_numSpacesInTab):Int = 4;
 	
-	var tabSpaces:String = "";
+	var tabSpaces:String = "    ";
 	
 	function set_numSpacesInTab(num:Int):Int
 	{
@@ -238,7 +238,7 @@ class BitmapFont2D extends Node2D
 			var rows:Array<String> = [];
 			
 			// TODO: Handle tabs later in this method. This is stub
-			var textWithoutTabs:String = StringTools.replace(text, "\t", tabSpaces);
+			var textWithoutTabs:String = text.split("\t").join(tabSpaces);
 			
 			// cut text into pices
 			var lineComplete:Bool;
@@ -465,6 +465,7 @@ class BitmapFont2D extends Node2D
 				cast(cast(c, Sprite2D).animator).gotoFrame(info.symbol);
 				c.x = info.x;
 				c.y = info.y;
+				c.scaleX = c.scaleY = fontScale;
 				pos++;
 			}
 		}
