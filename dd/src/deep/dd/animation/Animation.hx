@@ -1,6 +1,6 @@
 package deep.dd.animation;
 
-import deep.dd.texture.Frame;
+import deep.dd.utils.Frame;
 import deep.dd.texture.Texture2D;
 /**
  * ...

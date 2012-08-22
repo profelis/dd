@@ -1,20 +1,27 @@
 package deep.dd.texture.atlas;
 
-import deep.dd.texture.Frame;
+import deep.dd.utils.Frame;
 import deep.dd.texture.Texture2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
 
 class FontAtlasTexture2D extends AtlasTexture2D
 {
-	public var spaceWidth:Int = 0;
-	public var fontHeight:Int = 0;
-	public var hasSpaceGlyph:Bool = false;
+	public var spaceWidth(default, null):Int = 0;
+	public var fontHeight(default, null):Int = 0;
+	public var hasSpaceGlyph(default, null):Bool = false;
 	
 	var glyphs:Hash<Frame>;
 
-    public function new(texture:Texture2D, parser:IAtlasParser)
+    var fontParser:IFontAtlasParser;
+
+    public function new(texture:Texture2D, parser:IFontAtlasParser)
     {
-        super(texture, parser);
+        super(texture, fontParser = parser);
+
+        spaceWidth = fontParser.spaceWidth;
+        fontHeight = fontParser.fontHeight;
+        hasSpaceGlyph = fontParser.hasSpaceGlyph;
+
 		glyphs = new Hash<Frame>();
 		for (f in frames)
 		{
@@ -76,4 +83,11 @@ class FontAtlasTexture2D extends AtlasTexture2D
 		super.dispose();
 	}
 
+}
+
+interface IFontAtlasParser implements IAtlasParser
+{
+    var fontHeight(default, null):Int;
+    var spaceWidth(default, null):Int;
+    var hasSpaceGlyph(default, null):Bool;
 }

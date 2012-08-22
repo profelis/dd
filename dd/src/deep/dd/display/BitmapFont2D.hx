@@ -2,7 +2,7 @@ package deep.dd.display;
 import deep.dd.animation.Animator;
 import deep.dd.camera.Camera2D;
 import deep.dd.texture.atlas.FontAtlasTexture2D;
-import deep.dd.texture.Frame;
+import deep.dd.utils.Frame;
 import flash.text.TextFormatAlign;
 
 /**

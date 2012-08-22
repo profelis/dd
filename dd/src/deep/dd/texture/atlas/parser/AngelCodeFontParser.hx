@@ -1,7 +1,7 @@
 package deep.dd.texture.atlas.parser;
 
 import deep.dd.texture.atlas.FontAtlasTexture2D;
-import deep.dd.texture.Frame;
+import deep.dd.utils.Frame;
 import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
@@ -14,7 +14,7 @@ import deep.dd.texture.atlas.AtlasTexture2D;
 * - Glyph Designer (http://glyphdesigner.71squared.com/) - mac only, about $30
 * - bmGlyph (http://www.bmglyph.com/) - mac only, about $10
 **/
-class AngelCodeFontParser implements IAtlasParser
+class AngelCodeFontParser implements IFontAtlasParser
 {
     var data:Xml;
 	
@@ -93,11 +93,11 @@ class AngelCodeFontParser implements IAtlasParser
 					}
 					if (name == " ")
 					{
-						cast(a, FontAtlasTexture2D).spaceWidth = xadvance;
+						spaceWidth = xadvance;
 						
 						if (w > 0 && h > 0)
 						{
-							cast(a, FontAtlasTexture2D).hasSpaceGlyph = true;
+							hasSpaceGlyph = true;
 							trace("hasSpaceGlyph = true");
 						}
 					}
@@ -111,8 +111,12 @@ class AngelCodeFontParser implements IAtlasParser
 		}
 		#end
 		
-		cast(a, FontAtlasTexture2D).fontHeight = maxHeight;
+		fontHeight = maxHeight;
 
         return frames;
     }
+
+    public var spaceWidth(default, null):Int = 0;
+    public var fontHeight(default, null):Int = 0;
+    public var hasSpaceGlyph(default, null):Bool = false;
 }

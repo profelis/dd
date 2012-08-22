@@ -1,5 +1,6 @@
 package deep.dd.texture;
 
+import deep.dd.utils.Frame;
 import flash.geom.Matrix3D;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
