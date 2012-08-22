@@ -28,7 +28,7 @@ class BitmapFont2D extends Node2D
 		
 		spriteStorage = [];
 		textContainer = cont;
-		textContainer.animator = new Animator(1);
+		textContainer.animator = new Animator(60);
 		this.addChild(cont);
 		this.fieldWidth = fieldWidth;
 		this.align = TextFormatAlign.LEFT;
@@ -51,7 +51,6 @@ class BitmapFont2D extends Node2D
 		{
 			textContainer.texture = f;
 			needUpdate = true;
-			updateField();
 		}
 		
 		return f;
@@ -65,7 +64,6 @@ class BitmapFont2D extends Node2D
 		{
 			text = t;
 			needUpdate = true;
-			updateField();
 		}
 		
 		return t;
@@ -79,7 +77,6 @@ class BitmapFont2D extends Node2D
 		{
 			align = v;
 			needUpdate = true;
-			updateField();
 		}
 		return v;
 	}
@@ -92,7 +89,6 @@ class BitmapFont2D extends Node2D
 		{
 			padding = pad;
 			needUpdate = true;
-			updateField();
 		}
 		return pad;
 	}
@@ -105,7 +101,6 @@ class BitmapFont2D extends Node2D
 		{
 			lineSpacing = spacing;
 			needUpdate = true;
-			updateField();
 		}
 		return spacing;
 	}
@@ -118,7 +113,6 @@ class BitmapFont2D extends Node2D
 		{
 			letterSpacing = spacing;
 			needUpdate = true;
-			updateField();
 		}
 		return spacing;
 	}
@@ -131,7 +125,6 @@ class BitmapFont2D extends Node2D
 		{
 			fontScale = scale;
 			needUpdate = true;
-			updateField();
 		}
 		return scale;
 	}
@@ -144,7 +137,6 @@ class BitmapFont2D extends Node2D
 		{
 			autoUpperCase = toUpper;
 			needUpdate = true;
-			updateField();
 		}
 		return toUpper;
 	}
@@ -157,7 +149,6 @@ class BitmapFont2D extends Node2D
 		{
 			wordWrap = wrap;
 			needUpdate = true;
-			updateField();
 		}
 		return wrap;
 	}
@@ -170,7 +161,6 @@ class BitmapFont2D extends Node2D
 		{
 			fixedWidth = fixed;
 			needUpdate = true;
-			updateField();
 		}
 		return fixed;
 	}
@@ -183,7 +173,6 @@ class BitmapFont2D extends Node2D
 		{
 			multiLine = multi;
 			needUpdate = true;
-			updateField();
 		}
 		return multi;
 	}
@@ -196,7 +185,6 @@ class BitmapFont2D extends Node2D
 		{
 			fieldWidth = w;
 			needUpdate = true;
-			updateField();
 		}
 		return w;
 	}
@@ -232,6 +220,12 @@ class BitmapFont2D extends Node2D
 	{
 		
 	}*/
+	
+	override public function drawStep(camera:Camera2D):Void 
+	{
+		if (needUpdate) updateField();
+		super.drawStep(camera);
+	}
 	
 	function updateField():Void
 	{

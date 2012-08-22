@@ -1,10 +1,15 @@
 package ;
 import deep.dd.animation.Animator;
+import deep.dd.display.BitmapFont2D;
+import deep.dd.display.Cloud2D;
 import deep.dd.display.MovieClip2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
+import deep.dd.texture.atlas.FontAtlasTexture2D;
+import deep.dd.texture.atlas.parser.AngelCodeFontParser;
 import deep.dd.texture.atlas.parser.Cocos2DParser;
 import deep.dd.texture.atlas.parser.StarlingParser;
-import deep.dd.texture.atlas.parser.AngelCodeFontParser;
+import deep.dd.texture.atlas.parser.FontSheetParser;
+import flash.Lib;
 import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
 import deep.dd.display.Sprite2D;
@@ -31,8 +36,10 @@ import flash.events.Event;
 @:bitmap("starlingAtlas/atlas.png") class StarlingAtlasImage extends BitmapData {}
 @:file("starlingAtlas/atlas.xml") class StarlingAtlasData extends ByteArray { }
 
-@:bitmap("NavTitle.png") class AngelCodeImage extends BitmapData {}
-@:file("NavTitle.fnt") class AngelCodeData extends ByteArray {}
+@:bitmap("bluepink_font.png") class FontImage extends BitmapData { }
+
+@:bitmap("NavTitle.png") class NavTitleImage extends BitmapData { }
+@:file("NavTitle.fnt") class NavTitleData extends ByteArray { }
 
 class Main
 {
@@ -41,6 +48,7 @@ class Main
     var scene:Scene2D;
 	private var mc2:MovieClip2D;
 	private var mc3:MovieClip2D;
+	private var text:BitmapFont2D;
 
     public function new()
     {
@@ -75,7 +83,8 @@ class Main
 		mc2.fps = 25;
 		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc2.texture = st;
-		world.scene.addChild(mc2);
+		mc2.scaleX = mc2.scaleY = 1.45;
+	//	world.scene.addChild(mc2);
 		//cast(mc2.animator, Animator).stop();
 
 		mc3 = new MovieClip2D();
@@ -95,12 +104,35 @@ class Main
 		world.scene.addChild(mc4);
 		
 		var mc5:MovieClip2D = new MovieClip2D();
-		mc5.fps = 20;
-		var angelCode:AtlasTexture2D = new AtlasTexture2D(world.cache.getTexture(AngelCodeImage), new AngelCodeFontParser(Xml.parse(Std.string(new AngelCodeData()))));
-		mc5.texture = angelCode;
+		mc5.fps = 3;
+		//var fontAtlas = new FontAtlasTexture2D(world.cache.getTexture(FontImage), new FontSheetParser(32, 32, " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ", 10, 0.5));
+		var fontAtlas:FontAtlasTexture2D = new FontAtlasTexture2D(world.cache.getTexture(NavTitleImage), new AngelCodeFontParser(Xml.parse(Std.string(new NavTitleData())), 0.5));
+		mc5.texture = fontAtlas;
+		mc5.gotoFrame("@");
+		mc5.x = 200;
 		mc5.y = 200;
-		mc5.scaleX = mc5.scaleY = 2;
+		mc5.alpha = 0.5;
+		mc5.scaleX = mc5.scaleY = 3.62;
 		world.scene.addChild(mc5);
+		
+		var mc6:MovieClip2D = new MovieClip2D();
+		mc5.fps = 3;
+		var fontAtlas2:FontAtlasTexture2D = new FontAtlasTexture2D(world.cache.getTexture(NavTitleImage), new AngelCodeFontParser(Xml.parse(Std.string(new NavTitleData())), 3));
+		mc6.texture = fontAtlas2;
+		mc6.gotoFrame("@");
+		mc6.colorTransform = new Color(0, 1, 1, 1);
+		mc6.x = 200;
+		mc6.y = 200;
+		mc6.scaleX = mc6.scaleY = 3.62;
+		world.scene.addChild(mc6);
+		
+		text = new BitmapFont2D(new Cloud2D(100));
+	//	var fontAtlas = new FontAtlasTexture2D(world.cache.getTexture(NavTitleImage), new AngelCodeFontParser(Xml.parse(Std.string(new NavTitleData())), 0.5));
+		text.font = fontAtlas;
+		text.multiLine = true;
+		text.fixedWidth = false;
+		text.text = "Hello World!!!\nmulti!";
+		world.scene.addChild(text);
 		
         /*var b = new Batch2D();
         scene.addChild(b);
@@ -139,9 +171,9 @@ class Main
 
     function onRender(_)
     {
-    //   trace(cast(mc2.animator, Animator).isPlaying);
-    //  trace(mc2.textureFrame);
-		
+       /*trace(cast(mc2.animator, Animator).isPlaying);
+       trace(mc2.textureFrame);*/
+		text.text = "time: " + Lib.getTimer() + "\nmouseX: " + Lib.current.stage.mouseY;
 		//world.camera.x = -world.stage.mouseX;
         //world.camera.y = -world.stage.mouseY;
     //    world.camera.scale += (Math.random()-0.5) * 0.003;
