@@ -7,7 +7,7 @@ import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.texture.atlas.FontAtlasTexture2D;
 import flash.geom.Vector3D;
 
-class FontSheetParser implements IAtlasParser
+class FontSheetParser implements IFontAtlasParser
 {
     /**
 	 * Text Set 1 = !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
@@ -156,7 +156,7 @@ class FontSheetParser implements IAtlasParser
 			frames.push(new Frame(w, h, new Vector3D((currentX + padding) * kx, (currentY + padding) * ky, rw, rh), border, char));
 			r++;
 			
-			if (char == " ") cast(a, FontAtlasTexture2D).hasSpaceGlyph = true;
+			if (char == " ") hasSpaceGlyph = true;
 			
 			if (r == characterPerRow)
 			{
@@ -170,9 +170,13 @@ class FontSheetParser implements IAtlasParser
 			}
 		}
 		
-		cast(a, FontAtlasTexture2D).spaceWidth = characterWidth;
-		cast(a, FontAtlasTexture2D).fontHeight = characterHeight;
+		spaceWidth = characterWidth;
+		fontHeight = characterHeight;
 		
         return frames;
     }
+
+    public var spaceWidth(default, null):Int = 0;
+    public var fontHeight(default, null):Int = 0;
+    public var hasSpaceGlyph(default, null):Bool = false;
 }
