@@ -1,5 +1,6 @@
 package ;
 
+import deep.dd.display.render.BatchRender;
 import deep.dd.display.render.CloudRender;
 import deep.dd.display.render.SimpleRender;
 import deep.dd.display.SmartSprite2D;
@@ -59,14 +60,16 @@ class SmartTest
         world.bgColor.fromInt(0x666666);
 
 
-        var b = new SmartSprite2D(new CloudRender());
+        var b = new SmartSprite2D(new BatchRender());
+        //var b = new SmartSprite2D(new SimpleRender());
+        //var b = new SmartSprite2D(new CloudRender());
         scene.addChild(b);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
 
         
-        for (x in 0...3)
-            for (y in 0...3)
+        for (x in 0...5)
+            for (y in 0...5)
             {
                 var s = new Sprite2D();
                 b.addChild(s);
