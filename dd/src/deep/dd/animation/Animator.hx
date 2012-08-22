@@ -103,6 +103,7 @@ class Animator extends AnimatorBase
 	public function stop():Void
 	{
 		if (frame < 0) frame = 0;
+		frameTime = 1;
 		isPlaying = false;
 	}
 	
@@ -135,6 +136,7 @@ class Animator extends AnimatorBase
 				{
 					frameFound = true;
 					this.frame = i;
+					break;
 				}
 			}
 			

@@ -363,6 +363,7 @@ class BitmapFont2D extends Node2D
 			
 			var finalWidth:Float = calcFieldWidth + padding * 2;
 			
+			// We need to find out how many sprites to add or remove from display list
 			var numSpaces:Int;
 			var textLength:Int;
 			var childsNeeded:Int = 0;
@@ -380,6 +381,7 @@ class BitmapFont2D extends Node2D
 				}
 			}
 			
+			// If we haven't enough sprites then we add them
 			while (Std.int(textContainer.numChildren) < childsNeeded)
 			{
 				var c:Sprite2D = null; 
@@ -400,6 +402,7 @@ class BitmapFont2D extends Node2D
 				textContainer.addChild(c);
 			}
 			
+			// If we have more sprites than we need then we remove them
 			if (Std.int(textContainer.numChildren) > childsNeeded)
 			{
 				var numChildrenToRemove:Int = textContainer.numChildren - childsNeeded;
@@ -462,7 +465,7 @@ class BitmapFont2D extends Node2D
 			for (c in textContainer.iterator())
 			{
 				info = glyphInfo[pos];
-				cast(cast(c, Sprite2D).animator).gotoFrame(info.symbol);
+				cast(cast(c, Sprite2D).animator, Animator).gotoFrame(info.symbol);
 				c.x = info.x;
 				c.y = info.y;
 				c.scaleX = c.scaleY = fontScale;
