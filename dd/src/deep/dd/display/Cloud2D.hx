@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import deep.dd.display.render.CloudRender;
 import flash.geom.Vector3D;
 import haxe.FastList;
 import deep.dd.material.Material;
@@ -8,7 +9,20 @@ import deep.dd.material.cloud2d.Cloud2DMaterial;
 import deep.dd.geometry.Geometry;
 import deep.dd.utils.FastHaxe;
 
-class Cloud2D extends Sprite2D
+
+class Cloud2D extends SmartSprite2D
+{
+
+    public function new(startSize:UInt = 20, incSize:UInt = 20)
+    {
+        super(cloudRender = new CloudRender(startSize, incSize));
+    }
+
+    public var cloudRender(default, null):CloudRender;
+
+}
+
+class Cloud2DDeprecated extends Sprite2D
 {
     static inline public var PER_VERTEX:UInt = 9; // xyz, uv, rgba
     static inline public var MAX_SIZE:UInt = 16383; //65535 / 4;

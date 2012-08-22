@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import deep.dd.display.render.BatchRender;
 import deep.dd.utils.Frame;
 import deep.dd.material.batch2d.Batch2DMaterial;
 import deep.dd.display.Node2D;
@@ -16,7 +17,17 @@ import deep.dd.animation.AnimatorBase;
 import deep.dd.geometry.Geometry;
 import deep.dd.utils.FastHaxe;
 
-class Batch2D extends Sprite2D
+class Batch2D extends SmartSprite2D
+{
+    public function new()
+    {
+        super(batchRender = new BatchRender());
+    }
+
+    public var batchRender(default, null):BatchRender;
+}
+
+class Batch2DDeprecated extends Sprite2D
 {
     var mat:Batch2DMaterial;
 
