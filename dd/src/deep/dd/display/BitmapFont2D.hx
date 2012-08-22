@@ -117,18 +117,6 @@ class BitmapFont2D extends Node2D
 		return spacing;
 	}
 	
-	public var fontScale(default, set_fontScale):Float = 1.0;
-	
-	function set_fontScale(scale:Float):Float
-	{
-		if (fontScale != scale)
-		{
-			fontScale = scale;
-			needUpdate = true;
-		}
-		return scale;
-	}
-	
 	public var autoUpperCase(default, set_autoUpperCase):Bool = false;
 	
 	function set_autoUpperCase(toUpper:Bool):Bool
@@ -275,7 +263,7 @@ class BitmapFont2D extends Node2D
 							
 							if (wordWrap)
 							{
-								if (font.getTextWidth(currentRow, letterSpacing, fontScale) > fieldWidth)
+								if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
 								{
 									if (txt == "")
 									{
@@ -306,7 +294,7 @@ class BitmapFont2D extends Node2D
 							}
 							else
 							{
-								if (font.getTextWidth(currentRow, letterSpacing, fontScale) > fieldWidth)
+								if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
 								{
 									j = 0;
 									tempStr = "";
@@ -314,7 +302,7 @@ class BitmapFont2D extends Node2D
 									while (j < wordLength)
 									{
 										currentRow = txt + word.charAt(j);
-										if (font.getTextWidth(currentRow, letterSpacing, fontScale) > fieldWidth)
+										if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
 										{
 											rows.push(txt.substr(0, txt.length - 1));
 											txt = "";
@@ -342,7 +330,7 @@ class BitmapFont2D extends Node2D
 								if (!changed) 
 								{
 									var subText:String = txt.substr(0, txt.length - 1);
-									calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(subText, letterSpacing, fontScale)));
+									calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(subText, letterSpacing)));
 									rows.push(subText);
 								}
 								lineComplete = true;
@@ -356,7 +344,7 @@ class BitmapFont2D extends Node2D
 				}
 				else
 				{
-					calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(lines[i], letterSpacing, fontScale)));
+					calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(lines[i], letterSpacing)));
 					rows.push(lines[i]);
 				}
 			}
@@ -437,26 +425,26 @@ class BitmapFont2D extends Node2D
 				{
 					if (fixedWidth)
 					{
-						ox = (fieldWidth - font.getTextWidth(t, letterSpacing, fontScale)) / 2;
+						ox = (fieldWidth - font.getTextWidth(t, letterSpacing)) / 2;
 					}
 					else
 					{
-						ox = (finalWidth - font.getTextWidth(t, letterSpacing, fontScale)) / 2;
+						ox = (finalWidth - font.getTextWidth(t, letterSpacing)) / 2;
 					}
 				}
 				if (align == TextFormatAlign.RIGHT) 
 				{
 					if (fixedWidth)
 					{
-						ox = fieldWidth - font.getTextWidth(t, letterSpacing, fontScale);
+						ox = fieldWidth - font.getTextWidth(t, letterSpacing);
 					}
 					else
 					{
-						ox = finalWidth - font.getTextWidth(t, letterSpacing, fontScale) - 2 * padding;
+						ox = finalWidth - font.getTextWidth(t, letterSpacing) - 2 * padding;
 					}
 				}
 				
-				buildTextFromSprites(glyphInfo, t, ox + padding, oy + row * (font.fontHeight * fontScale + lineSpacing) + padding);
+				buildTextFromSprites(glyphInfo, t, ox + padding, oy + row * (font.fontHeight + lineSpacing) + padding);
 				row++;
 			}
 			
@@ -468,7 +456,6 @@ class BitmapFont2D extends Node2D
 				cast(cast(c, Sprite2D).animator, Animator).gotoFrame(info.symbol);
 				c.x = info.x;
 				c.y = info.y;
-				c.scaleX = c.scaleY = fontScale;
 				pos++;
 			}
 		}
@@ -501,11 +488,11 @@ class BitmapFont2D extends Node2D
 					glyphWidth = glyph.width;
 				}
 				glyphInfo.push(new GlyphInfo(glyphX, glyphY, char));
-				glyphX += glyphWidth * fontScale + letterSpacing;
+				glyphX += glyphWidth + letterSpacing;
 			}
 			else if (char == " ")
 			{
-				glyphX += font.spaceWidth * fontScale + letterSpacing;
+				glyphX += font.spaceWidth + letterSpacing;
 			}
 		}
 	}
