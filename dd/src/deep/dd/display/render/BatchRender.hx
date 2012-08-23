@@ -78,7 +78,7 @@ class BatchRender extends RenderBase
         var h = node.children.head;
         while (h != null)
         {
-            var c = h.elt;
+            var c:Node2D = h.elt;
             if (!c.visible) continue;
 
             if (c.ignoreInBatch)

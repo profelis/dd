@@ -97,11 +97,6 @@ class Node2D
         onMouseDown = new Signal2<Node2D, MouseData>();
         onMouseUp = new Signal2<Node2D, MouseData>();
 
-        transformComps = new Vector<Vector3D>(3, true);
-        transformComps[0] = tPos = new Vector3D(x, y, z);
-        transformComps[1] = tRot = new Vector3D(rotationY, rotationY, rotationZ);
-        transformComps[2] = tScale = new Vector3D(scaleX, scaleY, scaleZ);
-
         children = new FastList<Node2D>();
         transform = new Matrix3D();
 
@@ -332,39 +327,26 @@ class Node2D
             worldTransform.append(parent.worldTransform);
         }
 
-        /*
-        worldTransform.identity();
-        worldTransform.append(this.transform);
-
-        if (parent != null) worldTransform.append(parent.worldTransform);  */
         invalidateWorldTransform = false;
     }
 
-    public var transformComps(default, null):Vector<Vector3D>;
-    var tRot:Vector3D;
-    var tPos:Vector3D;
-    var tScale:Vector3D;
-
-    inline static var toRad = Math.PI / 180;
+    var moved:Bool = false;
+    var scaled:Bool = false;
+    var rotatedX:Bool = false;
+    var rotatedY:Bool = false;
+    var rotatedZ:Bool = false;
 
     inline public function updateTransform()
     {
-        transform.recompose(transformComps);
-        if (usePivot)
-        {
-            transform.prependTranslation(-pivot.x, -pivot.y, -pivot.z);
-            transform.appendTranslation(pivot.x, pivot.y, pivot.z);
-        }
-        /*
+
         transform.identity();
-        if (pivot != null) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
-        transform.appendScale(scaleX, scaleY, scaleZ);
-        transform.appendRotation(rotationZ, Vector3D.Z_AXIS);
-        transform.appendRotation(rotationY, Vector3D.Y_AXIS);
-        transform.appendRotation(rotationX, Vector3D.X_AXIS);
-        transform.appendTranslation(x, y, z);
-        if (pivot != null) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
-          */
+        if (usePivot) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
+        if (scaled) transform.appendScale(scaleX, scaleY, scaleZ);
+        if (rotatedZ) transform.appendRotation(rotationZ, Vector3D.Z_AXIS);
+        if (rotatedY) transform.appendRotation(rotationY, Vector3D.Y_AXIS);
+        if (rotatedX) transform.appendRotation(rotationX, Vector3D.X_AXIS);
+        if (moved) transform.appendTranslation(x, y, z);
+        if (usePivot) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
 
         invalidateTransform = false;
         invalidateWorldTransform = true;
@@ -381,10 +363,12 @@ class Node2D
     public var pivot(default, set_pivot):Vector3D;
     public var usePivot(default, null):Bool;
 
-    function set_pivot(v)
+    function set_pivot(v:Vector3D):Vector3D
     {
+        if (v != null && v.x == 0 && v.y == 0 && v.z == 0) v = null;
+
         pivot = v;
-        usePivot = pivot != null;
+        usePivot = v != null;
         invalidateTransform = true;
         return v;
     }
@@ -403,21 +387,24 @@ class Node2D
 
     function set_x(v:Float)
     {
-        tPos.x = x = v;
+        x = v;
+        moved = x != 0 || y != 0 || z != 0;
         invalidateTransform = true;
         return v;
     }
 
     function set_y(v:Float)
     {
-        tPos.y = y = v;
+        y = v;
+        moved = x != 0 || y != 0 || z != 0;
         invalidateTransform = true;
         return v;
     }
 
     function set_z(v:Float)
     {
-        tPos.z = z = v;
+        z = z = v;
+        moved = x != 0 || y != 0 || z != 0;
         invalidateTransform = true;
         return v;
     }
@@ -425,7 +412,7 @@ class Node2D
     function set_rotationX(v:Float)
     {
         rotationX = v;
-        tRot.x = v * toRad;
+        rotatedX = v != 0;
         invalidateTransform = true;
         return v;
     }
@@ -433,7 +420,7 @@ class Node2D
     function set_rotationY(v:Float)
     {
         rotationY = v;
-        tRot.y = v * toRad;
+        rotatedY = v != 0;
         invalidateTransform = true;
         return v;
     }
@@ -441,28 +428,31 @@ class Node2D
     function set_rotationZ(v:Float)
     {
         rotationZ = v;
-        tRot.z = v * toRad;
+        rotatedZ = v != 0;
         invalidateTransform = true;
         return v;
     }
 
     function set_scaleX(v:Float)
     {
-        tScale.x = scaleX = v;
+        scaleX = v;
+        scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
         invalidateTransform = true;
         return v;
     }
 
     function set_scaleY(v:Float)
     {
-        tScale.y = scaleY = v;
+        scaleY = v;
+        scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
         invalidateTransform = true;
         return v;
     }
 
     function set_scaleZ(v:Float)
     {
-        tScale.z = scaleZ = v;
+        scaleZ = v;
+        scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
         invalidateTransform = true;
         return v;
     }
