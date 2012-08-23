@@ -46,6 +46,7 @@ class Test3DSmart extends Test
         t = new AtlasTexture2D(world.cache.getBitmapTexture(bmp), new SpriteSheetParser(iw, ih));
 
         c = new SmartSprite2D();
+        c.scaleX = c.scaleY = 2;
         c.texture = t;
         scene.addChild(c);
         var pivot = new Vector3D(iw * 0.5, ih * 0.5);
