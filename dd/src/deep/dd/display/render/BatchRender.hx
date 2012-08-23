@@ -40,15 +40,13 @@ class BatchRender extends RenderBase
 
     var textureFrame:Frame;
     var animator:AnimatorBase;
-    var smart:SmartSprite2D;
 
-    override public function drawStep(s:SmartSprite2D, camera:Camera2D, invalidateTexture:Bool):Void
+    override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
     {
-        smart = s;
-		textureFrame = s.textureFrame;
-        animator = s.animator;
+		textureFrame = smartSprite.textureFrame;
+        animator = smartSprite.animator;
 
-		drawBatch(s, camera, invalidateTexture);
+		drawBatch(smartSprite, camera, invalidateTexture);
     }
 
     function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
@@ -127,7 +125,7 @@ class BatchRender extends RenderBase
             idx ++;
             if (idx == MAX_SIZE)
             {
-                mat.drawBatch(smart, camera, smart.texture, idx, mpos, cTrans, regions);
+                mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
                 vectorsFull = true;
                 idx = 0;
             }
@@ -144,7 +142,7 @@ class BatchRender extends RenderBase
                     regions[i] = emptyVector;
                 }
             }
-            mat.drawBatch(smart, camera, smart.texture, idx, mpos, cTrans, regions);
+            mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
         }
 
         for (s in subNodes)
@@ -167,7 +165,6 @@ class BatchRender extends RenderBase
         mat = null;
         emptyVector = null;
         emptyMatrix = null;
-        smart = null;
         textureFrame = null;
         animator = null;
     }

@@ -49,16 +49,14 @@ class CloudRender extends RenderBase
 
     var textureFrame:Frame;
     var animator:AnimatorBase;
-    var smart:SmartSprite2D;
 
-    override public function drawStep(s:SmartSprite2D, camera:Camera2D, invalidateTexture:Bool):Void
+    override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
     {
-        smart = s;
 		renderSize = 0;
-		textureFrame = s.textureFrame;
-        animator = s.animator;
+		textureFrame = smartSprite.textureFrame;
+        animator = smartSprite.animator;
 
-		drawBatch(s, camera, invalidateTexture);
+		drawBatch(smartSprite, camera, invalidateTexture);
     }
 
     public var renderSize(default, null):UInt;
@@ -163,7 +161,7 @@ class CloudRender extends RenderBase
         if (renderSize > 0)
         {
             geometry.update();
-            mat.drawCloud(smart, camera, renderSize);
+            mat.drawCloud(smartSprite, camera, renderSize);
         }
 
         for (s in renderList)
@@ -175,7 +173,6 @@ class CloudRender extends RenderBase
     override public function dispose()
     {
         mat = null;
-        smart = null;
         textureFrame = null;
         animator = null;
     }

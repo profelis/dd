@@ -1,5 +1,6 @@
 package ;
 
+import deep.dd.display.render.RenderBase;
 import deep.dd.display.render.BatchRender;
 import deep.dd.display.render.CloudRender;
 import deep.dd.display.render.SimpleRender;
@@ -45,8 +46,13 @@ class SmartTest
 
     var b:SmartSprite2D;
 
+    static var refs:Array<Class<RenderBase>>;
+    var pos = 0;
+
     public function new()
     {
+        refs = [SimpleRender, BatchRender, CloudRender];
+
         var s = flash.Lib.current.stage;
         s.scaleMode = StageScaleMode.NO_SCALE;
         s.align = StageAlign.TOP_LEFT;
@@ -61,7 +67,7 @@ class SmartTest
         world.bgColor.fromInt(0x666666);
 
 
-        b = new SmartSprite2D(new BatchRender());
+        b = new SmartSprite2D();
         //var b = new SmartSprite2D(new SimpleRender());
         //var b = new SmartSprite2D(new CloudRender());
         scene.addChild(b);
@@ -81,11 +87,8 @@ class SmartTest
                 s.x = x * 170 + 40;
                 s.y = y * 170;
             }
-		
-        var q = new Quad2D();
-        //b.addChild(q);
-        q.width = 100;
-        q.height = 100;
+
+        nextRender();
 
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
@@ -93,9 +96,15 @@ class SmartTest
         s.addEventListener(MouseEvent.CLICK, onClick);
     }
 
+    function nextRender()
+    {
+        b.render = Type.createInstance(refs[pos], []);
+        pos = (pos+1) % 3;
+    }
+
     function onClick(_)
     {
-        b.render = new CloudRender();
+        nextRender();
         //world.ctx.dispose();
 		//mc.animator.playAnimation(null);
     }

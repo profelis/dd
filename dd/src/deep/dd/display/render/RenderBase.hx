@@ -24,7 +24,7 @@ class RenderBase
 		return smartSprite = s;
 	}
 
-	public function drawStep(s:SmartSprite2D, camera:Camera2D, invalidateTexture:Bool):Void
+	public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
 	{
 		throw "override me";
 	}

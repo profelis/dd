@@ -15,7 +15,7 @@ import deep.dd.utils.FastHaxe;
 
 class SmartSprite2D extends Sprite2D
 {
-    public function new(render:RenderBase)
+    public function new(render:RenderBase = null)
     {
         super();
 
@@ -41,13 +41,10 @@ class SmartSprite2D extends Sprite2D
 
     function setRender(r:RenderBase):RenderBase
     {
-    	#if debug
-    	if (r == null) throw "render can't be null";
-    	#end
-    	
     	if (r == render) return render;
 
     	render = r;
+        render.smartSprite = this;
     	
 		ignoreInBatch = render.ignoreInBatch;
 
@@ -94,6 +91,6 @@ class SmartSprite2D extends Sprite2D
 
         if (invalidateDrawTransform) updateDrawTransform();
         
-    	render.drawStep(this, camera, invalidateTexture);
+    	render.drawStep(camera, invalidateTexture);
     }  
 }
