@@ -59,7 +59,11 @@ class BatchRender extends RenderBase
 		textureFrame = smartSprite.textureFrame;
         animator = smartSprite.animator;
 
+        mat.startBatch(smartSprite, smartSprite.texture);
+
 		drawBatch(smartSprite, camera, invalidateTexture);
+
+        mat.stopBatch();
     }
 
     var mpos:Vector<Matrix3D>;
@@ -139,7 +143,7 @@ class BatchRender extends RenderBase
                 idx ++;
                 if (idx == MAX_SIZE)
                 {
-                    mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
+                    mat.drawBatch(camera, idx, mpos, cTrans, regions);
                     vectorsFull = true;
                     idx = 0;
                 }
@@ -158,7 +162,7 @@ class BatchRender extends RenderBase
                     regions[i] = emptyVector;
                 }
             }
-            mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
+            mat.drawBatch(camera, idx, mpos, cTrans, regions);
         }
 
         for (s in subNodes)

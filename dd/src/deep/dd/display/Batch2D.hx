@@ -96,7 +96,11 @@ class Batch2DDeprecated extends Sprite2D
 
         if (invalidateDrawTransform) updateDrawTransform();
 
+        mat.startBatch(this, texture);
+
         drawBatch(this, camera, invalidateTexture);
+
+        mat.stopBatch();
     }
 
     function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
@@ -175,7 +179,7 @@ class Batch2DDeprecated extends Sprite2D
             idx ++;
             if (idx == MAX_SIZE)
             {
-                mat.drawBatch(this, camera, this.texture, idx, mpos, cTrans, regions);
+                mat.drawBatch(camera, idx, mpos, cTrans, regions);
                 vectorsFull = true;
                 idx = 0;
             }
@@ -192,7 +196,7 @@ class Batch2DDeprecated extends Sprite2D
                     regions[i] = emptyVector;
                 }
             }
-            mat.drawBatch(this, camera, this.texture, idx, mpos, cTrans, regions);
+            mat.drawBatch(camera, idx, mpos, cTrans, regions);
         }
 
         for (s in subNodes)

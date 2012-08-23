@@ -26,8 +26,8 @@ import deep.dd.World2D;
 
 class Test3DSmart extends Test
 {
-    inline static var nx = 130;
-    inline static var ny = 100;
+    inline static var nx = 70;
+    inline static var ny = 80;
 
     var c:SmartSprite2D;
     var t:AtlasTexture2D;
