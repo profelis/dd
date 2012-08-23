@@ -26,8 +26,8 @@ import deep.dd.World2D;
 
 class Test3DSmart extends Test
 {
-    inline static var nx = 18;
-    inline static var ny = 26;
+    inline static var nx = 70;
+    inline static var ny = 80;
 
     var c:SmartSprite2D;
     var t:AtlasTexture2D;
@@ -46,6 +46,7 @@ class Test3DSmart extends Test
         t = new AtlasTexture2D(world.cache.getBitmapTexture(bmp), new SpriteSheetParser(iw, ih));
 
         c = new SmartSprite2D();
+        c.scaleX = c.scaleY = 2;
         c.texture = t;
         scene.addChild(c);
         var pivot = new Vector3D(iw * 0.5, ih * 0.5);
@@ -55,7 +56,7 @@ class Test3DSmart extends Test
             {
                 var s = new Sprite2D();
                 s.texture = t.getTextureById(y * nx + x);
-                s.pivot = pivot;
+                //s.pivot = pivot;
                 s.x = x * iw - bmp.width * 0.5;
                 s.y = y * ih - bmp.height * 0.5;
                 c.addChild(s);
@@ -110,8 +111,9 @@ class Test3DSmart extends Test
 
         for (i in c.children)
         {
-            i.rotationX += 1.5;
-            i.rotationY += 1.5;
+            //i.rotationX += 1.5;
+            //i.rotationY += 1.5;
+            i.rotationZ += 10;
         }
 
         super.drawStep(camera);
