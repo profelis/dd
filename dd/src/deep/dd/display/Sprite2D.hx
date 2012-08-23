@@ -28,7 +28,10 @@ class Sprite2D extends DisplayNode2D
 
     public var animator(default, set_animator):AnimatorBase;
 
-    var invalidateDrawTransform:Bool;
+    /**
+    * @private
+    */
+    public var invalidateDrawTransform:Bool;
     public var drawTransform(default, null):Matrix3D;
 
     public var texture(default, set_texture):Texture2D;
@@ -59,7 +62,10 @@ class Sprite2D extends DisplayNode2D
         super.init(ctx);
     }
 
-    public var textureFrame(default, null):Frame;
+    /**
+    * @private setter
+    */
+    public var textureFrame(default, default):Frame;
 
     override public function drawStep(camera:Camera2D):Void
     {

@@ -1,102 +1,52 @@
-package deep.dd.display;
+package deep.dd.display.render;
 
-import deep.dd.display.render.BatchRender;
-import deep.dd.utils.Frame;
-import deep.dd.material.batch2d.Batch2DMaterial;
-import deep.dd.display.Node2D;
-import haxe.FastList;
-import mt.m3d.Color;
-import deep.dd.display.Sprite2D;
+import flash.Vector;
 import flash.geom.Vector3D;
 import flash.geom.Matrix3D;
-import flash.Vector;
-import deep.dd.camera.Camera2D;
-import deep.dd.material.Material;
 import deep.dd.material.batch2d.Batch2DMaterial;
+import deep.dd.display.SmartSprite2D;
 import deep.dd.animation.AnimatorBase;
+import deep.dd.camera.Camera2D;
+import deep.dd.display.Node2D;
+import deep.dd.display.Sprite2D;
 import deep.dd.geometry.Geometry;
+import deep.dd.material.Material;
+import deep.dd.texture.Texture2D;
+import deep.dd.utils.Frame;
 import deep.dd.utils.FastHaxe;
+import haxe.FastList;
 
-class Batch2D extends SmartSprite2D
+class BatchRender extends RenderBase
 {
-    public function new()
-    {
-        super(batchRender = new BatchRender());
-    }
-
-    public var batchRender(default, null):BatchRender;
-}
-
-class Batch2DDeprecated extends Sprite2D
-{
-    var mat:Batch2DMaterial;
 
     static public inline var MAX_SIZE = 20;
 
-    public function new()
-    {
+	public function new()
+	{
         emptyMatrix = new Matrix3D();
         emptyVector = new Vector3D(0, 0, 0, 0);
 
-        super(new Batch2DMaterial());
+        material = mat = new Batch2DMaterial();
 
-        ignoreInBatch = true;
+        geometry = Geometry.createTexturedBatch(MAX_SIZE);
+	}
+
+    override public function copy():RenderBase
+    {
+        return new BatchRender();
     }
 
-    override function createGeometry()
+    var mat:Batch2DMaterial;
+
+    var textureFrame:Frame;
+    var animator:AnimatorBase;
+
+    override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
     {
-        setGeometry(Geometry.createTexturedBatch(MAX_SIZE, _width = 1, _height = 1));
-    }
+		textureFrame = smartSprite.textureFrame;
+        animator = smartSprite.animator;
 
-    override function set_material(m:Material):Material
-    {
-        if (m == material) return m;
-
-        super.set_material(m);
-        if (FastHaxe.is(material, Batch2DMaterial)) mat = flash.Lib.as(material, Batch2DMaterial);
-
-        return material;
-    }
-
-    override public function drawStep(camera:Camera2D):Void
-    {
-        if (mat == null || texture == null)
-        {
-            super.drawStep(camera);
-            return;
-        }
-
-        var invalidateTexture:Bool = false;
-        if (texture != null)
-        {
-            var f = texture.frame;
-            if (animator != null)
-            {
-                animator.draw(scene.time);
-                f = animator.textureFrame;
-            }
-
-            if (textureFrame != f)
-            {
-                invalidateTexture = true;
-                invalidateDrawTransform = true;
-                textureFrame = f;
-                _width = textureFrame.width;
-                _height = textureFrame.height;
-            }
-
-            if (geometry.needUpdate) geometry.update();
-        }
-
-        if (invalidateWorldTransform || invalidateTransform) invalidateDrawTransform = true;
-
-        if (invalidateTransform) updateTransform();
-        if (invalidateWorldTransform) updateWorldTransform();
-        if (invalidateColorTransform) updateWorldColor();
-
-        if (invalidateDrawTransform) updateDrawTransform();
-
-        drawBatch(this, camera, invalidateTexture);
+		drawBatch(smartSprite, camera, invalidateTexture);
     }
 
     function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
@@ -150,7 +100,7 @@ class Batch2DDeprecated extends Sprite2D
 
             if (s.animator != null && s.animator != animator)
             {
-                s.animator.draw(scene.time);
+                s.animator.draw(node.scene.time);
                 var frame = s.animator.textureFrame;
 
                 if (frame != s.textureFrame)
@@ -175,7 +125,7 @@ class Batch2DDeprecated extends Sprite2D
             idx ++;
             if (idx == MAX_SIZE)
             {
-                mat.drawBatch(this, camera, this.texture, idx, mpos, cTrans, regions);
+                mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
                 vectorsFull = true;
                 idx = 0;
             }
@@ -192,7 +142,7 @@ class Batch2DDeprecated extends Sprite2D
                     regions[i] = emptyVector;
                 }
             }
-            mat.drawBatch(this, camera, this.texture, idx, mpos, cTrans, regions);
+            mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
         }
 
         for (s in subNodes)
@@ -209,4 +159,13 @@ class Batch2DDeprecated extends Sprite2D
     var emptyMatrix:Matrix3D;
     var emptyVector:Vector3D;
 
+    override public function dispose()
+    {
+        super.dispose();
+        mat = null;
+        emptyVector = null;
+        emptyMatrix = null;
+        textureFrame = null;
+        animator = null;
+    }
 }

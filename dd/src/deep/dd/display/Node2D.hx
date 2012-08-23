@@ -25,24 +25,42 @@ class Node2D
     public var scene(default, null):Scene2D;
     public var world(get_world, null):World2D;
 
-    var _width:Float = 1;
-    var _height:Float = 1;
+    /**
+    * @private
+    */
+    public var _width:Float = 1;
+    /**
+    * @private
+    */
+    public var _height:Float = 1;
 
     public var transform(default, null):Matrix3D;
-    var invalidateTransform:Bool = true;
+    /**
+    * @private
+    */
+    public var invalidateTransform:Bool = true;
 
     public var worldTransform(default, null):Matrix3D;
-    var invalidateWorldTransform:Bool = true;
+    /**
+    * @private
+    */
+    public var invalidateWorldTransform:Bool = true;
 
     public var colorTransform(default, set_colorTransform):Color;
     public var worldColorTransform(default, null):Vector3D;
-    var invalidateColorTransform:Bool;
+    /**
+    * @private
+    */
+    public var invalidateColorTransform:Bool;
 
     public var alpha(default, set_alpha):Float = 1;
 
     public var visible:Bool = true;
 
-    var children:FastList<Node2D>;
+    /**
+    * @private
+    */
+    public var children(default, null):FastList<Node2D>;
 
     public var numChildren(default, null):UInt = 0;
 

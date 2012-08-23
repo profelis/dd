@@ -1,111 +1,62 @@
-package deep.dd.display;
+package deep.dd.display.render;
 
-import deep.dd.display.render.CloudRender;
-import flash.geom.Vector3D;
-import haxe.FastList;
-import deep.dd.material.Material;
+import deep.dd.display.SmartSprite2D;
+import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
-import deep.dd.material.cloud2d.Cloud2DMaterial;
+import deep.dd.display.Node2D;
+import deep.dd.display.Sprite2D;
 import deep.dd.geometry.Geometry;
+import deep.dd.material.Material;
+import deep.dd.material.cloud2d.Cloud2DMaterial;
+import deep.dd.texture.Texture2D;
+import deep.dd.utils.Frame;
 import deep.dd.utils.FastHaxe;
+import haxe.FastList;
 
-
-class Cloud2D extends SmartSprite2D
+class CloudRender extends RenderBase
 {
+    public var startSize(default, null):UInt;
+	public var size(default, null):UInt;
+	public var incSize(default, null):UInt;
 
-    public function new(startSize:UInt = 20, incSize:UInt = 20)
-    {
-        super(cloudRender = new CloudRender(startSize, incSize));
-    }
-
-    public var cloudRender(default, null):CloudRender;
-
-}
-
-class Cloud2DDeprecated extends Sprite2D
-{
     static inline public var PER_VERTEX:UInt = 9; // xyz, uv, rgba
     static inline public var MAX_SIZE:UInt = 16383; //65535 / 4;
 
-    public var size(default, null):UInt;
-    public var incSize:UInt;
-
-    var mat:Cloud2DMaterial;
-
-    /**
-    *  @param size - start size
-    *  @param incSize - step of increment/decrement size
-    **/
-    public function new(startSize:UInt = 20, incSize:UInt = 20)
-    {
-        #if debug
+	public function new(startSize:UInt = 20, incSize:UInt = 20)
+	{
+		#if debug
         if (startSize > MAX_SIZE) throw "size > MAX_SIZE";
         if (startSize == 0) throw "startSize can't be 0";
         if (incSize == 0) throw "incSize can't be 0";
         #end
 
+        this.startSize = startSize;
         this.size = startSize;
         this.incSize = incSize;
 
-        super(new Cloud2DMaterial());
+        material = mat = new Cloud2DMaterial();
 
-        ignoreInBatch = true;
+        geometry = Geometry.createTexturedCloud(size);
+	}
+
+    override public function copy():RenderBase
+    {
+        var res = new CloudRender(startSize, incSize);
+        return res;
     }
 
-    override function createGeometry()
+    var mat:Cloud2DMaterial;
+
+    var textureFrame:Frame;
+    var animator:AnimatorBase;
+
+    override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
     {
-        setGeometry(Geometry.createTexturedCloud(size, _width = 1, _height = 1));
-    }
+		renderSize = 0;
+		textureFrame = smartSprite.textureFrame;
+        animator = smartSprite.animator;
 
-    override function set_material(m:Material):Material
-    {
-        if (m == material) return m;
-
-        super.set_material(m);
-        if (FastHaxe.is(material, Cloud2DMaterial)) mat = flash.Lib.as(material, Cloud2DMaterial);
-
-        return material;
-    }
-
-    override public function drawStep(camera:Camera2D):Void
-    {
-        if (mat == null || texture == null)
-        {
-            super.drawStep(camera);
-            return;
-        }
-
-        var invalidateTexture:Bool = false;
-        if (texture != null)
-        {
-            var f = texture.frame;
-            if (animator != null)
-            {
-                animator.draw(scene.time);
-                f = animator.textureFrame;
-            }
-
-            if (textureFrame != f)
-            {
-                invalidateTexture = true;
-                invalidateDrawTransform = true;
-                textureFrame = f;
-                _width = textureFrame.width;
-                _height = textureFrame.height;
-            }
-        }
-
-        if (invalidateWorldTransform || invalidateTransform) invalidateDrawTransform = true;
-
-        if (invalidateTransform) updateTransform();
-        if (invalidateWorldTransform) updateWorldTransform();
-        if (invalidateColorTransform) updateWorldColor();
-
-        if (invalidateDrawTransform) updateDrawTransform();
-
-        renderSize = 0;
-
-        drawBatch(this, camera, invalidateTexture);
+		drawBatch(smartSprite, camera, invalidateTexture);
     }
 
     public var renderSize(default, null):UInt;
@@ -155,7 +106,7 @@ class Cloud2DDeprecated extends Sprite2D
 
             if (s.animator != null && s.animator != animator)
             {
-                s.animator.draw(scene.time);
+                s.animator.draw(node.scene.time);
                 var frame = s.animator.textureFrame;
 
                 if (frame != s.textureFrame)
@@ -210,14 +161,19 @@ class Cloud2DDeprecated extends Sprite2D
         if (renderSize > 0)
         {
             geometry.update();
-            mat.drawCloud(this, camera, renderSize);
+            mat.drawCloud(smartSprite, camera, renderSize);
         }
 
         for (s in renderList)
         {
             s.drawStep(camera);
         }
-
     }
 
+    override public function dispose()
+    {
+        mat = null;
+        textureFrame = null;
+        animator = null;
+    }
 }

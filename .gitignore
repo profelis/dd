@@ -2,6 +2,7 @@
 
 .idea
 *.iml
+*.sublime-project
+
 bin
 out
-test/dump

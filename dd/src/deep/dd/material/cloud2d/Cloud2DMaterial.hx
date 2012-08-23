@@ -32,13 +32,13 @@ class Cloud2DMaterial extends Material
         shaderRef = SHADERS.get(texOpt & 0x60).get(texOpt & 0x18).get(texOpt & 0x7);
     }
 
-    override public function draw(node:DisplayNode2D, camera:Camera2D)
+    public function drawCloud(node:DisplayNode2D, camera:Camera2D, renderSize:UInt)
     {
         #if debug
-        if (!FastHaxe.is(node, Cloud2D)) throw "Cloud2DMaterial can't draw " + node;
+        if (!FastHaxe.is(node, Sprite2D)) throw "Cloud2DMaterial can't draw " + node;
         #end
 
-        var sp:Cloud2D = flash.Lib.as(node, Cloud2D);
+        var sp:Sprite2D = flash.Lib.as(node, Sprite2D);
         var tex = sp.texture;
 
         if (texOpt != tex.options)
@@ -52,14 +52,19 @@ class Cloud2DMaterial extends Material
 
         #if dd_stat
         node.world.statistics.drawCalls ++;
-        node.world.statistics.triangles += sp.renderSize * 2;
+        node.world.statistics.triangles += renderSize * 2;
         #end
 
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 
         shader.bind(node.geometry.vbuf);
-        ctx.drawTriangles(node.geometry.ibuf, 0, sp.renderSize * 2);
+        ctx.drawTriangles(node.geometry.ibuf, 0, renderSize * 2);
         shader.unbind();
+    }
+
+    override public function draw(node:DisplayNode2D, camera:Camera2D)
+    {
+        throw "use drawCloud";
     }
 
     public static var SHADERS(default, null):IntHash<IntHash<IntHash<Class<Shader>>>> = initSHADERS();
