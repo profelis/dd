@@ -1,6 +1,7 @@
 package deep.dd.display;
 import deep.dd.animation.Animator;
 import deep.dd.camera.Camera2D;
+import deep.dd.display.render.RenderBase;
 import deep.dd.texture.atlas.FontAtlasTexture2D;
 import deep.dd.utils.Frame;
 import flash.text.TextFormatAlign;
@@ -10,26 +11,16 @@ import flash.text.TextFormatAlign;
  * @author Zaphod
  */
 
-class BitmapFont2D extends Node2D
+class BitmapFont2D extends SmartSprite2D
 {
-	var textContainer:Sprite2D;
 	var needUpdate:Bool = true;
 	var spriteStorage:Array<Sprite2D>;
 	
-	public function new(cont:Sprite2D, fieldWidth:Int = 100) 
+	public function new(render:RenderBase = null, fieldWidth:Int = 100) 
 	{
-		super();
-		#if debug
-		if (!Std.is(cont, Cloud2D) && !Std.is(cont, Batch2D))
-		{
-			throw "cont should be Cloud2D or Batch2D. Instances of other classes not supported";
-		}
-		#end
-		
+		super(render);
 		spriteStorage = [];
-		textContainer = cont;
-		textContainer.animator = new Animator(60);
-		this.addChild(cont);
+		animator = new Animator(60);
 		this.fieldWidth = fieldWidth;
 		this.align = TextFormatAlign.LEFT;
 	}
@@ -38,18 +29,18 @@ class BitmapFont2D extends Node2D
 	
 	function get_font():FontAtlasTexture2D
 	{
-		if (textContainer.texture != null)
+		if (texture != null)
 		{
-			return cast(textContainer.texture, FontAtlasTexture2D);
+			return cast(texture, FontAtlasTexture2D);
 		}
 		return null;
 	}
 	
 	function set_font(f:FontAtlasTexture2D):FontAtlasTexture2D
 	{
-		if (textContainer.texture != f)
+		if (texture != f)
 		{
-			textContainer.texture = f;
+			texture = f;
 			needUpdate = true;
 		}
 		
@@ -351,7 +342,6 @@ class BitmapFont2D extends Node2D
 			
 			var finalWidth:Float = calcFieldWidth + padding * 2;
 			
-			// We need to find out how many sprites to add or remove from display list
 			var numSpaces:Int;
 			var textLength:Int;
 			var childsNeeded:Int = 0;
@@ -369,8 +359,7 @@ class BitmapFont2D extends Node2D
 				}
 			}
 			
-			// If we haven't enough sprites then we add them
-			while (Std.int(textContainer.numChildren) < childsNeeded)
+			while (Std.int(numChildren) < childsNeeded)
 			{
 				var c:Sprite2D = null; 
 				if (spriteStorage.length > 0)
@@ -384,19 +373,18 @@ class BitmapFont2D extends Node2D
 				else
 				{
 					c = new Sprite2D();
-					var an:Animator = cast textContainer.animator.copy();
+					var an:Animator = cast animator.copy();
 					c.animator = an;
 				}
-				textContainer.addChild(c);
+				addChild(c);
 			}
 			
-			// If we have more sprites than we need then we remove them
-			if (Std.int(textContainer.numChildren) > childsNeeded)
+			if (Std.int(numChildren) > childsNeeded)
 			{
-				var numChildrenToRemove:Int = textContainer.numChildren - childsNeeded;
+				var numChildrenToRemove:Int = numChildren - childsNeeded;
 				var childrenToRemove:Array<Sprite2D> = [];
 				
-				for (c in textContainer.iterator())
+				for (c in iterator())
 				{
 					childrenToRemove.push(cast(c, Sprite2D));
 					numChildrenToRemove--;
@@ -405,7 +393,7 @@ class BitmapFont2D extends Node2D
 				
 				for (c in childrenToRemove)
 				{
-					textContainer.removeChild(c);
+					removeChild(c);
 					spriteStorage.push(c);
 				}
 				childrenToRemove = null;
@@ -450,10 +438,10 @@ class BitmapFont2D extends Node2D
 			
 			var pos:Int = 0;
 			var info:GlyphInfo;
-			for (c in textContainer.iterator())
+			for (c in iterator())
 			{
 				info = glyphInfo[pos];
-				cast(cast(c, Sprite2D).animator, Animator).gotoFrame(info.symbol);
+				cast(cast(c, Sprite2D).animator).gotoFrame(info.symbol);
 				c.x = info.x;
 				c.y = info.y;
 				pos++;
@@ -500,7 +488,6 @@ class BitmapFont2D extends Node2D
 	override public function dispose():Void 
 	{
 		super.dispose();
-		textContainer = null;
 		for (s in spriteStorage)
 		{
 			s.dispose();
