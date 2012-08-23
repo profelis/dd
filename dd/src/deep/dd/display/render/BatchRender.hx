@@ -158,7 +158,7 @@ class BatchRender extends RenderBase
                     regions[i] = emptyVector;
                 }
             }
-            //mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
+            mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
         }
 
         for (s in subNodes)
