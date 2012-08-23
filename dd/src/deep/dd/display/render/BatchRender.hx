@@ -123,6 +123,7 @@ class BatchRender extends RenderBase
             else if (invalidateTexture || s.textureFrame == null)
             {
                 s.textureFrame = textureFrame;
+                s.invalidateDrawTransform = true;
             }
 
             if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();

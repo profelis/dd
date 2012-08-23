@@ -12,6 +12,6 @@
 -D dd_stat
 
 #-D shaderDebug
--debug
+#-debug
 #--no-inline
 #-D fdb

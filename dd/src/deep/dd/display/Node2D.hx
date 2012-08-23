@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import flash.Vector;
 import deep.dd.utils.MouseData;
 import msignal.Signal;
 import msignal.Signal.Signal1;
@@ -95,6 +96,11 @@ class Node2D
         onMouseOut = new Signal2<Node2D, MouseData>();
         onMouseDown = new Signal2<Node2D, MouseData>();
         onMouseUp = new Signal2<Node2D, MouseData>();
+
+        transformComps = new Vector<Vector3D>(3, true);
+        transformComps[0] = tPos = new Vector3D(x, y, z);
+        transformComps[1] = tRot = new Vector3D(rotationY, rotationY, rotationZ);
+        transformComps[2] = tScale = new Vector3D(scaleX, scaleY, scaleZ);
 
         children = new FastList<Node2D>();
         transform = new Matrix3D();
@@ -319,15 +325,38 @@ class Node2D
 
     inline public function updateWorldTransform()
     {
+
+        worldTransform.copyFrom(transform);
+
+        if (parent != null)
+        {
+            worldTransform.append(parent.worldTransform);
+        }
+
+        /*
         worldTransform.identity();
         worldTransform.append(this.transform);
 
-        if (parent != null) worldTransform.append(parent.worldTransform);
+        if (parent != null) worldTransform.append(parent.worldTransform);  */
         invalidateWorldTransform = false;
     }
 
+    var transformComps:Vector<Vector3D>;
+    var tRot:Vector3D;
+    var tPos:Vector3D;
+    var tScale:Vector3D;
+
+    inline static var toRad = Math.PI / 180;
+
     inline public function updateTransform()
     {
+        transform.recompose(transformComps);
+        if (usePivot)
+        {
+            transform.prependTranslation(-pivot.x, -pivot.y, -pivot.z);
+            transform.appendTranslation(pivot.x, pivot.y, pivot.z);
+        }
+        /*
         transform.identity();
         if (pivot != null) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
         transform.appendScale(scaleX, scaleY, scaleZ);
@@ -336,6 +365,7 @@ class Node2D
         transform.appendRotation(rotationX, Vector3D.X_AXIS);
         transform.appendTranslation(x, y, z);
         if (pivot != null) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
+          */
 
         invalidateTransform = false;
         invalidateWorldTransform = true;
@@ -350,10 +380,12 @@ class Node2D
     // transform
 
     public var pivot(default, set_pivot):Vector3D;
+    var usePivot:Bool;
 
     function set_pivot(v)
     {
         pivot = v;
+        usePivot = pivot != null;
         invalidateTransform = true;
         return v;
     }
@@ -372,21 +404,21 @@ class Node2D
 
     function set_x(v:Float)
     {
-        x = v;
+        tPos.x = x = v;
         invalidateTransform = true;
         return v;
     }
 
     function set_y(v:Float)
     {
-        y = v;
+        tPos.y = y = v;
         invalidateTransform = true;
         return v;
     }
 
     function set_z(v:Float)
     {
-        z = v;
+        tPos.z = z = v;
         invalidateTransform = true;
         return v;
     }
@@ -394,6 +426,7 @@ class Node2D
     function set_rotationX(v:Float)
     {
         rotationX = v;
+        tRot.x = v * toRad;
         invalidateTransform = true;
         return v;
     }
@@ -401,6 +434,7 @@ class Node2D
     function set_rotationY(v:Float)
     {
         rotationY = v;
+        tRot.y = v * toRad;
         invalidateTransform = true;
         return v;
     }
@@ -408,27 +442,28 @@ class Node2D
     function set_rotationZ(v:Float)
     {
         rotationZ = v;
+        tRot.z = v * toRad;
         invalidateTransform = true;
         return v;
     }
 
     function set_scaleX(v:Float)
     {
-        scaleX = v;
+        tScale.x = scaleX = v;
         invalidateTransform = true;
         return v;
     }
 
     function set_scaleY(v:Float)
     {
-        scaleY = v;
+        tScale.y = scaleY = v;
         invalidateTransform = true;
         return v;
     }
 
     function set_scaleZ(v:Float)
     {
-        scaleZ = v;
+        tScale.z = scaleZ = v;
         invalidateTransform = true;
         return v;
     }
