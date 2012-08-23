@@ -62,13 +62,13 @@ typedef Array<T,Const> = flash.Vector<T>
 		flash.display3D.Context3DVertexBufferFormat.FLOAT_4,
 	];
 
-	function bindInit(buf) {
+	inline function bindInit(buf) {
 		this.buf = buf;
 		regIndex = 0;
 		bufSize = 0;
 	}
 
-	function bindDone() {
+    inline function bindDone() {
 		buf = null;
 	}
 
@@ -83,21 +83,23 @@ typedef Array<T,Const> = flash.Vector<T>
 		throw "needs subclass";
 	}
 
-	public function unbind() {
+    public function unbind() {
 		while( regIndex-- > 0 )
 			c.setVertexBufferAt(regIndex,null);
 	}
 
-	public function draw( vbuf, ibuf ) {
+    inline public function draw( vbuf, ibuf ) {
 		bind(vbuf);
 		c.drawTriangles(ibuf);
 		unbind();
 	}
 
-	public function dispose() {
-		if( p == null ) return;
-		p.dispose();
-		p = null;
+    inline public function dispose() {
+		if( p != null )
+        {
+            p.dispose();
+            p = null;
+        }
 	}
 
 	inline public function select() {

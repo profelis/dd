@@ -29,6 +29,10 @@ class BatchRender extends RenderBase
 
         material = mat = new Batch2DMaterial();
         geometry = Geometry.createTexturedBatch(MAX_SIZE);
+
+        mpos = new Vector<Matrix3D>(MAX_SIZE, true);
+        cTrans = new Vector<Vector3D>(MAX_SIZE, true);
+        regions = new Vector<Vector3D>(MAX_SIZE, true);
 	}
 
     override public function copy():RenderBase
@@ -58,16 +62,17 @@ class BatchRender extends RenderBase
 		drawBatch(smartSprite, camera, invalidateTexture);
     }
 
+    var mpos:Vector<Matrix3D>;
+    var cTrans:Vector<Vector3D>;
+    var regions:Vector<Vector3D>;
+
     function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
     {
         var renderList = new FastList<Node2D>();
 
         var subNodes = new FastList<Node2D>();
-        var mpos = new Vector<Matrix3D>(MAX_SIZE, true);
-        var cTrans = new Vector<Vector3D>(MAX_SIZE, true);
-        var regions = new Vector<Vector3D>(MAX_SIZE, true);
 
-        var idx = 0;
+        var idx:UInt = 0;
         var vectorsFull = false;
 
         var h = node.children.head;
@@ -82,10 +87,9 @@ class BatchRender extends RenderBase
             }
             else
             {
-                var s:Sprite2D = null;
-                if (FastHaxe.is(c, Sprite2D))
+                var s:Sprite2D = flash.Lib.as(c, Sprite2D);
+                if (s != null)
                 {
-                    s = flash.Lib.as(c, Sprite2D);
                     if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
                 }
 
@@ -103,31 +107,34 @@ class BatchRender extends RenderBase
                 #if debug
                 if (!s.geometry.standart) throw "Batch2D ignore complex geometry";
                 #end
+                var sFrame = s.textureFrame;
 
                 if (s.animator != null && s.animator != animator)
                 {
                     s.animator.draw(node.scene.time);
                     var frame = s.animator.textureFrame;
 
-                    if (frame != s.textureFrame)
+                    if (frame != sFrame)
                     {
                         s.invalidateDrawTransform = true;
-                        s.textureFrame = frame;
+                        sFrame = frame;
                         s._width = frame.width;
                         s._height= frame.height;
                     }
                 }
                 else if (invalidateTexture || s.textureFrame == null)
                 {
-                    s.textureFrame = textureFrame;
+                    sFrame = textureFrame;
                     s.invalidateDrawTransform = true;
                 }
+
+                s.textureFrame = sFrame;
 
                 if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
 
                 mpos[idx] = s.drawTransform;
                 cTrans[idx] = s.worldColorTransform;
-                regions[idx] = s.textureFrame.region;
+                regions[idx] = sFrame.region;
 
                 idx ++;
                 if (idx == MAX_SIZE)
@@ -151,7 +158,7 @@ class BatchRender extends RenderBase
                     regions[i] = emptyVector;
                 }
             }
-            mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
+            //mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
         }
 
         for (s in subNodes)

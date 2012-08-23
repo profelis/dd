@@ -104,6 +104,8 @@ class Geometry
 
         if (csize == size) return;
 
+        poly.idx.fixed = false;
+
         if (csize > size)
         {
             poly.points = poly.points.slice(0, size * 4);
@@ -127,6 +129,8 @@ class Geometry
             }
         }
 
+        poly.idx.fixed = true;
+
         triangles = 2 * size;
 
         needUpdate = true;
@@ -139,8 +143,10 @@ class Geometry
 
         var ps = p.points.copy();
         var ts = p.tcoords.copy();
-        var is = p.idx.copy();
+        var is = p.idx.slice(0, p.idx.length);
+        is.fixed = true;
         var sup:Array<Float> = [0, 0, 0, 0];
+        p.idx.fixed = false;
 
         for (n in 1...size)
         {
@@ -153,6 +159,7 @@ class Geometry
             for (i in is) p.idx.push(Std.int(n * 4 + i));
         }
 
+        p.idx.fixed = true;
         p.sup = sup;
         g.resizable = false;
 
@@ -210,7 +217,7 @@ class Geometry
         var sx = 1 / stepsX;
         var sy = 1 / stepsY;
 
-        var ix:Array<UInt> = [];
+        var ix:flash.Vector<UInt> = new flash.Vector();
 
         stepsX++;
         stepsY++;
@@ -244,7 +251,7 @@ class Geometry
                 }
             }
         }
-
+        ix.fixed = true;
         var res = new Poly2D(vs, ix);
         if (textured) res.tcoords = uv;
         return res;
@@ -360,7 +367,7 @@ class Poly2D extends Polygon
 		dispose();
 		if (tempColors != null) colors = tempColors;
         ibuf = c.createIndexBuffer(idx.length);
-        ibuf.uploadFromVector(flash.Vector.ofArray(idx), 0, idx.length);
+        ibuf.uploadFromVector(idx, 0, idx.length);
 
         var size = 3;
         if (tcoords != null) size += 2;

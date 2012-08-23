@@ -9,15 +9,15 @@ class Polygon {
 	public var normals : Array<Vector>;
 	public var tangents : Array<Vector>;
 	public var tcoords : Array<UV>;
-	public var idx : Array<UInt>;
+	public var idx : flash.Vector<UInt>;
 	
 	public var ibuf : IndexBuffer3D;
 	public var vbuf : VertexBuffer3D;
 	
-	public function new( points, ?idx ) {
+	public function new( points, ?idx:flash.Vector<UInt> ) {
 		this.points = points;
 		if( idx == null ) {
-			idx = new Array();
+			idx = new flash.Vector<UInt>();
 			for( i in 0...points.length )
 				idx[i] = i;
 		}
@@ -32,7 +32,7 @@ class Polygon {
 	public function alloc( c : Context3D ) {
 		dispose();
 		ibuf = c.createIndexBuffer(idx.length);
-		ibuf.uploadFromVector(flash.Vector.ofArray(idx), 0, idx.length);
+		ibuf.uploadFromVector(idx, 0, idx.length);
 		var size = 3;
 		if( normals != null )
 			size += 3;
@@ -68,8 +68,8 @@ class Polygon {
 	}
 	
 	public function unindex() {
-		if( points.length != idx.length ) {
-			var p = [], id = [];
+		if( points.length != Std.int(idx.length) ) {
+			var p = [], id = new flash.Vector<UInt>();
 			for( i in idx ) {
 				id.push(p.length);
 				p.push(points[i]);
