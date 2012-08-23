@@ -1,5 +1,6 @@
 package ;
 
+import tests.Test3DSmart;
 import com.bit101.components.Style;
 import flash.text.TextFieldAutoSize;
 import tests.Test3D;
@@ -55,7 +56,7 @@ class Main extends Sprite
 
 
 
-		scenes = [TestQuad, Test3D];
+		scenes = [TestQuad, Test3D, Test3DSmart];
 
 
 

@@ -32,7 +32,7 @@ class SmartSprite2D extends Sprite2D
 
         if (render != null)
         {
-            render.dispose();
+            render.dispose(false);
             Reflect.setField(this, "render", null);
         }
     }
@@ -61,10 +61,13 @@ class SmartSprite2D extends Sprite2D
 
     override public function drawStep(camera:Camera2D):Void
     {
+        if (render == null) return;
+
     	if (geometry.needUpdate) geometry.update();
 
+        var hasTexture = texture != null;
     	var invalidateTexture = false;
-        if (texture != null)
+        if (hasTexture)
         {
             var f = texture.frame;
             if (animator != null)
@@ -89,7 +92,7 @@ class SmartSprite2D extends Sprite2D
         if (invalidateWorldTransform) updateWorldTransform();
         if (invalidateColorTransform) updateWorldColor();
 
-        if (invalidateDrawTransform) updateDrawTransform();
+        if (hasTexture && invalidateDrawTransform) updateDrawTransform();
         
     	render.drawStep(camera, invalidateTexture);
     }  

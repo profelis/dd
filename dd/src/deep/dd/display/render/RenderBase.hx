@@ -35,11 +35,15 @@ class RenderBase
 		return null;
 	}
 
-	public function dispose()
+	public function dispose(deep = true)
 	{
-		material.dispose();
+		if (deep)
+        {
+            material.dispose();
+            geometry.dispose();
+        }
+
 		material = null;
-		geometry.dispose();
 		geometry = null;
 		Reflect.setField(this, "smartSprite", null);
 	}

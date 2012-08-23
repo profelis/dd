@@ -35,7 +35,6 @@ class CloudRender extends RenderBase
         this.incSize = incSize;
 
         material = mat = new Cloud2DMaterial();
-
         geometry = Geometry.createTexturedCloud(size);
 	}
 
@@ -52,7 +51,16 @@ class CloudRender extends RenderBase
 
     override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
     {
-		renderSize = 0;
+		if (smartSprite.texture == null)
+        {
+            #if debug
+            trace("CloudRender reqired texture. Render in simple mode");
+            #end
+            for (i in smartSprite.children) if (i.visible) i.drawStep(camera);
+            return;
+        }
+
+        renderSize = 0;
 		textureFrame = smartSprite.textureFrame;
         animator = smartSprite.animator;
 
@@ -89,7 +97,7 @@ class CloudRender extends RenderBase
         if (size > MAX_SIZE) size = renderSize;
         else if (size == 0) size = 1;
 
-        geometry.resizeCloud(size);
+        if (geometry.triangles != untyped __global__["uint"](size * 2)) geometry.resizeCloud(size);
 
         var idx = 0;
         for (s in batchList)
@@ -170,8 +178,9 @@ class CloudRender extends RenderBase
         }
     }
 
-    override public function dispose()
+    override public function dispose(deep = true)
     {
+        super.dispose(deep);
         mat = null;
         textureFrame = null;
         animator = null;

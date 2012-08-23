@@ -27,7 +27,6 @@ class BatchRender extends RenderBase
         emptyVector = new Vector3D(0, 0, 0, 0);
 
         material = mat = new Batch2DMaterial();
-
         geometry = Geometry.createTexturedBatch(MAX_SIZE);
 	}
 
@@ -43,6 +42,15 @@ class BatchRender extends RenderBase
 
     override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
     {
+        if (smartSprite.texture == null)
+        {
+            #if debug
+            trace("BatchRender reqired texture. Render in simple mode");
+            #end
+            for (i in smartSprite.children) if (i.visible) i.drawStep(camera);
+            return;
+        }
+
 		textureFrame = smartSprite.textureFrame;
         animator = smartSprite.animator;
 
@@ -90,6 +98,7 @@ class BatchRender extends RenderBase
 
             if (c.numChildren > 0 || s == null)
             {
+                trace("to subnode");
                 subNodes.add(c);
                 continue;
             }
@@ -159,9 +168,9 @@ class BatchRender extends RenderBase
     var emptyMatrix:Matrix3D;
     var emptyVector:Vector3D;
 
-    override public function dispose()
+    override public function dispose(deep = true)
     {
-        super.dispose();
+        super.dispose(deep);
         mat = null;
         emptyVector = null;
         emptyMatrix = null;
