@@ -1,4 +1,5 @@
 package ;
+import deep.dd.display.render.CloudRender;
 import deep.dd.animation.Animator;
 import deep.dd.display.BitmapFont2D;
 import deep.dd.display.Cloud2D;
@@ -124,7 +125,7 @@ class Main
 		mc6.scaleX = mc6.scaleY = 3.62;
 		world.scene.addChild(mc6);
 		
-		text = new BitmapFont2D(new Cloud2D(100));
+		text = new BitmapFont2D(new CloudRender());
 	//	var fontAtlas = new FontAtlasTexture2D(world.cache.getTexture(NavTitleImage), new AngelCodeFontParser(Xml.parse(Std.string(new NavTitleData())), 0.5));
 		text.font = fontAtlas;
 		text.multiLine = true;

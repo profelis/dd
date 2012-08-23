@@ -1,5 +1,8 @@
 package ;
 
+import deep.dd.display.render.SimpleRender;
+import deep.dd.display.render.CloudRender;
+import deep.dd.display.SmartSprite2D;
 import deep.dd.utils.Stats;
 import deep.dd.display.Cloud2D;
 import deep.dd.animation.Animator;
@@ -57,7 +60,7 @@ class CloudTest
 
 
 
-        var b = new Cloud2D(100);
+        var b = new SmartSprite2D(new CloudRender());
         scene.addChild(b);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
@@ -74,12 +77,13 @@ class CloudTest
                 s.x = x * 70;
                 s.y = y * 70;
             }
-
-        var q = new Quad2D();
-        //b.addChild(q);
+         /*
+        var q = new Sprite2D();
+        q.texture = b.texture;
+        scene.addChild(q);
         q.width = 100;
         q.height = 100;
-
+           */
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 
