@@ -1,6 +1,7 @@
 package deep.dd.display;
 import deep.dd.animation.Animator;
 import deep.dd.camera.Camera2D;
+import deep.dd.display.render.RenderBase;
 import deep.dd.texture.atlas.FontAtlasTexture2D;
 import deep.dd.utils.Frame;
 import flash.text.TextFormatAlign;
@@ -10,26 +11,16 @@ import flash.text.TextFormatAlign;
  * @author Zaphod
  */
 
-class BitmapFont2D extends Node2D
+class BitmapFont2D extends SmartSprite2D
 {
-	var textContainer:Sprite2D;
 	var needUpdate:Bool = true;
 	var spriteStorage:Array<Sprite2D>;
 	
-	public function new(cont:Sprite2D, fieldWidth:Int = 100) 
+	public function new(render:RenderBase = null, fieldWidth:Int = 100) 
 	{
-		super();
-		#if debug
-		if (!Std.is(cont, Cloud2D) && !Std.is(cont, Batch2D))
-		{
-			throw "cont should be Cloud2D or Batch2D. Instances of other classes not supported";
-		}
-		#end
-		
+		super(render);
 		spriteStorage = [];
-		textContainer = cont;
-		textContainer.animator = new Animator(60);
-		this.addChild(cont);
+		animator = new Animator(60);
 		this.fieldWidth = fieldWidth;
 		this.align = TextFormatAlign.LEFT;
 	}
@@ -38,18 +29,18 @@ class BitmapFont2D extends Node2D
 	
 	function get_font():FontAtlasTexture2D
 	{
-		if (textContainer.texture != null)
+		if (texture != null)
 		{
-			return cast(textContainer.texture, FontAtlasTexture2D);
+			return cast(texture, FontAtlasTexture2D);
 		}
 		return null;
 	}
 	
 	function set_font(f:FontAtlasTexture2D):FontAtlasTexture2D
 	{
-		if (textContainer.texture != f)
+		if (texture != f)
 		{
-			textContainer.texture = f;
+			texture = f;
 			needUpdate = true;
 		}
 		
@@ -115,18 +106,6 @@ class BitmapFont2D extends Node2D
 			needUpdate = true;
 		}
 		return spacing;
-	}
-	
-	public var fontScale(default, set_fontScale):Float = 1.0;
-	
-	function set_fontScale(scale:Float):Float
-	{
-		if (fontScale != scale)
-		{
-			fontScale = scale;
-			needUpdate = true;
-		}
-		return scale;
 	}
 	
 	public var autoUpperCase(default, set_autoUpperCase):Bool = false;
@@ -275,7 +254,7 @@ class BitmapFont2D extends Node2D
 							
 							if (wordWrap)
 							{
-								if (font.getTextWidth(currentRow, letterSpacing, fontScale) > fieldWidth)
+								if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
 								{
 									if (txt == "")
 									{
@@ -306,7 +285,7 @@ class BitmapFont2D extends Node2D
 							}
 							else
 							{
-								if (font.getTextWidth(currentRow, letterSpacing, fontScale) > fieldWidth)
+								if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
 								{
 									j = 0;
 									tempStr = "";
@@ -314,7 +293,7 @@ class BitmapFont2D extends Node2D
 									while (j < wordLength)
 									{
 										currentRow = txt + word.charAt(j);
-										if (font.getTextWidth(currentRow, letterSpacing, fontScale) > fieldWidth)
+										if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
 										{
 											rows.push(txt.substr(0, txt.length - 1));
 											txt = "";
@@ -342,7 +321,7 @@ class BitmapFont2D extends Node2D
 								if (!changed) 
 								{
 									var subText:String = txt.substr(0, txt.length - 1);
-									calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(subText, letterSpacing, fontScale)));
+									calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(subText, letterSpacing)));
 									rows.push(subText);
 								}
 								lineComplete = true;
@@ -356,7 +335,7 @@ class BitmapFont2D extends Node2D
 				}
 				else
 				{
-					calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(lines[i], letterSpacing, fontScale)));
+					calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(lines[i], letterSpacing)));
 					rows.push(lines[i]);
 				}
 			}
@@ -380,7 +359,7 @@ class BitmapFont2D extends Node2D
 				}
 			}
 			
-			while (Std.int(textContainer.numChildren) < childsNeeded)
+			while (Std.int(numChildren) < childsNeeded)
 			{
 				var c:Sprite2D = null; 
 				if (spriteStorage.length > 0)
@@ -394,18 +373,18 @@ class BitmapFont2D extends Node2D
 				else
 				{
 					c = new Sprite2D();
-					var an:Animator = cast textContainer.animator.copy();
+					var an:Animator = cast animator.copy();
 					c.animator = an;
 				}
-				textContainer.addChild(c);
+				addChild(c);
 			}
 			
-			if (Std.int(textContainer.numChildren) > childsNeeded)
+			if (Std.int(numChildren) > childsNeeded)
 			{
-				var numChildrenToRemove:Int = textContainer.numChildren - childsNeeded;
+				var numChildrenToRemove:Int = numChildren - childsNeeded;
 				var childrenToRemove:Array<Sprite2D> = [];
 				
-				for (c in textContainer.iterator())
+				for (c in iterator())
 				{
 					childrenToRemove.push(cast(c, Sprite2D));
 					numChildrenToRemove--;
@@ -414,7 +393,7 @@ class BitmapFont2D extends Node2D
 				
 				for (c in childrenToRemove)
 				{
-					textContainer.removeChild(c);
+					removeChild(c);
 					spriteStorage.push(c);
 				}
 				childrenToRemove = null;
@@ -434,38 +413,37 @@ class BitmapFont2D extends Node2D
 				{
 					if (fixedWidth)
 					{
-						ox = (fieldWidth - font.getTextWidth(t, letterSpacing, fontScale)) / 2;
+						ox = (fieldWidth - font.getTextWidth(t, letterSpacing)) / 2;
 					}
 					else
 					{
-						ox = (finalWidth - font.getTextWidth(t, letterSpacing, fontScale)) / 2;
+						ox = (finalWidth - font.getTextWidth(t, letterSpacing)) / 2;
 					}
 				}
 				if (align == TextFormatAlign.RIGHT) 
 				{
 					if (fixedWidth)
 					{
-						ox = fieldWidth - font.getTextWidth(t, letterSpacing, fontScale);
+						ox = fieldWidth - font.getTextWidth(t, letterSpacing);
 					}
 					else
 					{
-						ox = finalWidth - font.getTextWidth(t, letterSpacing, fontScale) - 2 * padding;
+						ox = finalWidth - font.getTextWidth(t, letterSpacing) - 2 * padding;
 					}
 				}
 				
-				buildTextFromSprites(glyphInfo, t, ox + padding, oy + row * (font.fontHeight * fontScale + lineSpacing) + padding);
+				buildTextFromSprites(glyphInfo, t, ox + padding, oy + row * (font.fontHeight + lineSpacing) + padding);
 				row++;
 			}
 			
 			var pos:Int = 0;
 			var info:GlyphInfo;
-			for (c in textContainer.iterator())
+			for (c in iterator())
 			{
 				info = glyphInfo[pos];
 				cast(cast(c, Sprite2D).animator).gotoFrame(info.symbol);
 				c.x = info.x;
 				c.y = info.y;
-				c.scaleX = c.scaleY = fontScale;
 				pos++;
 			}
 		}
@@ -498,11 +476,11 @@ class BitmapFont2D extends Node2D
 					glyphWidth = glyph.width;
 				}
 				glyphInfo.push(new GlyphInfo(glyphX, glyphY, char));
-				glyphX += glyphWidth * fontScale + letterSpacing;
+				glyphX += glyphWidth + letterSpacing;
 			}
 			else if (char == " ")
 			{
-				glyphX += font.spaceWidth * fontScale + letterSpacing;
+				glyphX += font.spaceWidth + letterSpacing;
 			}
 		}
 	}
@@ -510,7 +488,6 @@ class BitmapFont2D extends Node2D
 	override public function dispose():Void 
 	{
 		super.dispose();
-		textContainer = null;
 		for (s in spriteStorage)
 		{
 			s.dispose();
