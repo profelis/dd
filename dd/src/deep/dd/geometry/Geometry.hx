@@ -368,7 +368,7 @@ class Poly2D extends Polygon
         if (sup != null) size+=1;
 
         vbuf = c.createVertexBuffer(points.length, size);
-        var buf = new flash.Vector<Float>();
+        var buf = new flash.Vector<Float>(size * points.length, true);
         var i = 0;
         for (k in 0...points.length)
         {

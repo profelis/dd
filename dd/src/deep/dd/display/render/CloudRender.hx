@@ -105,7 +105,7 @@ class CloudRender extends RenderBase
             #if debug
             if (!s.geometry.standart) throw "can't batch complex geometry";
             #end
-
+            /*
             if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
 
             if (s.invalidateTransform) s.updateTransform();
@@ -132,7 +132,7 @@ class CloudRender extends RenderBase
             }
 
             if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
-
+             */
             var poly = geometry.poly;
             var sPoly = s.geometry.poly;
 
@@ -170,7 +170,7 @@ class CloudRender extends RenderBase
         if (renderSize > 0)
         {
             geometry.update();
-            mat.drawCloud(smartSprite, camera, renderSize);
+            //mat.drawCloud(smartSprite, camera, renderSize);
         }
 
         for (s in renderList)

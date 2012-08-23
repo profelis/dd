@@ -49,7 +49,7 @@ typedef Array<T,Const> = flash.Vector<T>
 		return null;
 	}
 
-	function send(vertex:Bool,cst:flash.Vector<Float>) {
+	inline public function send(vertex:Bool,cst:flash.Vector<Float>) {
 		var pt = vertex?flash.display3D.Context3DProgramType.VERTEX:flash.display3D.Context3DProgramType.FRAGMENT;
 		c.setProgramConstantsFromVector(pt, 0, cst);
 	}
@@ -100,11 +100,11 @@ typedef Array<T,Const> = flash.Vector<T>
 		p = null;
 	}
 
-	public function select() {
+	inline public function select() {
 		c.setProgram(p);
 	}
 
-	function texture( index : Int, t : flash.display3D.textures.TextureBase ) {
+	inline function texture( index : Int, t : flash.display3D.textures.TextureBase ) {
 		c.setTextureAt(index, t);
 	}
 

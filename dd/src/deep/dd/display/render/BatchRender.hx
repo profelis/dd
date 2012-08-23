@@ -1,5 +1,6 @@
 package deep.dd.display.render;
 
+import haxe.Timer;
 import flash.Vector;
 import flash.geom.Vector3D;
 import flash.geom.Matrix3D;
@@ -59,22 +60,7 @@ class BatchRender extends RenderBase
 
     function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
     {
-        var batchList = new FastList<Node2D>();
         var renderList = new FastList<Node2D>();
-
-        for (c in node.children)
-        {
-            if (!c.visible) continue;
-
-            if (c.ignoreInBatch)
-            {
-                renderList.add(c);
-            }
-            else
-            {
-                batchList.add(c);
-            }
-        }
 
         var subNodes = new FastList<Node2D>();
         var mpos = new Vector<Matrix3D>(MAX_SIZE, true);
@@ -83,62 +69,75 @@ class BatchRender extends RenderBase
 
         var idx = 0;
         var vectorsFull = false;
-        for (c in batchList)
+
+        var h = node.children.head;
+        while (h != null)
         {
-            var s:Sprite2D = null;
-            if (FastHaxe.is(c, Sprite2D))
+            var c = h.elt;
+            if (!c.visible) continue;
+
+            if (c.ignoreInBatch)
             {
-                s = flash.Lib.as(c, Sprite2D);
-                if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
+                renderList.add(c);
             }
-
-            if (c.invalidateTransform) c.updateTransform();
-            if (c.invalidateWorldTransform) c.updateWorldTransform();
-            if (c.invalidateColorTransform) c.updateWorldColor();
-
-            if (c.numChildren > 0 || s == null)
+            else
             {
-                trace("to subnode");
-                subNodes.add(c);
-                continue;
-            }
-
-            #if debug
-            if (!s.geometry.standart) throw "Batch2D ignore complex geometry";
-            #end
-
-            if (s.animator != null && s.animator != animator)
-            {
-                s.animator.draw(node.scene.time);
-                var frame = s.animator.textureFrame;
-
-                if (frame != s.textureFrame)
+                var s:Sprite2D = null;
+                if (FastHaxe.is(c, Sprite2D))
                 {
+                    s = flash.Lib.as(c, Sprite2D);
+                    if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
+                }
+
+                if (c.invalidateTransform) c.updateTransform();
+                if (c.invalidateWorldTransform) c.updateWorldTransform();
+                if (c.invalidateColorTransform) c.updateWorldColor();
+
+                if (c.numChildren > 0 || s == null)
+                {
+                    trace("to subnode");
+                    subNodes.add(c);
+                    continue;
+                }
+
+                #if debug
+                if (!s.geometry.standart) throw "Batch2D ignore complex geometry";
+                #end
+
+                if (s.animator != null && s.animator != animator)
+                {
+                    s.animator.draw(node.scene.time);
+                    var frame = s.animator.textureFrame;
+
+                    if (frame != s.textureFrame)
+                    {
+                        s.invalidateDrawTransform = true;
+                        s.textureFrame = frame;
+                        s._width = frame.width;
+                        s._height= frame.height;
+                    }
+                }
+                else if (invalidateTexture || s.textureFrame == null)
+                {
+                    s.textureFrame = textureFrame;
                     s.invalidateDrawTransform = true;
-                    s.textureFrame = frame;
-                    s._width = frame.width;
-                    s._height= frame.height;
+                }
+
+                if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
+
+                mpos[idx] = s.drawTransform;
+                cTrans[idx] = s.worldColorTransform;
+                regions[idx] = s.textureFrame.region;
+
+                idx ++;
+                if (idx == MAX_SIZE)
+                {
+                    mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
+                    vectorsFull = true;
+                    idx = 0;
                 }
             }
-            else if (invalidateTexture || s.textureFrame == null)
-            {
-                s.textureFrame = textureFrame;
-                s.invalidateDrawTransform = true;
-            }
-
-            if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
-
-            mpos[idx] = s.drawTransform;
-            cTrans[idx] = s.worldColorTransform;
-            regions[idx] = s.textureFrame.region;
-
-            idx ++;
-            if (idx == MAX_SIZE)
-            {
-                mat.drawBatch(smartSprite, camera, smartSprite.texture, idx, mpos, cTrans, regions);
-                vectorsFull = true;
-                idx = 0;
-            }
+            h = h.next;
         }
 
         if (idx > 0)

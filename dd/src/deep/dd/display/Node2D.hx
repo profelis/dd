@@ -325,8 +325,7 @@ class Node2D
 
     inline public function updateWorldTransform()
     {
-
-        worldTransform.copyFrom(transform);
+        worldTransform.rawData = transform.rawData;
 
         if (parent != null)
         {
@@ -341,7 +340,7 @@ class Node2D
         invalidateWorldTransform = false;
     }
 
-    var transformComps:Vector<Vector3D>;
+    public var transformComps(default, null):Vector<Vector3D>;
     var tRot:Vector3D;
     var tPos:Vector3D;
     var tScale:Vector3D;
@@ -380,7 +379,7 @@ class Node2D
     // transform
 
     public var pivot(default, set_pivot):Vector3D;
-    var usePivot:Bool;
+    public var usePivot(default, null):Bool;
 
     function set_pivot(v)
     {

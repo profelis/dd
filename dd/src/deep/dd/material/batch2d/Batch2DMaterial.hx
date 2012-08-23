@@ -40,6 +40,11 @@ class Batch2DMaterial extends Material
         }
 
         untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}, {tex:tex.texture});
+        //untyped shader.getVertexConstants({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions});
+        //untyped shader.getFragmentConstants({tex:tex.texture});
+        //shader.select();
+        //shader.send(true, untyped shader.getVertexConstants({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}));
+        //shader.send(false, untyped shader.getFragmentConstants({tex:tex.texture}));
 
         #if dd_stat
         node.world.statistics.drawCalls ++;
