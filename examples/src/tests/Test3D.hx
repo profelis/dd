@@ -22,7 +22,7 @@ import deep.dd.World2D;
 class Test3D extends Test
 {
     inline static var nx = 18;
-    inline static var ny = 26;
+    inline static var ny = 24;
 
     var c:Sprite2D;
     var t:AtlasTexture2D;

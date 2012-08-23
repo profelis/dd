@@ -1,5 +1,7 @@
 package deep.dd.geometry;
 
+import flash.display3D.Context3D;
+import deep.dd.display.render.CloudRender;
 import mt.m3d.UV;
 import mt.m3d.Color;
 import flash.display3D.VertexBuffer3D;
@@ -86,16 +88,26 @@ class Geometry
         }
     }
 
-    static public function createTexturedCloud(size:Int, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):Geometry
+    static public function createTexturedCloud(size:UInt, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):Geometry
     {
         var g = createTextured(width, height, 1, 1, offsetX, offsetY);
-        g.setColor(0x00000000);
         g.resizable = false;
+
+        g.rawVBuf = new flash.Vector<Float>(4 * CloudRender.PER_VERTEX, true);
+        for (i in 0...g.rawVBuf.length)
+        {
+            g.rawVBuf[i] = 0;
+        }
+
+        g.poly.points = null;
+        g.poly.tcoords = null;
 
         g.resizeCloud(size);
 
         return g;
     }
+
+    public var rawVBuf:flash.Vector<Float>;
 
     public function resizeCloud(size:UInt)
     {
@@ -105,35 +117,42 @@ class Geometry
         if (csize == size) return;
 
         poly.idx.fixed = false;
+        rawVBuf.fixed = false;
+        rawVBuf.length = size * 4 * CloudRender.PER_VERTEX;
 
         if (csize > size)
         {
-            poly.points = poly.points.slice(0, size * 4);
-            poly.tcoords = poly.tcoords.slice(0, size * 4);
-            poly.colors = poly.colors.slice(0, size * 4);
-            poly.idx = poly.idx.slice(0, size * 6);
+            poly.idx.length = size * 6;
         }
         else
         {
-            var ps = poly.points.slice(0, 4);   // 4
-            var ts = poly.tcoords.slice(0, 4);  // 4
-            var cs = poly.colors.slice(0, 4);   // 4
             var is = poly.idx.slice(0, 6);      // 6
 
             for (n in csize...size)
             {
-                for (x in ps) poly.points.push(x.copy());
-                for (x in ts) poly.tcoords.push(x.copy());
-                for (x in cs) poly.colors.push(x.copy());
                 for (i in is) poly.idx.push(Std.int(n * 4 + i));
+            }
+
+            for (i in csize * 4 * CloudRender.PER_VERTEX...size * 4 * CloudRender.PER_VERTEX)
+            {
+                rawVBuf[i] = 0;
             }
         }
 
         poly.idx.fixed = true;
+        rawVBuf.fixed = true;
 
         triangles = 2 * size;
 
         needUpdate = true;
+    }
+
+    inline public function allocCloudVBuf()
+    {
+        if (vbuf == null)
+            poly.vbuf = vbuf = ctx.createVertexBuffer(triangles * 2, CloudRender.PER_VERTEX);
+
+        vbuf.uploadFromVector(rawVBuf, 0, triangles * 2);
     }
 
     static public function createTexturedBatch(size:Int, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):Geometry
@@ -141,11 +160,14 @@ class Geometry
         var g = createTextured(width, height, 1, 1, offsetX, offsetY);
         var p = g.poly;
 
-        var ps = p.points.copy();
-        var ts = p.tcoords.copy();
+        p.points.fixed = false;
+        p.tcoords.fixed = false;
+
+        var ps = p.points.slice(0, p.points.length);
+        var ts = p.tcoords.slice(0, p.tcoords.length);
         var is = p.idx.slice(0, p.idx.length);
         is.fixed = true;
-        var sup:Array<Float> = [0, 0, 0, 0];
+        var sup:flash.Vector<Float> = flash.Vector.ofArray([0.0, 0, 0, 0]);
         p.idx.fixed = false;
 
         for (n in 1...size)
@@ -158,8 +180,12 @@ class Geometry
             sup.push(n);
             for (i in is) p.idx.push(Std.int(n * 4 + i));
         }
+        sup.fixed = true;
 
+        p.points.fixed = true;
+        p.tcoords.fixed = true;
         p.idx.fixed = true;
+
         p.sup = sup;
         g.resizable = false;
 
@@ -208,10 +234,10 @@ class Geometry
 
     static function createPoly(textured = false, w = 1.0, h = 1.0, dx = 0.0, dy = 0.0, stepsX = 1, stepsY = 1)
     {
-        var vs:Array<Vector> = [];
+        var vs:flash.Vector<Vector> = new flash.Vector();
         var v:Vector;
 
-        var uv:Array<UV> = [];
+        var uv:flash.Vector<UV> = new flash.Vector();
         var u:UV;
 
         var sx = 1 / stepsX;
@@ -251,6 +277,8 @@ class Geometry
                 }
             }
         }
+        vs.fixed = true;
+        uv.fixed = true;
         ix.fixed = true;
         var res = new Poly2D(vs, ix);
         if (textured) res.tcoords = uv;
@@ -307,7 +335,7 @@ class Geometry
 
         if (poly.colors == null)
         {
-            var colors = new Array<Color>();
+            var colors = new flash.Vector<Color>(poly.points.length, true);
             for (i in 0...poly.points.length)
                 colors[i] = c.copy();
 
@@ -324,7 +352,7 @@ class Geometry
         needUpdate = true;
     }
 
-    public function setVertexColor(vertex:Int, c:UInt, ?alpha:Float)
+    public function setVertexColor(vertex:UInt, c:UInt, ?alpha:Float)
     {
         #if debug
         if (vertex < 0 || poly.points.length <= vertex) throw "out of vertex bounds";
@@ -357,9 +385,9 @@ class Poly2D extends Polygon
         super(points, idx);
     }
 
-    public var colors:Array<Color>;
+    public var colors:flash.Vector<Color>;
 
-    public var sup:Array<Float>;
+    public var sup:flash.Vector<Float>;
 
     override public function alloc(c:Context3D)
     {
@@ -368,6 +396,9 @@ class Poly2D extends Polygon
 		if (tempColors != null) colors = tempColors;
         ibuf = c.createIndexBuffer(idx.length);
         ibuf.uploadFromVector(idx, 0, idx.length);
+
+        if (points == null) return;
+
 
         var size = 3;
         if (tcoords != null) size += 2;
@@ -405,7 +436,7 @@ class Poly2D extends Polygon
         }
         vbuf.uploadFromVector(buf, 0, points.length);
     }
-	
+
 	override public function dispose():Dynamic 
 	{
 		super.dispose();

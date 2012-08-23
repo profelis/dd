@@ -3,12 +3,13 @@ package mt.m3d;
 import flash.display3D.VertexBuffer3D;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Context3D;
+
 class Polygon {
 
-	public var points : Array<Vector>;
-	public var normals : Array<Vector>;
-	public var tangents : Array<Vector>;
-	public var tcoords : Array<UV>;
+	public var points : flash.Vector<Vector>;
+	public var normals : flash.Vector<Vector>;
+	public var tangents : flash.Vector<Vector>;
+	public var tcoords : flash.Vector<UV>;
 	public var idx : flash.Vector<UInt>;
 	
 	public var ibuf : IndexBuffer3D;
@@ -68,12 +69,14 @@ class Polygon {
 	}
 	
 	public function unindex() {
-		if( points.length != Std.int(idx.length) ) {
-			var p = [], id = new flash.Vector<UInt>();
+		if( points.length != idx.length ) {
+			var p = new flash.Vector<Vector>(), id = new flash.Vector<UInt>();
 			for( i in idx ) {
 				id.push(p.length);
 				p.push(points[i]);
 			}
+            p.fixed = true;
+            idx.fixed = true;
 			points = p;
 			idx = id;
 		}
@@ -97,7 +100,7 @@ class Polygon {
 	
 	public function addNormals() {
 		// make per-point normal
-		normals = new Array();
+		normals = new flash.Vector<Vector>(points.length, true);
 		for( i in 0...points.length )
 			normals[i] = new Vector();
 		var pos = 0;

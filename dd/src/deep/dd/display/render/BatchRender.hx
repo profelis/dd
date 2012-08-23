@@ -187,5 +187,9 @@ class BatchRender extends RenderBase
         emptyMatrix = null;
         textureFrame = null;
         animator = null;
+
+        mpos = null;
+        cTrans = null;
+        regions = null;
     }
 }

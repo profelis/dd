@@ -26,8 +26,8 @@ import deep.dd.World2D;
 
 class Test3DSmart extends Test
 {
-    inline static var nx = 70;
-    inline static var ny = 80;
+    inline static var nx = 130;
+    inline static var ny = 100;
 
     var c:SmartSprite2D;
     var t:AtlasTexture2D;
@@ -56,7 +56,7 @@ class Test3DSmart extends Test
             {
                 var s = new Sprite2D();
                 s.texture = t.getTextureById(Std.int(y * nx + x));
-                s.pivot = pivot;
+                //s.pivot = pivot;
                 s.x = x * iw - bmp.width * 0.5;
                 s.y = y * ih - bmp.height * 0.5;
                 c.addChild(s);
