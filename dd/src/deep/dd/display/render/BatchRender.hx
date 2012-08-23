@@ -79,10 +79,8 @@ class BatchRender extends RenderBase
         var idx:UInt = 0;
         var vectorsFull = false;
 
-        var h = node.children.head;
-        while (h != null)
+        for (c in node.children)
         {
-            var c:Node2D = h.elt;
             if (!c.visible) continue;
 
             if (c.ignoreInBatch)
@@ -148,7 +146,6 @@ class BatchRender extends RenderBase
                     idx = 0;
                 }
             }
-            h = h.next;
         }
 
         if (idx > 0)
