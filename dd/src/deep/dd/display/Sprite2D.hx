@@ -107,8 +107,9 @@ class Sprite2D extends DisplayNode2D
 
     inline public function updateDrawTransform()
     {
-        drawTransform.rawData = textureFrame.drawMatrix.rawData;
-        drawTransform.append(worldTransform);
+        drawTransform.copyFrom(worldTransform);
+        textureFrame.applyFrame(drawTransform);
+        //drawTransform.rawData = textureFrame.drawMatrix.rawData;
 
         invalidateDrawTransform = false;
     }

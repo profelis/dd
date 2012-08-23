@@ -22,8 +22,6 @@ class Frame
     // offset + border size
     public var border(default, null):Rectangle;
 
-    public var drawMatrix(default, null):Matrix3D;
-
     public function new (width, height, region, ?border, ?name)
     {
         this.frameWidth = width;
@@ -31,7 +29,6 @@ class Frame
         this.region = region;
         this.name = name;
 
-        drawMatrix = new Matrix3D();
         setBorder(border);
     }
 
@@ -49,20 +46,18 @@ class Frame
             width = frameWidth;
             height = frameHeight;
         }
-
-        updateMatrix();
     }
 
-    public function updateMatrix()
+    inline public function applyFrame(m:Matrix3D)
     {
-        drawMatrix.identity();
-        drawMatrix.appendScale(frameWidth, frameHeight, 1);
+        m.prependScale(frameWidth, frameHeight, 1);
 
         if (border != null)
         {
-            drawMatrix.appendTranslation(border.x, border.y, 0);
+            m.prependTranslation(border.x, border.y, 0);
         }
     }
+
 
     public function toString()
     {
