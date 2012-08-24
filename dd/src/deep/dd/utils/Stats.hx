@@ -97,6 +97,8 @@ class Stats extends Sprite {
         text.height = TEXT_HEIGHT;
         text.styleSheet = style;
         text.condenseWhite = true;
+        text.multiline = true;
+        text.wordWrap = true;
         text.selectable = false;
         text.mouseEnabled = false;
 
@@ -127,6 +129,26 @@ class Stats extends Sprite {
             _stage.addEventListener(Event.RESIZE, onStageResize);
             onStageResize(null);
         }
+
+        if (wrld != null)
+        {
+            addEventListener(MouseEvent.ROLL_OVER, onRollOver);
+            addEventListener(MouseEvent.ROLL_OUT, onRollOut);
+        }
+    }
+
+    function onRollOver(_)
+    {
+        removeEventListener(Event.ENTER_FRAME, update);
+
+        graph.fillRect(graph.rect, Colors.bg);
+
+        text.htmlText = "<tex>HD: " + wrld.isHW + "</tex><tris>" + wrld.ctx.driverInfo + "</tris>";
+    }
+
+    function onRollOut(_)
+    {
+        addEventListener(Event.ENTER_FRAME, update);
     }
 
     function onStageResize(_)
