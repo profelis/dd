@@ -8,7 +8,7 @@ import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;
 import deep.dd.display.Sprite2D;
-import deep.dd.geometry.Geometry;
+import deep.dd.geometry.CloudGeometry;
 import deep.dd.material.Material;
 import deep.dd.material.cloud2d.Cloud2DMaterial;
 import deep.dd.texture.Texture2D;
@@ -38,8 +38,10 @@ class CloudRender extends RenderBase
         this.incSize = incSize;
 
         material = mat = new Cloud2DMaterial();
-        geometry = Geometry.createTexturedCloud(startSize);
+        geometry = geom = CloudGeometry.createTexturedCloud(startSize);
 	}
+
+    var geom:CloudGeometry;
 
     override public function copy():RenderBase
     {
@@ -100,10 +102,10 @@ class CloudRender extends RenderBase
         if (size > MAX_SIZE) size = renderSize;
         else if (size == 0) size = 1;
 
-        if (geometry.triangles != untyped __global__["uint"](size * 2)) geometry.resizeCloud(size);
+        if (geom.triangles != untyped __global__["uint"](size * 2)) geom.resizeCloud(size);
 
-        var idx = 0;
-        var buf = geometry.rawVBuf;
+        var idx:UInt = 0;
+        var buf = geom.rawVBuf;
 
         for (s in batchList)
         {
@@ -181,8 +183,8 @@ class CloudRender extends RenderBase
 
         if (renderSize > 0)
         {
-            if (geometry.needUpdate) geometry.update();
-            geometry.allocCloudVBuf();
+            if (geom.needUpdate) geom.update();
+            geom.allocCloudVBuf();
             mat.drawCloud(smartSprite, camera, renderSize);
         }
 

@@ -10,7 +10,7 @@ import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;
 import deep.dd.display.Sprite2D;
-import deep.dd.geometry.Geometry;
+import deep.dd.geometry.BatchGeometry;
 import deep.dd.material.Material;
 import deep.dd.texture.Texture2D;
 import deep.dd.utils.Frame;
@@ -28,7 +28,7 @@ class BatchRender extends RenderBase
         emptyVector = new Vector3D(0, 0, 0, 0);
 
         material = mat = new Batch2DMaterial();
-        geometry = Geometry.createTexturedBatch(MAX_SIZE);
+        geometry = BatchGeometry.createTexturedBatch(MAX_SIZE);
 
         mpos = new Vector<Matrix3D>(MAX_SIZE, true);
         cTrans = new Vector<Vector3D>(MAX_SIZE, true);

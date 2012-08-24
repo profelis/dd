@@ -1,7 +1,6 @@
 package deep.dd.geometry;
 
 import flash.display3D.Context3D;
-import deep.dd.display.render.CloudRender;
 import mt.m3d.UV;
 import mt.m3d.Color;
 import flash.display3D.VertexBuffer3D;
@@ -88,112 +87,6 @@ class Geometry
         }
     }
 
-    static public function createTexturedCloud(size:UInt, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):Geometry
-    {
-        var g = createTextured(width, height, 1, 1, offsetX, offsetY);
-        g.resizable = false;
-
-        g.rawVBuf = new flash.Vector<Float>(4 * CloudRender.PER_VERTEX, true);
-        for (i in 0...g.rawVBuf.length)
-        {
-            g.rawVBuf[i] = 0;
-        }
-
-        g.poly.points = null;
-        g.poly.tcoords = null;
-
-        g.resizeCloud(size);
-
-        return g;
-    }
-
-    public var rawVBuf:flash.Vector<Float>;
-
-    public function resizeCloud(size:UInt)
-    {
-        if (size <= 0) size = 1;
-        var csize:UInt = untyped __global__["uint"](triangles / 2);
-
-        if (csize == size) return;
-
-        poly.idx.fixed = false;
-        rawVBuf.fixed = false;
-        rawVBuf.length = size * 4 * CloudRender.PER_VERTEX;
-
-        if (csize > size)
-        {
-            poly.idx.length = size * 6;
-        }
-        else
-        {
-            var is = poly.idx.slice(0, 6);      // 6
-
-            for (n in csize...size)
-            {
-                for (i in is) poly.idx.push(Std.int(n * 4 + i));
-            }
-
-            for (i in csize * 4 * CloudRender.PER_VERTEX...size * 4 * CloudRender.PER_VERTEX)
-            {
-                rawVBuf[i] = 0;
-            }
-        }
-
-        poly.idx.fixed = true;
-        rawVBuf.fixed = true;
-
-        triangles = 2 * size;
-
-        needUpdate = true;
-    }
-
-    inline public function allocCloudVBuf()
-    {
-        if (vbuf == null)
-            poly.vbuf = vbuf = ctx.createVertexBuffer(triangles * 2, CloudRender.PER_VERTEX);
-
-        vbuf.uploadFromVector(rawVBuf, 0, triangles * 2);
-    }
-
-    static public function createTexturedBatch(size:Int, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):Geometry
-    {
-        var g = createTextured(width, height, 1, 1, offsetX, offsetY);
-        var p = g.poly;
-
-        p.points.fixed = false;
-        p.tcoords.fixed = false;
-
-        var ps = p.points.slice(0, p.points.length);
-        var ts = p.tcoords.slice(0, p.tcoords.length);
-        var is = p.idx.slice(0, p.idx.length);
-        is.fixed = true;
-        var sup:flash.Vector<Float> = flash.Vector.ofArray([0.0, 0, 0, 0]);
-        p.idx.fixed = false;
-
-        for (n in 1...size)
-        {
-            p.points = p.points.concat(ps);
-            p.tcoords = p.tcoords.concat(ts);
-            sup.push(n);
-            sup.push(n);
-            sup.push(n);
-            sup.push(n);
-            for (i in is) p.idx.push(Std.int(n * 4 + i));
-        }
-        sup.fixed = true;
-
-        p.points.fixed = true;
-        p.tcoords.fixed = true;
-        p.idx.fixed = true;
-
-        p.sup = sup;
-        g.resizable = false;
-
-        g.triangles *= size;
-
-        return g;
-    }
-
     static public function createTextured(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
     {
         return create(true, width, height, stepsX, stepsY, offsetX, offsetY);
@@ -204,7 +97,7 @@ class Geometry
         return create(false, width, height, stepsX, stepsY, offsetX, offsetY);
     }
 
-    static public function create(textured:Bool, width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
+    static public function create(textured:Bool, width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0, ref:Class<Geometry> = null):Geometry
     {
         #if debug
         if (width < 0) throw "width < 0";
@@ -214,7 +107,7 @@ class Geometry
         stepsX = stepsX < 1 ? 1 : stepsX;
         stepsY = stepsY < 1 ? 1 : stepsY;
 
-        var res = new Geometry();
+        var res = ref != null ? Type.createInstance(ref, []) : new Geometry();
         res.resizable = true;
         res.width = width;
         res.height = height;

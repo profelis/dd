@@ -8,7 +8,7 @@ import deep.dd.material.sprite2d.Sprite2DMaterial;
 
 class SimpleRender extends RenderBase
 {
-	public function new(renderRoot:Bool = false, material:Material = null)
+	public function new(renderRoot:Bool = true, material:Material = null)
 	{
         this.renderRoot = renderRoot;
 		this.material = material != null ? material : new Sprite2DMaterial();
