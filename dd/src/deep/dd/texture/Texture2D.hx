@@ -1,11 +1,11 @@
 package deep.dd.texture;
 
+import flash.geom.Vector3D;
 import deep.dd.utils.Frame;
 import flash.geom.Matrix3D;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 import deep.dd.utils.Cache;
-import flash.geom.Vector3D;
 import flash.geom.Point;
 import flash.display3D.Context3DTextureFormat;
 import flash.display.BitmapData;
@@ -40,7 +40,7 @@ class Texture2D
 
     var ctx:Context3D;
 
-	public function new(options:UInt)
+	public function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
     {
         this.options = options;
     }
@@ -86,25 +86,28 @@ class Texture2D
         return frame = f;
     }
 
+    public var needUpdate:Bool = false;
+
+    public function update()
+    {
+
+    }
+
     public var memory(default, null):UInt = 0;
 
     public function init(ctx:Context3D)
     {
         if (this.ctx == ctx) return;
 
-		if (texture != null)
-		{
-            #if dd_stat
-            if (this.ctx != null)
-            {
-                GlobalStatistics.removeTexture(this.ctx, this);
-            }
-            #end
-			texture.dispose();
-			texture = null;
-		}
+        unloadTexture();
 
         this.ctx = ctx;
+
+        uploadBitmapTexture();
+    }
+
+    function uploadBitmapTexture()
+    {
         memory = 0;
 
         texture = ctx.createTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, false);
@@ -166,6 +169,21 @@ class Texture2D
         GlobalStatistics.addTexture(ctx, this);
         #end
     }
+
+    function unloadTexture()
+    {
+        if (texture != null)
+        {
+            #if dd_stat
+            if (this.ctx != null)
+            {
+                GlobalStatistics.removeTexture(this.ctx, this);
+            }
+            #end
+            texture.dispose();
+            texture = null;
+        }
+    }
 	
 	public function dispose():Void
 	{
@@ -179,17 +197,7 @@ class Texture2D
         }
         else
         {
-            if (texture != null)
-            {
-                #if dd_stat
-                if (ctx != null)
-                {
-                    GlobalStatistics.removeTexture(ctx, this);
-                }
-                #end
-                texture.dispose();
-                texture = null;
-            }
+            unloadTexture();
             ctx = null;
         }
 	}
