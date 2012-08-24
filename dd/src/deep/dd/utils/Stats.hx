@@ -144,12 +144,16 @@ class Stats extends Sprite {
 
         graph.fillRect(graph.rect, Colors.bg);
 
-        text.htmlText = "<tex>HD: " + wrld.isHW + "</tex><tris>" + wrld.ctx.driverInfo + "</tris>" +
-        "<draws>" + Capabilities.version + (Capabilities.isDebugger ? "(debug)" : "") + "</draws>";
+        text.htmlText = "<xml><tex>HW: " + wrld.isHW + "</tex>"+
+            "<draws>" + Capabilities.version + (Capabilities.isDebugger ? " (debug)" : "") +
+            "</draws><memMax>" + wrld.ctx.driverInfo + "</memMax></xml>";
+
+        text.height = height;
     }
 
     function onRollOut(_)
     {
+        text.height = #if dd_stat 80 #else 50 #end;
         addEventListener(Event.ENTER_FRAME, update);
     }
 
