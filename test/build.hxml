@@ -2,7 +2,7 @@
 -swf-header 800:600:60:FFFFFF
 --flash-strict
 -swf-version 11
--main CloudTest
+-main FlashTextureTest
 -lib format
 -lib msignal
 -cp src

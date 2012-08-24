@@ -69,6 +69,8 @@ class SmartSprite2D extends Sprite2D
     	var invalidateTexture = false;
         if (hasTexture)
         {
+            if (texture.needUpdate) texture.update();
+
             var f = texture.frame;
             if (animator != null)
             {
