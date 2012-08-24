@@ -11,25 +11,27 @@ import flash.display.DisplayObject;
 class FlashTexture2D extends Texture2D
 {
     var displayObject:DisplayObject;
-    var pw:Int;
-    var ph:Int;
+
+    public var autoSize:Bool;
+
+    public var displayObjectWidth:Int;
+    public var displayObjectHeight:Int;
+
+    public var autoUpdate:Bool;
 
     public function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
     {
         super(options);
     }
 
-    public var autoUpdate:Bool;
-    public var autoSize:Bool;
-
     static public function fromDisplayObject(d:DisplayObject, autoUpdate = false, width = -1, height = -1, options:UInt = Texture2DOptions.QUALITY_ULTRA):FlashTexture2D
     {
         var res = new FlashTexture2D(options);
         res.displayObject = d;
         res.autoUpdate = autoUpdate;
-        res.autoSize = width == -1 && height == -1;
-        res.pw = width;
-        res.ph = height;
+        res.autoSize = width < 0 || height < 0;
+        res.displayObjectWidth = width;
+        res.displayObjectHeight = height;
 
         res.needUpdate = true;
 
@@ -58,12 +60,12 @@ class FlashTexture2D extends Texture2D
             if (bitmapData != null) bitmapData.dispose();
             var w = Std.int(displayObject.width) + 1;
             var h = Std.int(displayObject.height) + 1;
-            bitmapData = new BitmapData(w < 1 ? 1 : w, h < 1 ? 1 : h, true, 0x00000000);
+            bitmapData = new BitmapData(w, h, true, 0x00000000);
             f = true;
         }
         else if (bitmapData == null)
         {
-            bitmapData = new BitmapData(pw, ph, true, 0x00000000);
+            bitmapData = new BitmapData(displayObjectWidth, displayObjectHeight, true, 0x00000000);
             f = true;
         }
 
