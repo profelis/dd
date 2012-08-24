@@ -218,6 +218,7 @@ class BitmapFont2D extends SmartSprite2D
 			
 			// TODO: Handle tabs later in this method. This is stub
 			var textWithoutTabs:String = text.split("\t").join(tabSpaces);
+		//	var textWithoutTabs:String = text;
 			
 			// cut text into pices
 			var lineComplete:Bool;
@@ -347,15 +348,9 @@ class BitmapFont2D extends SmartSprite2D
 			var childsNeeded:Int = 0;
 			for (t in rows) 
 			{
-				textLength = t.length;
-				if (font.hasSpaceGlyph)
+				for (i in 0...t.length)
 				{
-					childsNeeded += textLength;
-				}
-				else
-				{
-					numSpaces = t.split(" ").length - 1;
-					childsNeeded += textLength - numSpaces;
+					if (font.getFrameByName(t.charAt(i)) != null) childsNeeded++;
 				}
 			}
 			
