@@ -301,27 +301,37 @@ class BitmapFont2D extends SmartSprite2D
 								
 								if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
 								{
-									j = 0;
-									tempStr = "";
-									wordLength = word.length;
-									while (j < wordLength)
+									if (word != "")
 									{
-										currentRow = txt + word.charAt(j);
-										if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
+										j = 0;
+										tempStr = "";
+										wordLength = word.length;
+										while (j < wordLength)
 										{
-											rows.push(txt.substr(0, txt.length - 1));
-											txt = "";
-											word = "";
-											wordPos = words.length;
-											j = wordLength;
-											changed = true;
+											currentRow = txt + word.charAt(j);
+											if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
+											{
+												rows.push(txt.substr(0, txt.length - 1));
+												txt = "";
+												word = "";
+												wordPos = words.length;
+												j = wordLength;
+												changed = true;
+											}
+											else
+											{
+												txt += word.charAt(j);
+											}
+											
+											j++;
 										}
-										else
-										{
-											txt += word.charAt(j);
-										}
-										j++;
 									}
+									else
+									{
+										changed = false;
+										wordPos = words.length;
+									}
+									
 								}
 								else
 								{
