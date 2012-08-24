@@ -190,16 +190,6 @@ class BitmapFont2D extends SmartSprite2D
 		return num;
 	}
 	
-	/**
-	 * Get symbol sprite
-	 * @param	pos
-	 * @return
-	 */
-	/*public function getGlyphAt(pos:Int):Sprite2D
-	{
-		
-	}*/
-	
 	override public function drawStep(camera:Camera2D):Void 
 	{
 		if (needUpdate) updateField();
