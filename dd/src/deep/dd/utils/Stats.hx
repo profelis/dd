@@ -12,6 +12,7 @@
  **/
 package deep.dd.utils;
 
+import flash.system.Capabilities;
 import deep.dd.World2D;
 import flash.display.BitmapData;
 import flash.display.Sprite;
@@ -143,7 +144,8 @@ class Stats extends Sprite {
 
         graph.fillRect(graph.rect, Colors.bg);
 
-        text.htmlText = "<tex>HD: " + wrld.isHW + "</tex><tris>" + wrld.ctx.driverInfo + "</tris>";
+        text.htmlText = "<tex>HD: " + wrld.isHW + "</tex><tris>" + wrld.ctx.driverInfo + "</tris>" +
+        "<draws>" + Capabilities.version + (Capabilities.isDebugger ? "(debug)" : "") + "</draws>";
     }
 
     function onRollOut(_)
