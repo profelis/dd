@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import deep.dd.utils.FastListUtils;
 import flash.Vector;
 import deep.dd.utils.MouseData;
 import msignal.Signal;
@@ -25,6 +26,8 @@ class Node2D
     public var parent(default, null):Node2D;
     public var scene(default, null):Scene2D;
     public var world(get_world, null):World2D;
+
+    public var extra:Dynamic;
 
     /**
     * @private
@@ -62,6 +65,7 @@ class Node2D
     * @private
     */
     public var children(default, null):FastList<Node2D>;
+    var childrenUtils:FastListUtils<Node2D>;
 
     public var numChildren(default, null):UInt = 0;
 
@@ -98,6 +102,7 @@ class Node2D
         onMouseUp = new Signal2<Node2D, MouseData>();
 
         children = new FastList<Node2D>();
+        childrenUtils = new FastListUtils<Node2D>(children);
         transform = new Matrix3D();
 
         mouseTransform = new Matrix3D();
@@ -185,34 +190,76 @@ class Node2D
 
     // children
 
-    public function addChild(c:Node2D):Void
+    public function contains(c:Node2D):Bool
     {
+        return c.parent == this;
+    }
+
+    public function getChildIndex(c:Node2D):Int
+    {
+        return childrenUtils.indexOf(c);
+    }
+
+    public function addChildAt(c:Node2D, pos:UInt):Void
+    {
+        #if debug
+        if (pos > numChildren) throw "out of bounds";
+        #end
         if (c.parent != null)
         {
             if (c.parent == this)
             {
-                children.remove(c);  // small optimization
-                children.add(c);
+                if (childrenUtils.tail.elt != c)
+                {
+                    childrenUtils.remove(c);
+                    childrenUtils.push(c);
+                }
                 return;
             }
 
             c.parent.removeChild(c);
         }
-        children.add(c);
+
+        childrenUtils.putAt(c, pos);
+        numChildren = childrenUtils.length;
+
         c.setParent(this);
         if (scene != null) c.setScene(scene);
         if (ctx != null) c.init(ctx);
-        numChildren ++;
+    }
+
+    public function addChild(c:Node2D):Void
+    {
+        addChildAt(c, numChildren);
+    }
+
+    public function removeChildAt(pos:UInt)
+    {
+        #if debug
+        if (pos >= numChildren) throw "out of bounds";
+        #end
+
+        removeChild(childrenUtils.getAt(pos));
     }
 
     public function removeChild(c:Node2D):Void
     {
-        if (!children.remove(c)) throw "c must be child";
+        if (!childrenUtils.remove(c)) throw "c must be child";
+        numChildren = childrenUtils.length;
+
         c.invalidateWorldTransform = true;
         c.parent = null;
         c.setParent(null);
         c.setScene(null);
-        numChildren --;
+    }
+
+    public function getChildAt(pos:UInt):Node2D
+    {
+        #if debug
+        if (pos >= numChildren) throw "out of bounds";
+        #end
+
+        return childrenUtils.getAt(pos);
     }
 	
     public function iterator():Iterator<Node2D>

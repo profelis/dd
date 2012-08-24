@@ -42,6 +42,7 @@ class CloudTest
     var world:World2D;
     var scene:Scene2D;
 
+    var b:SmartSprite2D;
 
     public function new()
     {
@@ -60,15 +61,16 @@ class CloudTest
 
 
 
-        var b = new SmartSprite2D(new CloudRender());
+        b = new SmartSprite2D(new SimpleRender(false));
         scene.addChild(b);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
 
         for (x in 0...10)
-            for (y in 0...10)
+            for (y in 0...1)
             {
                 var s = new Sprite2D();
+                s.extra = x;
                 b.addChild(s);
                 var an:Animator = cast b.animator.copy();
                 s.animator = an;
@@ -92,6 +94,8 @@ class CloudTest
 
     function onClick(_)
     {
+        b.removeChildAt(b.numChildren-1);
+        trace(b.getChildAt(3).extra);
         //world.ctx.dispose();
 		//mc.animator.playAnimation(null);
     }
