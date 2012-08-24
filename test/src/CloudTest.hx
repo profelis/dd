@@ -61,7 +61,7 @@ class CloudTest
 
 
 
-        b = new SmartSprite2D(new SimpleRender(false));
+        b = new SmartSprite2D(new CloudRender());
         scene.addChild(b);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
@@ -94,8 +94,11 @@ class CloudTest
 
     function onClick(_)
     {
-        b.removeChildAt(b.numChildren-1);
-        trace(b.getChildAt(3).extra);
+        b.removeChildAt(0);
+        var s = new Sprite2D();
+        s.x = 5.5 * 70;
+        b.addChildAt(s, 5);
+        trace(b.numChildren);
         //world.ctx.dispose();
 		//mc.animator.playAnimation(null);
     }

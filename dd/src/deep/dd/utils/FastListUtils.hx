@@ -51,30 +51,29 @@ class FastListUtils<T> implements Generic
 
     public function remove(v:T):Bool
     {
+        if (length == 0) return false;
+
         if (tail.elt == v)
         {
-            l.remove(v);
-            if (l.head != null)
+            if (length == 1)
             {
-                var h = l.head;
-                while (h != null)
-                {
-                    tail = h;
-                    h = h.next;
-                }
+                l.head = tail = null;
             }
             else
             {
-                tail = null;
+                var prev = null;
+                var h = l.head;
+                while (h != null)
+                {
+                    tail = prev;
+                    prev = h;
+                    h = h.next;
+                }
             }
             length --;
             return true;
         }
-        untyped trace(l.head.elt.extra);
         var res = l.remove(v);
-
-        trace("remove " + res);
-        untyped trace(l.head.elt.extra);
         if (res) length --;
         return res;
     }
@@ -84,6 +83,7 @@ class FastListUtils<T> implements Generic
         #if debug
         if (pos >= length) throw "out of bounds";
         #end
+
         if (pos == 0) return l.first();
         if (pos == untyped length-1) return tail != null ? tail.elt : null;
 
