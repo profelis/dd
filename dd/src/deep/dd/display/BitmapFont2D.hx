@@ -269,7 +269,14 @@ class BitmapFont2D extends SmartSprite2D
 									txt = "";
 									if (multiLine)
 									{
-										words.splice(0, wordPos);
+										if (word == "\t" && (wordPos < words.length))
+										{
+											words.splice(0, wordPos + 1);
+										}
+										else
+										{
+											words.splice(0, wordPos);
+										}
 									}
 									else
 									{
