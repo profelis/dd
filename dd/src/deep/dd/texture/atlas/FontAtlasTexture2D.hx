@@ -44,7 +44,7 @@ class FontAtlasTexture2D extends AtlasTexture2D
 		return null;
 	}
 	
-	public function getTextWidth(text:String, spacing:Int = 0):Float
+	public function getTextWidth(text:String, spacing:Int = 0, numSpacesInTab:Int = 4):Float
 	{
 		var w:Float = 0;
 		
@@ -67,6 +67,10 @@ class FontAtlasTexture2D extends AtlasTexture2D
 			else if (char == " ")
 			{
 				w += spaceWidth;
+			}
+			else if (char == "\t")
+			{
+				w += spaceWidth * numSpacesInTab;
 			}
 		}
 		

@@ -216,15 +216,11 @@ class BitmapFont2D extends SmartSprite2D
 			var calcFieldWidth:Int = fieldWidth;
 			var rows:Array<String> = [];
 			
-			// TODO: Handle tabs later in this method. This is stub
-			var textWithoutTabs:String = text.split("\t").join(tabSpaces);
-		//	var textWithoutTabs:String = text;
-			
 			// cut text into pices
 			var lineComplete:Bool;
 			
 			// get words
-			var lines:Array<String> = textWithoutTabs.split("\n");
+			var lines:Array<String> = text.split("\n");
 			var i:Int = -1;
 			var j:Int = -1;
 			if (!multiLine)
@@ -241,7 +237,15 @@ class BitmapFont2D extends SmartSprite2D
 				if (fixedWidth)
 				{
 					lineComplete = false;
-					var words:Array<String> = lines[i].split(" ");
+					var words:Array<String> = [];
+					if (!wordWrap)
+					{
+						words = lines[i].split("\t").join(tabSpaces).split(" ");
+					}
+					else
+					{
+						words = lines[i].split("\t").join(" \t ").split(" ");
+					}
 					
 					if (words.length > 0) 
 					{
@@ -250,12 +254,18 @@ class BitmapFont2D extends SmartSprite2D
 						while (!lineComplete) 
 						{
 							word = words[wordPos];
-							var currentRow:String = txt + word + " ";
+							
 							var changed:Bool = false;
 							
 							if (wordWrap)
 							{
-								if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
+								var prevWord:String = (wordPos > 0) ? words[wordPos - 1] : "";
+								var nextWord:String = (wordPos < words.length) ? words[wordPos + 1] : "";
+								
+								var currentRow:String = txt + word;
+								if (prevWord != "\t") currentRow += " ";
+								
+								if (font.getTextWidth(currentRow, letterSpacing, numSpacesInTab) > fieldWidth)
 								{
 									if (txt == "")
 									{
@@ -280,12 +290,25 @@ class BitmapFont2D extends SmartSprite2D
 								}
 								else
 								{
-									txt += word + " ";
+									if (word == "\t")
+									{
+										txt += tabSpaces;
+									}
+									if (nextWord == "\t" || prevWord == "\t")
+									{
+										txt += word;
+									}
+									else
+									{
+										txt += word + " ";
+									}
 									wordPos++;
 								}
 							}
 							else
 							{
+								var currentRow:String = txt + word;
+								
 								if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
 								{
 									j = 0;
@@ -336,8 +359,8 @@ class BitmapFont2D extends SmartSprite2D
 				}
 				else
 				{
-					calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(lines[i], letterSpacing)));
-					rows.push(lines[i]);
+					calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(lines[i].split("\t").join(tabSpaces), letterSpacing)));
+					rows.push(lines[i].split("\t").join(tabSpaces));
 				}
 			}
 			
