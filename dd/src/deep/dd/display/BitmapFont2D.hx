@@ -351,7 +351,7 @@ class BitmapFont2D extends SmartSprite2D
 							{
 								if (!changed) 
 								{
-									var subText:String = txt.substr(0, txt.length - 1);
+									var subText:String = txt;
 									calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(subText, letterSpacing)));
 									rows.push(subText);
 								}
