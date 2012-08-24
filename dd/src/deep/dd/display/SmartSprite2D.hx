@@ -53,8 +53,11 @@ class SmartSprite2D extends Sprite2D
 		material = render.material;
         if (material != null && ctx != null) material.init(ctx);
 
-    	_width = geometry.width;
-		_height = geometry.height;	
+        if (texture == null)
+        {
+            _width = geometry.width;
+            _height = geometry.height;	
+        }
 
     	return r;
     }

@@ -89,15 +89,15 @@ class Geometry
 
     static public function createTextured(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
     {
-        return create(true, width, height, stepsX, stepsY, offsetX, offsetY);
+        return create(Geometry, true, width, height, stepsX, stepsY, offsetX, offsetY);
     }
 
     static public function createSolid(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
     {
-        return create(false, width, height, stepsX, stepsY, offsetX, offsetY);
+        return create(Geometry, false, width, height, stepsX, stepsY, offsetX, offsetY);
     }
 
-    static public function create(textured:Bool, width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0, ref:Class<Geometry> = null):Geometry
+    static public function create<T:Geometry>(ref:Class<T>, textured:Bool, width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):T
     {
         #if debug
         if (width < 0) throw "width < 0";
@@ -107,7 +107,7 @@ class Geometry
         stepsX = stepsX < 1 ? 1 : stepsX;
         stepsY = stepsY < 1 ? 1 : stepsY;
 
-        var res = ref != null ? Type.createInstance(ref, []) : new Geometry();
+        var res:Geometry = Type.createInstance(ref, []);
         res.resizable = true;
         res.width = width;
         res.height = height;
@@ -122,7 +122,7 @@ class Geometry
 
         res.standart = width == 1 && height == 1 && stepsX == 1 && stepsY == 1 && offsetX == 0 && offsetY == 0;
 
-        return res;
+        return cast res;
     }
 
     static function createPoly(textured = false, w = 1.0, h = 1.0, dx = 0.0, dy = 0.0, stepsX = 1, stepsY = 1)

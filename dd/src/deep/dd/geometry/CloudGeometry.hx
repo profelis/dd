@@ -6,7 +6,7 @@ class CloudGeometry extends Geometry
 {
     static public function createTexturedCloud(size:UInt, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):CloudGeometry
     {
-        var g:CloudGeometry = cast Geometry.create(true, width, height, 1, 1, offsetX, offsetY, CloudGeometry);
+        var g:CloudGeometry = Geometry.create(CloudGeometry, true, width, height, 1, 1, offsetX, offsetY);
         g.resizable = false;
 
         g.rawVBuf = new flash.Vector<Float>(4 * CloudRender.PER_VERTEX, true);

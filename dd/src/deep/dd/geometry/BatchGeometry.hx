@@ -5,7 +5,7 @@ class BatchGeometry extends Geometry
 {
     static public function createTexturedBatch(size:Int, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):BatchGeometry
     {
-        var g:BatchGeometry = cast Geometry.create(true, width, height, 1, 1, offsetX, offsetY, BatchGeometry);
+        var g:BatchGeometry = Geometry.create(BatchGeometry, true, width, height, 1, 1, offsetX, offsetY);
         var p = g.poly;
 
         p.points.fixed = false;
