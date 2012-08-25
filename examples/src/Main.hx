@@ -1,5 +1,6 @@
 package ;
 
+import tests.BitmapFontTest;
 import tests.Test3DSmart;
 import com.bit101.components.Style;
 import flash.text.TextFieldAutoSize;
@@ -56,7 +57,7 @@ class Main extends Sprite
 
 
 
-		scenes = [TestQuad, Test3D, Test3DSmart];
+		scenes = [TestQuad, BitmapFontTest, Test3D, Test3DSmart];
 
 
 
@@ -124,7 +125,6 @@ class Main extends Sprite
 		}
 		
 		sceneText.text = "(" + (activeSceneIdx + 1) + "/" + scenes.length + ") " + Type.getClassName(scenes[activeSceneIdx]) + " // hit space or right = next test, left = prev test, d = device loss";
-	//	world.cache.reinitBitmapTextureCache();
 		currentScene = Type.createInstance(scenes[activeSceneIdx], [world]);
 	}
 
