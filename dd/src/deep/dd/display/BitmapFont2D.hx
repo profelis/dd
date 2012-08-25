@@ -245,13 +245,13 @@ class BitmapFont2D extends SmartSprite2D
 						{
 							word = words[wordPos];
 							var changed:Bool = false;
+							var currentRow:String = txt + word;
 							
 							if (wordWrap)
 							{
 								var prevWord:String = (wordPos > 0) ? words[wordPos - 1] : "";
 								var nextWord:String = (wordPos < words.length) ? words[wordPos + 1] : "";
 								
-								var currentRow:String = txt + word;
 								if (prevWord != "\t") currentRow += " ";
 								
 								if (font.getTextWidth(currentRow, letterSpacing, numSpacesInTab) > fieldWidth)
@@ -303,8 +303,6 @@ class BitmapFont2D extends SmartSprite2D
 							}
 							else
 							{
-								var currentRow:String = txt + word;
-								
 								if (font.getTextWidth(currentRow, letterSpacing) > fieldWidth)
 								{
 									if (word != "")
