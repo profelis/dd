@@ -24,12 +24,12 @@ class FlashTexture2D extends Texture2D
         super(options);
     }
 
-    static public function fromDisplayObject(d:DisplayObject, autoUpdate = false, width = -1, height = -1, options:UInt = Texture2DOptions.QUALITY_ULTRA):FlashTexture2D
+    static public function fromDisplayObject(d:DisplayObject, autoUpdate = false, width:UInt = 0, height:UInt = 0, options:UInt = Texture2DOptions.QUALITY_ULTRA):FlashTexture2D
     {
         var res = new FlashTexture2D(options);
         res.displayObject = d;
         res.autoUpdate = autoUpdate;
-        res.autoSize = width < 0 || height < 0;
+        res.autoSize = width == 0 || height == 0;
         res.displayObjectWidth = width;
         res.displayObjectHeight = height;
 
@@ -71,6 +71,7 @@ class FlashTexture2D extends Texture2D
 
         if (f)
         {
+            bitmapData.lock();
             bitmapWidth = bitmapData.width;
             bitmapHeight = bitmapData.height;
             textureWidth = Texture2D.getNextPowerOfTwo(bitmapWidth);
