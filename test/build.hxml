@@ -2,7 +2,7 @@
 -swf-header 800:600:60:FFFFFF
 --flash-strict
 -swf-version 11
--main SmartTest
+-main CloudTest
 -lib format
 -lib msignal
 -cp src
@@ -15,6 +15,6 @@
 #-D shaderCompDebug
 -debug
 -D dd_stat
-#-D fdb
+-D fdb
 #--no-inline
 

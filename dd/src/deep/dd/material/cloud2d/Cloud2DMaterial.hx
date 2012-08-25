@@ -1,5 +1,6 @@
 package deep.dd.material.cloud2d;
 
+import deep.dd.display.SmartSprite2D;
 import deep.dd.display.Cloud2D;
 import deep.dd.display.Batch2D;
 import deep.dd.utils.Frame;
@@ -35,10 +36,10 @@ class Cloud2DMaterial extends Material
     public function drawCloud(node:DisplayNode2D, camera:Camera2D, renderSize:UInt)
     {
         #if debug
-        if (!FastHaxe.is(node, Sprite2D)) throw "Cloud2DMaterial can't draw " + node;
+        if (!FastHaxe.is(node, SmartSprite2D)) throw "Cloud2DMaterial can't draw " + node;
         #end
 
-        var sp:Sprite2D = flash.Lib.as(node, Sprite2D);
+        var sp:SmartSprite2D = flash.Lib.as(node, SmartSprite2D);
         var tex = sp.texture;
 
         if (texOpt != tex.options)

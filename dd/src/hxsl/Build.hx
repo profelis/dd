@@ -49,6 +49,7 @@ class Build {
 		var inf = {
 			vars : [],
 			setup : [],
+            vcount : 0
 		};
 		var vcount = 0;
 		function add(v) {
@@ -68,20 +69,23 @@ class Build {
 					add(n);
 					add(n);
 				case TFloat2:
-					add(n + ".x");
-					add(n + ".y");
+				    inf.setup.push("var n = " + n + ";");
+					add("n.x");
+					add("n.y");
 					add("1.");
 					add("1.");
 				case TFloat3:
-					add(n + ".x");
-					add(n + ".y");
-					add(n + ".z");
+				    inf.setup.push("var n = " + n + ";");
+					add("n.x");
+					add("n.y");
+					add("n.z");
 					add("1.");
 				case TFloat4:
-					add(n + ".x");
-					add(n + ".y");
-					add(n + ".z");
-					add(n + ".w");
+				    inf.setup.push("var n = " + n + ";");
+					add("n.x");
+					add("n.y");
+					add("n.z");
+					add("n.w");
 				case TMatrix(w,h,t):
 					var tmp = "raw_" + c.name;
 					inf.setup.push("var " + tmp + " = " + n + ".rawData;");
@@ -98,9 +102,10 @@ class Build {
 					add("(" + n + " & 0xFF) / 255.0");
 					add("(" + n + ">>>24) / 255.0");
 				case TArray(t, count):
+				    inf.setup.push("var n = " + n + ";");
 					var old = vcount;
 					inf.setup.push("for( _i in 0..." + count + " ) {");
-					addType(n + "[_i]", t);
+					addType("n[_i]", t);
 					inf.setup.push("}");
 					vcount += (vcount - old) * (count - 1);
 				}
@@ -117,6 +122,7 @@ class Build {
 		if( vcount >> 2 > format.agal.Tools.getProps(RConst, !shader.vertex).count )
 			Context.error("This shader has reached the maximum number of allowed parameters/constants", shader.pos);
 
+        inf.vcount = vcount;
 		return inf;
 	}
 	#end
@@ -218,10 +224,10 @@ class Build {
 		var decls = [
 			"override function getVertexData() return format.agal.Tools.ofString('" + vsbytes + "')",
 			"override function getFragmentData() return format.agal.Tools.ofString('" + fsbytes + "')",
-			"public function getVertexConstants(vars:{" + vs.vars.join(",") + "}) { var cst = new flash.Vector<Float>(); var pos = 0; " + vs.setup.join("\n") + "return cst; }",
-			"public function getFragmentConstants(vars:{" + fs.vars.join(",") + "}) { var cst = new flash.Vector<Float>(); var pos = 0; " + fs.setup.join("\n") + "return cst; }",
+			"public inline function getVertexConstants(vars:{" + vs.vars.join(",") + "}) { var cst = new flash.Vector<Float>("+vs.vcount+", true); var pos = 0; " + vs.setup.join("\n") + "return cst; }",
+			"public inline function getFragmentConstants(vars:{" + fs.vars.join(",") + "}) { var cst = new flash.Vector<Float>("+fs.vcount+",true); var pos = 0; " + fs.setup.join("\n") + "return cst; }",
 			"override function bind(buf) {"+bindCode+"}",
-			"public function init( vertex : {" + vs.vars.join(",") + "}, fragment : {" + fs.vars.join(",") + "} ) {" + initCode + "}",
+			"public inline function init( vertex : {" + vs.vars.join(",") + "}, fragment : {" + fs.vars.join(",") + "} ) {" + initCode + "}",
 		];
 		if( unbindCode != null )
 			decls.push("override function unbind() {" + unbindCode + "}");

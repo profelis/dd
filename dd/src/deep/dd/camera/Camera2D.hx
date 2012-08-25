@@ -15,6 +15,7 @@ class Camera2D
         c = new Camera();
         c.up = new Vector(0, 1, 0);
         c.zFar = 10000;
+        scale = c.zoom;
     }
 
     public var needUpdate:Bool = false;
@@ -54,6 +55,7 @@ class Camera2D
 		if (c != null) c.dispose();
 		c = null;
 		proj = null;
+		ort = null;
 	}
 	
 	public var x(default, set_x):Float = 0;
@@ -71,16 +73,11 @@ class Camera2D
 		return y = val;
 	}
 	
-	public var scale(get_scale, set_scale):Float;
-	
-	function get_scale():Float
-	{
-		return c.zoom;
-	}
+	public var scale(default, set_scale):Float;
 	
 	function set_scale(val:Float):Float
 	{
-		c.zoom = val;
+		c.zoom = scale = val;
 		needUpdate = true;
 		return val;
 	}

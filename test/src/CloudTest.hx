@@ -1,5 +1,8 @@
 package ;
 
+import deep.dd.display.render.SimpleRender;
+import deep.dd.display.render.CloudRender;
+import deep.dd.display.SmartSprite2D;
 import deep.dd.utils.Stats;
 import deep.dd.display.Cloud2D;
 import deep.dd.animation.Animator;
@@ -39,6 +42,7 @@ class CloudTest
     var world:World2D;
     var scene:Scene2D;
 
+    var b:SmartSprite2D;
 
     public function new()
     {
@@ -57,15 +61,16 @@ class CloudTest
 
 
 
-        var b = new Cloud2D(100);
+        b = new SmartSprite2D(new CloudRender());
         scene.addChild(b);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
 
         for (x in 0...10)
-            for (y in 0...10)
+            for (y in 0...1)
             {
                 var s = new Sprite2D();
+                s.extra = x;
                 b.addChild(s);
                 var an:Animator = cast b.animator.copy();
                 s.animator = an;
@@ -74,12 +79,13 @@ class CloudTest
                 s.x = x * 70;
                 s.y = y * 70;
             }
-
-        var q = new Quad2D();
-        //b.addChild(q);
+         /*
+        var q = new Sprite2D();
+        q.texture = b.texture;
+        scene.addChild(q);
         q.width = 100;
         q.height = 100;
-
+           */
 
         s.addEventListener(Event.ENTER_FRAME, onRender);
 
@@ -88,6 +94,11 @@ class CloudTest
 
     function onClick(_)
     {
+        b.removeChildAt(0);
+        var s = new Sprite2D();
+        s.x = 5.5 * 70;
+        b.addChildAt(s, 5);
+        trace(b.numChildren);
         //world.ctx.dispose();
 		//mc.animator.playAnimation(null);
     }

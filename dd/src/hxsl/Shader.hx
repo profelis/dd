@@ -49,7 +49,7 @@ typedef Array<T,Const> = flash.Vector<T>
 		return null;
 	}
 
-	function send(vertex:Bool,cst:flash.Vector<Float>) {
+	inline public function send(vertex:Bool,cst:flash.Vector<Float>) {
 		var pt = vertex?flash.display3D.Context3DProgramType.VERTEX:flash.display3D.Context3DProgramType.FRAGMENT;
 		c.setProgramConstantsFromVector(pt, 0, cst);
 	}
@@ -62,13 +62,13 @@ typedef Array<T,Const> = flash.Vector<T>
 		flash.display3D.Context3DVertexBufferFormat.FLOAT_4,
 	];
 
-	function bindInit(buf) {
+	inline function bindInit(buf) {
 		this.buf = buf;
 		regIndex = 0;
 		bufSize = 0;
 	}
 
-	function bindDone() {
+    inline function bindDone() {
 		buf = null;
 	}
 
@@ -83,28 +83,30 @@ typedef Array<T,Const> = flash.Vector<T>
 		throw "needs subclass";
 	}
 
-	public function unbind() {
+    public function unbind() {
 		while( regIndex-- > 0 )
 			c.setVertexBufferAt(regIndex,null);
 	}
 
-	public function draw( vbuf, ibuf ) {
+    inline public function draw( vbuf, ibuf ) {
 		bind(vbuf);
 		c.drawTriangles(ibuf);
 		unbind();
 	}
 
-	public function dispose() {
-		if( p == null ) return;
-		p.dispose();
-		p = null;
+    inline public function dispose() {
+		if( p != null )
+        {
+            p.dispose();
+            p = null;
+        }
 	}
 
-	public function select() {
+	inline public function select() {
 		c.setProgram(p);
 	}
 
-	function texture( index : Int, t : flash.display3D.textures.TextureBase ) {
+	inline function texture( index : Int, t : flash.display3D.textures.TextureBase ) {
 		c.setTextureAt(index, t);
 	}
 

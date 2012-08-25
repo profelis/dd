@@ -3,21 +3,22 @@ package mt.m3d;
 import flash.display3D.VertexBuffer3D;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Context3D;
+
 class Polygon {
 
-	public var points : Array<Vector>;
-	public var normals : Array<Vector>;
-	public var tangents : Array<Vector>;
-	public var tcoords : Array<UV>;
-	public var idx : Array<UInt>;
+	public var points : flash.Vector<Vector>;
+	public var normals : flash.Vector<Vector>;
+	public var tangents : flash.Vector<Vector>;
+	public var tcoords : flash.Vector<UV>;
+	public var idx : flash.Vector<UInt>;
 	
 	public var ibuf : IndexBuffer3D;
 	public var vbuf : VertexBuffer3D;
 	
-	public function new( points, ?idx ) {
+	public function new( points, ?idx:flash.Vector<UInt> ) {
 		this.points = points;
 		if( idx == null ) {
-			idx = new Array();
+			idx = new flash.Vector<UInt>();
 			for( i in 0...points.length )
 				idx[i] = i;
 		}
@@ -32,7 +33,7 @@ class Polygon {
 	public function alloc( c : Context3D ) {
 		dispose();
 		ibuf = c.createIndexBuffer(idx.length);
-		ibuf.uploadFromVector(flash.Vector.ofArray(idx), 0, idx.length);
+		ibuf.uploadFromVector(idx, 0, idx.length);
 		var size = 3;
 		if( normals != null )
 			size += 3;
@@ -69,11 +70,13 @@ class Polygon {
 	
 	public function unindex() {
 		if( points.length != idx.length ) {
-			var p = [], id = [];
+			var p = new flash.Vector<Vector>(), id = new flash.Vector<UInt>();
 			for( i in idx ) {
 				id.push(p.length);
 				p.push(points[i]);
 			}
+            p.fixed = true;
+            idx.fixed = true;
 			points = p;
 			idx = id;
 		}
@@ -97,7 +100,7 @@ class Polygon {
 	
 	public function addNormals() {
 		// make per-point normal
-		normals = new Array();
+		normals = new flash.Vector<Vector>(points.length, true);
 		for( i in 0...points.length )
 			normals[i] = new Vector();
 		var pos = 0;

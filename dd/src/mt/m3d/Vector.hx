@@ -40,7 +40,7 @@ class Vector {
 		z *= k;
 	}
 
-	public function set(x,y,z) {
+	inline public function set(x,y,z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

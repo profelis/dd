@@ -69,8 +69,8 @@ class BatchTest
         b0.animator = new Animator(10);
 
         c0 = [];
-        for (i in 0...10)
-        for (j in 0...10)
+        for (i in 0...30)
+        for (j in 0...30)
         {
             var s = new Sprite2D();
             s.pivot = new Vector3D(20, 20);
@@ -94,14 +94,14 @@ class BatchTest
         sp0.addChild(sp1 = new Sprite2D());
         sp1.x = -50;
 
-        var b = new Cloud2D(25);
+        var b = new Batch2D();
         b.x = 250;
         //b0.addChild(b);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
         b.animator = new Animator(25);
         c = [];
-        for (x in 0...5)
-            for (y in 0...5)
+        for (x in 0...30)
+            for (y in 0...30)
             {
                 var s = new Sprite2D();
                 c.push(s);

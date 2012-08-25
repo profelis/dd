@@ -12,6 +12,7 @@
  **/
 package deep.dd.utils;
 
+import flash.system.Capabilities;
 import deep.dd.World2D;
 import flash.display.BitmapData;
 import flash.display.Sprite;
@@ -97,6 +98,8 @@ class Stats extends Sprite {
         text.height = TEXT_HEIGHT;
         text.styleSheet = style;
         text.condenseWhite = true;
+        text.multiline = true;
+        text.wordWrap = true;
         text.selectable = false;
         text.mouseEnabled = false;
 
@@ -127,6 +130,31 @@ class Stats extends Sprite {
             _stage.addEventListener(Event.RESIZE, onStageResize);
             onStageResize(null);
         }
+
+        if (wrld != null)
+        {
+            addEventListener(MouseEvent.ROLL_OVER, onRollOver);
+            addEventListener(MouseEvent.ROLL_OUT, onRollOut);
+        }
+    }
+
+    function onRollOver(_)
+    {
+        removeEventListener(Event.ENTER_FRAME, update);
+
+        graph.fillRect(graph.rect, Colors.bg);
+
+        text.htmlText = "<xml><tex>HW: " + wrld.isHW + "</tex>"+
+            "<draws>" + Capabilities.version + (Capabilities.isDebugger ? " (debug)" : "") +
+            "</draws><memMax>" + wrld.ctx.driverInfo + "</memMax></xml>";
+
+        text.height = height;
+    }
+
+    function onRollOut(_)
+    {
+        text.height = #if dd_stat 80 #else 50 #end;
+        addEventListener(Event.ENTER_FRAME, update);
     }
 
     function onStageResize(_)

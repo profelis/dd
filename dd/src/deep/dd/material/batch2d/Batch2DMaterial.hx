@@ -30,8 +30,10 @@ class Batch2DMaterial extends Material
         shaderRef = SHADERS.get(texOpt & 0x60).get(texOpt & 0x18).get(texOpt & 0x7);
     }
 
-    public function drawBatch(node:Sprite2D, camera:Camera2D, tex:Texture2D, size:Int, mpos:Vector<Matrix3D>, cTrans:Vector<Vector3D>, regions:Vector<Vector3D>)
+    public function startBatch(node:Sprite2D, tex:Texture2D)
     {
+        this.node = node;
+
         if (texOpt != tex.options)
         {
             texOpt = tex.options;
@@ -39,18 +41,33 @@ class Batch2DMaterial extends Material
             updateShader();
         }
 
-        untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}, {tex:tex.texture});
+        ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
+
+        shader.select();
+        shader.send(false, untyped shader.getFragmentConstants({tex:tex.texture}));
+
+        shader.bind(node.geometry.vbuf);
+    }
+
+    var node:Sprite2D;
+
+    public function stopBatch()
+    {
+        shader.unbind();
+        node = null;
+    }
+
+    public function drawBatch(camera:Camera2D, size:Int, mpos:Vector<Matrix3D>, cTrans:Vector<Vector3D>, regions:Vector<Vector3D>)
+    {
+        //untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}, {tex:tex.texture});
+        shader.send(true, untyped shader.getVertexConstants({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}));
 
         #if dd_stat
         node.world.statistics.drawCalls ++;
         node.world.statistics.triangles += size * 2;
         #end
 
-        ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
-
-        shader.bind(node.geometry.vbuf);
         ctx.drawTriangles(node.geometry.ibuf, 0, size * 2);
-        shader.unbind();
     }
 
     override public function draw(node:DisplayNode2D, camera:Camera2D)

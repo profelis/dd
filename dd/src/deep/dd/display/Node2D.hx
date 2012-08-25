@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import deep.dd.utils.FastListUtils;
 import flash.Vector;
 import deep.dd.utils.MouseData;
 import msignal.Signal;
@@ -25,6 +26,8 @@ class Node2D
     public var parent(default, null):Node2D;
     public var scene(default, null):Scene2D;
     public var world(get_world, null):World2D;
+
+    public var extra:Dynamic;
 
     /**
     * @private
@@ -62,6 +65,7 @@ class Node2D
     * @private
     */
     public var children(default, null):FastList<Node2D>;
+    var childrenUtils:FastListUtils<Node2D>;
 
     public var numChildren(default, null):UInt = 0;
 
@@ -97,12 +101,8 @@ class Node2D
         onMouseDown = new Signal2<Node2D, MouseData>();
         onMouseUp = new Signal2<Node2D, MouseData>();
 
-        transformComps = new Vector<Vector3D>(3, true);
-        transformComps[0] = tPos = new Vector3D(x, y, z);
-        transformComps[1] = tRot = new Vector3D(rotationY, rotationY, rotationZ);
-        transformComps[2] = tScale = new Vector3D(scaleX, scaleY, scaleZ);
-
         children = new FastList<Node2D>();
+        childrenUtils = new FastListUtils<Node2D>(children);
         transform = new Matrix3D();
 
         mouseTransform = new Matrix3D();
@@ -190,34 +190,76 @@ class Node2D
 
     // children
 
-    public function addChild(c:Node2D):Void
+    public function contains(c:Node2D):Bool
     {
+        return c.parent == this;
+    }
+
+    public function getChildIndex(c:Node2D):Int
+    {
+        return childrenUtils.indexOf(c);
+    }
+
+    public function addChildAt(c:Node2D, pos:UInt):Void
+    {
+        #if debug
+        if (pos > numChildren) throw "out of bounds";
+        #end
         if (c.parent != null)
         {
             if (c.parent == this)
             {
-                children.remove(c);  // small optimization
-                children.add(c);
+                if (childrenUtils.tail.elt != c)
+                {
+                    childrenUtils.remove(c);
+                    childrenUtils.push(c);
+                }
                 return;
             }
 
             c.parent.removeChild(c);
         }
-        children.add(c);
+
+        childrenUtils.putAt(c, pos);
+        numChildren = childrenUtils.length;
+
         c.setParent(this);
         if (scene != null) c.setScene(scene);
         if (ctx != null) c.init(ctx);
-        numChildren ++;
+    }
+
+    public function addChild(c:Node2D):Void
+    {
+        addChildAt(c, numChildren);
+    }
+
+    public function removeChildAt(pos:UInt)
+    {
+        #if debug
+        if (pos >= numChildren) throw "out of bounds";
+        #end
+
+        removeChild(childrenUtils.getAt(pos));
     }
 
     public function removeChild(c:Node2D):Void
     {
-        if (!children.remove(c)) throw "c must be child";
+        if (!childrenUtils.remove(c)) throw "c must be child";
+        numChildren = childrenUtils.length;
+
         c.invalidateWorldTransform = true;
         c.parent = null;
         c.setParent(null);
         c.setScene(null);
-        numChildren --;
+    }
+
+    public function getChildAt(pos:UInt):Node2D
+    {
+        #if debug
+        if (pos >= numChildren) throw "out of bounds";
+        #end
+
+        return childrenUtils.getAt(pos);
     }
 	
     public function iterator():Iterator<Node2D>
@@ -325,47 +367,33 @@ class Node2D
 
     inline public function updateWorldTransform()
     {
-
-        worldTransform.copyFrom(transform);
+        worldTransform.rawData = transform.rawData;
 
         if (parent != null)
         {
             worldTransform.append(parent.worldTransform);
         }
 
-        /*
-        worldTransform.identity();
-        worldTransform.append(this.transform);
-
-        if (parent != null) worldTransform.append(parent.worldTransform);  */
         invalidateWorldTransform = false;
     }
 
-    var transformComps:Vector<Vector3D>;
-    var tRot:Vector3D;
-    var tPos:Vector3D;
-    var tScale:Vector3D;
-
-    inline static var toRad = Math.PI / 180;
+    var moved:Bool = false;
+    var scaled:Bool = false;
+    var rotatedX:Bool = false;
+    var rotatedY:Bool = false;
+    var rotatedZ:Bool = false;
 
     inline public function updateTransform()
     {
-        transform.recompose(transformComps);
-        if (usePivot)
-        {
-            transform.prependTranslation(-pivot.x, -pivot.y, -pivot.z);
-            transform.appendTranslation(pivot.x, pivot.y, pivot.z);
-        }
-        /*
+
         transform.identity();
-        if (pivot != null) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
-        transform.appendScale(scaleX, scaleY, scaleZ);
-        transform.appendRotation(rotationZ, Vector3D.Z_AXIS);
-        transform.appendRotation(rotationY, Vector3D.Y_AXIS);
-        transform.appendRotation(rotationX, Vector3D.X_AXIS);
-        transform.appendTranslation(x, y, z);
-        if (pivot != null) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
-          */
+        if (usePivot) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
+        if (scaled) transform.appendScale(scaleX, scaleY, scaleZ);
+        if (rotatedZ) transform.appendRotation(rotationZ, Vector3D.Z_AXIS);
+        if (rotatedY) transform.appendRotation(rotationY, Vector3D.Y_AXIS);
+        if (rotatedX) transform.appendRotation(rotationX, Vector3D.X_AXIS);
+        if (moved) transform.appendTranslation(x, y, z);
+        if (usePivot) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
 
         invalidateTransform = false;
         invalidateWorldTransform = true;
@@ -380,12 +408,14 @@ class Node2D
     // transform
 
     public var pivot(default, set_pivot):Vector3D;
-    var usePivot:Bool;
+    public var usePivot(default, null):Bool;
 
-    function set_pivot(v)
+    function set_pivot(v:Vector3D):Vector3D
     {
+        if (v != null && v.x == 0 && v.y == 0 && v.z == 0) v = null;
+
         pivot = v;
-        usePivot = pivot != null;
+        usePivot = v != null;
         invalidateTransform = true;
         return v;
     }
@@ -404,21 +434,24 @@ class Node2D
 
     function set_x(v:Float)
     {
-        tPos.x = x = v;
+        x = v;
+        moved = x != 0 || y != 0 || z != 0;
         invalidateTransform = true;
         return v;
     }
 
     function set_y(v:Float)
     {
-        tPos.y = y = v;
+        y = v;
+        moved = x != 0 || y != 0 || z != 0;
         invalidateTransform = true;
         return v;
     }
 
     function set_z(v:Float)
     {
-        tPos.z = z = v;
+        z = z = v;
+        moved = x != 0 || y != 0 || z != 0;
         invalidateTransform = true;
         return v;
     }
@@ -426,7 +459,7 @@ class Node2D
     function set_rotationX(v:Float)
     {
         rotationX = v;
-        tRot.x = v * toRad;
+        rotatedX = v != 0;
         invalidateTransform = true;
         return v;
     }
@@ -434,7 +467,7 @@ class Node2D
     function set_rotationY(v:Float)
     {
         rotationY = v;
-        tRot.y = v * toRad;
+        rotatedY = v != 0;
         invalidateTransform = true;
         return v;
     }
@@ -442,28 +475,31 @@ class Node2D
     function set_rotationZ(v:Float)
     {
         rotationZ = v;
-        tRot.z = v * toRad;
+        rotatedZ = v != 0;
         invalidateTransform = true;
         return v;
     }
 
     function set_scaleX(v:Float)
     {
-        tScale.x = scaleX = v;
+        scaleX = v;
+        scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
         invalidateTransform = true;
         return v;
     }
 
     function set_scaleY(v:Float)
     {
-        tScale.y = scaleY = v;
+        scaleY = v;
+        scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
         invalidateTransform = true;
         return v;
     }
 
     function set_scaleZ(v:Float)
     {
-        tScale.z = scaleZ = v;
+        scaleZ = v;
+        scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
         invalidateTransform = true;
         return v;
     }

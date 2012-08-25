@@ -1,6 +1,7 @@
 package mt.m3d;
 
 import flash.geom.Vector3D;
+
 @:final class Color
 {
     public var a:Float;
@@ -53,7 +54,7 @@ import flash.geom.Vector3D;
         b = v.z;
     }
 
-    public function concat(c:Color)
+    public inline function concat(c:Color)
     {
         a *= c.a;
         r *= c.r;

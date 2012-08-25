@@ -1,11 +1,14 @@
 package deep.dd.display.render;
 
+import mt.m3d.UV;
+import mt.m3d.Color;
+import mt.m3d.Vector;
 import deep.dd.display.SmartSprite2D;
 import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;
 import deep.dd.display.Sprite2D;
-import deep.dd.geometry.Geometry;
+import deep.dd.geometry.CloudGeometry;
 import deep.dd.material.Material;
 import deep.dd.material.cloud2d.Cloud2DMaterial;
 import deep.dd.texture.Texture2D;
@@ -35,8 +38,10 @@ class CloudRender extends RenderBase
         this.incSize = incSize;
 
         material = mat = new Cloud2DMaterial();
-        geometry = Geometry.createTexturedCloud(size);
+        geometry = geom = CloudGeometry.createTexturedCloud(startSize);
 	}
+
+    var geom:CloudGeometry;
 
     override public function copy():RenderBase
     {
@@ -97,9 +102,11 @@ class CloudRender extends RenderBase
         if (size > MAX_SIZE) size = renderSize;
         else if (size == 0) size = 1;
 
-        if (geometry.triangles != untyped __global__["uint"](size * 2)) geometry.resizeCloud(size);
+        if (geom.triangles != untyped __global__["uint"](size * 2)) geom.resizeCloud(size);
 
-        var idx = 0;
+        var idx:UInt = 0;
+        var buf = geom.rawVBuf;
+
         for (s in batchList)
         {
             #if debug
@@ -133,43 +140,51 @@ class CloudRender extends RenderBase
 
             if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
 
-            var poly = geometry.poly;
             var sPoly = s.geometry.poly;
 
             var i = idx;
-
             var m = s.drawTransform.rawData;
             for (p in sPoly.points)
             {
-                poly.points[i++].set(
-                    m[0] * p.x + m[4] * p.y + m[8] * p.z + m[12],
-                    m[1] * p.x + m[5] * p.y + m[9] * p.z + m[13],
-                    m[2] * p.x + m[6] * p.y + m[10] * p.z + m[14]
-                );
+                var px = p.x;
+                var py = p.y;
+                var pz = p.z;
+
+                buf[i] = m[0] * px + m[4] * py + m[8] * pz + m[12];
+                buf[i+1] = m[1] * px + m[5] * py + m[9] * pz + m[13];
+                buf[i+2] = m[2] * px + m[6] * py + m[10] * pz + m[14];
+
+                i+= PER_VERTEX;
             }
 
-            i = idx;
-            for (o in 0...4)
-            {
-                var c = poly.colors[i++];
-                c.fromVector(s.worldColorTransform);
-            }
-
+            i = idx + 3;
             var r = s.textureFrame.region;
-            i = idx;
             for (t in sPoly.tcoords)
             {
-                poly.tcoords[i].u = t.u * r.z + r.x;
-                poly.tcoords[i].v = t.v * r.w + r.y;
-                i++;
+                buf[i] = t.u * r.z + r.x;
+                buf[i+1] = t.v * r.w + r.y;
+
+                i += PER_VERTEX;
             }
 
-            idx+=4;
+            i = idx + 5;
+            var c = s.worldColorTransform;
+            for (o in 0...4)
+            {
+                buf[i] = c.x;
+                buf[i+1] = c.y;
+                buf[i+2] = c.z;
+                buf[i+3] = c.w;
+                i+= PER_VERTEX;
+            }
+
+            idx += 4 * PER_VERTEX;
         }
 
         if (renderSize > 0)
         {
-            geometry.update();
+            if (geom.needUpdate) geom.update();
+            geom.allocCloudVBuf();
             mat.drawCloud(smartSprite, camera, renderSize);
         }
 
