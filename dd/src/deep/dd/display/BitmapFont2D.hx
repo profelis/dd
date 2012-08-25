@@ -244,7 +244,6 @@ class BitmapFont2D extends SmartSprite2D
 						while (!lineComplete) 
 						{
 							word = words[wordPos];
-							
 							var changed:Bool = false;
 							
 							if (wordWrap)
@@ -338,7 +337,6 @@ class BitmapFont2D extends SmartSprite2D
 										changed = false;
 										wordPos = words.length;
 									}
-									
 								}
 								else
 								{
@@ -351,9 +349,8 @@ class BitmapFont2D extends SmartSprite2D
 							{
 								if (!changed) 
 								{
-									var subText:String = txt;
-									calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(subText, letterSpacing)));
-									rows.push(subText);
+									calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(txt, letterSpacing)));
+									rows.push(txt);
 								}
 								lineComplete = true;
 							}
@@ -366,8 +363,9 @@ class BitmapFont2D extends SmartSprite2D
 				}
 				else
 				{
-					calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(lines[i].split("\t").join(tabSpaces), letterSpacing)));
-					rows.push(lines[i].split("\t").join(tabSpaces));
+					var lineWithoutTabs:String = lines[i].split("\t").join(tabSpaces);
+					calcFieldWidth = Math.floor(Math.max(calcFieldWidth, font.getTextWidth(lineWithoutTabs, letterSpacing)));
+					rows.push(lineWithoutTabs);
 				}
 			}
 			
