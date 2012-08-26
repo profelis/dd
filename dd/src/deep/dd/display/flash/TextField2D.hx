@@ -3,6 +3,7 @@ package deep.dd.display.flash;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.texture.FlashTexture2D;
+import deep.dd.texture.Texture2D;
 import flash.filters.BitmapFilter;
 import flash.text.AntiAliasType;
 import flash.text.GridFitType;
@@ -20,16 +21,29 @@ class TextField2D extends Sprite2D
 	
 	private var needRedraw:Bool;
 	
-	public function new() 
+	public function new(field:TextField = null) 
 	{
 		super();
-		flashField = new TextField();
-		textFormat = new TextFormat();
-		autoSize = TextFieldAutoSize.LEFT;
-		thickness = 0;
-		sharpness = 0;
-		gridFitType = GridFitType.NONE;
-		antiAliasType = AntiAliasType.NORMAL;
+		flashField = (field != null) ? field : new TextField();
+		textFormat = flashField.defaultTextFormat;
+		text = flashField.text;
+		autoSize = flashField.autoSize;
+		textWidth = Std.int(flashField.width);
+		textHeight = Std.int(flashField.height);
+		border = flashField.border;
+		borderColor = flashField.borderColor;
+		background = flashField.background;
+		backgroundColor = flashField.backgroundColor;
+		wordWrap = flashField.wordWrap;
+		embedFonts = flashField.embedFonts;
+		condenseWhite = flashField.condenseWhite;
+		multiline = flashField.multiline;
+		thickness = flashField.thickness;
+		sharpness = flashField.sharpness;
+		gridFitType = flashField.gridFitType;
+		antiAliasType = flashField.antiAliasType;
+		
+		Reflect.setField(this, "texture", FlashTexture2D.fromDisplayObject(flashField));
 		
 		needRedraw = true;
     }
@@ -62,7 +76,7 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var text(default, set_text):String = "";
+	public var text(default, set_text):String;
 	
 	function set_text(v:String):String
 	{
@@ -91,7 +105,7 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var textWidth(default, set_textWidth):Int = 0;
+	public var textWidth(default, set_textWidth):Int;
 	
 	function set_textWidth(v:Int):Int
 	{
@@ -107,7 +121,7 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var textHeight(default, set_textHeight):Int = 0;
+	public var textHeight(default, set_textHeight):Int;
 	
 	function set_textHeight(v:Int):Int
 	{
@@ -119,7 +133,7 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var border(default, set_border):Bool = false;
+	public var border(default, set_border):Bool;
 	
 	function set_border(v:Bool):Bool
 	{
@@ -131,7 +145,7 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var borderColor(default, set_borderColor):UInt = 0xffffff;
+	public var borderColor(default, set_borderColor):UInt;
 	
 	function set_borderColor(v:UInt):UInt
 	{
@@ -143,7 +157,7 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var background(default, set_background):Bool = false;
+	public var background(default, set_background):Bool;
 	
 	function set_background(v:Bool):Bool
 	{
@@ -155,7 +169,7 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var backgroundColor(default, set_backgroundColor):UInt = 0x888888;
+	public var backgroundColor(default, set_backgroundColor):UInt;
 	
 	function set_backgroundColor(v:UInt):UInt
 	{
@@ -167,7 +181,7 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var wordWrap(default, set_wordWrap):Bool = false;
+	public var wordWrap(default, set_wordWrap):Bool;
 	
 	function set_wordWrap(v:Bool):Bool
 	{
@@ -179,7 +193,7 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var embedFonts(default, set_embedFonts):Bool = false;
+	public var embedFonts(default, set_embedFonts):Bool;
 	
 	function set_embedFonts(v:Bool):Bool
 	{
@@ -191,7 +205,7 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var condenseWhite(default, set_condenseWhite):Bool = false;
+	public var condenseWhite(default, set_condenseWhite):Bool;
 	
 	function set_condenseWhite(v:Bool):Bool
 	{
@@ -305,86 +319,61 @@ class TextField2D extends Sprite2D
 		return v;
 	}
 	
-	public var multiline(get_multiline, set_multiline):Bool;
-	
-	function get_multiline():Bool 
-	{
-		return flashField.multiline;
-	}
+	public var multiline(default, set_multiline):Bool;
 	
 	function set_multiline(v:Bool):Bool 
 	{
-		if (flashField.multiline != v)
+		if (multiline != v)
 		{
-			flashField.multiline = v;
+			multiline = v;
 			needRedraw = true;
 		}
 		return v;
 	}
 	
-	public var thickness(get_thickness, set_thickness):Float;
-	
-	function get_thickness():Float
-	{
-		return flashField.thickness;
-	}
+	public var thickness(default, set_thickness):Float;
 	
 	function set_thickness(v:Float):Float
 	{
-		if (flashField.thickness != v)
+		if (thickness != v)
 		{
-			flashField.thickness = v;
+			thickness = v;
 			needRedraw = true;
 		}
 		return v;
 	}
 	
-	public var sharpness(get_sharpness, set_sharpness):Float;
-	
-	function get_sharpness():Float
-	{
-		return flashField.sharpness;
-	}
+	public var sharpness(default, set_sharpness):Float;
 	
 	function set_sharpness(v:Float):Float
 	{
-		if (flashField.sharpness != v)
+		if (sharpness != v)
 		{
-			flashField.sharpness = v;
+			sharpness = v;
 			needRedraw = true;
 		}
 		return v;
 	}
 	
-	public var gridFitType(get_gridFitType, set_gridFitType):GridFitType;
-	
-	function get_gridFitType():GridFitType
-	{
-		return flashField.gridFitType;
-	}
+	public var gridFitType(default, set_gridFitType):GridFitType;
 	
 	function set_gridFitType(v:GridFitType):GridFitType
 	{
-		if (flashField.gridFitType != v)
+		if (gridFitType != v)
 		{
-			flashField.gridFitType = v;
+			gridFitType = v;
 			needRedraw = true;
 		}
 		return v;
 	}
 	
-	public var antiAliasType(get_antiAliasType, set_antiAliasType):AntiAliasType;
-	
-	function get_antiAliasType():AntiAliasType
-	{
-		return flashField.antiAliasType;
-	}
+	public var antiAliasType(default, set_antiAliasType):AntiAliasType;
 	
 	function set_antiAliasType(v:AntiAliasType):AntiAliasType
 	{
-		if (flashField.antiAliasType != v)
+		if (antiAliasType != v)
 		{
-			flashField.antiAliasType = v;
+			antiAliasType = v;
 			needRedraw = true;
 		}
 		return v;
@@ -406,6 +395,11 @@ class TextField2D extends Sprite2D
 	function updateField():Void
 	{
 		flashField.defaultTextFormat = textFormat;
+		flashField.multiline = multiline;
+		flashField.thickness = thickness;
+		flashField.sharpness = sharpness;
+		flashField.gridFitType = gridFitType;
+		flashField.antiAliasType = antiAliasType;
 		flashField.htmlText = text;
 		flashField.border = border;
 		flashField.borderColor = borderColor;
@@ -420,9 +414,13 @@ class TextField2D extends Sprite2D
 		flashField.width = (textWidth > 0) ? textWidth : flashField.textWidth;
 		flashField.height = (textHeight > 0) ? textHeight : flashField.textHeight;
 		
-		texture = FlashTexture2D.fromDisplayObject(flashField);
-		
+		texture.needUpdate = true;
 		needRedraw = false;
+	}
+	
+	override private function set_texture(tex:Texture2D):Texture2D 
+	{
+		return tex;
 	}
 	
 }
