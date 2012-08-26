@@ -1,14 +1,23 @@
-package deep.dd.material.cloud2d;
+package deep.dd.material.particle2D;
 
 import deep.dd.display.SmartSprite2D;
+import deep.dd.utils.Frame;
+import flash.Vector;
 import deep.dd.display.DisplayNode2D;
+import flash.geom.Vector3D;
+import flash.geom.Matrix3D;
+import deep.dd.material.sprite2d.Sprite2DMaterial;
 import deep.dd.texture.Texture2D;
 import deep.dd.material.Material;
+import deep.dd.display.Sprite2D;
 import deep.dd.camera.Camera2D;
+import deep.dd.display.DisplayNode2D;
+import deep.dd.material.Quad2DMaterial;
 import deep.dd.utils.FastHaxe;
+import flash.display3D.Context3D;
 import hxsl.Shader;
 
-class Cloud2DMaterial extends Material
+class GravityParticle2DMaterial extends Material
 {
     public function new()
     {
@@ -101,7 +110,7 @@ class Cloud2DMaterial extends Material
 class WrapNearestNo extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, nearest, mm_no);
@@ -111,7 +120,7 @@ class WrapNearestNo extends Shader
 class WrapNearestNearest extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, nearest, mm_near);
@@ -121,7 +130,7 @@ class WrapNearestNearest extends Shader
 class WrapNearestLinear extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, nearest, mm_linear);
@@ -131,7 +140,7 @@ class WrapNearestLinear extends Shader
 class WrapLinearNo extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, linear, mm_no);
@@ -141,7 +150,7 @@ class WrapLinearNo extends Shader
 class WrapLinearNearest extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, linear, mm_near);
@@ -151,7 +160,7 @@ class WrapLinearNearest extends Shader
 class WrapLinearLinear extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, wrap, linear, mm_linear);
@@ -161,7 +170,7 @@ class WrapLinearLinear extends Shader
 class ClampNearestNo extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, nearest, mm_no);
@@ -171,7 +180,7 @@ class ClampNearestNo extends Shader
 class ClampNearestNearest extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, nearest, mm_near);
@@ -181,7 +190,7 @@ class ClampNearestNearest extends Shader
 class ClampNearestLinear extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, nearest, mm_linear);
@@ -191,7 +200,7 @@ class ClampNearestLinear extends Shader
 class ClampLinearNo extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, linear, mm_no);
@@ -201,7 +210,7 @@ class ClampLinearNo extends Shader
 class ClampLinearNearest extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, linear, mm_near);
@@ -211,7 +220,7 @@ class ClampLinearNearest extends Shader
 class ClampLinearLinear extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/cloud2d/Cloud2DShader.hxsl");
+        include("./deep/dd/material/cloud2d/GravityParticle2DShader.hxsl");
 
         function texture(t:Texture, uv:Float2)
             return t.get(uv, clamp, linear, mm_linear);

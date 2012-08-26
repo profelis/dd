@@ -1,21 +1,26 @@
 package deep.dd.display.render;
 
+import deep.dd.particle.utils.ParticlePresetBase;
+import deep.dd.particle.utils.ParticlePresetBase;
+import deep.dd.particle.utils.ParticlePresetBase.Bounds;
+import mt.m3d.Color;
+import flash.geom.Vector3D;
 import deep.dd.particle.utils.ParticlePreset;
 
 
-class GPUGravityParticleRender extends ParticleRenderBase
+class GPUGravityParticleRender extends ParticleRenderBase<GravityParticlePreset>
 {
-	public function new()
+	public function new(preset:GravityParticlePreset)
 	{
-		
+		super(preset);
 	}
 }
 
-class GravityParticlePreset extends ParticlePreset<Particle>
+class GravityParticlePreset extends ParticlePresetBase
 {
 	public var startPosition:Bounds<Vector3D>;
 	public var startRotation:Bounds<Vector3D>;
-	
+
 	public var speed:Bounds<Vector3D>;
 
 	public var startScale:Bounds<Float>;
@@ -28,7 +33,6 @@ class GravityParticlePreset extends ParticlePreset<Particle>
 
 	public function new()
 	{
-
 	}
 }
 
@@ -58,8 +62,7 @@ class Particle
 	public var startTime:Float;
 	public var life:Float;
 
-	public var new()
+	public function new()
 	{
-		
 	}
 }

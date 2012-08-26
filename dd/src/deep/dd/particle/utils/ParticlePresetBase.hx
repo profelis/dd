@@ -2,7 +2,6 @@ package deep.dd.particle.utils;
 
 import flash.geom.Vector3D;
 import haxe.rtti.Generic;
-import mt.m3d.Color;
 
 class Bounds<T> implements Generic
 {
@@ -16,9 +15,11 @@ class Bounds<T> implements Generic
 	}
 }
 
-class ParticlePresetBase<T> implements Generic
+class ParticlePresetBase implements Generic
 {
 	public var count:Bounds<UInt>;
 
 	public var life:Bounds<Float>;
+
+    public var spawnNum:UInt;
 }
