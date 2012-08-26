@@ -2,7 +2,7 @@ package mt.m3d;
 
 import flash.geom.Vector3D;
 
-@:final class Color
+class Color
 {
     public var a:Float;
     public var r:Float;

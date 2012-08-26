@@ -38,7 +38,7 @@ class CloudRender extends RenderBase
         this.incSize = incSize;
 
         material = mat = new Cloud2DMaterial();
-        geometry = geom = CloudGeometry.createTexturedCloud(startSize);
+        geometry = geom = CloudGeometry.createTexturedCloud(startSize, PER_VERTEX);
 	}
 
     var geom:CloudGeometry;
