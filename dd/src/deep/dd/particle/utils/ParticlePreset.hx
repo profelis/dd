@@ -21,6 +21,4 @@ class ParticlePresetBase<T> implements Generic
 	public var count:Bounds<UInt>;
 
 	public var life:Bounds<Float>;
-
-	public var startPosition:Bounds<Vector3D>;
 }

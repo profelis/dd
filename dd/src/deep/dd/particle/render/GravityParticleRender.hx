@@ -13,6 +13,7 @@ class GPUGravityParticleRender extends ParticleRenderBase
 
 class GravityParticlePreset extends ParticlePreset<Particle>
 {
+	public var startPosition:Bounds<Vector3D>;
 	public var startRotation:Bounds<Vector3D>;
 	
 	public var speed:Bounds<Vector3D>;
