@@ -13,6 +13,28 @@ import deep.dd.material.sprite2d.Sprite2DMaterial;
 import deep.dd.geometry.Geometry;
 import deep.dd.utils.FastHaxe;
 
+class Batch2D extends SmartSprite2D
+{
+    public function new()
+    {
+        super(batchRender = new deep.dd.display.render.BatchRender());
+    }
+
+    public var batchRender(default, null):deep.dd.display.render.BatchRender;
+}
+
+class Cloud2D extends SmartSprite2D
+{
+
+    public function new(startSize:UInt = 20, incSize:UInt = 20)
+    {
+        super(cloudRender = new deep.dd.display.render.CloudRender(startSize, incSize));
+    }
+
+    public var cloudRender(default, null):deep.dd.display.render.CloudRender;
+
+}
+
 class SmartSprite2D extends Sprite2D
 {
     public function new(render:RenderBase = null)

@@ -80,7 +80,7 @@ class BitmapFontTest extends Test
 
         text.rotationZ = currAngle;
 
-		for (c in text) { c.rotationX = -currAngle; c.rotationY = -currAngle; }
+		for (c in text) { c.rotationX = -currAngle*5; c.rotationY = -currAngle*5; }
 
 		text2.text = Std.string(Lib.getTimer());
 

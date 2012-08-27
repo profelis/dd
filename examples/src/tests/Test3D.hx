@@ -1,13 +1,12 @@
 package tests;
 
+import deep.dd.display.SmartSprite2D;
 import com.bit101.components.Label;
 import com.bit101.components.RadioButton;
 import com.bit101.components.VBox;
 import flash.display.Sprite;
 import haxe.FastList;
-import deep.dd.display.Cloud2D;
 import deep.dd.display.Node2D;
-import deep.dd.display.Batch2D;
 import flash.geom.Vector3D;
 import deep.dd.camera.Camera2D;
 import deep.dd.texture.atlas.parser.SpriteSheetParser;
