@@ -99,7 +99,7 @@ class AtlasTexture2D extends SubTexture2D
 		
 		if (animFrames.length > 0)
 		{
-			AtlasTexture2D.sortPrefix = name;
+			AtlasTexture2D.sortPrefixLength = name.length;
 			AtlasTexture2D.sortFramesInAnimation(animFrames);
 			anim = new Animation(animFrames, name);
 			animationMap.set(name, anim);
@@ -115,12 +115,12 @@ class AtlasTexture2D extends SubTexture2D
 	}
 	
 	// I know that it is a bad practice to use such global variable, but it makes sorting a lot easier
-	static var sortPrefix:String;
+	static var sortPrefixLength:Int;
 	
 	static function frameSortFunction(frame1:Frame, frame2:Frame):Int
-	{                                        // TODO: frame.name.substr(sortPrefix.length)
-		var num1:Int = Std.parseInt(StringTools.replace(frame1.name, AtlasTexture2D.sortPrefix, ""));
-		var num2:Int = Std.parseInt(StringTools.replace(frame2.name, AtlasTexture2D.sortPrefix, ""));
+	{
+		var num1:Int = Std.parseInt(frame1.name.substr(0, AtlasTexture2D.sortPrefixLength));
+		var num2:Int = Std.parseInt(frame2.name.substr(0, AtlasTexture2D.sortPrefixLength));
 		
 		if (num1 > num2)
 		{
