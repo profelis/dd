@@ -1,6 +1,8 @@
 
 package deep.dd.particle.render;
 
+import deep.dd.display.render.BatchRender;
+import deep.dd.display.render.CloudRender;
 import deep.dd.display.SmartSprite2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.utils.FastHaxe;
@@ -13,6 +15,24 @@ import deep.dd.particle.utils.ParticlePresetBase;
 import deep.dd.particle.utils.ParticlePresetBase.Bounds;
 import mt.m3d.Color;
 import flash.geom.Vector3D;
+
+class GravityParticleRenderBuilder
+{
+    static public function gpuRender(preset:GravityParticlePreset)
+    {
+        return new GPUGravityParticleRender(preset);
+    }
+
+    static public function cpuCloudRender(preset:GravityParticlePreset)
+    {
+        return new GravityParticleRender(preset, new CloudRender());
+    }
+
+    static public function cpuBatchRender(preset:GravityParticlePreset)
+    {
+        return new GravityParticleRender(preset, new BatchRender());
+    }
+}
 
 class GravityParticleRender extends ParticleRenderBase
 {
