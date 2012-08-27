@@ -1,5 +1,7 @@
 package ;
 
+import deep.dd.particle.ParticleSystem2D;
+import deep.dd.particle.preset.GravityParticlePreset;
 import deep.dd.display.render.BatchRender;
 import deep.dd.particle.render.GravityParticleRender;
 import deep.dd.display.render.SimpleRender;
@@ -7,10 +9,9 @@ import deep.dd.display.render.CloudRender;
 import deep.dd.display.SmartSprite2D;
 import deep.dd.particle.ParticleSystem2D;
 import deep.dd.particle.render.GravityParticleRender.GPUGravityParticleRender;
-import deep.dd.particle.render.GravityParticleRender.GravityParticlePreset;
 import deep.dd.particle.render.GravityParticleRender;
-import deep.dd.particle.utils.ParticlePresetBase;
-import deep.dd.particle.utils.ParticlePresetBase.Bounds;
+import deep.dd.particle.preset.ParticlePresetBase;
+import deep.dd.particle.preset.ParticlePresetBase.Bounds;
 import deep.dd.utils.Stats;
 import deep.dd.animation.Animator;
 import flash.geom.Vector3D;
@@ -64,8 +65,8 @@ class ParticleTest
 
         preset = new GravityParticlePreset();
         preset.particleNum = 1000;
-        preset.spawnNum = 1;
-        preset.spawnStep = 0.03;
+        preset.spawnNum = 15;
+        preset.spawnStep = 0.02;
         preset.life = new Bounds<Float>(2, 3);
         preset.startPosition = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(400, 0, 0));
         preset.velocity = new Bounds<Vector3D>(new Vector3D(30, 0, 0), new Vector3D(40, 10, 0));
@@ -78,7 +79,7 @@ class ParticleTest
 
 
         //var ps = new ParticleSystem2D(new GravityParticleRender(preset, new CloudRender()));
-        ps = new ParticleSystem2D(new GPUGravityParticleRender(preset));
+        ps = new ParticleSystem2D(GravityParticleRenderBuilder.gpuRender(preset));
         ps.x = 50;
         ps.y = 50;
         ps.blendMode = BlendMode.ADD_A;
@@ -99,7 +100,7 @@ class ParticleTest
     function onClick(_)
     {
         ps.render.dispose();
-        ps.render = new GravityParticleRender(preset, new CloudRender());
+        ps.render = GravityParticleRenderBuilder.cpuCloudRender(preset);
         //world.ctx.dispose();
 		//mc.animator.playAnimation(null);
     }

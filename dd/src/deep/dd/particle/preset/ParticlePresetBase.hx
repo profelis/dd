@@ -1,4 +1,4 @@
-package deep.dd.particle.utils;
+package deep.dd.particle.preset;
 
 import flash.geom.Vector3D;
 import haxe.rtti.Generic;

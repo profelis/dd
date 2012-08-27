@@ -1,7 +1,7 @@
 package deep.dd.particle.render;
 
 import deep.dd.display.render.RenderBase;
-import deep.dd.particle.utils.ParticlePresetBase;
+import deep.dd.particle.preset.ParticlePresetBase;
 
 class ParticleRenderBase extends RenderBase
 {
