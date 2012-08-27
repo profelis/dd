@@ -184,7 +184,7 @@ class CloudRender extends RenderBase
         if (renderSize > 0)
         {
             if (geom.needUpdate) geom.update();
-            geom.allocCloudVBuf();
+            geom.uploadVBuf();
             mat.drawCloud(smartSprite, camera, renderSize);
         }
 

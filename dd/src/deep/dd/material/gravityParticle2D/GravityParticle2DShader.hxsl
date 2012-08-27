@@ -1,30 +1,41 @@
-var input : {
-    startPos : Float3,
-    uv: Float2,
+var input:
+{
+    pos:Float3,
+    uv:Float2,
 
-    velocity : Float3,
+    startPos:Float3,
+    velocity:Float3,
 
-    startColor:Float4,
+    color:Float4,
     dColor:Float4,
 
-    scale:Float2,
+    scale:Float2, // startScale, dScale
 
-    startTime:Float
+    life:Float2,  // startTime, life
 };
 
 var tuv:Float2;
-var cTrans:Float4;
+var tcolor:Float4;
 
-function vertex(mproj:Matrix)
+function vertex(mproj:Matrix, mpos:Matrix, time:Float, gravity:Float3, region:Float4)
 {
-    out = pos.xyzw * mproj;
-    tuv = uv;
-    cTrans = color;
+    var k = frc((time - life.x) / life.y);
+    var t = k * life.y;
+
+    var v = gravity * t + velocity;
+
+    var vertex = pos.xyzw;
+    vertex.xyz *= scale.x + scale.y * k;
+    vertex.xyz += startPos + v * t;
+    out = vertex * mpos * mproj;
+
+    tcolor = color + dColor * k;
+    tuv = uv * region.zw + region.xy;
 }
 
 function fragment(tex:Texture)
 {
-    out = texture(tex, tuv) * cTrans;
+    out = texture(tex, tuv) * tcolor;
 }
 
 /*

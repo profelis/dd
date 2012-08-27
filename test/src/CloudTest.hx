@@ -59,8 +59,6 @@ class CloudTest
 		world.antialiasing = 2;
         world.bgColor.fromInt(0x666666);
 
-
-
         b = new SmartSprite2D(new CloudRender());
         scene.addChild(b);
         b.texture = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));

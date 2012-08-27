@@ -66,7 +66,7 @@ class CloudGeometry extends Geometry
         needUpdate = true;
     }
 
-    inline public function allocCloudVBuf()
+    inline public function uploadVBuf()
     {
         if (vbuf == null)
             poly.vbuf = vbuf = ctx.createVertexBuffer(triangles * 2, perVertex);

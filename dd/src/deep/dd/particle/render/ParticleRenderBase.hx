@@ -1,12 +1,13 @@
-package deep.dd.display.render;
+package deep.dd.particle.render;
 
 import deep.dd.display.render.RenderBase;
+import deep.dd.particle.utils.ParticlePresetBase;
 
-class ParticleRenderBase<ParticlePreset> extends RenderBase
+class ParticleRenderBase extends RenderBase
 {
-	var preset:ParticlePreset;
+	var preset:ParticlePresetBase;
 
-	public function new(preset:ParticlePreset)
+	public function new(preset:ParticlePresetBase)
 	{
 		this.preset = preset;
 	}

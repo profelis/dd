@@ -18,7 +18,7 @@ class RenderBase
 	function set_smartSprite(s)
 	{
 		#if debug
-		if (smartSprite != null) "render using. Use render.copy()";
+		if (smartSprite != null) "can't reasing render. Use render.copy()";
 		#end
 
 		return smartSprite = s;
