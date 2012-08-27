@@ -13,8 +13,8 @@
 
 #-D shaderDebug
 #-D shaderCompDebug
--debug
+#-debug
 -D dd_stat
--D fdb
+#-D fdb
 #--no-inline
 

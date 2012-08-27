@@ -1,12 +1,14 @@
 
 package deep.dd.particle.render;
 
+import deep.dd.utils.FastHaxe;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.render.RenderBase;
 import deep.dd.geometry.CloudGeometry;
 import deep.dd.geometry.Geometry;
 import deep.dd.material.gravityParticle2D.GravityParticle2DMaterial;
 import deep.dd.particle.utils.ParticlePresetBase;
+import deep.dd.particle.utils.ParticlePresetBase.Bounds;
 import mt.m3d.Color;
 import flash.geom.Vector3D;
 
@@ -17,9 +19,9 @@ class GPUGravityParticleRender extends ParticleRenderBase
 
 	public function new(preset:GravityParticlePreset)
 	{
-		super(gravityPreset = preset);
+        geometry = gravityGeometry = CloudGeometry.createTexturedCloud(1, PER_VERTEX, 1, 1, -0.5, -0.5);
 
-		geometry = gravityGeometry = CloudGeometry.createTexturedCloud(preset.particleNum, PER_VERTEX, 1, 1, -0.5, -0.5);
+        super(gravityPreset = preset);
 
 		material = gravityMaterial = new GravityParticle2DMaterial();
 
@@ -36,6 +38,22 @@ class GPUGravityParticleRender extends ParticleRenderBase
 	var size:UInt = 0;
 	var lastSpawn:Float = 0;
 
+    override function set_preset(p:ParticlePresetBase):ParticlePresetBase
+    {
+        #if debug
+        if (!FastHaxe.is(p, GravityParticlePreset)) throw "preset must be GravityParticlePreset";
+        #end
+
+        gravityPreset = flash.Lib.as(p, GravityParticlePreset);
+        super.set_preset(p);
+        size = 0;
+        lastSpawn = 0;
+
+        gravityGeometry.resizeCloud(preset.particleNum);
+
+        return p;
+    }
+
 	override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
 	{
 		#if debug
@@ -45,19 +63,23 @@ class GPUGravityParticleRender extends ParticleRenderBase
         }
         #end
 
-        var time = smartSprite.scene.time;
-		if (size < gravityPreset.particleNum && (time - lastSpawn) > gravityPreset.spawnStep)
-		{
-			var spawn:Int = Std.int(Math.min(gravityPreset.particleNum - size, gravityPreset.spawnNum));
-			
-			for (i in 0...spawn)
-			{
-				fillBuffer(time, size + i);
-			}
-			size += spawn;
 
-			gravityGeometry.uploadVBuf();
-			lastSpawn = time;
+		if (size < gravityPreset.particleNum)
+		{
+            var time = smartSprite.scene.time;
+            if (size == 0 || (time - lastSpawn) > gravityPreset.spawnStep)
+            {
+                var spawn:Int = Std.int(Math.min(gravityPreset.particleNum - size, gravityPreset.spawnNum));
+
+                for (i in 0...spawn)
+                {
+                    fillBuffer(time, size + i);
+                }
+                size += spawn;
+
+                gravityGeometry.uploadVBuf();
+                lastSpawn = time;
+            }
 		}
 
 		gravityMaterial.drawParticleSystem(smartSprite, camera, size, gravityPreset.gravity);

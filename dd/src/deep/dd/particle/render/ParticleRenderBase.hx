@@ -5,7 +5,15 @@ import deep.dd.particle.utils.ParticlePresetBase;
 
 class ParticleRenderBase extends RenderBase
 {
-	var preset:ParticlePresetBase;
+	public var preset(default, set_preset):ParticlePresetBase;
+
+    function set_preset(p:ParticlePresetBase):ParticlePresetBase
+    {
+        #if debug
+        if (p == null) throw "preset can't be null";
+        #end
+        return preset = p;
+    }
 
 	public function new(preset:ParticlePresetBase)
 	{

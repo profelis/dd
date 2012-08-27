@@ -1,11 +1,15 @@
 package ;
 
+import deep.dd.particle.render.GravityParticleRender;
 import deep.dd.display.render.SimpleRender;
 import deep.dd.display.render.CloudRender;
 import deep.dd.display.SmartSprite2D;
 import deep.dd.particle.ParticleSystem2D;
+import deep.dd.particle.render.GravityParticleRender.GPUGravityParticleRender;
+import deep.dd.particle.render.GravityParticleRender.GravityParticlePreset;
 import deep.dd.particle.render.GravityParticleRender;
 import deep.dd.particle.utils.ParticlePresetBase;
+import deep.dd.particle.utils.ParticlePresetBase.Bounds;
 import deep.dd.utils.Stats;
 import deep.dd.display.Cloud2D;
 import deep.dd.animation.Animator;
@@ -52,27 +56,27 @@ class ParticleTest
         world.scene = scene = new Scene2D();
 
 		world.antialiasing = 2;
-        world.bgColor.fromInt(0x666666);
+        world.bgColor.fromInt(0x333333);
 
         var texture = world.cache.getTexture(Image);
 
         var preset:GravityParticlePreset = new GravityParticlePreset();
-        preset.particleNum = 100;
-        preset.spawnNum = 5;
-        preset.spawnStep = 0.2;
-        preset.life = new Bounds<Float>(3, 5);
-        preset.startPosition = new Bounds<Vector3D>(new Vector3D(0, 0, 0));
-        preset.velocity = new Bounds<Vector3D>(new Vector3D(1.6, 0, 0), new Vector3D(2.6, 0, 0));
-        preset.startColor = new Bounds<Color>(new Color(1, 1, 1, 0.4));
-        preset.endColor = new Bounds<Color>(new Color(0, 0, 0, 0.1), new Color(1, 1, 1, 0.1));
-        preset.gravity = new Vector3D(0, 0.2, 0);
-        preset.startScale = new Bounds<Float>(1);
-        preset.endScale = new Bounds<Float>(0.1);
+        preset.particleNum = 500;
+        preset.spawnNum = 10;
+        preset.spawnStep = 0.05;
+        preset.life = new Bounds<Float>(2, 3);
+        preset.startPosition = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(400, 0, 0));
+        preset.velocity = new Bounds<Vector3D>(new Vector3D(1, 0, 0), new Vector3D(1.2, 0, 0));
+        preset.startColor = new Bounds<Color>(new Color(1, 1, 1, 0.6));
+        preset.endColor = new Bounds<Color>(new Color(0, 0, 0, 0.01), new Color(1, 1, 1, 0.01));
+        preset.gravity = new Vector3D(0, 1.5, 0);
+        preset.startScale = new Bounds<Float>(0.5);
+        preset.endScale = new Bounds<Float>(0.05);
 
 
         var ps = new ParticleSystem2D(new GPUGravityParticleRender(preset));
-        ps.x = 100;
-        ps.y = 100;
+        ps.x = 50;
+        ps.y = 50;
         ps.blendMode = BlendMode.ADD_A;
         ps.texture = texture;
         scene.addChild(ps);

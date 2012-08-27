@@ -22,14 +22,9 @@ class Cloud2DMaterial extends Material
         shaderRef = SHADERS.get(texOpt & 0x60).get(texOpt & 0x18).get(texOpt & 0x7);
     }
 
-    public function drawCloud(node:DisplayNode2D, camera:Camera2D, renderSize:UInt)
+    public function drawCloud(node:SmartSprite2D, camera:Camera2D, renderSize:UInt)
     {
-        #if debug
-        if (!FastHaxe.is(node, SmartSprite2D)) throw "Cloud2DMaterial can't draw " + node;
-        #end
-
-        var sp:SmartSprite2D = flash.Lib.as(node, SmartSprite2D);
-        var tex = sp.texture;
+        var tex = node.texture;
 
         if (texOpt != tex.options)
         {
