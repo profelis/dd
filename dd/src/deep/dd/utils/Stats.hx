@@ -32,7 +32,7 @@ class Stats extends Sprite {
     static inline var GRAPH_WIDTH : Int = 70;
     static inline var XPOS : Int = 69;//width - 1
     static inline var GRAPH_HEIGHT : Int = 50;
-    static inline var TEXT_HEIGHT : Int = #if dd_stat 80 #else 50 #end;
+    static inline var TEXT_HEIGHT : Int = #if dd_stat 90 #else 60 #end;
 
     private var xml : XML;
 
@@ -153,7 +153,7 @@ class Stats extends Sprite {
 
     function onRollOut(_)
     {
-        text.height = #if dd_stat 80 #else 50 #end;
+        text.height = #if dd_stat 90 #else 60 #end;
         addEventListener(Event.ENTER_FRAME, update);
     }
 

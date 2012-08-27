@@ -33,6 +33,8 @@ class BatchRender extends RenderBase
         mpos = new Vector<Matrix3D>(MAX_SIZE, true);
         cTrans = new Vector<Vector3D>(MAX_SIZE, true);
         regions = new Vector<Vector3D>(MAX_SIZE, true);
+
+        ignoreInBatch = true;
 	}
 
     override public function copy():RenderBase

@@ -16,7 +16,7 @@ class Geometry
     public var ibuf(default, null):IndexBuffer3D;
     public var vbuf(default, null):VertexBuffer3D;
 
-    public function new(?p:Poly2D)
+    function new(?p:Poly2D)
     {
         this.poly = p;
     }

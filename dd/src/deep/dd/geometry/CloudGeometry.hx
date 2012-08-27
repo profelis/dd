@@ -4,12 +4,13 @@ import deep.dd.display.render.CloudRender;
 
 class CloudGeometry extends Geometry
 {
-    static public function createTexturedCloud(size:UInt, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):CloudGeometry
+    static public function createTexturedCloud(size:UInt, perVertex:UInt, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):CloudGeometry
     {
         var g:CloudGeometry = Geometry.create(CloudGeometry, true, width, height, 1, 1, offsetX, offsetY);
         g.resizable = false;
 
-        g.rawVBuf = new flash.Vector<Float>(4 * CloudRender.PER_VERTEX, true);
+        g.perVertex = perVertex;
+        g.rawVBuf = new flash.Vector<Float>(4 * perVertex, true);
         for (i in 0...g.rawVBuf.length)
         {
             g.rawVBuf[i] = 0;
@@ -23,6 +24,8 @@ class CloudGeometry extends Geometry
         return g;
     }
 
+    var perVertex:UInt;
+
     public var rawVBuf:flash.Vector<Float>;
 
     public function resizeCloud(size:UInt)
@@ -34,7 +37,7 @@ class CloudGeometry extends Geometry
 
         poly.idx.fixed = false;
         rawVBuf.fixed = false;
-        rawVBuf.length = size * 4 * CloudRender.PER_VERTEX;
+        rawVBuf.length = size * 4 * perVertex;
 
         if (csize > size)
         {
@@ -49,7 +52,7 @@ class CloudGeometry extends Geometry
                 for (i in is) poly.idx.push(Std.int(n * 4 + i));
             }
 
-            for (i in csize * 4 * CloudRender.PER_VERTEX...size * 4 * CloudRender.PER_VERTEX)
+            for (i in csize * 4 * perVertex...size * 4 * perVertex)
             {
                 rawVBuf[i] = 0;
             }
@@ -63,10 +66,10 @@ class CloudGeometry extends Geometry
         needUpdate = true;
     }
 
-    inline public function allocCloudVBuf()
+    inline public function uploadVBuf()
     {
         if (vbuf == null)
-            poly.vbuf = vbuf = ctx.createVertexBuffer(triangles * 2, CloudRender.PER_VERTEX);
+            poly.vbuf = vbuf = ctx.createVertexBuffer(triangles * 2, perVertex);
 
         vbuf.uploadFromVector(rawVBuf, 0, triangles * 2);
     }
