@@ -1,8 +1,6 @@
 
 package deep.dd.particle.render;
 
-import deep.dd.display.render.BatchRender;
-import deep.dd.display.render.CloudRender;
 import deep.dd.display.SmartSprite2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.utils.FastHaxe;
@@ -25,12 +23,12 @@ class GravityParticleRenderBuilder
 
     static public function cpuCloudRender(preset:GravityParticlePreset)
     {
-        return new GravityParticleRender(preset, new CloudRender());
+        return new GravityParticleRender(preset, new deep.dd.display.render.CloudRender());
     }
 
     static public function cpuBatchRender(preset:GravityParticlePreset)
     {
-        return new GravityParticleRender(preset, new BatchRender());
+        return new GravityParticleRender(preset, new deep.dd.display.render.BatchRender());
     }
 }
 
@@ -122,7 +120,7 @@ class GravityParticleRender extends ParticleRenderBase
                 for (i in 0...spawn)
                 {
                     var idx = size + i;
-                    var p:Particle = cast preset.createParticle();
+                    var p:Particle = gravityPreset.createParticle();
                     p.startTime = time;
                     particles[idx] = p;
 
@@ -255,7 +253,6 @@ class GPUGravityParticleRender extends ParticleRenderBase
             }
 		}
 
-
 		gravityMaterial.drawParticleSystem(smartSprite, camera, size, gravityPreset.gravity);
 
 		for (i in smartSprite.children) if (i.visible) i.drawStep(camera);
@@ -263,7 +260,7 @@ class GPUGravityParticleRender extends ParticleRenderBase
 
 	inline function fillBuffer(time, pos:Int)
 	{
-		var p:Particle = flash.Lib.as(gravityPreset.createParticle(), Particle);
+		var p:Particle = gravityPreset.createParticle();
 		p.startTime = time;
 
 		var buf = gravityGeometry.rawVBuf;
@@ -337,11 +334,9 @@ class GravityParticlePreset extends ParticlePresetBase
 
 	public var gravity:Vector3D;
 
-	public function new()
-	{
-	}
+	public function new() {}
 
-	override public function createParticle():Particle
+	inline public function createParticle():Particle
 	{
 		var res:Particle = new Particle();
 
@@ -399,7 +394,5 @@ class Particle extends ParticleBase
 	public var scale:Float;
 	public var dScale:Float;
 
-	public function new()
-	{
-	}
+	public function new() {}
 }

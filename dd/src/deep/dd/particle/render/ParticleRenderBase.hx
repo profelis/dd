@@ -15,7 +15,7 @@ class ParticleRenderBase extends RenderBase
         return preset = p;
     }
 
-	public function new(preset:ParticlePresetBase)
+	function new(preset:ParticlePresetBase)
 	{
 		this.preset = preset;
         ignoreInBatch = true;

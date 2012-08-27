@@ -11,12 +11,6 @@ class ParticlePresetBase
     public var spawnStep:Float;
 
 	public var life:Bounds<Float>;
-
-	public function createParticle():ParticleBase
-	{
-		throw "Not implemented";
-		return null;
-	}
 }
 
 class ParticleBase
