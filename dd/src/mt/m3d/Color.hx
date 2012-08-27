@@ -62,14 +62,6 @@ class Color
         b *= c.b;
     }
 
-    public inline function substract(c:Color)
-    {
-        a = clamp(a - c.a);
-        r = clamp(r - c.r);
-        g = clamp(g - c.g);
-        b = clamp(b - c.b);
-    }
-
     inline public function copy():Color
     {
         return new Color(r, g, b, a);

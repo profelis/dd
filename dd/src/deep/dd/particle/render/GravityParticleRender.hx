@@ -1,6 +1,7 @@
 
 package deep.dd.particle.render;
 
+import flash.geom.Matrix3D;
 import deep.dd.display.SmartSprite2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.utils.FastHaxe;
@@ -124,8 +125,12 @@ class GravityParticleRender extends ParticleRenderBase
                     p.startTime = time;
                     particles[idx] = p;
 
-                    if (sprites[idx] == null) sprites[idx] = new Sprite2D();
-                    smartSprite.addChild(sprites[idx]);
+                    var s = sprites[idx];
+                    if (s == null) sprites[idx] = s = new Sprite2D();
+                    smartSprite.addChild(s);
+                    s.rotationX = p.startRotation.x;
+                    s.rotationY = p.startRotation.y;
+                    s.rotationZ = p.startRotation.z;
                 }
                 size += spawn;
                 lastSpawn = time;
@@ -262,13 +267,18 @@ class GPUGravityParticleRender extends ParticleRenderBase
 	{
 		var p:Particle = gravityPreset.createParticle();
 		p.startTime = time;
+        var m:Matrix3D = new Matrix3D();
+        m.appendRotation(p.startRotation.z, Vector3D.Z_AXIS);
+        m.appendRotation(p.startRotation.y, Vector3D.Y_AXIS);
+        m.appendRotation(p.startRotation.x, Vector3D.X_AXIS);
 
 		var buf = gravityGeometry.rawVBuf;
 
 		var i = pos * PER_VERTEX * 4;
 		for (idx in 0...4)
 		{
-			var v = poly.points[idx];
+			var v = poly.points[idx].toVector();
+            v = m.transformVector(v);
 			buf[i++] = v.x;
 			buf[i++] = v.y;
 			buf[i++] = v.z;
@@ -323,6 +333,7 @@ class GPUGravityParticleRender extends ParticleRenderBase
 class GravityParticlePreset extends ParticlePresetBase
 {
 	public var startPosition:Bounds<Vector3D>;
+	public var startRotation:Bounds<Vector3D>;
 
 	public var velocity:Bounds<Vector3D>;
 
@@ -367,6 +378,8 @@ class GravityParticlePreset extends ParticlePresetBase
 		res.db = dc.b - c.b;
 		res.da = dc.a - c.a;
 
+        res.startRotation = BoundsTools.randomVector(startRotation);
+
 		return res;
 	}
 }
@@ -393,6 +406,8 @@ class Particle extends ParticleBase
 
 	public var scale:Float;
 	public var dScale:Float;
+
+    public var startRotation:Vector3D;
 
 	public function new() {}
 }

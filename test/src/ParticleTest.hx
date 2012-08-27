@@ -63,8 +63,8 @@ class ParticleTest
         var texture = world.cache.getTexture(Image);
 
         preset = new GravityParticlePreset();
-        preset.particleNum = 15000;
-        preset.spawnNum = 100;
+        preset.particleNum = 1000;
+        preset.spawnNum = 1;
         preset.spawnStep = 0.03;
         preset.life = new Bounds<Float>(2, 3);
         preset.startPosition = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(400, 0, 0));
@@ -74,6 +74,7 @@ class ParticleTest
         preset.gravity = new Vector3D(0, 100, 0);
         preset.startScale = new Bounds<Float>(0.5);
         preset.endScale = new Bounds<Float>(0.05);
+        preset.startRotation = new Bounds<Vector3D>(new Vector3D(0, 0, 45));
 
 
         //var ps = new ParticleSystem2D(new GravityParticleRender(preset, new CloudRender()));
