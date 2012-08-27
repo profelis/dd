@@ -17,15 +17,17 @@ var input:
 var tuv:Float2;
 var cTrans:Float4;
 
-function vertex(mproj:Matrix, mpos:Matrix, time:Float, gravity:Float3, region:Float4, texSize:Float2)
+function vertex(mproj:Matrix, mpos:Matrix, time:Float, gravity:Float3, region:Float4, texSize:Float2, pcTrans:Float4)
 {
     var k = frc((time - life.x) / life.y);   // k = [0,1]
     var t = k * life.y;                      // t = [0, life]
 
-    var v = gravity * t + velocity;          // velocity
-
     var vertex = pos.xyzw;
     vertex.xyz *= scale.x + scale.y * k;     // vertex *= scale
+
+    var v = velocity;                        // velocity
+    v.xy /= texSize.xy;
+    v += gravity * t;                        // velocity += gravity * t
 
     var dt = startPos;
     dt.xy /= texSize.xy;
@@ -33,7 +35,7 @@ function vertex(mproj:Matrix, mpos:Matrix, time:Float, gravity:Float3, region:Fl
 
     out = vertex * mpos * mproj;             // out
 
-    cTrans = color + dColor * k;             // tcolor = [startColor, endColor]
+    cTrans = pcTrans * (color + dColor * k); // cTrans = parentColor * [startColor, endColor]
     tuv = uv * region.zw + region.xy;
 }
 

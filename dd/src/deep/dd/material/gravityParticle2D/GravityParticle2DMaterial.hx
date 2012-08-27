@@ -24,6 +24,7 @@ class GravityParticle2DMaterial extends Material
     {
         super(null);
         texSize = new Vector3D();
+        gravity = new Vector3D();
     }
 
     var texOpt:UInt = 0;
@@ -34,6 +35,7 @@ class GravityParticle2DMaterial extends Material
     }
 
     var texSize:Vector3D;
+    var gravity:Vector3D;
 
     public function drawParticleSystem(node:SmartSprite2D, camera:Camera2D, renderSize:UInt, gravity:Vector3D)
     {
@@ -49,7 +51,9 @@ class GravityParticle2DMaterial extends Material
         texSize.x = tex.width;
         texSize.y = tex.height;
 
-        untyped shader.init({time:node.scene.time, mproj:camera.proj, mpos:node.drawTransform, gravity:gravity, region:tex.frame.region, texSize:texSize}, {tex:tex.texture});
+        this.gravity.setTo(gravity.x / texSize.x, gravity.y / texSize.y, gravity.z);
+
+        untyped shader.init({time:node.scene.time, mproj:camera.proj, mpos:node.drawTransform, gravity:this.gravity, region:tex.frame.region, texSize:texSize, pcTrans:node.worldColorTransform}, {tex:tex.texture});
 
         #if dd_stat
         node.world.statistics.drawCalls ++;

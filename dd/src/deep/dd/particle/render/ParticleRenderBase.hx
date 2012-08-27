@@ -18,5 +18,6 @@ class ParticleRenderBase extends RenderBase
 	public function new(preset:ParticlePresetBase)
 	{
 		this.preset = preset;
+        ignoreInBatch = true;
 	}
 }

@@ -1,5 +1,6 @@
 package ;
 
+import deep.dd.display.render.BatchRender;
 import deep.dd.particle.render.GravityParticleRender;
 import deep.dd.display.render.SimpleRender;
 import deep.dd.display.render.CloudRender;
@@ -43,6 +44,9 @@ class ParticleTest
     var world:World2D;
     var scene:Scene2D;
 
+    var preset:GravityParticlePreset;
+    var ps:ParticleSystem2D;
+
     public function new()
     {
         var s = flash.Lib.current.stage;
@@ -60,21 +64,22 @@ class ParticleTest
 
         var texture = world.cache.getTexture(Image);
 
-        var preset:GravityParticlePreset = new GravityParticlePreset();
-        preset.particleNum = 500;
-        preset.spawnNum = 10;
-        preset.spawnStep = 0.05;
+        preset = new GravityParticlePreset();
+        preset.particleNum = 15000;
+        preset.spawnNum = 100;
+        preset.spawnStep = 0.03;
         preset.life = new Bounds<Float>(2, 3);
         preset.startPosition = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(400, 0, 0));
-        preset.velocity = new Bounds<Vector3D>(new Vector3D(1, 0, 0), new Vector3D(1.2, 0, 0));
+        preset.velocity = new Bounds<Vector3D>(new Vector3D(30, 0, 0), new Vector3D(40, 10, 0));
         preset.startColor = new Bounds<Color>(new Color(1, 1, 1, 0.6));
         preset.endColor = new Bounds<Color>(new Color(0, 0, 0, 0.01), new Color(1, 1, 1, 0.01));
-        preset.gravity = new Vector3D(0, 1.5, 0);
+        preset.gravity = new Vector3D(0, 100, 0);
         preset.startScale = new Bounds<Float>(0.5);
         preset.endScale = new Bounds<Float>(0.05);
 
 
-        var ps = new ParticleSystem2D(new GPUGravityParticleRender(preset));
+        //var ps = new ParticleSystem2D(new GravityParticleRender(preset, new CloudRender()));
+        ps = new ParticleSystem2D(new GPUGravityParticleRender(preset));
         ps.x = 50;
         ps.y = 50;
         ps.blendMode = BlendMode.ADD_A;
@@ -94,6 +99,8 @@ class ParticleTest
 
     function onClick(_)
     {
+        ps.render.dispose();
+        ps.render = new GravityParticleRender(preset, new CloudRender());
         //world.ctx.dispose();
 		//mc.animator.playAnimation(null);
     }
