@@ -1,6 +1,7 @@
 package ;
 
 import tests.BitmapFontTest;
+import tests.TextFieldTest;
 import tests.Test3DSmart;
 import com.bit101.components.Style;
 import flash.text.TextFieldAutoSize;
@@ -57,7 +58,7 @@ class Main extends Sprite
 
 
 
-		scenes = [TestQuad, BitmapFontTest, Test3D, Test3DSmart];
+		scenes = [TestQuad, BitmapFontTest, TextFieldTest, Test3D, Test3DSmart];
 
 
 

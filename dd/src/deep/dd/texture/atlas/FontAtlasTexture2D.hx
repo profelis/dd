@@ -55,15 +55,7 @@ class FontAtlasTexture2D extends AtlasTexture2D
 			var glyph:Frame = glyphs.get(char);
 			if (glyph != null)
 			{
-				// TODO: frame.width contains border.width
-				if (glyph.border != null)
-				{
-					w += glyph.border.width;
-				}
-				else
-				{
-					w += glyph.width;
-				}
+				w += glyph.width;
 			}
 			else if (char == " ")
 			{
