@@ -42,7 +42,6 @@ class RadialParticlePreset extends ParticlePresetBase
 
         res.radius = BoundsTools.randomFloat(startRadius);
         res.dRadius = BoundsTools.randomFloat(endRadius) - res.radius;
-        trace(res.dRadius);
 
         res.scale = BoundsTools.randomFloat(startScale);
         res.dScale = BoundsTools.randomFloat(endScale) - res.scale;

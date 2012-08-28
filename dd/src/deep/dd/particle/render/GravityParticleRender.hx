@@ -1,6 +1,7 @@
 
 package deep.dd.particle.render;
 
+import deep.dd.particle.render.ParticleRenderBase;
 import deep.dd.material.gravityParticle2D.GravityParticle2DMaterial;
 import deep.dd.particle.preset.GravityParticlePreset;
 import flash.geom.Matrix3D;
@@ -34,33 +35,18 @@ class GravityParticleRenderBuilder
     }
 }
 
-class GravityParticleRender extends ParticleRenderBase
+class GravityParticleRender extends CPUParticleRenderBase
 {
     public function new(preset:GravityParticlePreset, render:RenderBase)
     {
-        #if debug
-        if (FastHaxe.is(render, ParticleRenderBase)) throw "render must be simple render (CloudRender, BatchRender)";
-        if (render.smartSprite != null) throw "render in use";
-        #end
-
-        this.render = render;
-
-        geometry = render.geometry;
-        material = render.material;
-        ignoreInBatch = render.ignoreInBatch;
-
-        sprites = new flash.Vector<Sprite2D>();
         particles = new flash.Vector<Particle>();
 
-        super(preset);
+        super(preset, render);
     }
 
     var gravityPreset:GravityParticlePreset;
 
-    var render:RenderBase;
-
     var particles:flash.Vector<Particle>;
-    var sprites:flash.Vector<Sprite2D>;
 
     override function set_preset(p:ParticlePresetBase):ParticlePresetBase
     {
@@ -71,42 +57,13 @@ class GravityParticleRender extends ParticleRenderBase
         gravityPreset = flash.Lib.as(p, GravityParticlePreset);
         super.set_preset(gravityPreset);
 
-        size = 0;
-
         particles.fixed = false;
-        sprites.fixed = false;
-
         particles.length = gravityPreset.particleNum;
-        sprites.length = gravityPreset.particleNum;
-
         particles.fixed = true;
-        sprites.fixed = true;
-
-        if (smartSprite != null)
-        {
-            for (s in sprites)
-                if (smartSprite.contains(s)) smartSprite.removeChild(s);
-        }
 
         return p;
     }
 
-    override function set_smartSprite(v:SmartSprite2D):SmartSprite2D
-    {
-        if (smartSprite != null)
-        {
-            for (s in sprites)
-                if (smartSprite.contains(s)) smartSprite.removeChild(s);
-        }
-
-        render.smartSprite = v;
-
-        for (i in 0...size) v.addChild(sprites[i]);
-
-        return super.set_smartSprite(v);
-    }
-
-    var size:UInt = 0;
     var lastSpawn:Float = 0;
 
     override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
@@ -177,14 +134,8 @@ class GravityParticleRender extends ParticleRenderBase
     {
         super.dispose(deep);
 
-        render.dispose(false);
-        render = null;
-
         gravityPreset = null;
-
         particles = null;
-        for (s in sprites) if (s != null) s.dispose();
-        sprites = null;
     }
 }
 
