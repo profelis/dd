@@ -19,9 +19,7 @@ import flash.Lib;
 class TextFieldTest extends Test
 {
 	var text:TextField2D;
-	var fieldWidth:Float;
-	var fieldHeight:Float;
-	
+
 	public function new(wrld:World2D) 
 	{
 		super(wrld);
@@ -35,19 +33,20 @@ class TextFieldTest extends Test
 		field.width = field.textWidth;
 		field.height = field.textHeight * 2;
 		
-		fieldWidth = field.width;
-		fieldHeight = field.height;
+		var fieldWidth = field.width;
+		var fieldHeight = field.height;
 		
 		text = new TextField2D(field);
 		text.pivot = new Vector3D(fieldWidth * 0.5, fieldHeight * 0.5, 0);
+
+        text.x = (world.width - fieldWidth) * 0.5;
+        text.y = (world.height - fieldHeight) * 0.5;
 		
 		wrld.scene.addChild(text);
 	}
 	
 	override public function drawStep(camera:Camera2D):Void
 	{
-		text.x = (world.width - fieldWidth) * 0.5;
-		text.y = (world.height - fieldHeight) * 0.5;
 		text.rotationZ += 2;
 		text.rotationX += 1;
 		text.scaleX = text.scaleY = sin0_1(time);
