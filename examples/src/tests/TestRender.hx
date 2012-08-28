@@ -22,10 +22,10 @@ import deep.dd.World2D;
 
 @:bitmap("../assets/test3d/haxe.png") class ImageSmart extends BitmapData {}
 
-class Test3DSmart extends Test
+class TestRender extends Test
 {
-    inline static var nx = 130;
-    inline static var ny = 100;
+    inline static var nx = 26;
+    inline static var ny = 30;
 
     var c:SmartSprite2D;
     var t:AtlasTexture2D;
@@ -44,9 +44,9 @@ class Test3DSmart extends Test
         t = new AtlasTexture2D(world.cache.getBitmapTexture(bmp), new SpriteSheetParser(iw, ih));
 
         c = new SmartSprite2D();
-        c.scaleX = c.scaleY = 2;
         c.texture = t;
         scene.addChild(c);
+
         var pivot = new Vector3D(iw * 0.5, ih * 0.5);
         for (y in 0...ny)
         {
@@ -54,7 +54,7 @@ class Test3DSmart extends Test
             {
                 var s = new Sprite2D();
                 s.texture = t.getTextureById(Std.int(y * nx + x));
-                //s.pivot = pivot;
+                s.pivot = pivot;
                 s.x = x * iw - bmp.width * 0.5;
                 s.y = y * ih - bmp.height * 0.5;
                 c.addChild(s);
@@ -81,7 +81,7 @@ class Test3DSmart extends Test
 
     function initSimple(?_)
     {
-        reInit(new SimpleRender());
+        reInit(new SimpleRender(false));
     }
 
     function initBatch(?_)
@@ -92,9 +92,6 @@ class Test3DSmart extends Test
     function initCloud(?_)
     {
         reInit(new CloudRender());
-
-        // cloud auto size test
-        // world.stage.addEventListener("click", function (_) { for (i in 0...40) {c.removeChild(list.first()); list.remove(list.first());} });
     }
 
     function reInit(r:RenderBase)
@@ -106,12 +103,10 @@ class Test3DSmart extends Test
 
     override public function drawStep(camera:Camera2D):Void
     {
-
         for (i in c.children)
         {
-            //i.rotationX += 1.5;
-            //i.rotationY += 1.5;
-            i.rotationZ += 10;
+            i.rotationX += 2;
+            i.rotationY += 2;
         }
 
         super.drawStep(camera);
