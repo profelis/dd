@@ -1,6 +1,7 @@
 package tests;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Sprite2D;
+import flash.geom.Vector3D;
 import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
@@ -17,7 +18,7 @@ import flash.Lib;
 
 class TextFieldTest extends Test
 {
-	var textWrapper:Sprite2D;
+	var text:TextField2D;
 	
 	public function new(wrld:World2D) 
 	{
@@ -32,24 +33,19 @@ class TextFieldTest extends Test
 		field.width = field.textWidth;
 		field.height = field.textHeight * 2;
 		
-		var text:TextField2D = new TextField2D(field);
+		text = new TextField2D(field);
+		text.pivot = new Vector3D(field.width * 0.5, field.height * 0.5, 0);
 		
-		textWrapper = new Sprite2D();
-		textWrapper.addChild(text);
-		text.x = -field.width * 0.5;
-		text.y = -field.height * 0.5;
-		
-		wrld.scene.addChild(textWrapper);
+		wrld.scene.addChild(text);
 	}
 	
 	override public function drawStep(camera:Camera2D):Void
 	{
-		var time:Float = Lib.getTimer() / 1000;
-		textWrapper.x = world.width * 0.5;
-		textWrapper.y = world.height * 0.5;
-		textWrapper.rotationZ += 2;
-		textWrapper.rotationX += 1;
-		textWrapper.scaleX = textWrapper.scaleY = sin0_1(time);
+		text.x = world.width * 0.5;
+		text.y = world.height * 0.5;
+		text.rotationZ += 2;
+		text.rotationX += 1;
+		text.scaleX = text.scaleY = sin0_1(time);
 
         super.drawStep(camera);
 	}
@@ -57,7 +53,7 @@ class TextFieldTest extends Test
 	override public function dispose():Void 
 	{
 		super.dispose();
-		textWrapper = null;
+		text = null;
 	}
 	
 	function sin0_1(t:Float):Float 
