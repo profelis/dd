@@ -40,7 +40,7 @@ class Texture2D
 
     var ctx:Context3D;
 
-	public function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
+	function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
     {
         this.options = options;
     }

@@ -40,7 +40,7 @@ class Sprite2DMaterial extends Material
         {
             texOpt = tex.options;
             updateShaderRef();
-            updateShader();
+            attachShader();
         }
 
         untyped shader.init({mpos:sp.drawTransform, mproj:camera.proj, region:sp.textureFrame.region}, {tex:tex.texture, cTrans:node.worldColorTransform});

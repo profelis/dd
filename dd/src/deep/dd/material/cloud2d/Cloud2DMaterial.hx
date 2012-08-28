@@ -30,7 +30,7 @@ class Cloud2DMaterial extends Material
         {
             texOpt = tex.options;
             updateShaderRef();
-            updateShader();
+            attachShader();
         }
 
         untyped shader.init({mproj:camera.proj}, {tex:tex.texture});

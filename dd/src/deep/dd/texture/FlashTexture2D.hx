@@ -19,7 +19,7 @@ class FlashTexture2D extends Texture2D
 
     public var autoUpdate:Bool;
 
-    public function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
     {
         super(options);
     }

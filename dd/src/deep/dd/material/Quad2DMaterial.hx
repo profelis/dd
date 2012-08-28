@@ -18,8 +18,6 @@ class Quad2DMaterial extends Material
 
         super.draw(node, camera);
     }
-
-
 }
 
 class QuadShader extends Shader

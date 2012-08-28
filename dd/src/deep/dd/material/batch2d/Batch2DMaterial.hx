@@ -5,13 +5,11 @@ import flash.Vector;
 import deep.dd.display.DisplayNode2D;
 import flash.geom.Vector3D;
 import flash.geom.Matrix3D;
-import deep.dd.material.sprite2d.Sprite2DMaterial;
 import deep.dd.texture.Texture2D;
 import deep.dd.material.Material;
 import deep.dd.display.Sprite2D;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.DisplayNode2D;
-import deep.dd.material.Quad2DMaterial;
 import flash.display3D.Context3D;
 import hxsl.Shader;
 
@@ -37,7 +35,7 @@ class Batch2DMaterial extends Material
         {
             texOpt = tex.options;
             updateShaderRef();
-            updateShader();
+            attachShader();
         }
 
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);

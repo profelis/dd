@@ -45,7 +45,7 @@ class GravityParticle2DMaterial extends Material
         {
             texOpt = tex.options;
             updateShaderRef();
-            updateShader();
+            attachShader();
         }
 
         texSize.x = tex.width;

@@ -1,6 +1,7 @@
 package deep.dd.animation;
 
 import deep.dd.utils.Frame;
+import deep.dd.utils.FastHaxe;
 import deep.dd.texture.Texture2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.display.MovieClip2D;
@@ -116,11 +117,10 @@ class Animator extends AnimatorBase
 	{
 		gotoFrame(frame - 1);
 	}
-	
-	
+
 	public function gotoFrame(frame:Dynamic):Void 
 	{
-		if (Std.is(frame, Int))
+		if (FastHaxe.is(frame, Int))
 		{
 			if (frame > 0 && frame < animationFrames) this.frame = frame;
 		}

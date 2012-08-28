@@ -42,10 +42,10 @@ class Material
 
         this.ctx = ctx;
 
-        updateShader();
+        attachShader();
     }
 
-    inline function updateShader()
+    inline function attachShader()
     {
         if (shaderRef != null)
         {
