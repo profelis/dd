@@ -26,7 +26,7 @@ class UVTest
 		flash.Lib.current.stage.addChild(new Stats(world, true));
 
 		s = new Sprite2D();
-		s.x = s.y = 50;
+		s.x = s.y = 80;
 		s.scaleX = s.scaleY = 4;
 		s.texture = world.cache.getTexture(Image);
 		s.texture.frame.region.z *= 2;
@@ -40,6 +40,8 @@ class UVTest
 	{
 		s.texture.frame.region.x += 0.03;
 		s.texture.frame.region.y += 0.03;
+
+        s.rotationX = Math.sin(scene.time) * 45;
 	}
 
 	static function main()
