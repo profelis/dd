@@ -120,7 +120,7 @@ class Animator extends AnimatorBase
 
 	public function gotoFrame(frame:Dynamic):Void 
 	{
-		if (FastHaxe.is(frame, Int))
+		if (Std.is(frame, Int))
 		{
 			if (frame > 0 && frame < animationFrames) this.frame = frame;
 		}
@@ -160,17 +160,12 @@ class Animator extends AnimatorBase
 	
 	function get_animationFrames():Int
 	{
-		if (animation != null)
-		{
-			return animation.frames.length;
-		}
-		
-		return totalFrames;
+		return animation != null ? animation.frames.length : totalFrames;
 	}
 	
 	function get_animationName():String
 	{
-		return (animation != null) ? animation.name : "";
+		return animation != null ? animation.name : "";
 	}
 	
 	override private function set_atlas(atl:AtlasTexture2D):AtlasTexture2D 
@@ -200,5 +195,4 @@ class Animator extends AnimatorBase
 		super.dispose();
 		animation = null;
 	}
-
 }

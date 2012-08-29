@@ -2,7 +2,7 @@ package ;
 import deep.dd.display.render.CloudRender;
 import deep.dd.animation.Animator;
 import deep.dd.display.BitmapFont2D;
-import deep.dd.display.Cloud2D;
+import deep.dd.display.SmartSprite2D.Cloud2D;
 import deep.dd.display.MovieClip2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.texture.atlas.FontAtlasTexture2D;
@@ -14,7 +14,7 @@ import flash.Lib;
 import mt.m3d.Color;
 import deep.dd.utils.BlendMode;
 import deep.dd.display.Sprite2D;
-import deep.dd.display.Batch2D;
+import deep.dd.display.SmartSprite2D.Batch2D;
 import flash.utils.ByteArray;
 import deep.dd.texture.Texture2D;
 import flash.display.BitmapData;
@@ -119,7 +119,7 @@ class Main
 		var fontAtlas2:FontAtlasTexture2D = new FontAtlasTexture2D(world.cache.getTexture(NavTitleImage), new AngelCodeFontParser(Xml.parse(Std.string(new NavTitleData())), 3));
 		mc6.texture = fontAtlas2;
 		mc6.gotoFrame("@");
-		mc6.colorTransform = new Color(0, 1, 1, 1);
+		mc6.colorTransform = new Color(1, 0, 0, 1);
 		mc6.x = 200;
 		mc6.y = 200;
 		mc6.scaleX = mc6.scaleY = 3.62;
@@ -129,7 +129,6 @@ class Main
 	//	var fontAtlas = new FontAtlasTexture2D(world.cache.getTexture(NavTitleImage), new AngelCodeFontParser(Xml.parse(Std.string(new NavTitleData())), 0.5));
 		text.font = fontAtlas;
 		text.multiLine = true;
-		text.fixedWidth = false;
 		text.text = "Hello World!!!\nmulti!";
 		world.scene.addChild(text);
 		
@@ -172,7 +171,7 @@ class Main
     {
        /*trace(cast(mc2.animator, Animator).isPlaying);
        trace(mc2.textureFrame);*/
-		text.text = "time: " + Lib.getTimer() + "\nmouseX: " + Lib.current.stage.mouseY;
+		text.text = "time: " + Lib.getTimer() + "\nmouseX: " + Lib.current.stage.mouseX;
 		//world.camera.x = -world.stage.mouseX;
         //world.camera.y = -world.stage.mouseY;
     //    world.camera.scale += (Math.random()-0.5) * 0.003;

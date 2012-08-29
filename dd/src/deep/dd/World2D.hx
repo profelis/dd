@@ -107,10 +107,6 @@ class World2D
 		{
 			scene.init(ctx);
 		}
-		else
-		{
-			pause = true;
-		}
 
         stage.addEventListener(Event.ENTER_FRAME, onRender);
         stage.addEventListener(Event.RESIZE, onResize);
@@ -141,6 +137,8 @@ class World2D
 
     function onTouchEvent(e:TouchEvent)
     {
+        if (!bounds.contains(e.stageX, e.stageY)) return;
+
         var md:MouseData = new MouseData();
         md.type = touchAlias.get(e.type);
         md.pointId = e.touchPointID;
@@ -154,6 +152,8 @@ class World2D
 
     function onMouseEvent(e:MouseEvent)
     {
+        if (!bounds.contains(e.stageX, e.stageY)) return;
+
         var md:MouseData = new MouseData();
         md.type = e.type;
         md.shift = e.shiftKey;
@@ -165,18 +165,13 @@ class World2D
 
     inline function mouseStep(mx:Float, my:Float, md:MouseData)
     {
-        if (bounds.contains(mx, my))
-        {
-            var m = new Vector3D(0, 0, 0, 1);
+        var m = new Vector3D(0, 0, 0, 1);
 
-            m.x = (mx - bounds.x) / bounds.width * 2 - 1;
-            m.y = -(my - bounds.y) / bounds.height * 2 + 1;
+        m.x = (mx - bounds.x) / bounds.width * 2 - 1;
+        m.y = -(my - bounds.y) / bounds.height * 2 + 1;
 
-            scene.mouseStep(m, camera, md);
-        }
+        scene.mouseStep(m, camera, md);
     }
-
-
 
     inline function ctxExist():Bool
     {
@@ -236,12 +231,21 @@ class World2D
 		st3d.removeEventListener(Event.CONTEXT3D_CREATE, onContext);
 		stage.removeEventListener(Event.ENTER_FRAME, onRender);
         stage.removeEventListener(Event.RESIZE, onResize);
+
+        stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseEvent);
+        stage.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseEvent);
+        stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseEvent);
+
+        stage.removeEventListener(TouchEvent.TOUCH_MOVE, onTouchEvent);
+        stage.removeEventListener(TouchEvent.TOUCH_BEGIN, onTouchEvent);
+        stage.removeEventListener(TouchEvent.TOUCH_END, onTouchEvent);
 		
         if (camera != null)
         {
             camera.dispose();
 		    camera = null;
         }
+
 		if (scene != null)
         {
             scene.dispose();
@@ -277,20 +281,16 @@ class World2D
         if (scene != null)
         {
             Reflect.setProperty(scene, "world", this);
+            scene.init(ctx);
         }
-		else
-		{
-			pause = true;
-		}
-		scene.init(ctx);
+		
         return s;
     }
 
     function set_antialiasing(val:UInt):UInt
     {
         invalidateSize = (val != antialiasing);
-        antialiasing = val;
-        return val;
+        return antialiasing = val;
     }
 
 	function set_bounds(rect:Rectangle):Rectangle

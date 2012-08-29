@@ -420,6 +420,9 @@ class TextField2D extends Sprite2D
 	
 	override private function set_texture(tex:Texture2D):Texture2D 
 	{
+		#if debug
+		throw "assert";
+		#end
 		return tex;
 	}
 	

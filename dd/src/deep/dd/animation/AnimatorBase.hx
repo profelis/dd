@@ -31,7 +31,7 @@ class AnimatorBase
     public function dispose():Void
     {
         Reflect.setField(this, "atlas", null);
-        Reflect.setField(this, "textureFrame", null);
+        this.textureFrame = null;
     }
 	
 	function set_atlas(atl:AtlasTexture2D):AtlasTexture2D
