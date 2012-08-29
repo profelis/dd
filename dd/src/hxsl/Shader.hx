@@ -94,7 +94,7 @@ typedef Array<T,Const> = flash.Vector<T>
 		unbind();
 	}
 
-    inline public function dispose() {
+    public function dispose() {
 		if( p != null )
         {
             p.dispose();
