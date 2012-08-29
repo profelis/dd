@@ -34,7 +34,6 @@ class PerlinTest
         s.height = 600;
         s.colorTransform = new Color(0, 1, 0, 1);
 		scene.addChild(s);
-        s.rotationY = 0;
 
 		flash.Lib.current.addEventListener(flash.events.Event.ENTER_FRAME, onRender);
 	}
@@ -43,6 +42,9 @@ class PerlinTest
 	{
         perlin.delta.x += 0.005;
         perlin.delta.y += 0.005;
+        perlin.delta.z += 0.005;
+
+        //perlin.scale = 5 + Math.sin(scene.time) * 2;
 		//s.texture.frame.region.x += 0.03;
 		//s.texture.frame.region.y += 0.03;
 

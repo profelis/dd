@@ -27,7 +27,7 @@ class DisplayNode2D extends Node2D
 
     function createGeometry()
     {
-        geometry = Geometry.createSolid(1, 1);
+        geometry = Geometry.createSolid(_width = 1, _height = 1);
     }
 
     override public function dispose():Void

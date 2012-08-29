@@ -18,7 +18,7 @@ class PerlinMaterial extends Material
     {
         super(PerlinShader);
 
-        delta = new Vector3D(0.05, 0.05, 0.05);
+        delta = new Vector3D();
     }
 
     public var delta(default, null):Vector3D;
@@ -171,7 +171,7 @@ class PerlinShader extends Shader
 
         function vertex(delta : Float3, scale : Float, mpos:M44, mproj:M44)
         {
-            tuv = ([-pos.x, -pos.y, 0] + delta) * scale;
+            tuv = ([pos.x, -pos.y, 0] + delta) * scale;
             out = pos.xyzw * mpos * mproj;
             one = 1/256;
         }
