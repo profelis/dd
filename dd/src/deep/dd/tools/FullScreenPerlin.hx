@@ -1,4 +1,4 @@
-package deep.dd.material;
+package deep.dd.tools;
 
 import flash.geom.Matrix3D;
 import flash.display3D.textures.Texture;
@@ -8,15 +8,31 @@ import hxsl.Shader;
 import flash.display3D.Context3D;
 import deep.dd.display.DisplayNode2D;
 import deep.dd.camera.Camera2D;
+import deep.dd.geometry.Geometry;
 import deep.dd.material.Material;
 
 import flash.geom.Vector3D;
 
-class PerlinMaterial extends Material
+class FullScreenPerlin extends DisplayNode2D
 {
     public function new()
     {
-        super(PerlinShader);
+        super(perlin = new FullScreenPerlinMaterial());
+    }
+
+    override function createGeometry()
+    {
+        geometry = Geometry.createSolid(2, 2, 1, 1, -1, -1);
+    }
+
+    public var perlin(default, null):FullScreenPerlinMaterial;
+}
+
+class FullScreenPerlinMaterial extends Material
+{
+    public function new()
+    {
+        super(FullScreenPerlinShader);
 
         delta = new Vector3D();
     }
@@ -24,27 +40,29 @@ class PerlinMaterial extends Material
     public var delta(default, null):Vector3D;
     public var scale:Float = 3;
 
-    var perlinShader:PerlinShader;
+    var perlinShader:FullScreenPerlinShader;
 
     override public function init(ctx:Context3D)
     {
         super.init(ctx);
 
-        perlinShader = flash.Lib.as(shader, PerlinShader);
+        perlinShader = flash.Lib.as(shader, FullScreenPerlinShader);
     }
+
 
     override public function draw(sprite:DisplayNode2D, camera:Camera2D)
     {
-        perlinShader.perlin(delta, scale, sprite.worldTransform, camera.proj, sprite.worldColorTransform);
+        perlinShader.perlin(delta, scale, sprite.worldColorTransform);
 
         super.draw(sprite, camera);
     }
+
 }
 
 /**
 * http://ncannasse.fr/blog/perlin_noise_shader
 **/
-class PerlinShader extends Shader
+class FullScreenPerlinShader extends Shader
 {
 
     static var PTBL = flash.Vector.ofArray([ 151, 160, 137, 91, 90, 15,
@@ -157,9 +175,9 @@ class PerlinShader extends Shader
         }
     }
 
-    public inline function perlin(delta:Vector3D, scale : Float, mpos:Matrix3D, mproj:Matrix3D, cTrans:Vector3D)
+    public inline function perlin(delta:Vector3D, scale : Float, cTrans:Vector3D)
     {
-        init({delta : delta, scale : scale, mpos:mpos, mproj:mproj}, {permut : permut, g : grad, cTrans:cTrans});
+        init({delta : delta, scale : scale}, {permut : permut, g : grad, cTrans:cTrans});
     }
 
 
@@ -171,10 +189,10 @@ class PerlinShader extends Shader
         var tuv : Float3;
         var one:Float;
 
-        function vertex(delta : Float3, scale : Float, mpos:M44, mproj:M44)
+        function vertex(delta : Float3, scale : Float)
         {
-            tuv = ([pos.x, -pos.y, 0] + delta) * scale;
-            out = pos.xyzw * mpos * mproj;
+            tuv = ([(pos.x + 1) * 0.5, 1-(pos.y+1)*0.5, 0] + delta) * scale;
+            out = pos.xyzw;
             one = 1/256;
         }
 
