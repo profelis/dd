@@ -1,9 +1,12 @@
 package;
+import com.bit101.components.ComboBox;
 import com.bit101.components.HRangeSlider;
 import com.bit101.components.HSlider;
 import com.bit101.components.HUISlider;
 import com.bit101.components.Label;
+import com.bit101.components.ListItem;
 import com.bit101.components.Panel;
+import com.bit101.components.RadioButton;
 import com.bit101.components.ScrollPane;
 import com.bit101.components.Style;
 import com.bit101.components.VRangeSlider;
@@ -26,6 +29,7 @@ import flash.display.Sprite;
 import flash.display.StageScaleMode;
 import flash.display.StageAlign;
 import flash.display3D.Context3DRenderMode;
+import flash.events.Event;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
 import mt.m3d.Color;
@@ -88,6 +92,24 @@ class Main
 	var xGravity:HUISlider;
 	var yGravity:HUISlider;
 	var zGravity:HUISlider;
+	
+	// Other settings
+	var otherSettingsWindow:Window;
+	private var blendNone:RadioButton;
+	private var blendNoneA:RadioButton;
+	private var blendNormal:RadioButton;
+	private var blendNormalA:RadioButton;
+	private var blendAdd:RadioButton;
+	private var blendAddA:RadioButton;
+	private var blendMultiply:RadioButton;
+	private var blendMultiplyA:RadioButton;
+	private var blendScreen:RadioButton;
+	private var blendScreenA:RadioButton;
+	private var blendErase:RadioButton;
+	private var blendEraseA:RadioButton;
+	private var bgRed:HUISlider;
+	private var bgGreen:HUISlider;
+	private var bgBlue:HUISlider;
 	
     public function new()
     {
@@ -398,7 +420,105 @@ class Main
 		endA.labelPrecision = 2;
 		endA.labelPosition = 'bottom';
 		label = new Label(colorPanel, labelX - 40, 232, "End A");
+		
+		// Other settings
+		otherSettingsWindow = new Window(s, 630, 0, 'Particle Configuration');
+		otherSettingsWindow.setSize(210, 400);
+		otherSettingsWindow.draggable = false;
+		otherSettingsWindow.hasMinimizeButton = true;
+		
+		var otherPanel = new ScrollPane(otherSettingsWindow, 0, 0);
+		otherPanel.showGrid = true;
+		otherPanel.autoHideScrollBar = true;
+		otherPanel.setSize(210, 400);
+		
+		blendNone = new RadioButton(otherPanel, 20, 20, "NONE", false, onBlendChange);
+		blendNoneA = new RadioButton(otherPanel, 20, 40, "NONE_A", false, onBlendChange);
+		blendNormal = new RadioButton(otherPanel, 20, 60, "NORMAL", false, onBlendChange);
+		blendNormalA = new RadioButton(otherPanel, 20, 80, "NORMAL_A", false, onBlendChange);
+		blendAdd = new RadioButton(otherPanel, 20, 100, "ADD", false, onBlendChange);
+		blendAddA = new RadioButton(otherPanel, 20, 120, "ADD_A", false, onBlendChange);
+		blendMultiply = new RadioButton(otherPanel, 20, 140, "MULTIPLY", false, onBlendChange);
+		blendMultiplyA = new RadioButton(otherPanel, 20, 160, "MULTIPLY_A", false, onBlendChange);
+		blendScreen = new RadioButton(otherPanel, 20, 180, "SCREEN", false, onBlendChange);
+		blendScreenA = new RadioButton(otherPanel, 20, 200, "SCREEN_A", false, onBlendChange);
+		blendErase = new RadioButton(otherPanel, 20, 220, "ERASE", false, onBlendChange);
+		blendEraseA = new RadioButton(otherPanel, 20, 240, "ERASE_A", false, onBlendChange);
+		
+		bgRed = new HUISlider(otherPanel, 20, 270, "bgRed", onBgRedChange);
+		bgRed.setSliderParams(0, 1, 0.5);
+		bgGreen = new HUISlider(otherPanel, 20, 300, "bgGreen", onBgGreenChange);
+		bgGreen.setSliderParams(0, 1, 0.5);
+		bgBlue = new HUISlider(otherPanel, 20, 330, "bgBlue", onBgBlueChange);
+		bgBlue.setSliderParams(0, 1, 0.5);
     }
+	
+	function onBgRedChange(param1:Dynamic)
+	{
+		world.bgColor.r = bgRed.value;
+	}
+	
+	function onBgGreenChange(param1:Dynamic)
+	{
+		world.bgColor.g = bgGreen.value;
+	}
+	
+	function onBgBlueChange(param1:Dynamic)
+	{
+		world.bgColor.b = bgBlue.value;
+	}
+	
+	private function onBlendChange(e:Event):Void 
+	{
+		if (blendNone.selected)
+		{
+			ps.blendMode = BlendMode.NONE;
+		}
+		else if (blendNoneA.selected)
+		{
+			ps.blendMode = BlendMode.NONE_A;
+		}
+		else if (blendNormal.selected)
+		{
+			ps.blendMode = BlendMode.NORMAL;
+		}
+		else if (blendNormalA.selected)
+		{
+			ps.blendMode = BlendMode.NORMAL_A;
+		}
+		else if (blendAdd.selected)
+		{
+			ps.blendMode = BlendMode.ADD;
+		}
+		else if (blendAddA.selected)
+		{
+			ps.blendMode = BlendMode.ADD_A;
+		}
+		else if (blendMultiply.selected)
+		{
+			ps.blendMode = BlendMode.MULTIPLY;
+		}
+		else if (blendMultiplyA.selected)
+		{
+			ps.blendMode = BlendMode.MULTIPLY_A;
+		}
+		else if (blendScreen.selected)
+		{
+			ps.blendMode = BlendMode.SCREEN;
+		}
+		else if (blendScreenA.selected)
+		{
+			ps.blendMode = BlendMode.SCREEN_A;
+		}
+		else if (blendErase.selected)
+		{
+			ps.blendMode = BlendMode.ERASE;
+		}
+		else if (blendEraseA.selected)
+		{
+			ps.blendMode = BlendMode.ERASE_A;
+		}
+	}
 	
 	function onXChange(param1:Dynamic)
 	{
