@@ -1,5 +1,9 @@
 package ;
 
+import flash.display.Bitmap;
+import flash.geom.Matrix;
+import flash.display.BitmapData;
+import deep.dd.display.TextureRenderer;
 import flash.display3D.Context3D;
 import deep.dd.material.Material;
 import flash.display3D.textures.Texture;
@@ -38,7 +42,7 @@ class PerlinTest
 	function new()
 	{
 		world = new deep.dd.World2D(Context3DRenderMode.AUTO, 2);
-		world.bgColor = new Color(0, 0, 0);
+		world.bgColor = new Color(0, 0, 0, 1);
 		scene = world.scene = new Scene2D();
 
         world.stage.align = StageAlign.TOP_LEFT;
@@ -47,24 +51,28 @@ class PerlinTest
 		flash.Lib.current.stage.addChild(new Stats(world, true));
 
 
+        var i = new Image(0, 0);
+        var b = new BitmapData(Std.int(i.width * 0.5), Std.int(i.height * 0.5), true, 0x00000000);
+        b.draw(i, new Matrix(0.5, 0, 0, 0.5));
+
+        var cloud2 = new Sprite2D();
+        cloud2.texture = world.cache.getBitmapTexture(b);
+        cloud2.colorTransform = new Color(1, 0, 0, 1);
+
+        s2 = new CloudLayer(cloud2, new Vector3D(2, 1, 12), 2, -0.05+0.1);
+        s2.bgColor = new Color(0, 0, 0, 1);
+        scene.addChild(s2);
+
 
         var cloud = new Sprite2D();
         cloud.texture = world.cache.getTexture(Image);
-        cloud.colorTransform = new Color(1, 1, 0.7, 1);
+        cloud.colorTransform = new Color(0.7, 1, 1, 1);
 
-		s = new CloudLayer(cloud, new Vector3D(), 1.5);
+		s = new CloudLayer(cloud, new Vector3D(), 2, -0.1+0.15);
+        s.bgColor = new Color(0, 0, 0, 1);
+        s.alpha = 0.85;
 		scene.addChild(s);
-         /*
 
-        var cloud2 = new Sprite2D();
-        cloud2.texture = world.cache.getTexture(Image);
-        cloud2.colorTransform = new Color(1, 0, 0, 1);
-
-        s2 = new CloudLayer(cloud, new Vector3D(2, 1, 12), 1.6);
-        s2.alpha = 0.5;
-        scene.addChild(s2);
-
-                             */
 
 		world.stage.addEventListener(flash.events.Event.ENTER_FRAME, onRender);
 	}
@@ -76,10 +84,9 @@ class PerlinTest
 
         s.delta.x = dx;
         s.delta.y = dy;
-        /*
+
         s2.delta.x = dx;
         s2.delta.y = dy;
-        */
     }
 
 	static function main()
@@ -88,7 +95,7 @@ class PerlinTest
 	}
 }
 
-class CloudLayer extends Node2D
+class CloudLayer extends TextureRenderer
 {
     var fsPerlin:FullScreenPerlin;
     var perlin:FullScreenPerlinMaterial;
@@ -97,7 +104,7 @@ class CloudLayer extends Node2D
 
     var startDelta:Vector3D;
 
-    public function new(cloud:Sprite2D, delta:Vector3D, scale:Float)
+    public function new(cloud:Sprite2D, delta:Vector3D, scale:Float, depth:Float)
     {
         super();
 
@@ -114,6 +121,7 @@ class CloudLayer extends Node2D
         addChild(fsPerlin);
         perlin = fsPerlin.perlin;
         perlin.scale = scale;
+        perlin.depth = depth;
         perlin.delta.copyFrom(startDelta);
 
         fsPerlin.blendMode = new BlendMode(Context3DBlendFactor.ZERO, Context3DBlendFactor.SOURCE_COLOR);
@@ -123,7 +131,7 @@ class CloudLayer extends Node2D
 
     public var delta(default, null):Vector3D;
 
-    override public function draw(camera:Camera2D):Void
+    override public function drawStep(camera:Camera2D):Void
     {
         if (delta.x != 0 || delta.y != 0 || delta.z != 0)
         {
@@ -137,7 +145,7 @@ class CloudLayer extends Node2D
             delta.setTo(0, 0, 0);
         }
 
-        super.draw(camera);
+        super.drawStep(camera);
     }
 
     override function setScene(s:Scene2D):Void
@@ -152,11 +160,27 @@ class CloudLayer extends Node2D
 
     function onResize(?_)
     {
-        cloud.width = scene.world.bounds.width;
-        cloud.height = scene.world.bounds.height;
+        var w = Std.int(scene.world.bounds.width)+1;
+        var h = Std.int(scene.world.bounds.height)+1;
+
+        cloud.width = w;
+        cloud.height = h;
 
         cloud.texture.frame.region.z = cloud.scaleX;
         cloud.texture.frame.region.w = cloud.scaleY;
+
+        if (texture == null)
+        {
+            texture = Texture2D.emptyTexture(w, h);
+        }
+        else
+        {
+            var old = texture;
+            texture = null;
+            old.dispose();
+
+            texture = Texture2D.emptyTexture(w, h);
+        }
     }
 
 }
@@ -188,6 +212,8 @@ class FullScreenPerlinMaterial extends Material
     public var delta(default, null):Vector3D;
     public var scale:Float = 3;
 
+    public var depth:Float = 1.0;
+
     var perlinShader:FullScreenPerlinShader;
 
     override public function init(ctx:Context3D)
@@ -200,7 +226,7 @@ class FullScreenPerlinMaterial extends Material
 
     override public function draw(sprite:DisplayNode2D, camera:Camera2D)
     {
-        perlinShader.perlin(delta, scale, sprite.worldColorTransform);
+        perlinShader.perlin(delta, scale, depth, sprite.worldColorTransform);
 
         super.draw(sprite, camera);
     }
@@ -323,9 +349,9 @@ class FullScreenPerlinShader extends Shader
         }
     }
 
-    public inline function perlin(delta:Vector3D, scale : Float, cTrans:Vector3D)
+    public inline function perlin(delta:Vector3D, scale : Float, depth:Float, cTrans:Vector3D)
     {
-        init({delta : delta, scale : scale}, {permut : permut, g : grad, cTrans:cTrans});
+        init({delta : delta, scale : scale}, {permut : permut, g : grad, cTrans:cTrans, depth:depth});
     }
 
 
@@ -359,7 +385,7 @@ class FullScreenPerlinShader extends Shader
         //return t * t * (3 - 2 * t);
     }
 
-    function gradient( permut : Texture, g : Texture, pos : Float3 )
+    function gradient( permut : Texture, g : Texture, pos : Float3)
     {
         var p = pos.frc();
         var i = pos - p;
@@ -381,7 +407,7 @@ class FullScreenPerlinShader extends Shader
         );
     }
 
-    function fragment( permut : Texture, g : Texture, cTrans:Float4)
+    function fragment( permut : Texture, g : Texture, cTrans:Float4, depth:Float)
     {
         var pos = tuv;
         var tot = 0;
@@ -391,7 +417,7 @@ class FullScreenPerlinShader extends Shader
             per *= 0.5;
             pos *= 2;
         }
-        var n = (tot+0.0) * 0.5;
+        var n = (tot+depth) * 0.5;
         out = [n, n, n, 1] * cTrans;
     }
     };
