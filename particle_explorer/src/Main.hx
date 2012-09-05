@@ -6,6 +6,7 @@ import com.bit101.components.HUISlider;
 import com.bit101.components.Label;
 import com.bit101.components.ListItem;
 import com.bit101.components.Panel;
+import com.bit101.components.PushButton;
 import com.bit101.components.RadioButton;
 import com.bit101.components.ScrollPane;
 import com.bit101.components.Style;
@@ -14,6 +15,7 @@ import com.bit101.components.VSlider;
 import com.bit101.components.Window;
 import deep.dd.display.Scene2D;
 import deep.dd.particle.render.ParticleRenderBase;
+import deep.dd.texture.Texture2D;
 import deep.dd.utils.Stats;
 import deep.dd.World2D;
 import deep.dd.particle.ParticleSystem2D;
@@ -29,12 +31,14 @@ import flash.display.Sprite;
 import flash.display.StageScaleMode;
 import flash.display.StageAlign;
 import flash.display3D.Context3DRenderMode;
+import flash.display3D.Context3DBlendFactor;
 import flash.events.Event;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
 import mt.m3d.Color;
 
 @:bitmap("deep.png") class Image extends BitmapData {}
+@:bitmap("circle.png") class Circle extends BitmapData {}
 
 class Main
 {
@@ -95,21 +99,20 @@ class Main
 	
 	// Other settings
 	var otherSettingsWindow:Window;
-	private var blendNone:RadioButton;
-	private var blendNoneA:RadioButton;
-	private var blendNormal:RadioButton;
-	private var blendNormalA:RadioButton;
-	private var blendAdd:RadioButton;
-	private var blendAddA:RadioButton;
-	private var blendMultiply:RadioButton;
-	private var blendMultiplyA:RadioButton;
-	private var blendScreen:RadioButton;
-	private var blendScreenA:RadioButton;
-	private var blendErase:RadioButton;
-	private var blendEraseA:RadioButton;
-	private var bgRed:HUISlider;
-	private var bgGreen:HUISlider;
-	private var bgBlue:HUISlider;
+	var bgRed:HUISlider;
+	var bgGreen:HUISlider;
+	var bgBlue:HUISlider;
+	
+	var blendSource:ComboBox;
+	var blendDestination:ComboBox;
+	var blendMode:BlendMode;
+	
+	var load:PushButton;
+	var save:PushButton;
+	
+	var textureEditor:TextureEditor;
+	var textureBmd:BitmapData;
+	private var texture:Texture2D;
 	
     public function new()
     {
@@ -125,7 +128,8 @@ class Main
 		world.antialiasing = 2;
         world.bgColor.fromInt(0x333333);
 		
-		var texture = world.cache.getTexture(Image);
+		textureBmd = Type.createInstance(Circle, [0, 0]);
+		texture = world.cache.getBitmapTexture(textureBmd);
 		
 		gravityPreset = new GravityParticlePreset();
         gravityPreset.particleNum = 1000;
@@ -148,7 +152,8 @@ class Main
 		ps = new ParticleSystem2D(GravityParticleRenderBuilder.gpuRender(gravityPreset));
         ps.x = s.stageWidth * 0.5;
         ps.y = s.stageHeight * 0.5;
-        ps.blendMode = BlendMode.ADD_A;
+		blendMode = new BlendMode(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE);
+        ps.blendMode = blendMode;
         ps.texture = texture;
         scene.addChild(ps);
 		
@@ -432,26 +437,107 @@ class Main
 		otherPanel.autoHideScrollBar = true;
 		otherPanel.setSize(210, 400);
 		
-		blendNone = new RadioButton(otherPanel, 20, 20, "NONE", false, onBlendChange);
-		blendNoneA = new RadioButton(otherPanel, 20, 40, "NONE_A", false, onBlendChange);
-		blendNormal = new RadioButton(otherPanel, 20, 60, "NORMAL", false, onBlendChange);
-		blendNormalA = new RadioButton(otherPanel, 20, 80, "NORMAL_A", false, onBlendChange);
-		blendAdd = new RadioButton(otherPanel, 20, 100, "ADD", false, onBlendChange);
-		blendAddA = new RadioButton(otherPanel, 20, 120, "ADD_A", false, onBlendChange);
-		blendMultiply = new RadioButton(otherPanel, 20, 140, "MULTIPLY", false, onBlendChange);
-		blendMultiplyA = new RadioButton(otherPanel, 20, 160, "MULTIPLY_A", false, onBlendChange);
-		blendScreen = new RadioButton(otherPanel, 20, 180, "SCREEN", false, onBlendChange);
-		blendScreenA = new RadioButton(otherPanel, 20, 200, "SCREEN_A", false, onBlendChange);
-		blendErase = new RadioButton(otherPanel, 20, 220, "ERASE", false, onBlendChange);
-		blendEraseA = new RadioButton(otherPanel, 20, 240, "ERASE_A", false, onBlendChange);
-		
-		bgRed = new HUISlider(otherPanel, 20, 270, "bgRed", onBgRedChange);
+		bgRed = new HUISlider(otherPanel, 20, 20, "bgRed", onBgRedChange);
 		bgRed.setSliderParams(0, 1, 0.5);
-		bgGreen = new HUISlider(otherPanel, 20, 300, "bgGreen", onBgGreenChange);
+		bgGreen = new HUISlider(otherPanel, 20, 50, "bgGreen", onBgGreenChange);
 		bgGreen.setSliderParams(0, 1, 0.5);
-		bgBlue = new HUISlider(otherPanel, 20, 330, "bgBlue", onBgBlueChange);
+		bgBlue = new HUISlider(otherPanel, 20, 80, "bgBlue", onBgBlueChange);
 		bgBlue.setSliderParams(0, 1, 0.5);
+		
+		blendSource = new ComboBox(otherPanel, 20, 110, "SOURCE");
+		blendSource.addItem("ZERO");
+		blendSource.addItem("ONE");
+		blendSource.addItem("SRC");
+		blendSource.addItem("ONE_SRC");
+		blendSource.addItem("SRC_ALPHA");
+		blendSource.addItem("ONE_SRC_ALPHA");
+		blendSource.addItem("DST_ALPHA");
+		blendSource.addItem("ONE_DST_ALPHA");
+		blendSource.addItem("DST_COLOR");
+		blendSource.addItem("ONE_DST_COLOR");
+		blendSource.selectedItem = "ONE";
+		blendSource.addEventListener(Event.SELECT, onBlendSrcSelect);
+		
+		blendDestination = new ComboBox(otherPanel, 20, 140, "DEST");
+		blendDestination.addItem("ZERO");
+		blendDestination.addItem("ONE");
+		blendDestination.addItem("SRC");
+		blendDestination.addItem("ONE_SRC");
+		blendDestination.addItem("SRC_ALPHA");
+		blendDestination.addItem("ONE_SRC_ALPHA");
+		blendDestination.addItem("DST_ALPHA");
+		blendDestination.addItem("ONE_DST_ALPHA");
+		blendDestination.addItem("DST_COLOR");
+		blendDestination.addItem("ONE_DST_COLOR");
+		blendDestination.selectedItem = "ONE";
+		blendDestination.addEventListener(Event.SELECT, onBlendDestSelect);
+		
+		textureEditor = new TextureEditor(textureBmd);
+		textureEditor.addEventListener(Event.COMPLETE, onTextureChange);
+		textureEditor.y = 400;
+		s.addChild(textureEditor);
     }
+	
+	private function onTextureChange(e:Event):Void 
+	{
+		var bmd:BitmapData = textureEditor.displayData;
+		texture = world.cache.getBitmapTexture(bmd);
+		ps.texture = texture;
+	}
+	
+	private function onBlendSrcSelect(e:Event):Void 
+	{
+		switch (Std.string(blendSource.selectedItem))
+		{
+			case "ZERO":
+				blendMode.src = Context3DBlendFactor.ZERO;
+			case "ONE":
+				blendMode.src = Context3DBlendFactor.ONE;
+			case "SRC":
+				blendMode.src = Context3DBlendFactor.SOURCE_COLOR;
+			case "ONE_SRC":
+				blendMode.src = Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR;
+			case "SRC_ALPHA":
+				blendMode.src = Context3DBlendFactor.SOURCE_ALPHA;
+			case "ONE_SRC_ALPHA":
+				blendMode.src = Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA;
+			case "DST_ALPHA":
+				blendMode.src = Context3DBlendFactor.DESTINATION_ALPHA;
+			case "ONE_DST_ALPHA":
+				blendMode.src = Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA;
+			case "DST_COLOR":
+				blendMode.src = Context3DBlendFactor.DESTINATION_COLOR;
+			case "ONE_DST_COLOR":
+				blendMode.src = Context3DBlendFactor.ONE_MINUS_DESTINATION_COLOR;
+		}
+	}
+	
+	private function onBlendDestSelect(e:Event):Void 
+	{
+		switch (Std.string(blendDestination.selectedItem))
+		{
+			case "ZERO":
+				blendMode.dst = Context3DBlendFactor.ZERO;
+			case "ONE":
+				blendMode.dst = Context3DBlendFactor.ONE;
+			case "SRC":
+				blendMode.dst = Context3DBlendFactor.SOURCE_COLOR;
+			case "ONE_SRC":
+				blendMode.dst = Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR;
+			case "SRC_ALPHA":
+				blendMode.dst = Context3DBlendFactor.SOURCE_ALPHA;
+			case "ONE_SRC_ALPHA":
+				blendMode.dst = Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA;
+			case "DST_ALPHA":
+				blendMode.dst = Context3DBlendFactor.DESTINATION_ALPHA;
+			case "ONE_DST_ALPHA":
+				blendMode.dst = Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA;
+			case "DST_COLOR":
+				blendMode.dst = Context3DBlendFactor.DESTINATION_COLOR;
+			case "ONE_DST_COLOR":
+				blendMode.dst = Context3DBlendFactor.ONE_MINUS_DESTINATION_COLOR;
+		}
+	}
 	
 	function onBgRedChange(param1:Dynamic)
 	{
@@ -466,58 +552,6 @@ class Main
 	function onBgBlueChange(param1:Dynamic)
 	{
 		world.bgColor.b = bgBlue.value;
-	}
-	
-	private function onBlendChange(e:Event):Void 
-	{
-		if (blendNone.selected)
-		{
-			ps.blendMode = BlendMode.NONE;
-		}
-		else if (blendNoneA.selected)
-		{
-			ps.blendMode = BlendMode.NONE_A;
-		}
-		else if (blendNormal.selected)
-		{
-			ps.blendMode = BlendMode.NORMAL;
-		}
-		else if (blendNormalA.selected)
-		{
-			ps.blendMode = BlendMode.NORMAL_A;
-		}
-		else if (blendAdd.selected)
-		{
-			ps.blendMode = BlendMode.ADD;
-		}
-		else if (blendAddA.selected)
-		{
-			ps.blendMode = BlendMode.ADD_A;
-		}
-		else if (blendMultiply.selected)
-		{
-			ps.blendMode = BlendMode.MULTIPLY;
-		}
-		else if (blendMultiplyA.selected)
-		{
-			ps.blendMode = BlendMode.MULTIPLY_A;
-		}
-		else if (blendScreen.selected)
-		{
-			ps.blendMode = BlendMode.SCREEN;
-		}
-		else if (blendScreenA.selected)
-		{
-			ps.blendMode = BlendMode.SCREEN_A;
-		}
-		else if (blendErase.selected)
-		{
-			ps.blendMode = BlendMode.ERASE;
-		}
-		else if (blendEraseA.selected)
-		{
-			ps.blendMode = BlendMode.ERASE_A;
-		}
 	}
 	
 	function onXChange(param1:Dynamic)
