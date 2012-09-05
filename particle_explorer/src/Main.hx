@@ -157,6 +157,8 @@ class Main
         ps.texture = texture;
         scene.addChild(ps);
 		
+		var xml:Xml = ParticleSaver.systemToXml(ps);
+		
 		Style.embedFonts = false;
         Style.fontSize = 10;
 		Style.fontName = "arial";
