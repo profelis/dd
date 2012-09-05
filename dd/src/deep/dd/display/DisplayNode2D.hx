@@ -27,7 +27,7 @@ class DisplayNode2D extends Node2D
 
     function createGeometry()
     {
-
+        geometry = Geometry.createSolid(_width = 1, _height = 1);
     }
 
     override public function dispose():Void
@@ -104,7 +104,7 @@ class DisplayNode2D extends Node2D
 
     function get_height():Float
     {
-        return _width * scaleX;
+        return _height * scaleY;
     }
 
     function set_height(v:Float):Float

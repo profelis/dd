@@ -16,6 +16,8 @@ class Camera2D
         c.up = new Vector(0, 1, 0);
         c.zFar = 10000;
         scale = c.zoom;
+
+        needUpdate = true;
     }
 
     public var needUpdate:Bool = false;
@@ -45,9 +47,12 @@ class Camera2D
 
     public function resize(w:Int, h:Int)
     {
-        this.w = w;
-        this.h = h;
-        needUpdate = true;
+        if (this.w != w || this.h != h)
+        {
+            this.w = w;
+            this.h = h;
+            needUpdate = true;
+        }
     }
 	
 	public function dispose():Void
@@ -63,14 +68,22 @@ class Camera2D
 
 	function set_x(val:Float):Float
 	{
-		needUpdate = true;
-		return x = val;
+        if (x != val)
+        {
+            needUpdate = true;
+            x = val;
+        }
+        return val;
 	}
 	
 	function set_y(val:Float):Float
 	{
-		needUpdate = true;
-		return y = val;
+        if (y != val)
+        {
+            needUpdate = true;
+            y = val;
+        }
+		return val;
 	}
 	
 	public var scale(default, set_scale):Float;

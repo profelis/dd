@@ -23,8 +23,8 @@ class Texture2D
     var bitmapData:BitmapData;
 
     // preferred size
-    public var width(default, null):Float;
-    public var height(default, null):Float;
+    public var width(default, null):Int;
+    public var height(default, null):Int;
 
     // bitmap texture size
     public var bitmapWidth(default, null):Int;
@@ -56,6 +56,17 @@ class Texture2D
 
         res.frame = new Frame(res.bitmapWidth, res.bitmapHeight,
                 new Vector3D(0, 0, res.bitmapWidth/res.textureWidth, res.bitmapHeight/res.textureHeight));
+
+        return res;
+    }
+
+    public static function emptyTexture(width:Int, height:Int):Texture2D
+    {
+        var res = new Texture2D();
+        res.textureWidth = getNextPowerOfTwo(width);
+        res.textureHeight = getNextPowerOfTwo(height);
+
+        res.frame = new Frame(width, height, new Vector3D(0, 0, 1, 1));
 
         return res;
     }
@@ -103,7 +114,19 @@ class Texture2D
 
         this.ctx = ctx;
 
-        uploadBitmapTexture();
+        if (bitmapData != null) uploadBitmapTexture();
+        else uploadEmptyTexture();
+    }
+
+    function uploadEmptyTexture()
+    {
+        texture = ctx.createTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, true);
+
+        memory = textureWidth * textureHeight * 4;
+
+        #if dd_stat
+        GlobalStatistics.addTexture(ctx, this);
+        #end
     }
 
     function uploadBitmapTexture()

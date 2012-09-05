@@ -28,7 +28,7 @@ class World2D
     public var context3DRenderMode(default, null):Context3DRenderMode;
 
     public var stage(default, null):Stage;
-    var st3d:Stage3D;
+    public var stage3d(default, null):Stage3D;
 
     public var ctx(default, null):Context3D;
     public var isHW(default, null):Bool = false;
@@ -73,16 +73,16 @@ class World2D
 
         camera = new Camera2D();
 
-        st3d = stage.stage3Ds[stageId];
-        st3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);
-        st3d.requestContext3D(Std.string(context3DRenderMode));
+        stage3d = stage.stage3Ds[stageId];
+        stage3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);
+        stage3d.requestContext3D(Std.string(context3DRenderMode));
 
-        if (st3d.context3D != null && st3d.context3D.driverInfo != "Disposed") onContext(null);
+        if (stage3d.context3D != null && stage3d.context3D.driverInfo != "Disposed") onContext(null);
     }
 
     function onContext(_)
     {
-        if (ctx == st3d.context3D) return;
+        if (ctx == stage3d.context3D) return;
 
         if (ctx != null)
         {
@@ -92,7 +92,7 @@ class World2D
             GlobalStatistics.freeContext(ctx);
             #end
         }
-        ctx = st3d.context3D;
+        ctx = stage3d.context3D;
 
         isHW = ctx.driverInfo.toLowerCase().indexOf("software") == -1;
 		
@@ -194,8 +194,8 @@ class World2D
     {
         var w = Std.int(bounds.width);
         var h = Std.int(bounds.height);
-        st3d.x = bounds.x;
-        st3d.y = bounds.y;
+        stage3d.x = bounds.x;
+        stage3d.y = bounds.y;
         camera.resize(w, h);
         ctx.configureBackBuffer(w, h, antialiasing);
         invalidateSize = false;
@@ -228,7 +228,7 @@ class World2D
 	
 	function dispose(disposeContext3D:Bool = true):Void
 	{
-		st3d.removeEventListener(Event.CONTEXT3D_CREATE, onContext);
+		stage3d.removeEventListener(Event.CONTEXT3D_CREATE, onContext);
 		stage.removeEventListener(Event.ENTER_FRAME, onRender);
         stage.removeEventListener(Event.RESIZE, onResize);
 
@@ -263,7 +263,7 @@ class World2D
         context3DRenderMode = null;
         bgColor = null;
 		stage = null;
-		st3d = null;
+		stage3d = null;
 
         if (disposeContext3D) ctx.dispose();
         ctx = null;
