@@ -158,6 +158,7 @@ class Main
         scene.addChild(ps);
 		
 		var xml:Xml = ParticleSaver.systemToXml(ps);
+		ParticleSaver.parseXml(xml);
 		
 		Style.embedFonts = false;
         Style.fontSize = 10;

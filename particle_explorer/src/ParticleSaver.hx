@@ -247,8 +247,20 @@ class ParticleSaver
 		return config;
 	}
 	
-	/*public static function parseXml(xml:Xml):ParticleSystem2D
+	public static function parseXml(xml:Xml):ParticleSystem2D
 	{
+		var type:String = "";
 		
-	}*/
+		for (node in xml.elements())
+		{
+			if (node.nodeName == "type")
+			{
+				
+			}
+		}
+		
+		var system:ParticleSystem2D = null;
+		
+		return system;
+	}
 }
