@@ -22,9 +22,9 @@ class GravityParticlePreset extends ParticlePresetBase
 
     public function new() {}
 
-    inline public function createParticle():Particle
+    inline public function createParticle():GravityParticle
     {
-        var res:Particle = new Particle();
+        var res:GravityParticle = new GravityParticle();
 
         res.life = BoundsTools.randomFloat(life);
 
@@ -59,7 +59,7 @@ class GravityParticlePreset extends ParticlePresetBase
     }
 }
 
-class Particle extends ParticleBase
+class GravityParticle extends ParticleBase
 {
     public var x:Float;
     public var y:Float;

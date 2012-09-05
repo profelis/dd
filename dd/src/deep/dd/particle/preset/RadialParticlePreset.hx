@@ -28,9 +28,9 @@ class RadialParticlePreset extends ParticlePresetBase
 
     public function new() {}
 
-    inline public function createParticle():Particle
+    inline public function createParticle():RadialParticle
     {
-        var res:Particle = new Particle();
+        var res:RadialParticle = new RadialParticle();
 
         res.life = BoundsTools.randomFloat(life);
 
@@ -64,7 +64,7 @@ class RadialParticlePreset extends ParticlePresetBase
     }
 }
 
-class Particle extends ParticleBase
+class RadialParticle extends ParticleBase
 {
     public var z:Float;
     public var vz:Float;

@@ -39,14 +39,14 @@ class GravityParticleRender extends CPUParticleRenderBase
 {
     public function new(preset:GravityParticlePreset, render:RenderBase)
     {
-        particles = new flash.Vector<Particle>();
+        particles = new flash.Vector<GravityParticle>();
 
         super(preset, render);
     }
 
     var gravityPreset:GravityParticlePreset;
 
-    var particles:flash.Vector<Particle>;
+    var particles:flash.Vector<GravityParticle>;
 
     override function set_preset(p:ParticlePresetBase):ParticlePresetBase
     {
@@ -79,7 +79,7 @@ class GravityParticleRender extends CPUParticleRenderBase
                 for (i in 0...spawn)
                 {
                     var idx = size + i;
-                    var p:Particle = gravityPreset.createParticle();
+                    var p:GravityParticle = gravityPreset.createParticle();
                     p.startTime = time;
                     particles[idx] = p;
 
@@ -98,7 +98,7 @@ class GravityParticleRender extends CPUParticleRenderBase
         var gravity = gravityPreset.gravity;
         for (i in 0...size)
         {
-            var p:Particle = particles[i];
+            var p:GravityParticle = particles[i];
             var s:Sprite2D = sprites[i];
 
             var k = (time - p.startTime) / p.life;

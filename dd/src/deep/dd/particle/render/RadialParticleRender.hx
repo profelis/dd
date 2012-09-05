@@ -41,14 +41,14 @@ class RadialParticleRender extends CPUParticleRenderBase
 {
     public function new(preset:RadialParticlePreset, render:RenderBase)
     {
-        particles = new flash.Vector<Particle>();
+        particles = new flash.Vector<RadialParticle>();
 
         super(preset, render);
     }
 
     var radialPreset:RadialParticlePreset;
 
-    var particles:flash.Vector<Particle>;
+    var particles:flash.Vector<RadialParticle>;
 
     override function set_preset(p:ParticlePresetBase):ParticlePresetBase
     {
@@ -81,7 +81,7 @@ class RadialParticleRender extends CPUParticleRenderBase
                 for (i in 0...spawn)
                 {
                     var idx = size + i;
-                    var p:Particle = radialPreset.createParticle();
+                    var p:RadialParticle = radialPreset.createParticle();
                     p.startTime = time;
                     particles[idx] = p;
 
@@ -99,7 +99,7 @@ class RadialParticleRender extends CPUParticleRenderBase
 
         for (i in 0...size)
         {
-            var p:Particle = particles[i];
+            var p:RadialParticle = particles[i];
             var s:Sprite2D = sprites[i];
 
             var k = (time - p.startTime) / p.life;
