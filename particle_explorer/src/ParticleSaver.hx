@@ -22,7 +22,6 @@ class ParticleSaver
 	public static function systemToXml(ps:ParticleSystem2D):Xml
 	{
 		var config:Xml = Xml.createElement("particleEmitterConfig");
-		
 		var type:String = "";
 		
 		var preset:ParticlePresetBase = cast(ps.render, ParticleRenderBase).preset;
@@ -210,16 +209,21 @@ class ParticleSaver
 		
 		for (node in xml.elements())
 		{
-			if (node.nodeName == "type")
+			if (node.nodeName == "particleEmitterConfig")
 			{
-				type = node.get("value");
-				break;
+				for (nodeChild in node.elements())
+				{
+					if (nodeChild.nodeName == "type")
+					{
+						type = nodeChild.get("value");
+						break;
+					}
+				}
 			}
+			
 		}
 		
 		var preset:ParticlePresetBase = null;
-		var gravityPreset:GravityParticlePreset = null;
-		var radialPreset:RadialParticlePreset = null;
 		
 		var blendSrc:Context3DBlendFactor = null;
 		var blendDst:Context3DBlendFactor = null;
@@ -246,78 +250,83 @@ class ParticleSaver
 		
 		for (node in xml.elements())
 		{
-			if (node.nodeName == "blend")
+			if (node.nodeName == "particleEmitterConfig")
 			{
-				blendSrc = stringToBlendFactor(node.get("source"));
-				blendDst = stringToBlendFactor(node.get("destination"));
-			}
-			else if (node.nodeName == "life")
-			{
-				lifeMin = Std.parseFloat(node.get("min"));
-				lifeMax = Std.parseFloat(node.get("max"));
-			}
-			else if (node.nodeName == "particleNum")
-			{
-				particleNum = cast(Std.parseInt(node.get("value")), UInt);
-			}
-			else if (node.nodeName == "spawnNum")
-			{
-				spawnNum = cast(Std.parseInt(node.get("value")), UInt);
-			}
-			else if (node.nodeName == "spawnStep")
-			{
-				spawnStep = Std.parseFloat(node.get("value"));
-			}
-			else if (node.nodeName == "startColor")
-			{
-				startColorMin.r = Std.parseFloat(node.get("minR"));
-				startColorMin.g = Std.parseFloat(node.get("minG"));
-				startColorMin.b = Std.parseFloat(node.get("minB"));
-				startColorMin.a = Std.parseFloat(node.get("minA"));
-				
-				startColorMax.r = Std.parseFloat(node.get("maxR"));
-				startColorMax.g = Std.parseFloat(node.get("maxG"));
-				startColorMax.b = Std.parseFloat(node.get("maxB"));
-				startColorMax.a = Std.parseFloat(node.get("maxA"));
-			}
-			else if (node.nodeName == "endColor")
-			{
-				endColorMin.r = Std.parseFloat(node.get("minR"));
-				endColorMin.g = Std.parseFloat(node.get("minG"));
-				endColorMin.b = Std.parseFloat(node.get("minB"));
-				endColorMin.a = Std.parseFloat(node.get("minA"));
-				
-				endColorMax.r = Std.parseFloat(node.get("maxR"));
-				endColorMax.g = Std.parseFloat(node.get("maxG"));
-				endColorMax.b = Std.parseFloat(node.get("maxB"));
-				endColorMax.a = Std.parseFloat(node.get("maxA"));
-			}
-			else if (node.nodeName == "startScale")
-			{
-				startScaleMin = Std.parseFloat(node.get("min"));
-				startScaleMax = Std.parseFloat(node.get("max"));
-			}
-			else if (node.nodeName == "endScale")
-			{
-				endScaleMin = Std.parseFloat(node.get("min"));
-				endScaleMax = Std.parseFloat(node.get("max"));
-			}
-			else if (node.nodeName == "rotation")
-			{
-				rotationMin.x = Std.parseFloat(node.get("minX"));
-				rotationMin.y = Std.parseFloat(node.get("minY"));
-				rotationMin.z = Std.parseFloat(node.get("minZ"));
-				
-				rotationMax.x = Std.parseFloat(node.get("maxX"));
-				rotationMax.y = Std.parseFloat(node.get("maxY"));
-				rotationMax.z = Std.parseFloat(node.get("maxZ"));
+				for (nodeChild in node.elements())
+				{
+					if (nodeChild.nodeName == "blend")
+					{
+						blendSrc = stringToBlendFactor(nodeChild.get("source"));
+						blendDst = stringToBlendFactor(nodeChild.get("destination"));
+					}
+					else if (nodeChild.nodeName == "life")
+					{
+						lifeMin = Std.parseFloat(nodeChild.get("min"));
+						lifeMax = Std.parseFloat(nodeChild.get("max"));
+					}
+					else if (nodeChild.nodeName == "particleNum")
+					{
+						particleNum = cast(Std.parseInt(nodeChild.get("value")), UInt);
+					}
+					else if (nodeChild.nodeName == "spawnNum")
+					{
+						spawnNum = cast(Std.parseInt(nodeChild.get("value")), UInt);
+					}
+					else if (nodeChild.nodeName == "spawnStep")
+					{
+						spawnStep = Std.parseFloat(nodeChild.get("value"));
+					}
+					else if (nodeChild.nodeName == "startColor")
+					{
+						startColorMin.r = Std.parseFloat(nodeChild.get("minR"));
+						startColorMin.g = Std.parseFloat(nodeChild.get("minG"));
+						startColorMin.b = Std.parseFloat(nodeChild.get("minB"));
+						startColorMin.a = Std.parseFloat(nodeChild.get("minA"));
+						
+						startColorMax.r = Std.parseFloat(nodeChild.get("maxR"));
+						startColorMax.g = Std.parseFloat(nodeChild.get("maxG"));
+						startColorMax.b = Std.parseFloat(nodeChild.get("maxB"));
+						startColorMax.a = Std.parseFloat(nodeChild.get("maxA"));
+					}
+					else if (nodeChild.nodeName == "endColor")
+					{
+						endColorMin.r = Std.parseFloat(nodeChild.get("minR"));
+						endColorMin.g = Std.parseFloat(nodeChild.get("minG"));
+						endColorMin.b = Std.parseFloat(nodeChild.get("minB"));
+						endColorMin.a = Std.parseFloat(nodeChild.get("minA"));
+						
+						endColorMax.r = Std.parseFloat(nodeChild.get("maxR"));
+						endColorMax.g = Std.parseFloat(nodeChild.get("maxG"));
+						endColorMax.b = Std.parseFloat(nodeChild.get("maxB"));
+						endColorMax.a = Std.parseFloat(nodeChild.get("maxA"));
+					}
+					else if (nodeChild.nodeName == "startScale")
+					{
+						startScaleMin = Std.parseFloat(nodeChild.get("min"));
+						startScaleMax = Std.parseFloat(nodeChild.get("max"));
+					}
+					else if (nodeChild.nodeName == "endScale")
+					{
+						endScaleMin = Std.parseFloat(nodeChild.get("min"));
+						endScaleMax = Std.parseFloat(nodeChild.get("max"));
+					}
+					else if (nodeChild.nodeName == "rotation")
+					{
+						rotationMin.x = Std.parseFloat(nodeChild.get("minX"));
+						rotationMin.y = Std.parseFloat(nodeChild.get("minY"));
+						rotationMin.z = Std.parseFloat(nodeChild.get("minZ"));
+						
+						rotationMax.x = Std.parseFloat(nodeChild.get("maxX"));
+						rotationMax.y = Std.parseFloat(nodeChild.get("maxY"));
+						rotationMax.z = Std.parseFloat(nodeChild.get("maxZ"));
+					}
+				}
 			}
 		}
 		
 		if (type == "gravity")
 		{
-			gravityPreset = new GravityParticlePreset();
-			preset = gravityPreset;
+			var gravityPreset:GravityParticlePreset = new GravityParticlePreset();
 			
 			var startPositionMin:Vector3D = new Vector3D();
 			var startPositionMax:Vector3D = new Vector3D();
@@ -327,31 +336,37 @@ class ParticleSaver
 			
 			for (node in xml.elements())
 			{
-				if (node.nodeName == "startPosition")
+				if (node.nodeName == "particleEmitterConfig")
 				{
-					startPositionMin.x = Std.parseFloat(node.get("minX"));
-					startPositionMin.y = Std.parseFloat(node.get("minY"));
-					startPositionMin.z = Std.parseFloat(node.get("minZ"));
-					
-					startPositionMax.x = Std.parseFloat(node.get("maxX"));
-					startPositionMax.y = Std.parseFloat(node.get("maxY"));
-					startPositionMax.z = Std.parseFloat(node.get("maxZ"));
-				}
-				else if (node.nodeName == "startVelocity")
-				{
-					startVelocityMin.x = Std.parseFloat(node.get("minX"));
-					startVelocityMin.y = Std.parseFloat(node.get("minY"));
-					startVelocityMin.z = Std.parseFloat(node.get("minZ"));
-					
-					startVelocityMax.x = Std.parseFloat(node.get("maxX"));
-					startVelocityMax.y = Std.parseFloat(node.get("maxY"));
-					startVelocityMax.z = Std.parseFloat(node.get("maxZ"));
-				}
-				else if (node.nodeName == "gravity")
-				{
-					gravity.x = Std.parseFloat(node.get("x"));
-					gravity.y = Std.parseFloat(node.get("y"));
-					gravity.z = Std.parseFloat(node.get("z"));
+					for (nodeChild in node.elements())
+					{
+						if (nodeChild.nodeName == "startPosition")
+						{
+							startPositionMin.x = Std.parseFloat(nodeChild.get("minX"));
+							startPositionMin.y = Std.parseFloat(nodeChild.get("minY"));
+							startPositionMin.z = Std.parseFloat(nodeChild.get("minZ"));
+							
+							startPositionMax.x = Std.parseFloat(nodeChild.get("maxX"));
+							startPositionMax.y = Std.parseFloat(nodeChild.get("maxY"));
+							startPositionMax.z = Std.parseFloat(nodeChild.get("maxZ"));
+						}
+						else if (nodeChild.nodeName == "startVelocity")
+						{
+							startVelocityMin.x = Std.parseFloat(nodeChild.get("minX"));
+							startVelocityMin.y = Std.parseFloat(nodeChild.get("minY"));
+							startVelocityMin.z = Std.parseFloat(nodeChild.get("minZ"));
+							
+							startVelocityMax.x = Std.parseFloat(nodeChild.get("maxX"));
+							startVelocityMax.y = Std.parseFloat(nodeChild.get("maxY"));
+							startVelocityMax.z = Std.parseFloat(nodeChild.get("maxZ"));
+						}
+						else if (nodeChild.nodeName == "gravity")
+						{
+							gravity.x = Std.parseFloat(nodeChild.get("x"));
+							gravity.y = Std.parseFloat(nodeChild.get("y"));
+							gravity.z = Std.parseFloat(nodeChild.get("z"));
+						}
+					}
 				}
 			}
 			
@@ -364,11 +379,12 @@ class ParticleSaver
 			gravityPreset.startScale = new Bounds<Float>(startScaleMin, startScaleMax);
 			gravityPreset.endScale = new Bounds<Float>(endScaleMin, endScaleMax);
 			gravityPreset.startRotation = new Bounds<Vector3D>(rotationMin, rotationMax);
+			
+			preset = gravityPreset;
 		}
 		else if (type == "radial")
 		{
-			radialPreset = new RadialParticlePreset();
-			preset = radialPreset;
+			var radialPreset:RadialParticlePreset = new RadialParticlePreset();
 			
 			var startAngleMin:Float = 0;
 			var startAngleMax:Float = 0;
@@ -390,37 +406,42 @@ class ParticleSaver
 			
 			for (node in xml.elements())
 			{
-				if (node.nodeName == "startAngle")
+				if (node.nodeName == "particleEmitterConfig")
 				{
-					startAngleMin = Std.parseFloat(node.get("min"));
-					startAngleMax = Std.parseFloat(node.get("max"));
+					for (nodeChild in node.elements())
+					{
+						if (nodeChild.nodeName == "startAngle")
+						{
+							startAngleMin = Std.parseFloat(nodeChild.get("min"));
+							startAngleMax = Std.parseFloat(nodeChild.get("max"));
+						}
+						else if (nodeChild.nodeName == "angleSpeed")
+						{
+							angleSpeedMin = Std.parseFloat(nodeChild.get("min"));
+							angleSpeedMax = Std.parseFloat(nodeChild.get("max"));
+						}
+						else if (nodeChild.nodeName == "startDepth")
+						{
+							startDepthMin = Std.parseFloat(nodeChild.get("min"));
+							startDepthMax = Std.parseFloat(nodeChild.get("max"));
+						}
+						else if (nodeChild.nodeName == "depthSpeed")
+						{
+							depthSpeedMin = Std.parseFloat(nodeChild.get("min"));
+							depthSpeedMax = Std.parseFloat(nodeChild.get("max"));
+						}
+						else if (nodeChild.nodeName == "startRadius")
+						{
+							startRadiusMin = Std.parseFloat(nodeChild.get("min"));
+							startRadiusMax = Std.parseFloat(nodeChild.get("max"));
+						}
+						else if (nodeChild.nodeName == "endRadius")
+						{
+							endRadiusMin = Std.parseFloat(nodeChild.get("min"));
+							endRadiusMax = Std.parseFloat(nodeChild.get("max"));
+						}
+					}
 				}
-				else if (node.nodeName == "angleSpeed")
-				{
-					angleSpeedMin = Std.parseFloat(node.get("min"));
-					angleSpeedMax = Std.parseFloat(node.get("max"));
-				}
-				else if (node.nodeName == "startDepth")
-				{
-					startDepthMin = Std.parseFloat(node.get("min"));
-					startDepthMax = Std.parseFloat(node.get("max"));
-				}
-				else if (node.nodeName == "depthSpeed")
-				{
-					depthSpeedMin = Std.parseFloat(node.get("min"));
-					depthSpeedMax = Std.parseFloat(node.get("max"));
-				}
-				else if (node.nodeName == "startRadius")
-				{
-					startRadiusMin = Std.parseFloat(node.get("min"));
-					startRadiusMax = Std.parseFloat(node.get("max"));
-				}
-				else if (node.nodeName == "endRadius")
-				{
-					endRadiusMin = Std.parseFloat(node.get("min"));
-					endRadiusMax = Std.parseFloat(node.get("max"));
-				}
-				
 			}	
 			
 			radialPreset.startAngle = new Bounds<Float>(startAngleMin, startAngleMax);
@@ -435,6 +456,8 @@ class ParticleSaver
 			radialPreset.startScale = new Bounds<Float>(startScaleMin, startScaleMax);
 			radialPreset.endScale = new Bounds<Float>(endScaleMin, endScaleMax);
 			radialPreset.startRotation = new Bounds<Vector3D>(rotationMin, rotationMax);
+			
+			preset = radialPreset;
 		}
 		#if debug
 		else
@@ -442,7 +465,6 @@ class ParticleSaver
 			throw "Wrong file format";
 		}
 		#end
-		
 		preset.life = new Bounds<Float>(lifeMin, lifeMax);
 		preset.particleNum = particleNum;
 		preset.spawnNum = spawnNum;
@@ -451,11 +473,11 @@ class ParticleSaver
 		var ps:ParticleSystem2D = null;
 		if (type == "gravity")
 		{
-			ps = new ParticleSystem2D(GravityParticleRenderBuilder.gpuRender(gravityPreset));
+			ps = new ParticleSystem2D(GravityParticleRenderBuilder.gpuRender(cast(preset, GravityParticlePreset)));
 		}
 		else
 		{
-			ps = new ParticleSystem2D(RadialParticleRenderBuilder.gpuRender(radialPreset));
+			ps = new ParticleSystem2D(RadialParticleRenderBuilder.gpuRender(cast(preset, RadialParticlePreset)));
 		}
 		
 		ps.blendMode = new BlendMode(blendSrc, blendDst);

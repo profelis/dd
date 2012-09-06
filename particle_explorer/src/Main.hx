@@ -33,8 +33,12 @@ import flash.display.StageAlign;
 import flash.display3D.Context3DRenderMode;
 import flash.display3D.Context3DBlendFactor;
 import flash.events.Event;
+import flash.events.IOErrorEvent;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
+import flash.net.FileFilter;
+import flash.net.FileReference;
+import flash.utils.ByteArray;
 import mt.m3d.Color;
 
 @:bitmap("deep.png") class Image extends BitmapData {}
@@ -42,7 +46,6 @@ import mt.m3d.Color;
 
 class Main
 {
-	
 	var world:World2D;
     var scene:Scene2D;
 
@@ -109,6 +112,8 @@ class Main
 	
 	var load:PushButton;
 	var save:PushButton;
+	var fileRef:FileReference;
+	var fileTypes:Array<FileFilter>;
 	
 	var textureEditor:TextureEditor;
 	var textureBmd:BitmapData;
@@ -116,6 +121,8 @@ class Main
 	
     public function new()
     {
+		fileTypes = [new FileFilter("DD particle system format", "*.pxml")];
+		
 		var s = flash.Lib.current.stage;
         s.scaleMode = StageScaleMode.NO_SCALE;
         s.align = StageAlign.TOP_LEFT;
@@ -156,9 +163,6 @@ class Main
         ps.blendMode = blendMode;
         ps.texture = texture;
         scene.addChild(ps);
-		
-		var xml:Xml = ParticleSaver.systemToXml(ps);
-		ParticleSaver.parseXml(xml);
 		
 		Style.embedFonts = false;
         Style.fontSize = 10;
@@ -475,11 +479,115 @@ class Main
 		blendDestination.selectedItem = "ONE";
 		blendDestination.addEventListener(Event.SELECT, onBlendDestSelect);
 		
+		
+		save = new PushButton(otherPanel, 20, 170, "Save The System", onSave);
+		load = new PushButton(otherPanel, 20, 200, "Load The System", onLoad);
+		
 		textureEditor = new TextureEditor(textureBmd);
 		textureEditor.addEventListener(Event.COMPLETE, onTextureChange);
 		textureEditor.y = 400;
 		s.addChild(textureEditor);
     }
+	
+	private function onSave(e:Event) 
+	{
+		var fileName:String = "particle.pxml";
+		var data:String = Std.string(ParticleSaver.systemToXml(ps));
+		fileRef = new FileReference();
+		fileRef.addEventListener(Event.COMPLETE, onSaveComplete);
+		fileRef.addEventListener(Event.CANCEL, onSaveCancel);
+		fileRef.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+		fileRef.save(data, fileName);
+	}
+	
+	private function onSaveComplete(e:Event):Void 
+	{
+		fileRef.removeEventListener(Event.COMPLETE, onSaveComplete);
+		fileRef.removeEventListener(Event.CANCEL,onSaveCancel);
+		fileRef.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+		fileRef = null;
+	}
+	
+	private function onSaveCancel(e:Event):Void 
+	{
+		fileRef.removeEventListener(Event.COMPLETE, onSaveComplete);
+		fileRef.removeEventListener(Event.CANCEL,onSaveCancel);
+		fileRef.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+		fileRef = null;
+	}
+	
+	private function onSaveError(e:IOErrorEvent):Void 
+	{
+		fileRef.removeEventListener(Event.COMPLETE, onSaveComplete);
+		fileRef.removeEventListener(Event.CANCEL,onSaveCancel);
+		fileRef.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+		fileRef = null;
+	}
+	
+	private function onLoad(e:Event) 
+	{
+		fileRef = new FileReference();
+		fileRef.addEventListener(Event.SELECT, onOpenSelect);
+		fileRef.addEventListener(Event.CANCEL, onOpenCancel);
+		fileRef.browse(fileTypes);
+	}
+	
+	private function onOpenSelect(e:Event = null):Void
+	{
+		fileRef.removeEventListener(Event.SELECT, onOpenSelect);
+		fileRef.removeEventListener(Event.CANCEL, onOpenCancel);
+		fileRef.addEventListener(Event.COMPLETE, onOpenComplete);
+		fileRef.addEventListener(IOErrorEvent.IO_ERROR, onOpenError);
+		fileRef.load();
+	}
+	
+	private function onOpenComplete(e:Event = null):Void
+	{
+		fileRef.removeEventListener(Event.COMPLETE, onOpenComplete);
+		fileRef.removeEventListener(IOErrorEvent.IO_ERROR, onOpenError);
+		
+		var fileContents:String = null;
+		var data:ByteArray = fileRef.data;
+		if (data != null)
+		{
+			fileContents = data.readUTFBytes(data.bytesAvailable);
+		}
+		fileRef = null;
+		if((fileContents == null) || (fileContents.length <= 0))
+		{
+			#if debug
+			throw "empty file";
+			#end
+			return;
+		}
+		
+		world.scene.removeChild(ps);
+		ps = ParticleSaver.parseXml(Xml.parse(fileContents));
+		ps.x = world.bounds.width * 0.5;
+        ps.y = world.bounds.height * 0.5;
+		ps.texture = texture;
+		world.scene.addChild(ps);
+		
+		// TODO: set UI values according to particle system properties
+	}
+	
+	private function onOpenCancel(e:Event = null):Void
+	{
+		fileRef.removeEventListener(Event.SELECT, onOpenSelect);
+		fileRef.removeEventListener(Event.CANCEL, onOpenCancel);
+		fileRef = null;
+	}
+	
+	private function onOpenError(e:Event=null):Void
+	{
+		fileRef.removeEventListener(Event.COMPLETE, onOpenComplete);
+		fileRef.removeEventListener(IOErrorEvent.IO_ERROR, onOpenError);
+		fileRef = null;
+		
+		#if debug
+		throw "Unable to open DD particle system file"
+		#end
+	}
 	
 	private function onTextureChange(e:Event):Void 
 	{
