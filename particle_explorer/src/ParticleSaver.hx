@@ -5,6 +5,11 @@ import deep.dd.particle.preset.GravityParticlePreset;
 import deep.dd.particle.preset.ParticlePresetBase;
 import deep.dd.particle.preset.RadialParticlePreset;
 import deep.dd.particle.render.ParticleRenderBase;
+import deep.dd.particle.render.GravityParticleRender;
+import deep.dd.particle.render.RadialParticleRender;
+import deep.dd.utils.BlendMode;
+import flash.geom.Vector3D;
+import mt.m3d.Color;
 
 import flash.display3D.Context3DBlendFactor;
 	
@@ -52,56 +57,8 @@ class ParticleSaver
 		config.addChild(spawnStep);
 		
 		var blend:Xml = Xml.createElement("blend");
-		var src:String = "";
-		var dst:String = "";
-		
-		switch (ps.blendMode.src)
-		{
-			case Context3DBlendFactor.ZERO:
-				src = "ZERO";
-			case Context3DBlendFactor.ONE:
-				src = "ONE";
-			case Context3DBlendFactor.SOURCE_COLOR:
-				src = "SOURCE_COLOR";
-			case Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR:
-				src = "ONE_MINUS_SOURCE_COLOR";
-			case Context3DBlendFactor.SOURCE_ALPHA:
-				src = "SOURCE_ALPHA";
-			case Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA:
-				src = "ONE_MINUS_SOURCE_ALPHA";
-			case Context3DBlendFactor.DESTINATION_ALPHA:
-				src = "DESTINATION_ALPHA";
-			case Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA:
-				src = "ONE_MINUS_DESTINATION_ALPHA";
-			case Context3DBlendFactor.DESTINATION_COLOR:
-				src = "DESTINATION_COLOR";
-			case Context3DBlendFactor.ONE_MINUS_DESTINATION_COLOR:
-				src = "ONE_MINUS_DESTINATION_COLOR";
-		}
-		
-		switch (ps.blendMode.dst)
-		{
-			case Context3DBlendFactor.ZERO:
-				dst = "ZERO";
-			case Context3DBlendFactor.ONE:
-				dst = "ONE";
-			case Context3DBlendFactor.SOURCE_COLOR:
-				dst = "SOURCE_COLOR";
-			case Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR:
-				dst = "ONE_MINUS_SOURCE_COLOR";
-			case Context3DBlendFactor.SOURCE_ALPHA:
-				dst = "SOURCE_ALPHA";
-			case Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA:
-				dst = "ONE_MINUS_SOURCE_ALPHA";
-			case Context3DBlendFactor.DESTINATION_ALPHA:
-				dst = "DESTINATION_ALPHA";
-			case Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA:
-				dst = "ONE_MINUS_DESTINATION_ALPHA";
-			case Context3DBlendFactor.DESTINATION_COLOR:
-				dst = "DESTINATION_COLOR";
-			case Context3DBlendFactor.ONE_MINUS_DESTINATION_COLOR:
-				dst = "ONE_MINUS_DESTINATION_COLOR";
-		}
+		var src:String = blendFactorToString(ps.blendMode.src);
+		var dst:String = blendFactorToString(ps.blendMode.dst);
 		
 		blend.set("source", src);
 		blend.set("destination", dst);
@@ -255,12 +212,311 @@ class ParticleSaver
 		{
 			if (node.nodeName == "type")
 			{
-				
+				type = node.get("value");
+				break;
 			}
 		}
 		
-		var system:ParticleSystem2D = null;
+		var preset:ParticlePresetBase = null;
+		var gravityPreset:GravityParticlePreset = null;
+		var radialPreset:RadialParticlePreset = null;
 		
-		return system;
+		var blendSrc:Context3DBlendFactor = null;
+		var blendDst:Context3DBlendFactor = null;
+		
+		var lifeMin:Float = 0;
+		var lifeMax:Float = 0;
+		
+		var particleNum:UInt = 0;
+		var spawnNum:UInt = 0;
+		var spawnStep:Float = 0;
+		
+		var startColorMin:Color = new Color();
+		var startColorMax:Color = new Color();
+		var endColorMin:Color = new Color();
+		var endColorMax:Color = new Color();
+		
+		var startScaleMin:Float = 0;
+		var startScaleMax:Float = 0;
+		var endScaleMin:Float = 0;
+		var endScaleMax:Float = 0;
+		
+		var rotationMin:Vector3D = new Vector3D();
+		var rotationMax:Vector3D = new Vector3D();
+		
+		for (node in xml.elements())
+		{
+			if (node.nodeName == "blend")
+			{
+				blendSrc = stringToBlendFactor(node.get("source"));
+				blendDst = stringToBlendFactor(node.get("destination"));
+			}
+			else if (node.nodeName == "life")
+			{
+				lifeMin = Std.parseFloat(node.get("min"));
+				lifeMax = Std.parseFloat(node.get("max"));
+			}
+			else if (node.nodeName == "particleNum")
+			{
+				particleNum = cast(Std.parseInt(node.get("value")), UInt);
+			}
+			else if (node.nodeName == "spawnNum")
+			{
+				spawnNum = cast(Std.parseInt(node.get("value")), UInt);
+			}
+			else if (node.nodeName == "spawnStep")
+			{
+				spawnStep = Std.parseFloat(node.get("value"));
+			}
+			else if (node.nodeName == "startColor")
+			{
+				startColorMin.r = Std.parseFloat(node.get("minR"));
+				startColorMin.g = Std.parseFloat(node.get("minG"));
+				startColorMin.b = Std.parseFloat(node.get("minB"));
+				startColorMin.a = Std.parseFloat(node.get("minA"));
+				
+				startColorMax.r = Std.parseFloat(node.get("maxR"));
+				startColorMax.g = Std.parseFloat(node.get("maxG"));
+				startColorMax.b = Std.parseFloat(node.get("maxB"));
+				startColorMax.a = Std.parseFloat(node.get("maxA"));
+			}
+			else if (node.nodeName == "endColor")
+			{
+				endColorMin.r = Std.parseFloat(node.get("minR"));
+				endColorMin.g = Std.parseFloat(node.get("minG"));
+				endColorMin.b = Std.parseFloat(node.get("minB"));
+				endColorMin.a = Std.parseFloat(node.get("minA"));
+				
+				endColorMax.r = Std.parseFloat(node.get("maxR"));
+				endColorMax.g = Std.parseFloat(node.get("maxG"));
+				endColorMax.b = Std.parseFloat(node.get("maxB"));
+				endColorMax.a = Std.parseFloat(node.get("maxA"));
+			}
+			else if (node.nodeName == "startScale")
+			{
+				startScaleMin = Std.parseFloat(node.get("min"));
+				startScaleMax = Std.parseFloat(node.get("max"));
+			}
+			else if (node.nodeName == "endScale")
+			{
+				endScaleMin = Std.parseFloat(node.get("min"));
+				endScaleMax = Std.parseFloat(node.get("max"));
+			}
+			else if (node.nodeName == "rotation")
+			{
+				rotationMin.x = Std.parseFloat(node.get("minX"));
+				rotationMin.y = Std.parseFloat(node.get("minY"));
+				rotationMin.z = Std.parseFloat(node.get("minZ"));
+				
+				rotationMax.x = Std.parseFloat(node.get("maxX"));
+				rotationMax.y = Std.parseFloat(node.get("maxY"));
+				rotationMax.z = Std.parseFloat(node.get("maxZ"));
+			}
+		}
+		
+		if (type == "gravity")
+		{
+			gravityPreset = new GravityParticlePreset();
+			preset = gravityPreset;
+			
+			var startPositionMin:Vector3D = new Vector3D();
+			var startPositionMax:Vector3D = new Vector3D();
+			var startVelocityMin:Vector3D = new Vector3D();
+			var startVelocityMax:Vector3D = new Vector3D();
+			var gravity:Vector3D = new Vector3D();
+			
+			for (node in xml.elements())
+			{
+				if (node.nodeName == "startPosition")
+				{
+					startPositionMin.x = Std.parseFloat(node.get("minX"));
+					startPositionMin.y = Std.parseFloat(node.get("minY"));
+					startPositionMin.z = Std.parseFloat(node.get("minZ"));
+					
+					startPositionMax.x = Std.parseFloat(node.get("maxX"));
+					startPositionMax.y = Std.parseFloat(node.get("maxY"));
+					startPositionMax.z = Std.parseFloat(node.get("maxZ"));
+				}
+				else if (node.nodeName == "startVelocity")
+				{
+					startVelocityMin.x = Std.parseFloat(node.get("minX"));
+					startVelocityMin.y = Std.parseFloat(node.get("minY"));
+					startVelocityMin.z = Std.parseFloat(node.get("minZ"));
+					
+					startVelocityMax.x = Std.parseFloat(node.get("maxX"));
+					startVelocityMax.y = Std.parseFloat(node.get("maxY"));
+					startVelocityMax.z = Std.parseFloat(node.get("maxZ"));
+				}
+				else if (node.nodeName == "gravity")
+				{
+					gravity.x = Std.parseFloat(node.get("x"));
+					gravity.y = Std.parseFloat(node.get("y"));
+					gravity.z = Std.parseFloat(node.get("z"));
+				}
+			}
+			
+			gravityPreset.startPosition = new Bounds<Vector3D>(startPositionMin, startPositionMax);
+			gravityPreset.velocity = new Bounds<Vector3D>(startVelocityMin, startVelocityMax);
+			gravityPreset.gravity = gravity;
+			
+			gravityPreset.startColor = new Bounds<Color>(startColorMin, startColorMax);
+			gravityPreset.endColor = new Bounds<Color>(endColorMin, endColorMax);
+			gravityPreset.startScale = new Bounds<Float>(startScaleMin, startScaleMax);
+			gravityPreset.endScale = new Bounds<Float>(endScaleMin, endScaleMax);
+			gravityPreset.startRotation = new Bounds<Vector3D>(rotationMin, rotationMax);
+		}
+		else if (type == "radial")
+		{
+			radialPreset = new RadialParticlePreset();
+			preset = radialPreset;
+			
+			var startAngleMin:Float = 0;
+			var startAngleMax:Float = 0;
+			
+			var angleSpeedMin:Float = 0;
+			var angleSpeedMax:Float = 0;
+			
+			var startDepthMin:Float = 0;
+			var startDepthMax:Float = 0;
+			
+			var depthSpeedMin:Float = 0;
+			var depthSpeedMax:Float = 0;
+			
+			var startRadiusMin:Float = 0;
+			var startRadiusMax:Float = 0;
+			
+			var endRadiusMin:Float = 0;
+			var endRadiusMax:Float = 0;
+			
+			for (node in xml.elements())
+			{
+				if (node.nodeName == "startAngle")
+				{
+					startAngleMin = Std.parseFloat(node.get("min"));
+					startAngleMax = Std.parseFloat(node.get("max"));
+				}
+				else if (node.nodeName == "angleSpeed")
+				{
+					angleSpeedMin = Std.parseFloat(node.get("min"));
+					angleSpeedMax = Std.parseFloat(node.get("max"));
+				}
+				else if (node.nodeName == "startDepth")
+				{
+					startDepthMin = Std.parseFloat(node.get("min"));
+					startDepthMax = Std.parseFloat(node.get("max"));
+				}
+				else if (node.nodeName == "depthSpeed")
+				{
+					depthSpeedMin = Std.parseFloat(node.get("min"));
+					depthSpeedMax = Std.parseFloat(node.get("max"));
+				}
+				else if (node.nodeName == "startRadius")
+				{
+					startRadiusMin = Std.parseFloat(node.get("min"));
+					startRadiusMax = Std.parseFloat(node.get("max"));
+				}
+				else if (node.nodeName == "endRadius")
+				{
+					endRadiusMin = Std.parseFloat(node.get("min"));
+					endRadiusMax = Std.parseFloat(node.get("max"));
+				}
+				
+			}	
+			
+			radialPreset.startAngle = new Bounds<Float>(startAngleMin, startAngleMax);
+			radialPreset.angleSpeed = new Bounds<Float>(angleSpeedMin, angleSpeedMax);
+			radialPreset.startDepth = new Bounds<Float>(startDepthMin, startDepthMax);
+			radialPreset.depthSpeed = new Bounds<Float>(depthSpeedMin, depthSpeedMax);
+			radialPreset.startRadius = new Bounds<Float>(startRadiusMin, startRadiusMax);
+			radialPreset.endRadius = new Bounds<Float>(endRadiusMin, endRadiusMax);
+			
+			radialPreset.startColor = new Bounds<Color>(startColorMin, startColorMax);
+			radialPreset.endColor = new Bounds<Color>(endColorMin, endColorMax);
+			radialPreset.startScale = new Bounds<Float>(startScaleMin, startScaleMax);
+			radialPreset.endScale = new Bounds<Float>(endScaleMin, endScaleMax);
+			radialPreset.startRotation = new Bounds<Vector3D>(rotationMin, rotationMax);
+		}
+		#if debug
+		else
+		{
+			throw "Wrong file format";
+		}
+		#end
+		
+		preset.life = new Bounds<Float>(lifeMin, lifeMax);
+		preset.particleNum = particleNum;
+		preset.spawnNum = spawnNum;
+		preset.spawnStep = spawnStep;
+		
+		var ps:ParticleSystem2D = null;
+		if (type == "gravity")
+		{
+			ps = new ParticleSystem2D(GravityParticleRenderBuilder.gpuRender(gravityPreset));
+		}
+		else
+		{
+			ps = new ParticleSystem2D(RadialParticleRenderBuilder.gpuRender(radialPreset));
+		}
+		
+		ps.blendMode = new BlendMode(blendSrc, blendDst);
+		return ps;
+	}
+	
+	private static function blendFactorToString(blendFactor:Context3DBlendFactor):String
+	{
+		var str:String = "";
+		switch (blendFactor)
+		{
+			case Context3DBlendFactor.ZERO:
+				str = "ZERO";
+			case Context3DBlendFactor.ONE:
+				str = "ONE";
+			case Context3DBlendFactor.SOURCE_COLOR:
+				str = "SOURCE_COLOR";
+			case Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR:
+				str = "ONE_MINUS_SOURCE_COLOR";
+			case Context3DBlendFactor.SOURCE_ALPHA:
+				str = "SOURCE_ALPHA";
+			case Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA:
+				str = "ONE_MINUS_SOURCE_ALPHA";
+			case Context3DBlendFactor.DESTINATION_ALPHA:
+				str = "DESTINATION_ALPHA";
+			case Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA:
+				str = "ONE_MINUS_DESTINATION_ALPHA";
+			case Context3DBlendFactor.DESTINATION_COLOR:
+				str = "DESTINATION_COLOR";
+			case Context3DBlendFactor.ONE_MINUS_DESTINATION_COLOR:
+				str = "ONE_MINUS_DESTINATION_COLOR";
+		}
+		return str;
+	}
+	
+	private static function stringToBlendFactor(str:String):Context3DBlendFactor
+	{
+		var blendFactor:Context3DBlendFactor = null;
+		switch (str)
+		{
+			case "ZERO":
+				blendFactor = Context3DBlendFactor.ZERO;
+			case "ONE":
+				blendFactor = Context3DBlendFactor.ONE;
+			case "SOURCE_COLOR":
+				blendFactor = Context3DBlendFactor.SOURCE_COLOR;
+			case "ONE_MINUS_SOURCE_COLOR":
+				blendFactor = Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR;
+			case "SOURCE_ALPHA":
+				blendFactor = Context3DBlendFactor.SOURCE_ALPHA;
+			case "ONE_MINUS_SOURCE_ALPHA":
+				blendFactor = Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA;
+			case "DESTINATION_ALPHA":
+				blendFactor = Context3DBlendFactor.DESTINATION_ALPHA;
+			case "ONE_MINUS_DESTINATION_ALPHA":
+				blendFactor = Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA;
+			case "DESTINATION_COLOR":
+				blendFactor = Context3DBlendFactor.DESTINATION_COLOR;
+			case "ONE_MINUS_DESTINATION_COLOR":
+				blendFactor = Context3DBlendFactor.ONE_MINUS_DESTINATION_COLOR;
+		}
+		return blendFactor;
 	}
 }
