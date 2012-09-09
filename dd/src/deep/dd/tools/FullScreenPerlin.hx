@@ -49,7 +49,6 @@ class FullScreenPerlinMaterial extends Material
         perlinShader = flash.Lib.as(shader, FullScreenPerlinShader);
     }
 
-
     override public function draw(sprite:DisplayNode2D, camera:Camera2D)
     {
         perlinShader.perlin(delta, scale, sprite.worldColorTransform);
@@ -57,6 +56,13 @@ class FullScreenPerlinMaterial extends Material
         super.draw(sprite, camera);
     }
 
+    override public function dispose():Void
+    {
+        super.dispose();
+
+        perlinShader = null;
+        delta = null;
+    }
 }
 
 /**
@@ -105,29 +111,19 @@ class FullScreenPerlinShader extends Shader
     static var permut : Texture;
     static var grad : Texture;
 
-    public function new(c) {
+    public function new(c)
+    {
         super(c);
         initPermut();
         initGradient();
     }
 
-    override function dispose() {
-        super.dispose();
-
-        permut.dispose();
-        permut = null;
-        grad.dispose();
-        grad = null;
-
-        permutBytes = null;
-        gradBytes = null;
-    }
-
-    inline function perm( x : Int ) {
+    inline function perm(x:Int)
+    {
         return PTBL[x & 0xFF];
     }
 
-    function initPermut()
+    inline function initPermut()
     {
         if (permutBytes == null)
         {
@@ -154,7 +150,7 @@ class FullScreenPerlinShader extends Shader
         }
     }
 
-    function initGradient()
+    inline function initGradient()
     {
         if (gradBytes == null)
         {
@@ -183,9 +179,11 @@ class FullScreenPerlinShader extends Shader
 
     static var SRC =
     {
-        var input : {
+        var input:
+        {
             pos : Float3
         }
+
         var tuv : Float3;
         var one:Float;
 

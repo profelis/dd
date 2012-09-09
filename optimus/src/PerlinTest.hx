@@ -51,27 +51,29 @@ class PerlinTest
 
         flash.Lib.current.stage.addChild(new Stats(world, true));
 
-
+        /*
         var i = new Image(0, 0);
         var b = new BitmapData(Std.int(i.width * 0.5), Std.int(i.height * 0.5), true, 0x00000000);
         b.draw(i, new Matrix(0.5, 0, 0, 0.5));
+        */
 
         var cloud2 = new Sprite2D();
-        cloud2.texture = world.cache.getBitmapTexture(b);
-        cloud2.colorTransform = new Color(1, 0, 0, 1);
+        cloud2.texture = world.cache.getTexture(Image);
+        cloud2.colorTransform = ColorTools.fromUInt(0xFFFF0000);
 
-        s2 = new CloudLayer(cloud2, new Vector3D(2, 1, 12), 2, -0.05 + 0.1);
+        s2 = new CloudLayer(cloud2, new Vector3D(), 2, 0.2);
         s2.bgColor = new Color(0, 0, 0, 1);
         scene.addChild(s2);
 
 
         var cloud = new Sprite2D();
         cloud.texture = world.cache.getTexture(Image);
-        cloud.colorTransform = new Color(0.7, 1, 1, 1);
+        cloud.colorTransform = new Color(0, 0, 1, 1);
 
-        s = new CloudLayer(cloud, new Vector3D(), 2, -0.1 + 0.15);
+        s = new CloudLayer(cloud, new Vector3D(), 2, 0.0);
         s.bgColor = new Color(0, 0, 0, 1);
         s.alpha = 0.85;
+        s.blendMode = BlendMode.ADD;
         scene.addChild(s);
 
 
@@ -139,8 +141,8 @@ class CloudLayer extends TextureRenderer
             cloud.texture.frame.region.x += delta.x;
             cloud.texture.frame.region.y += delta.y;
 
-            delta.x /= cloud.scaleX;
-            delta.y /= cloud.scaleY;
+            delta.x /= cloud.scaleX*0.5;
+            delta.y /= cloud.scaleY*0.5;
 
             perlin.delta.incrementBy(delta);
             delta.setTo(0, 0, 0);
@@ -287,25 +289,12 @@ class FullScreenPerlinShader extends Shader
         initGradient();
     }
 
-    override function dispose()
-    {
-        super.dispose();
-
-        permut.dispose();
-        permut = null;
-        grad.dispose();
-        grad = null;
-
-        permutBytes = null;
-        gradBytes = null;
-    }
-
     inline function perm(x:Int)
     {
         return PTBL[x & 0xFF];
     }
 
-    function initPermut()
+    inline function initPermut()
     {
         if (permutBytes == null)
         {
@@ -332,7 +321,7 @@ class FullScreenPerlinShader extends Shader
         }
     }
 
-    function initGradient()
+    inline function initGradient()
     {
         if (gradBytes == null)
         {
@@ -359,7 +348,6 @@ class FullScreenPerlinShader extends Shader
         init({delta : delta, scale : scale}, {permut : permut, g : grad, cTrans:cTrans, depth:depth});
     }
 
-
     static var SRC =
     {
         var input : {
@@ -371,7 +359,7 @@ class FullScreenPerlinShader extends Shader
 
         function vertex(delta : Float3, scale : Float)
         {
-            tuv = ([(pos.x + 1) * 0.5, 1- (pos.y + 1) * 0.5, 0] + delta) * scale;
+            tuv = ([(pos.x + 1) * 0.5, 1-(pos.y + 1) * 0.5, 0] + delta) * scale;
             out = pos.xyzw;
             one = 1 / 256;
         }
@@ -398,6 +386,7 @@ class FullScreenPerlinShader extends Shader
             var f = fade(p);
             i *= one;
             var a = permut.get(i.xy, nearest, wrap) + i.z;
+
             return lerp(
                 lerp(
                     lerp( gradperm(g, a.x, p), gradperm(g, a.z, p + [ - 1, 0, 0] ), f.x),

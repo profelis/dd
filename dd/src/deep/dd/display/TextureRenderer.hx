@@ -91,6 +91,4 @@ class TextureRenderer extends Sprite2D
         cam.dispose();
         cam = null;
     }
-
-
 }

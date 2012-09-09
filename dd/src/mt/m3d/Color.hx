@@ -77,3 +77,20 @@ class Color
     }
 
 }
+
+class ColorTools
+{
+    inline static public function fromUInt(color:UInt)
+    {
+        var c = new Color();
+        c.fromUInt(color);
+        return c;
+    }
+
+    inline static public function fromInt(color:Int, a:Float = 1.0)
+    {
+        var c = new Color();
+        c.fromInt(color, a);
+        return c;
+    }
+}

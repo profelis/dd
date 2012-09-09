@@ -39,6 +39,15 @@ class PerlinMaterial extends Material
 
         super.draw(sprite, camera);
     }
+
+    override public function dispose():Void
+    {
+        super.dispose();
+
+        perlinShader = null;
+        delta = null;
+    }
+
 }
 
 /**
@@ -93,23 +102,11 @@ class PerlinShader extends Shader
         initGradient();
     }
 
-    override function dispose() {
-        super.dispose();
-
-        permut.dispose();
-        permut = null;
-        grad.dispose();
-        grad = null;
-
-        permutBytes = null;
-        gradBytes = null;
-    }
-
     inline function perm( x : Int ) {
         return PTBL[x & 0xFF];
     }
 
-    function initPermut()
+    inline function initPermut()
     {
         if (permutBytes == null)
         {
@@ -136,7 +133,7 @@ class PerlinShader extends Shader
         }
     }
 
-    function initGradient()
+    inline function initGradient()
     {
         if (gradBytes == null)
         {
@@ -220,7 +217,8 @@ class PerlinShader extends Shader
             var pos = tuv;
             var tot = 0;
             var per = 1.0;
-            for( k in 0...2 ) {
+            for( k in 0...2 )
+            {
                 tot += gradient(permut, g, pos) * per;
                 per *= 0.5;
                 pos *= 2;
