@@ -1,4 +1,5 @@
 package;
+import com.bit101.components.Accordion;
 import com.bit101.components.ComboBox;
 import com.bit101.components.HRangeSlider;
 import com.bit101.components.HSlider;
@@ -34,8 +35,10 @@ import flash.display3D.Context3DRenderMode;
 import flash.display3D.Context3DBlendFactor;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
+import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.geom.Vector3D;
+import flash.Lib;
 import flash.net.FileFilter;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
@@ -110,6 +113,8 @@ class Main
 	var blendDestination:ComboBox;
 	var blendMode:BlendMode;
 	
+	var accordion:Accordion;
+	
 	var load:PushButton;
 	var save:PushButton;
 	var fileRef:FileReference;
@@ -169,132 +174,43 @@ class Main
 		Style.fontName = "arial";
         Style.setStyle(Style.LIGHT);
 		
-		gravityWindow = new Window(s, 0, 0, 'Gravity System Settings');
-		gravityWindow.setSize(210, 400);
-		gravityWindow.draggable = false;
-		gravityWindow.hasMinimizeButton = true;
-		
-		var panel:ScrollPane = new ScrollPane(gravityWindow, 0, 0);
-		panel.showGrid = true;
-		panel.autoHideScrollBar = true;
-		panel.setSize(210, 400);
-		
-		var startPositionLabel:Label = new Label(panel, 0, 8, "Start Position");
-		startPositionLabel.x = (gravityWindow.width - startPositionLabel.width) * 0.5;
-		
 		var gapBetweenLabelAndSlider:Float = 10;
 		var labelX:Float = 10;
 		var rangeX:Float = 30;
 		var sliderX:Float = 21;
 		
-		xPosition = new HRangeSlider(panel, rangeX, 30, onXChange);
-		xPosition.minimum = -500;
-		xPosition.maximum = 500;
-		xPosition.lowValue = 0;
-		xPosition.highValue = 0;
-		xPosition.width = 136;
-		xPosition.labelPosition = 'bottom';
-		var label:Label = new Label(panel, labelX, 27, "X");
-		
-		yPosition = new HRangeSlider(panel, rangeX, 60, onYChange);
-		yPosition.minimum = -500;
-		yPosition.maximum = 500;
-		yPosition.lowValue = 0;
-		yPosition.highValue = 0;
-		yPosition.width = 136;
-		yPosition.labelPosition = 'bottom';
-		label = new Label(panel, labelX, 57, "Y");
-		
-		zPosition = new HRangeSlider(panel, rangeX, 90, onZChange);
-		zPosition.minimum = -500;
-		zPosition.maximum = 500;
-		zPosition.lowValue = 0;
-		zPosition.highValue = 0;
-		zPosition.width = 136;
-		zPosition.labelPosition = 'bottom';
-		label = new Label(panel, labelX, 87, "Z");
-		
-		var startVelocityLabel:Label = new Label(panel, 0, 120, "Start Velocity");
-		startVelocityLabel.x = (gravityWindow.width - startVelocityLabel.width) * 0.5;
-		
-		xVelocity = new HRangeSlider(panel, rangeX, 140, onVelocityXChange);
-		xVelocity.minimum = -500;
-		xVelocity.maximum = 500;
-		xVelocity.lowValue = 0;
-		xVelocity.highValue = 0;
-		xVelocity.width = 136;
-		xVelocity.labelPosition = 'bottom';
-		var label:Label = new Label(panel, labelX, 137, "X");
-		
-		yVelocity = new HRangeSlider(panel, rangeX, 170, onVelocityYChange);
-		yVelocity.minimum = -500;
-		yVelocity.maximum = 500;
-		yVelocity.lowValue = 0;
-		yVelocity.highValue = 0;
-		yVelocity.width = 136;
-		yVelocity.labelPosition = 'bottom';
-		var label:Label = new Label(panel, labelX, 167, "Y");
-		
-		zVelocity = new HRangeSlider(panel, rangeX, 200, onVelocityZChange);
-		zVelocity.minimum = -500;
-		zVelocity.maximum = 500;
-		zVelocity.lowValue = 0;
-		zVelocity.highValue = 0;
-		zVelocity.width = 136;
-		zVelocity.labelPosition = 'bottom';
-		var label:Label = new Label(panel, labelX, 197, "Z");
-		
-		var gravityLabel:Label = new Label(panel, 0, 230, "Gravity");
-		gravityLabel.x = (gravityWindow.width - gravityLabel.width) * 0.5;
-		
-		xGravity = new HUISlider(panel, sliderX, 247, onGravityXChange);
-		xGravity.setSliderParams( -500, 500, 0);
-		var label:Label = new Label(panel, labelX, 247, "X");
-		
-		yGravity = new HUISlider(panel, sliderX, 277, onGravityYChange);
-		yGravity.setSliderParams( -500, 500, 0);
-		var label:Label = new Label(panel, labelX, 277, "Y");
-		
-		zGravity = new HUISlider(panel, sliderX, 307, onGravityYChange);
-		zGravity.setSliderParams( -500, 500, 0);
-		var label:Label = new Label(panel, labelX, 307, "Z");
+		accordion = new Accordion(s, 0, 0);
+		accordion.setSize(350, 600);
 		
 		// Particle config
-		particleWindow = new Window(s, 210, 0, 'Particle Configuration');
-		particleWindow.setSize(210, 400);
-		particleWindow.draggable = false;
-		particleWindow.hasMinimizeButton = true;
+		particleWindow = accordion.getWindowAt(0);
+		particleWindow.title = 'Particle Configuration';
 		
-		var particlePanel = new ScrollPane(particleWindow, 0, 0);
-		particlePanel.showGrid = true;
-		particlePanel.autoHideScrollBar = true;
-		particlePanel.setSize(210, 400);
-		
-		numParticles = new HUISlider(particlePanel, sliderX, 27, onNumParticlesChange);
+		numParticles = new HUISlider(particleWindow, sliderX, 27, onNumParticlesChange);
 		numParticles.setSliderParams(0, 10000, 1000);
 		numParticles.labelPrecision = 0;
 		numParticles.label = 'particlesNum';
 		
-		spawnNum = new HUISlider(particlePanel, sliderX, 57, onSpawnNumChange);
+		spawnNum = new HUISlider(particleWindow, sliderX, 57, onSpawnNumChange);
 		spawnNum.setSliderParams(0, 1000, 100);
 		spawnNum.labelPrecision = 0;
 		spawnNum.label = 'spawnNum';
 		
-		spawnStep = new HUISlider(particlePanel, sliderX, 87, onSpawnStepChange);
+		spawnStep = new HUISlider(particleWindow, sliderX, 87, onSpawnStepChange);
 		spawnStep.setSliderParams(0, 1, 0.03);
 		spawnStep.labelPrecision = 3;
 		spawnStep.label = 'spawnStep';
 		
-		life = new HRangeSlider(particlePanel, rangeX, 117, onLigeChange);
+		life = new HRangeSlider(particleWindow, rangeX, 117, onLigeChange);
 		life.minimum = 1;
 		life.maximum = 20;
 		life.lowValue = 2;
 		life.highValue = 3;
 		life.width = 136;
 		life.labelPosition = 'bottom';
-		label = new Label(particlePanel, labelX, 112, "life");
+		var label:Label = new Label(particleWindow, labelX, 112, "life");
 		
-		startScale = new HRangeSlider(particlePanel, rangeX, 147, onStartScaleChange);
+		startScale = new HRangeSlider(particleWindow, rangeX, 147, onStartScaleChange);
 		startScale.labelPrecision = 2;
 		startScale.minimum = 0.01;
 		startScale.maximum = 10;
@@ -302,9 +218,9 @@ class Main
 		startScale.highValue = 1;
 		startScale.width = 136;
 		startScale.labelPosition = 'bottom';
-		label = new Label(particlePanel, labelX - 20, 142, "startScale");
+		label = new Label(particleWindow, labelX - 20, 142, "startScale");
 		
-		endScale = new HRangeSlider(particlePanel, rangeX, 177, onEndScaleChange);
+		endScale = new HRangeSlider(particleWindow, rangeX, 177, onEndScaleChange);
 		endScale.labelPrecision = 2;
 		endScale.minimum = 0.01;
 		endScale.maximum = 10;
@@ -312,146 +228,47 @@ class Main
 		endScale.highValue = 1;
 		endScale.width = 136;
 		endScale.labelPosition = 'bottom';
-		label = new Label(particlePanel, labelX - 20, 172, "endScale");
+		label = new Label(particleWindow, labelX - 20, 172, "endScale");
 		
-		angleX = new HRangeSlider(particlePanel, rangeX, 207, onAngleXChange);
+		angleX = new HRangeSlider(particleWindow, rangeX, 207, onAngleXChange);
 		angleX.minimum = 0;
 		angleX.maximum = 360;
 		angleX.lowValue = 0;
 		angleX.highValue = 0;
 		angleX.width = 136;
 		angleX.labelPosition = 'bottom';
-		label = new Label(particlePanel, labelX - 40, 202, "rotation X");
+		label = new Label(particleWindow, labelX - 40, 202, "rotation X");
 		
-		angleY = new HRangeSlider(particlePanel, rangeX, 237, onAngleYChange);
+		angleY = new HRangeSlider(particleWindow, rangeX, 237, onAngleYChange);
 		angleY.minimum = 0;
 		angleY.maximum = 360;
 		angleY.lowValue = 0;
 		angleY.highValue = 0;
 		angleY.width = 136;
 		angleY.labelPosition = 'bottom';
-		label = new Label(particlePanel, labelX - 40, 232, "rotation Y");
+		label = new Label(particleWindow, labelX - 40, 232, "rotation Y");
 		
-		angleZ = new HRangeSlider(particlePanel, rangeX, 267, onAngleYChange);
+		angleZ = new HRangeSlider(particleWindow, rangeX, 267, onAngleYChange);
 		angleZ.minimum = 0;
 		angleZ.maximum = 360;
 		angleZ.lowValue = 0;
 		angleZ.highValue = 0;
 		angleZ.width = 136;
 		angleZ.labelPosition = 'bottom';
-		label = new Label(particlePanel, labelX - 40, 262, "rotation Z");
-		
-		// Color config
-		colorWindow = new Window(s, 420, 0, 'Particle Color');
-		colorWindow.setSize(210, 400);
-		colorWindow.draggable = false;
-		colorWindow.hasMinimizeButton = true;
-		
-		var colorPanel = new ScrollPane(colorWindow, 0, 0);
-		colorPanel.showGrid = true;
-		colorPanel.autoHideScrollBar = true;
-		colorPanel.setSize(210, 400);
-		
-		startR = new HRangeSlider(colorPanel, sliderX, 27, onStartRChange);
-		startR.minimum = 0;
-		startR.maximum = 1;
-		startR.lowValue = 1;
-		startR.highValue = 1;
-		startR.width = 136;
-		startR.labelPrecision = 2;
-		startR.labelPosition = 'bottom';
-		label = new Label(colorPanel, labelX - 40, 22, "Start R");
-		
-		startG = new HRangeSlider(colorPanel, sliderX, 57, onStartGChange);
-		startG.minimum = 0;
-		startG.maximum = 1;
-		startG.lowValue = 1;
-		startG.highValue = 1;
-		startG.width = 136;
-		startG.labelPrecision = 2;
-		startG.labelPosition = 'bottom';
-		label = new Label(colorPanel, labelX - 40, 52, "Start G");
-		
-		startB = new HRangeSlider(colorPanel, sliderX, 87, onStartBChange);
-		startB.minimum = 0;
-		startB.maximum = 1;
-		startB.lowValue = 1;
-		startB.highValue = 1;
-		startB.width = 136;
-		startB.labelPrecision = 2;
-		startB.labelPosition = 'bottom';
-		label = new Label(colorPanel, labelX - 40, 82, "Start B");
-		
-		startA = new HRangeSlider(colorPanel, sliderX, 117, onStartAChange);
-		startA.minimum = 0;
-		startA.maximum = 1;
-		startA.lowValue = 1;
-		startA.highValue = 1;
-		startA.width = 136;
-		startA.labelPrecision = 2;
-		startA.labelPosition = 'bottom';
-		label = new Label(colorPanel, labelX - 40, 112, "Start A");
-		
-		//
-		endR = new HRangeSlider(colorPanel, sliderX, 147, onEndRChange);
-		endR.minimum = 0;
-		endR.maximum = 1;
-		endR.lowValue = 1;
-		endR.highValue = 1;
-		endR.width = 136;
-		endR.labelPrecision = 2;
-		endR.labelPosition = 'bottom';
-		label = new Label(colorPanel, labelX - 40, 142, "End R");
-		
-		endG = new HRangeSlider(colorPanel, sliderX, 177, onEndGChange);
-		endG.minimum = 0;
-		endG.maximum = 1;
-		endG.lowValue = 1;
-		endG.highValue = 1;
-		endG.width = 136;
-		endG.labelPrecision = 2;
-		endG.labelPosition = 'bottom';
-		label = new Label(colorPanel, labelX - 40, 172, "End G");
-		
-		endB = new HRangeSlider(colorPanel, sliderX, 207, onEndBChange);
-		endB.minimum = 0;
-		endB.maximum = 1;
-		endB.lowValue = 1;
-		endB.highValue = 1;
-		endB.width = 136;
-		endB.labelPrecision = 2;
-		endB.labelPosition = 'bottom';
-		label = new Label(colorPanel, labelX - 40, 202, "End B");
-		
-		endA = new HRangeSlider(colorPanel, sliderX, 237, onEndAChange);
-		endA.minimum = 0;
-		endA.maximum = 1;
-		endA.lowValue = 1;
-		endA.highValue = 1;
-		endA.width = 136;
-		endA.labelPrecision = 2;
-		endA.labelPosition = 'bottom';
-		label = new Label(colorPanel, labelX - 40, 232, "End A");
+		label = new Label(particleWindow, labelX - 40, 262, "rotation Z");
 		
 		// Other settings
-		otherSettingsWindow = new Window(s, 630, 0, 'Particle Configuration');
-		otherSettingsWindow.setSize(210, 400);
-		otherSettingsWindow.draggable = false;
-		otherSettingsWindow.hasMinimizeButton = true;
+		otherSettingsWindow = accordion.getWindowAt(1);
+		otherSettingsWindow.title = 'Particle Configuration 2';
 		
-		var otherPanel = new ScrollPane(otherSettingsWindow, 0, 0);
-		otherPanel.showGrid = true;
-		otherPanel.autoHideScrollBar = true;
-		otherPanel.setSize(210, 400);
-		
-		bgRed = new HUISlider(otherPanel, 20, 20, "bgRed", onBgRedChange);
+		bgRed = new HUISlider(otherSettingsWindow, 20, 20, "bgRed", onBgRedChange);
 		bgRed.setSliderParams(0, 1, 0.5);
-		bgGreen = new HUISlider(otherPanel, 20, 50, "bgGreen", onBgGreenChange);
+		bgGreen = new HUISlider(otherSettingsWindow, 20, 50, "bgGreen", onBgGreenChange);
 		bgGreen.setSliderParams(0, 1, 0.5);
-		bgBlue = new HUISlider(otherPanel, 20, 80, "bgBlue", onBgBlueChange);
+		bgBlue = new HUISlider(otherSettingsWindow, 20, 80, "bgBlue", onBgBlueChange);
 		bgBlue.setSliderParams(0, 1, 0.5);
 		
-		blendSource = new ComboBox(otherPanel, 20, 110, "SOURCE");
+		blendSource = new ComboBox(otherSettingsWindow, 20, 110, "SOURCE");
 		blendSource.addItem("ZERO");
 		blendSource.addItem("ONE");
 		blendSource.addItem("SRC");
@@ -465,7 +282,7 @@ class Main
 		blendSource.selectedItem = "ONE";
 		blendSource.addEventListener(Event.SELECT, onBlendSrcSelect);
 		
-		blendDestination = new ComboBox(otherPanel, 20, 140, "DEST");
+		blendDestination = new ComboBox(otherSettingsWindow, 20, 140, "DEST");
 		blendDestination.addItem("ZERO");
 		blendDestination.addItem("ONE");
 		blendDestination.addItem("SRC");
@@ -479,15 +296,196 @@ class Main
 		blendDestination.selectedItem = "ONE";
 		blendDestination.addEventListener(Event.SELECT, onBlendDestSelect);
 		
+		save = new PushButton(otherSettingsWindow, 20, 170, "Save The System", onSave);
+		load = new PushButton(otherSettingsWindow, 20, 200, "Load The System", onLoad);
 		
-		save = new PushButton(otherPanel, 20, 170, "Save The System", onSave);
-		load = new PushButton(otherPanel, 20, 200, "Load The System", onLoad);
+		// Color config
+		accordion.addWindow('Particle Color');
+		colorWindow = accordion.getWindowAt(2);
 		
-		textureEditor = new TextureEditor(textureBmd);
+		startR = new HRangeSlider(colorWindow, sliderX, 27, onStartRChange);
+		startR.minimum = 0;
+		startR.maximum = 1;
+		startR.lowValue = 1;
+		startR.highValue = 1;
+		startR.width = 136;
+		startR.labelPrecision = 2;
+		startR.labelPosition = 'bottom';
+		label = new Label(colorWindow, labelX - 40, 22, "Start R");
+		
+		startG = new HRangeSlider(colorWindow, sliderX, 57, onStartGChange);
+		startG.minimum = 0;
+		startG.maximum = 1;
+		startG.lowValue = 1;
+		startG.highValue = 1;
+		startG.width = 136;
+		startG.labelPrecision = 2;
+		startG.labelPosition = 'bottom';
+		label = new Label(colorWindow, labelX - 40, 52, "Start G");
+		
+		startB = new HRangeSlider(colorWindow, sliderX, 87, onStartBChange);
+		startB.minimum = 0;
+		startB.maximum = 1;
+		startB.lowValue = 1;
+		startB.highValue = 1;
+		startB.width = 136;
+		startB.labelPrecision = 2;
+		startB.labelPosition = 'bottom';
+		label = new Label(colorWindow, labelX - 40, 82, "Start B");
+		
+		startA = new HRangeSlider(colorWindow, sliderX, 117, onStartAChange);
+		startA.minimum = 0;
+		startA.maximum = 1;
+		startA.lowValue = 1;
+		startA.highValue = 1;
+		startA.width = 136;
+		startA.labelPrecision = 2;
+		startA.labelPosition = 'bottom';
+		label = new Label(colorWindow, labelX - 40, 112, "Start A");
+		
+		//
+		endR = new HRangeSlider(colorWindow, sliderX, 147, onEndRChange);
+		endR.minimum = 0;
+		endR.maximum = 1;
+		endR.lowValue = 1;
+		endR.highValue = 1;
+		endR.width = 136;
+		endR.labelPrecision = 2;
+		endR.labelPosition = 'bottom';
+		label = new Label(colorWindow, labelX - 40, 142, "End R");
+		
+		endG = new HRangeSlider(colorWindow, sliderX, 177, onEndGChange);
+		endG.minimum = 0;
+		endG.maximum = 1;
+		endG.lowValue = 1;
+		endG.highValue = 1;
+		endG.width = 136;
+		endG.labelPrecision = 2;
+		endG.labelPosition = 'bottom';
+		label = new Label(colorWindow, labelX - 40, 172, "End G");
+		
+		endB = new HRangeSlider(colorWindow, sliderX, 207, onEndBChange);
+		endB.minimum = 0;
+		endB.maximum = 1;
+		endB.lowValue = 1;
+		endB.highValue = 1;
+		endB.width = 136;
+		endB.labelPrecision = 2;
+		endB.labelPosition = 'bottom';
+		label = new Label(colorWindow, labelX - 40, 202, "End B");
+		
+		endA = new HRangeSlider(colorWindow, sliderX, 237, onEndAChange);
+		endA.minimum = 0;
+		endA.maximum = 1;
+		endA.lowValue = 1;
+		endA.highValue = 1;
+		endA.width = 136;
+		endA.labelPrecision = 2;
+		endA.labelPosition = 'bottom';
+		label = new Label(colorWindow, labelX - 40, 232, "End A");
+		
+		
+		//"Texture Editor"
+		accordion.addWindow('Texture Editor');
+		textureEditor = new TextureEditor(textureBmd, accordion.getWindowAt(3));
 		textureEditor.addEventListener(Event.COMPLETE, onTextureChange);
-		textureEditor.y = 400;
-		s.addChild(textureEditor);
+		
+		// gravity settings
+		accordion.addWindow('Gravity System Settings');
+		gravityWindow = accordion.getWindowAt(4);
+		
+		var startPositionLabel:Label = new Label(gravityWindow, 0, 8, "Start Position");
+		startPositionLabel.x = (gravityWindow.width - startPositionLabel.width) * 0.5;
+		
+		xPosition = new HRangeSlider(gravityWindow, rangeX, 30, onXChange);
+		xPosition.minimum = -500;
+		xPosition.maximum = 500;
+		xPosition.lowValue = 0;
+		xPosition.highValue = 0;
+		xPosition.width = 136;
+		xPosition.labelPosition = 'bottom';
+		var label:Label = new Label(gravityWindow, labelX, 27, "X");
+		
+		yPosition = new HRangeSlider(gravityWindow, rangeX, 60, onYChange);
+		yPosition.minimum = -500;
+		yPosition.maximum = 500;
+		yPosition.lowValue = 0;
+		yPosition.highValue = 0;
+		yPosition.width = 136;
+		yPosition.labelPosition = 'bottom';
+		label = new Label(gravityWindow, labelX, 57, "Y");
+		
+		zPosition = new HRangeSlider(gravityWindow, rangeX, 90, onZChange);
+		zPosition.minimum = -500;
+		zPosition.maximum = 500;
+		zPosition.lowValue = 0;
+		zPosition.highValue = 0;
+		zPosition.width = 136;
+		zPosition.labelPosition = 'bottom';
+		label = new Label(gravityWindow, labelX, 87, "Z");
+		
+		var startVelocityLabel:Label = new Label(gravityWindow, 0, 120, "Start Velocity");
+		startVelocityLabel.x = (gravityWindow.width - startVelocityLabel.width) * 0.5;
+		
+		xVelocity = new HRangeSlider(gravityWindow, rangeX, 140, onVelocityXChange);
+		xVelocity.minimum = -500;
+		xVelocity.maximum = 500;
+		xVelocity.lowValue = 0;
+		xVelocity.highValue = 0;
+		xVelocity.width = 136;
+		xVelocity.labelPosition = 'bottom';
+		label = new Label(gravityWindow, labelX, 137, "X");
+		
+		yVelocity = new HRangeSlider(gravityWindow, rangeX, 170, onVelocityYChange);
+		yVelocity.minimum = -500;
+		yVelocity.maximum = 500;
+		yVelocity.lowValue = 0;
+		yVelocity.highValue = 0;
+		yVelocity.width = 136;
+		yVelocity.labelPosition = 'bottom';
+		var label:Label = new Label(gravityWindow, labelX, 167, "Y");
+		
+		zVelocity = new HRangeSlider(gravityWindow, rangeX, 200, onVelocityZChange);
+		zVelocity.minimum = -500;
+		zVelocity.maximum = 500;
+		zVelocity.lowValue = 0;
+		zVelocity.highValue = 0;
+		zVelocity.width = 136;
+		zVelocity.labelPosition = 'bottom';
+		var label:Label = new Label(gravityWindow, labelX, 197, "Z");
+		
+		var gravityLabel:Label = new Label(gravityWindow, 0, 230, "Gravity");
+		gravityLabel.x = (gravityWindow.width - gravityLabel.width) * 0.5;
+		
+		xGravity = new HUISlider(gravityWindow, sliderX, 247, onGravityXChange);
+		xGravity.setSliderParams( -500, 500, 0);
+		var label:Label = new Label(gravityWindow, labelX, 247, "X");
+		
+		yGravity = new HUISlider(gravityWindow, sliderX, 277, onGravityYChange);
+		yGravity.setSliderParams( -500, 500, 0);
+		var label:Label = new Label(gravityWindow, labelX, 277, "Y");
+		
+		zGravity = new HUISlider(gravityWindow, sliderX, 307, onGravityYChange);
+		zGravity.setSliderParams( -500, 500, 0);
+		var label:Label = new Label(gravityWindow, labelX, 307, "Z");
+		
+		s.addEventListener(MouseEvent.CLICK, onStageClick);
     }
+	
+	// TODO: set UI values according to particle system properties
+	private function updateUI():Void
+	{
+		
+	}
+	
+	private function onStageClick(e:MouseEvent):Void 
+	{
+		if (e.target == Lib.current.stage)
+		{
+			ps.x = e.stageX;
+			ps.y = e.stageY;
+		}
+	}
 	
 	private function onSave(e:Event) 
 	{
@@ -568,7 +566,7 @@ class Main
 		ps.texture = texture;
 		world.scene.addChild(ps);
 		
-		// TODO: set UI values according to particle system properties
+		updateUI();
 	}
 	
 	private function onOpenCancel(e:Event = null):Void

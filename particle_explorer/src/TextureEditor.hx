@@ -31,21 +31,24 @@ class TextureEditor extends Sprite
 	var textures:ComboBox;
 	var load:PushButton;
 	var done:PushButton;
-	var panel:ScrollPane;
 	
-	public function new(defaultBmd:BitmapData)
+	var window:Window;
+	
+	public function new(defaultBmd:BitmapData, window:Window)
 	{
 		super();
 		
 		displayData = defaultBmd;
 		uploader = new FileReference();
 		dataArray = [];
-		addEventListener(Event.ADDED_TO_STAGE, init);
+		this.window = window;
+		//addEventListener(Event.ADDED_TO_STAGE, init);
+		init();
 	}
 	
-	function init(e:Event):Void 
+	function init(e:Event = null):Void 
 	{
-		removeEventListener(Event.ADDED_TO_STAGE, init);
+	//	removeEventListener(Event.ADDED_TO_STAGE, init);
 		
 		initUI();
 		initBmpDisplay();
@@ -53,21 +56,12 @@ class TextureEditor extends Sprite
 	
 	function initUI() 
 	{
-		var window:Window = new Window(this, 0, 0, "Texture Editor");
-		window.hasMinimizeButton = true;
-		window.draggable = false;
-		window.setSize(350, 150);
-		panel = new ScrollPane(window, 0, 0);
-		panel.showGrid = true;
-		panel.autoHideScrollBar = true;
-		panel.setSize(350, 150);
-		
 		dataArray.push(new TextureItem("Default", displayData));
-		textures = new ComboBox(panel, 20, 20, 'Texture', dataArray);
+		textures = new ComboBox(window, 20, 20, 'Texture', dataArray);
 		textures.addEventListener(Event.SELECT, onTextureSelect);
 		textures.selectedItem = dataArray[0];
-		load = new PushButton(panel, 20, 50, "Load Texture", onUpload);
-		done = new PushButton(panel, 20, 80, "Update Texture", onDone);
+		load = new PushButton(window, 20, 50, "Load Texture", onUpload);
+		done = new PushButton(window, 20, 80, "Update Texture", onDone);
 	}
 	
 	private function onTextureSelect(e:Event):Void 
@@ -154,7 +148,7 @@ class TextureEditor extends Sprite
 		displayBg.graphics.endFill();
 		displayBg.x = 200;
 		addChild(displayBg);
-		panel.content.addChild(displayBg);
+		window.content.addChild(displayBg);
 		showBitmap();
 	}
 	
