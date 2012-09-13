@@ -15,6 +15,7 @@ import com.bit101.components.VRangeSlider;
 import com.bit101.components.VSlider;
 import com.bit101.components.Window;
 import deep.dd.display.Scene2D;
+import deep.dd.particle.preset.RadialParticlePreset;
 import deep.dd.particle.render.ParticleRenderBase;
 import deep.dd.texture.Texture2D;
 import deep.dd.utils.Stats;
@@ -53,6 +54,9 @@ class Main
     var scene:Scene2D;
 
     var gravityPreset:GravityParticlePreset;
+	var radialPreset:RadialParticlePreset;
+	var currentPreset:ParticlePresetBase;
+	var currentPresetClass:Class<ParticlePresetBase>;
     var ps:ParticleSystem2D;
 	
 	// Particles Configuration
@@ -62,6 +66,7 @@ class Main
 	var spawnNum:HUISlider;
 	var spawnStep:HUISlider;
 	var life:HRangeSlider;
+	var systemType:ComboBox;
 	
 	var startScale:HRangeSlider;
 	var endScale:HRangeSlider;
@@ -150,16 +155,31 @@ class Main
         gravityPreset.life = new Bounds<Float>(2, 3);
         gravityPreset.startPosition = new Bounds<Vector3D>(new Vector3D(500, 500, 500), new Vector3D(500, 500, 500));
         gravityPreset.velocity = new Bounds<Vector3D>(new Vector3D(30, 0, 0), new Vector3D(40, 10, 0));
-        startColorMin = new Color(1, 1, 1, 0.6);
-		startColorMax = new Color(1, 1, 1, 0.6);
-		gravityPreset.startColor = new Bounds<Color>(startColorMin, startColorMax);
-		endColorMin = new Color(0, 0, 0, 0.01);
-		endColorMax = new Color(1, 1, 1, 0.01);
-        gravityPreset.endColor = new Bounds<Color>(endColorMin, endColorMax);
+		gravityPreset.startColor = new Bounds<Color>(new Color(1, 1, 1, 0.6), new Color(1, 1, 1, 0.6));
+        gravityPreset.endColor = new Bounds<Color>(new Color(0, 0, 0, 0.01), new Color(1, 1, 1, 0.01));
         gravityPreset.gravity = new Vector3D(0, 100, 0);
         gravityPreset.startScale = new Bounds<Float>(0.5);
         gravityPreset.endScale = new Bounds<Float>(0.05);
         gravityPreset.startRotation = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(0, 0, 360));
+		
+		radialPreset = new RadialParticlePreset();
+		radialPreset.particleNum = 1000;
+		radialPreset.spawnNum = 100;
+        radialPreset.spawnStep = 0.03;
+        radialPreset.life = new Bounds<Float>(2, 3);
+		radialPreset.startColor = new Bounds<Color>(new Color(1, 1, 1, 0.6), new Color(1, 1, 1, 0.6));
+        radialPreset.endColor = new Bounds<Color>(new Color(0, 0, 0, 0.01), new Color(1, 1, 1, 0.01));
+		radialPreset.startRotation = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(0, 0, 360));
+		radialPreset.startScale = new Bounds<Float>(0.5);
+        radialPreset.endScale = new Bounds<Float>(0.05);
+		radialPreset.startAngle = new Bounds<Float>(0, 360);
+		radialPreset.angleSpeed = new Bounds<Float>(0, 10);
+		radialPreset.startDepth = new Bounds<Float>(0, 0);
+		radialPreset.startRadius = new Bounds<Float>(0, 10);
+		radialPreset.endRadius = new Bounds<Float>(0, 100);
+		
+		currentPreset = gravityPreset;
+		currentPresetClass = GravityParticlePreset;
 		
 		ps = new ParticleSystem2D(GravityParticleRenderBuilder.gpuRender(gravityPreset));
         ps.x = s.stageWidth * 0.5;
@@ -201,7 +221,7 @@ class Main
 		spawnStep.labelPrecision = 3;
 		spawnStep.label = 'spawnStep';
 		
-		life = new HRangeSlider(particleWindow, rangeX, 117, onLigeChange);
+		life = new HRangeSlider(particleWindow, rangeX, 117, onLifeChange);
 		life.minimum = 1;
 		life.maximum = 20;
 		life.lowValue = 2;
@@ -256,6 +276,10 @@ class Main
 		angleZ.width = 136;
 		angleZ.labelPosition = 'bottom';
 		label = new Label(particleWindow, labelX - 40, 262, "rotation Z");
+		
+		systemType = new ComboBox(particleWindow, rangeX, 297, 'Type', ['Gravity', 'Radial']);
+		systemType.selectedIndex = 0;
+		systemType.addEventListener(Event.SELECT, onSystemTypeSelect);
 		
 		// Other settings
 		otherSettingsWindow = accordion.getWindowAt(1);
@@ -384,7 +408,6 @@ class Main
 		endA.labelPosition = 'bottom';
 		label = new Label(colorWindow, labelX - 40, 232, "End A");
 		
-		
 		//"Texture Editor"
 		accordion.addWindow('Texture Editor');
 		textureEditor = new TextureEditor(textureBmd, accordion.getWindowAt(3));
@@ -470,12 +493,22 @@ class Main
 		var label:Label = new Label(gravityWindow, labelX, 307, "Z");
 		
 		s.addEventListener(MouseEvent.CLICK, onStageClick);
+		s.addEventListener(Event.ENTER_FRAME, onEnterFrame);
     }
 	
-	// TODO: set UI values according to particle system properties
-	private function updateUI():Void
+	private function onSystemTypeSelect(e:Event):Void 
 	{
-		
+		trace(Std.string(systemType.selectedItem));
+	}
+	
+	var needUpdate:Bool = false;
+	private function onEnterFrame(e:Event):Void 
+	{
+		if (needUpdate)
+		{
+			cast(ps.render, ParticleRenderBase).preset = currentPreset;
+			needUpdate = false;
+		}
 	}
 	
 	private function onStageClick(e:MouseEvent):Void 
@@ -564,7 +597,19 @@ class Main
 		ps.x = world.bounds.width * 0.5;
         ps.y = world.bounds.height * 0.5;
 		ps.texture = texture;
+		blendMode = ps.blendMode;
 		world.scene.addChild(ps);
+		
+		if (Std.is(cast(ps.render, ParticleRenderBase).preset, GravityParticlePreset))
+		{
+			currentPreset = gravityPreset;
+			currentPresetClass = GravityParticlePreset;
+		}
+		else
+		{
+			currentPreset = radialPreset;
+			currentPresetClass = RadialParticlePreset;
+		}
 		
 		updateUI();
 	}
@@ -592,6 +637,35 @@ class Main
 		var bmd:BitmapData = textureEditor.displayData;
 		texture = world.cache.getBitmapTexture(bmd);
 		ps.texture = texture;
+	}
+	
+	private function blendFactorToString(blendFactor:Context3DBlendFactor):String
+	{
+		var str:String = "";
+		switch (blendFactor)
+		{
+			case Context3DBlendFactor.ZERO:
+				str = "ZERO";
+			case Context3DBlendFactor.ONE:
+				str = "ONE";
+			case Context3DBlendFactor.SOURCE_COLOR:
+				str = "SRC";
+			case Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR:
+				str = "ONE_SRC";
+			case Context3DBlendFactor.SOURCE_ALPHA:
+				str = "SRC_ALPHA";
+			case Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA:
+				str = "ONE_SRC_ALPHA";
+			case Context3DBlendFactor.DESTINATION_ALPHA:
+				str = "DST_ALPHA";
+			case Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA:
+				str = "ONE_DST_ALPHA";
+			case Context3DBlendFactor.DESTINATION_COLOR:
+				str = "DST_COLOR";
+			case Context3DBlendFactor.ONE_MINUS_DESTINATION_COLOR:
+				str = "ONE_DST_COLOR";
+		}
+		return str;
 	}
 	
 	private function onBlendSrcSelect(e:Event):Void 
@@ -667,176 +741,309 @@ class Main
 	{
 		gravityPreset.startPosition.min.x = xPosition.lowValue;
 		gravityPreset.startPosition.max.x = xPosition.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		needUpdate = true;
 	}
 	
 	function onYChange(param1:Dynamic)
 	{
 		gravityPreset.startPosition.min.y = yPosition.lowValue;
 		gravityPreset.startPosition.max.y = yPosition.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		needUpdate = true;
 	}
 	
 	function onZChange(param1:Dynamic)
 	{
 		gravityPreset.startPosition.min.z = zPosition.lowValue;
 		gravityPreset.startPosition.max.z = zPosition.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		needUpdate = true;
 	}
 	
 	function onVelocityXChange(param1:Dynamic)
 	{
 		gravityPreset.velocity.min.x = xVelocity.lowValue;
 		gravityPreset.velocity.max.x = xVelocity.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		needUpdate = true;
 	}
 	
 	function onVelocityYChange(param1:Dynamic)
 	{
 		gravityPreset.velocity.min.y = yVelocity.lowValue;
 		gravityPreset.velocity.max.y = yVelocity.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		needUpdate = true;
 	}
 	
 	function onVelocityZChange(param1:Dynamic)
 	{
 		gravityPreset.velocity.min.z = zVelocity.lowValue;
 		gravityPreset.velocity.max.z = zVelocity.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		needUpdate = true;
 	}
 	
 	function onGravityXChange(param1:Dynamic)
 	{
 		gravityPreset.gravity.x = xGravity.value;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		needUpdate = true;
 	}
 	
 	function onGravityYChange(param1:Dynamic)
 	{
 		gravityPreset.gravity.y = yGravity.value;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		needUpdate = true;
 	}
 	
 	function onGravityZChange(param1:Dynamic)
 	{
 		gravityPreset.gravity.z = zGravity.value;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		needUpdate = true;
 	}
 	
 	function onNumParticlesChange(param1:Dynamic)
 	{
 		gravityPreset.particleNum = cast(Std.int(numParticles.value), UInt);
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		radialPreset.particleNum = gravityPreset.particleNum;
+		needUpdate = true;
 	}
 	
 	function onSpawnNumChange(param1:Dynamic)
 	{
 		gravityPreset.spawnNum = cast(Std.int(spawnNum.value), UInt);
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		radialPreset.spawnNum = gravityPreset.spawnNum;
+		needUpdate = true;
 	}
 	
 	function onSpawnStepChange(param1:Dynamic)
 	{
 		gravityPreset.spawnStep = spawnStep.value;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		radialPreset.spawnStep = spawnStep.value;
+		needUpdate = true;
 	}
 	
-	function onLigeChange(param1:Dynamic)
+	function onLifeChange(param1:Dynamic)
 	{
 		gravityPreset.life.min = life.lowValue;
 		gravityPreset.life.max = life.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.life.min = life.lowValue;
+		radialPreset.life.max = life.highValue;
+		needUpdate = true;
 	}
 	
 	function onStartScaleChange(param1:Dynamic)
 	{
 		gravityPreset.startScale.min = startScale.lowValue;
 		gravityPreset.startScale.max = startScale.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.startScale.min = startScale.lowValue;
+		radialPreset.startScale.max = startScale.highValue;
+		needUpdate = true;
 	}
 	
 	function onEndScaleChange(param1:Dynamic)
 	{
 		gravityPreset.endScale.min = endScale.lowValue;
 		gravityPreset.endScale.max = endScale.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.endScale.min = endScale.lowValue;
+		radialPreset.endScale.max = endScale.highValue;
+		needUpdate = true;
 	}
 	
 	function onAngleXChange(param1:Dynamic)
 	{
 		gravityPreset.startRotation.min.x = angleX.lowValue;
 		gravityPreset.startRotation.max.x = angleX.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.startRotation.min.x = angleX.lowValue;
+		radialPreset.startRotation.max.x = angleX.highValue;
+		needUpdate = true;
 	}
 	
 	function onAngleYChange(param1:Dynamic)
 	{
 		gravityPreset.startRotation.min.y = angleY.lowValue;
 		gravityPreset.startRotation.max.y = angleY.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.startRotation.min.y = angleY.lowValue;
+		radialPreset.startRotation.max.y = angleY.highValue;
+		needUpdate = true;
 	}
 	
 	function onAngleZChange(param1:Dynamic)
 	{
 		gravityPreset.startRotation.min.z = angleZ.lowValue;
 		gravityPreset.startRotation.max.z = angleZ.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.startRotation.min.z = angleZ.lowValue;
+		radialPreset.startRotation.max.z = angleZ.highValue;
+		needUpdate = true;
 	}
 	
 	function onStartRChange(param1:Dynamic)
 	{
 		gravityPreset.startColor.min.r = startR.lowValue;
 		gravityPreset.startColor.max.r = startR.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.startColor.min.r = startR.lowValue;
+		radialPreset.startColor.max.r = startR.highValue;
+		needUpdate = true;
 	}
 	
 	function onStartGChange(param1:Dynamic)
 	{
 		gravityPreset.startColor.min.g = startG.lowValue;
 		gravityPreset.startColor.max.g = startG.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.startColor.min.g = startG.lowValue;
+		radialPreset.startColor.max.g = startG.highValue;
+		needUpdate = true;
 	}
 	
 	function onStartBChange(param1:Dynamic)
 	{
 		gravityPreset.startColor.min.b = startB.lowValue;
 		gravityPreset.startColor.max.b = startB.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.startColor.min.b = startB.lowValue;
+		radialPreset.startColor.max.b = startB.highValue;
+		needUpdate = true;
 	}
 	
 	function onStartAChange(param1:Dynamic)
 	{
 		gravityPreset.startColor.min.a = startA.lowValue;
 		gravityPreset.startColor.max.a = startA.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.startColor.min.a = startA.lowValue;
+		radialPreset.startColor.max.a = startA.highValue;
+		needUpdate = true;
 	}
 	
 	function onEndRChange(param1:Dynamic)
 	{
 		gravityPreset.endColor.min.r = endR.lowValue;
 		gravityPreset.endColor.max.r = endR.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.endColor.min.r = endR.lowValue;
+		radialPreset.endColor.max.r = endR.highValue;
+		needUpdate = true;
 	}
 	
 	function onEndGChange(param1:Dynamic)
 	{
 		gravityPreset.endColor.min.g = endG.lowValue;
 		gravityPreset.endColor.max.g = endG.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.endColor.min.g = endG.lowValue;
+		radialPreset.endColor.max.g = endG.highValue;
+		needUpdate = true;
 	}
 	
 	function onEndBChange(param1:Dynamic)
 	{
 		gravityPreset.endColor.min.b = endB.lowValue;
 		gravityPreset.endColor.max.b = endB.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.endColor.min.b = endB.lowValue;
+		radialPreset.endColor.max.b = endB.highValue;
+		needUpdate = true;
 	}
 	
 	function onEndAChange(param1:Dynamic)
 	{
 		gravityPreset.endColor.min.a = endA.lowValue;
 		gravityPreset.endColor.max.a = endA.highValue;
-		cast(ps.render, ParticleRenderBase).preset = gravityPreset;
+		
+		radialPreset.endColor.min.a = endA.lowValue;
+		radialPreset.endColor.max.a = endA.highValue;
+		needUpdate = true;
+	}
+	
+	private function updateUI():Void
+	{
+		blendSource.selectedItem = blendFactorToString(blendMode.src);
+		blendDestination.selectedItem = blendFactorToString(blendMode.dst);
+		
+		// TODO: set UI values according to particle system properties
+		if (currentPresetClass == GravityParticlePreset)
+		{
+			var grav:GravityParticlePreset = cast(cast(ps.render, ParticleRenderBase).preset, GravityParticlePreset);
+			
+			xPosition.lowValue = grav.startPosition.min.x;
+			xPosition.highValue = grav.startPosition.max.x;
+			
+			yPosition.lowValue = grav.startPosition.min.y;
+			yPosition.highValue = grav.startPosition.max.y;
+			
+			zPosition.lowValue = grav.startPosition.min.z;
+			zPosition.highValue = grav.startPosition.max.z;
+			
+			xVelocity.lowValue = grav.velocity.min.x;
+			xVelocity.highValue = grav.velocity.max.x;
+			
+			yVelocity.lowValue = grav.velocity.min.y;
+			yVelocity.highValue = grav.velocity.max.y;
+			
+			zVelocity.lowValue = grav.velocity.min.z;
+			zVelocity.highValue = grav.velocity.max.z;
+			
+			xGravity.value = grav.gravity.x;
+			yGravity.value = grav.gravity.y;
+			zGravity.value = grav.gravity.z;
+		}
+		else
+		{
+			var radial:RadialParticlePreset = cast(cast(ps.render, ParticleRenderBase).preset, RadialParticlePreset);
+			
+			
+		}
+		
+		var preset = cast(ps.render, ParticleRenderBase).preset;
+		numParticles.value = preset.particleNum;
+		spawnNum.value = preset.spawnNum;
+		spawnStep.value = preset.spawnStep;
+		life.lowValue = preset.life.min;
+		life.highValue = preset.life.max;
+		
+		startScale.lowValue = Reflect.field(preset, 'startScale').min;
+		startScale.highValue = Reflect.field(preset, 'startScale').max;
+		
+		endScale.lowValue = Reflect.field(preset, 'endScale').min;
+		endScale.highValue = Reflect.field(preset, 'endScale').max;
+		
+		angleX.lowValue = Reflect.field(preset, 'startRotation').min.x;
+		angleX.highValue = Reflect.field(preset, 'startRotation').max.x;
+		
+		angleY.lowValue = Reflect.field(preset, 'startRotation').min.y;
+		angleY.highValue = Reflect.field(preset, 'startRotation').max.y;
+		
+		angleZ.lowValue = Reflect.field(preset, 'startRotation').min.z;
+		angleZ.highValue = Reflect.field(preset, 'startRotation').max.z;
+		
+		startR.lowValue = Reflect.field(preset, 'startColor').min.r;
+		startR.highValue = Reflect.field(preset, 'startColor').max.r;
+		
+		startG.lowValue = Reflect.field(preset, 'startColor').min.g;
+		startG.highValue = Reflect.field(preset, 'startColor').max.g;
+		
+		startB.lowValue = Reflect.field(preset, 'startColor').min.b;
+		startB.highValue = Reflect.field(preset, 'startColor').max.b;
+		
+		startA.lowValue = Reflect.field(preset, 'startColor').min.a;
+		startA.highValue = Reflect.field(preset, 'startColor').max.a;
+		
+		endR.lowValue = Reflect.field(preset, 'endColor').min.r;
+		endR.highValue = Reflect.field(preset, 'endColor').max.r;
+		
+		endG.lowValue = Reflect.field(preset, 'endColor').min.g;
+		endG.highValue = Reflect.field(preset, 'endColor').max.g;
+		
+		endB.lowValue = Reflect.field(preset, 'endColor').min.b;
+		endB.highValue = Reflect.field(preset, 'endColor').max.b;
+		
+		endA.lowValue = Reflect.field(preset, 'endColor').min.a;
+		endA.highValue = Reflect.field(preset, 'endColor').max.a;
+		
+		
 	}
 
     static function main()
