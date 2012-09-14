@@ -72,8 +72,8 @@ class AngelCodeFontParser implements IFontAtlasParser
 					var yoffset:Int = q(node.get("yoffset"));
 					var xadvance:Int = q(node.get("xadvance"));
 					
-					var w = width - padding * 2;
-					var h = height - padding * 2;
+					var w = Math.ceil(width - padding * 2);
+					var h = Math.ceil(height - padding * 2);
 					var rw = w * kx;
 					var rh = h * ky;
 					

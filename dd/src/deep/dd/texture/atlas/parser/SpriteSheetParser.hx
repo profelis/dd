@@ -30,8 +30,8 @@ class SpriteSheetParser implements IAtlasParser
         var kx = 1.0 / a.textureWidth;
         var ky = 1.0 / a.textureHeight;
 
-        var w = iw - padding * 2;
-        var h = ih - padding * 2;
+        var w = Math.ceil(iw - padding * 2);
+        var h = Math.ceil(ih - padding * 2);
 
         var rw = w * kx;
         var rh = h * ky;

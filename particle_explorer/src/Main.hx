@@ -752,7 +752,7 @@ class Main
 		fileRef = null;
 		
 		#if debug
-		throw "Unable to open DD particle system file"
+		throw "Unable to open DD particle system file";
 		#end
 	}
 	

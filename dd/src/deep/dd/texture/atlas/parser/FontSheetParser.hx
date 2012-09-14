@@ -140,8 +140,8 @@ class FontSheetParser implements IFontAtlasParser
 		var currentY:Int = offsetY;
 		var r:UInt = 0;
 		
-		var w = characterWidth - padding * 2;
-        var h = characterHeight - padding * 2;
+		var w = Math.ceil(characterWidth - padding * 2);
+        var h = Math.ceil(characterHeight - padding * 2);
 		
 		var rw = w * kx;
         var rh = h * ky;
