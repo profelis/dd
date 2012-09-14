@@ -70,7 +70,7 @@ class PerlinTest
         cloud.texture = world.cache.getTexture(Image);
         cloud.colorTransform = new Color(0, 0, 1, 1);
 
-        s = new CloudLayer(cloud, new Vector3D(), 2, 0.0);
+        s = new CloudLayer(cloud, new Vector3D(), 2, 0.1);
         s.bgColor = new Color(0, 0, 0, 1);
         s.alpha = 0.85;
         s.blendMode = BlendMode.ADD;
