@@ -1,5 +1,6 @@
 package;
 import com.bit101.components.ComboBox;
+import com.bit101.components.Label;
 import com.bit101.components.PushButton;
 import com.bit101.components.ScrollPane;
 import com.bit101.components.Window;
@@ -56,12 +57,13 @@ class TextureEditor extends Sprite
 	
 	function initUI() 
 	{
+		var label:Label = new Label(window, 20, 20, "Texture");
 		dataArray.push(new TextureItem("Default", displayData));
-		textures = new ComboBox(window, 20, 20, 'Texture', dataArray);
+		textures = new ComboBox(window, label.x + label.width + 10, 20, 'Texture', dataArray);
 		textures.addEventListener(Event.SELECT, onTextureSelect);
 		textures.selectedItem = dataArray[0];
-		load = new PushButton(window, 20, 50, "Load Texture", onUpload);
-		done = new PushButton(window, 20, 80, "Update Texture", onDone);
+		load = new PushButton(window, textures.x, 50, "Load Texture", onUpload);
+		done = new PushButton(window, textures.x, 80, "Update Texture", onDone);
 	}
 	
 	private function onTextureSelect(e:Event):Void 

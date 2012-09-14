@@ -19,9 +19,9 @@ import flash.display3D.Context3DBlendFactor;
  */
 class ParticleSaver 
 {
-	public static function systemToXml(ps:ParticleSystem2D):Xml
+	public static function systemToXmlString(ps:ParticleSystem2D):String
 	{
-		var config:Xml = Xml.createElement("particleEmitterConfig");
+		var output:String = '<particleEmitterConfig>\n';
 		var type:String = "";
 		
 		var preset:ParticlePresetBase = cast(ps.render, ParticleRenderBase).preset;
@@ -34,173 +34,146 @@ class ParticleSaver
 			type = "radial";
 		}
 		
-		var typeElmnt:Xml = Xml.createElement("type");
-		typeElmnt.set("value", type);
-		config.addChild(typeElmnt);
+		output += '<type value="' + type + '"/>\n';
+		output += '<life min="' + Std.string(preset.life.min) + '" max="' + Std.string(preset.life.max) + '"/>\n';
+		output += '<particleNum value="' + Std.string(preset.particleNum) + '"/>\n';
+		output += '<spawnNum value="' + Std.string(preset.spawnNum) + '"/>\n';
+		output += '<spawnStep value="' + Std.string(preset.spawnStep) + '"/>\n';
 		
-		var life:Xml = Xml.createElement("life");
-		life.set("min", Std.string(preset.life.min));
-		life.set("max", Std.string(preset.life.max));
-		config.addChild(life);
-		
-		var particleNum:Xml = Xml.createElement("particleNum");
-		particleNum.set("value", Std.string(preset.particleNum));
-		config.addChild(particleNum);
-		
-		var spawnNum:Xml = Xml.createElement("spawnNum");
-		spawnNum.set("value", Std.string(preset.spawnNum));
-		config.addChild(spawnNum);
-		
-		var spawnStep:Xml = Xml.createElement("spawnStep");
-		spawnStep.set("value", Std.string(preset.spawnStep));
-		config.addChild(spawnStep);
-		
-		var blend:Xml = Xml.createElement("blend");
 		var src:String = blendFactorToString(ps.blendMode.src);
 		var dst:String = blendFactorToString(ps.blendMode.dst);
+		output += '<blend source="' + src + '" destination="' + dst + '"/>\n';
 		
-		blend.set("source", src);
-		blend.set("destination", dst);
-		config.addChild(blend);
-		
-		var startColor:Xml = Xml.createElement("startColor");
-		var endColor:Xml = Xml.createElement("endColor");
-		var startScale:Xml = Xml.createElement("startScale");
-		var endScale:Xml = Xml.createElement("endScale");
-		var rotation:Xml = Xml.createElement("rotation");
+		var startColor:String = '<startColor ';
+		var endColor:String = '<endColor ';
+		var startScale:String = '<startScale ';
+		var endScale:String = '<endScale ';
+		var rotation:String = '<rotation ';
 		
 		if (type == "gravity")
 		{
 			var gravityPreset:GravityParticlePreset = cast(preset, GravityParticlePreset);
 			
-			startColor.set("minR", Std.string(gravityPreset.startColor.min.r));
-			startColor.set("maxR", Std.string(gravityPreset.startColor.max.r));
-			startColor.set("minG", Std.string(gravityPreset.startColor.min.g));
-			startColor.set("maxG", Std.string(gravityPreset.startColor.max.g));
-			startColor.set("minB", Std.string(gravityPreset.startColor.min.b));
-			startColor.set("maxB", Std.string(gravityPreset.startColor.max.b));
-			startColor.set("minA", Std.string(gravityPreset.startColor.min.a));
-			startColor.set("maxA", Std.string(gravityPreset.startColor.max.a));
+			startColor += 'minR="' + Std.string(gravityPreset.startColor.min.r) + '" ';
+			startColor += 'maxR="' + Std.string(gravityPreset.startColor.max.r) + '" ';
+			startColor += 'minG="' + Std.string(gravityPreset.startColor.min.g) + '" ';
+			startColor += 'maxG="' + Std.string(gravityPreset.startColor.max.g) + '" ';
+			startColor += 'minB="' + Std.string(gravityPreset.startColor.min.b) + '" ';
+			startColor += 'maxB="' + Std.string(gravityPreset.startColor.max.b) + '" ';
+			startColor += 'minA="' + Std.string(gravityPreset.startColor.min.a) + '" ';
+			startColor += 'maxA="' + Std.string(gravityPreset.startColor.max.a) + '" ';
 			
-			endColor.set("minR", Std.string(gravityPreset.endColor.min.r));
-			endColor.set("maxR", Std.string(gravityPreset.endColor.max.r));
-			endColor.set("minG", Std.string(gravityPreset.endColor.min.g));
-			endColor.set("maxG", Std.string(gravityPreset.endColor.max.g));
-			endColor.set("minB", Std.string(gravityPreset.endColor.min.b));
-			endColor.set("maxB", Std.string(gravityPreset.endColor.max.b));
-			endColor.set("minA", Std.string(gravityPreset.endColor.min.a));
-			endColor.set("maxA", Std.string(gravityPreset.endColor.max.a));
+			endColor += 'minR="' + Std.string(gravityPreset.endColor.min.r) + '" ';
+			endColor += 'maxR="' + Std.string(gravityPreset.endColor.max.r) + '" ';
+			endColor += 'minG="' + Std.string(gravityPreset.endColor.min.g) + '" ';
+			endColor += 'maxG="' + Std.string(gravityPreset.endColor.max.g) + '" ';
+			endColor += 'minB="' + Std.string(gravityPreset.endColor.min.b) + '" ';
+			endColor += 'maxB="' + Std.string(gravityPreset.endColor.max.b) + '" ';
+			endColor += 'minA="' + Std.string(gravityPreset.endColor.min.a) + '" ';
+			endColor += 'maxA="' + Std.string(gravityPreset.endColor.max.a) + '" ';
 			
-			startScale.set("min", Std.string(gravityPreset.startScale.min));
-			startScale.set("max", Std.string(gravityPreset.startScale.max));
+			startScale += 'min="' + Std.string(gravityPreset.startScale.min) + '" ';
+			startScale += 'max="' + Std.string(gravityPreset.startScale.max) + '" ';
 			
-			endScale.set("min", Std.string(gravityPreset.endScale.min));
-			endScale.set("max", Std.string(gravityPreset.endScale.max));
+			endScale += 'min="' + Std.string(gravityPreset.endScale.min) + '" ';
+			endScale += 'max="' + Std.string(gravityPreset.endScale.max) + '" ';
 			
-			rotation.set("minX", Std.string(gravityPreset.startRotation.min.x));
-			rotation.set("maxX", Std.string(gravityPreset.startRotation.max.x));
-			rotation.set("minY", Std.string(gravityPreset.startRotation.min.y));
-			rotation.set("maxY", Std.string(gravityPreset.startRotation.max.y));
-			rotation.set("minZ", Std.string(gravityPreset.startRotation.min.z));
-			rotation.set("maxZ", Std.string(gravityPreset.startRotation.max.z));
+			rotation += 'minX="' + Std.string(gravityPreset.startRotation.min.x) + '" ';
+			rotation += 'maxX="' + Std.string(gravityPreset.startRotation.max.x) + '" ';
+			rotation += 'minY="' + Std.string(gravityPreset.startRotation.min.y) + '" ';
+			rotation += 'maxY="' + Std.string(gravityPreset.startRotation.max.y) + '" ';
+			rotation += 'minZ="' + Std.string(gravityPreset.startRotation.min.z) + '" ';
+			rotation += 'maxZ="' + Std.string(gravityPreset.startRotation.max.z) + '" ';
 			
-			var startPosition:Xml = Xml.createElement("startPosition");
-			startPosition.set("minX", Std.string(gravityPreset.startPosition.min.x));
-			startPosition.set("maxX", Std.string(gravityPreset.startPosition.max.x));
-			startPosition.set("minY", Std.string(gravityPreset.startPosition.min.y));
-			startPosition.set("maxY", Std.string(gravityPreset.startPosition.max.y));
-			startPosition.set("minZ", Std.string(gravityPreset.startPosition.min.z));
-			startPosition.set("maxZ", Std.string(gravityPreset.startPosition.max.z));
-			config.addChild(startPosition);
+			var startPosition:String = '<startPosition ';
+			startPosition += 'minX="' + Std.string(gravityPreset.startPosition.min.x) + '" ';
+			startPosition += 'maxX="' + Std.string(gravityPreset.startPosition.max.x) + '" ';
+			startPosition += 'minY="' + Std.string(gravityPreset.startPosition.min.y) + '" ';
+			startPosition += 'maxY="' + Std.string(gravityPreset.startPosition.max.y) + '" ';
+			startPosition += 'minZ="' + Std.string(gravityPreset.startPosition.min.z) + '" ';
+			startPosition += 'maxZ="' + Std.string(gravityPreset.startPosition.max.z) + '" ';
+			startPosition += '/>\n';
+			output += startPosition;
 			
-			var startVelocity:Xml = Xml.createElement("startVelocity");
-			startVelocity.set("minX", Std.string(gravityPreset.velocity.min.x));
-			startVelocity.set("maxX", Std.string(gravityPreset.velocity.max.x));
-			startVelocity.set("minY", Std.string(gravityPreset.velocity.min.y));
-			startVelocity.set("maxY", Std.string(gravityPreset.velocity.max.y));
-			startVelocity.set("minZ", Std.string(gravityPreset.velocity.min.z));
-			startVelocity.set("maxZ", Std.string(gravityPreset.velocity.max.z));
-			config.addChild(startVelocity);
+			var startVelocity:String = '<startVelocity ';
+			startVelocity += 'minX="' + Std.string(gravityPreset.velocity.min.x) + '" ';
+			startVelocity += 'maxX="' + Std.string(gravityPreset.velocity.max.x) + '" ';
+			startVelocity += 'minY="' + Std.string(gravityPreset.velocity.min.y) + '" ';
+			startVelocity += 'maxY="' + Std.string(gravityPreset.velocity.max.y) + '" ';
+			startVelocity += 'minZ="' + Std.string(gravityPreset.velocity.min.z) + '" ';
+			startVelocity += 'maxZ="' + Std.string(gravityPreset.velocity.max.z) + '" ';
+			startVelocity += '/>\n';
+			output += startVelocity;
 			
-			var gravity:Xml = Xml.createElement("gravity");
-			gravity.set("x", Std.string(gravityPreset.gravity.x));
-			gravity.set("y", Std.string(gravityPreset.gravity.y));
-			gravity.set("z", Std.string(gravityPreset.gravity.z));
-			config.addChild(gravity);
+			var gravity:String = '<gravity ';
+			gravity += 'x="' + Std.string(gravityPreset.gravity.x) + '" ';
+			gravity += 'y="' + Std.string(gravityPreset.gravity.y) + '" ';
+			gravity += 'z="' + Std.string(gravityPreset.gravity.z) + '" ';
+			gravity += '/>\n';
+			output += gravity;
 		}
 		else
 		{
 			var radialPreset:RadialParticlePreset = cast(preset, RadialParticlePreset);
 			
-			startColor.set("minR", Std.string(radialPreset.startColor.min.r));
-			startColor.set("maxR", Std.string(radialPreset.startColor.max.r));
-			startColor.set("minG", Std.string(radialPreset.startColor.min.g));
-			startColor.set("maxG", Std.string(radialPreset.startColor.max.g));
-			startColor.set("minB", Std.string(radialPreset.startColor.min.b));
-			startColor.set("maxB", Std.string(radialPreset.startColor.max.b));
-			startColor.set("minA", Std.string(radialPreset.startColor.min.a));
-			startColor.set("maxA", Std.string(radialPreset.startColor.max.a));
+			startColor += 'minR="' + Std.string(radialPreset.startColor.min.r) + '" ';
+			startColor += 'maxR="' + Std.string(radialPreset.startColor.max.r) + '" ';
+			startColor += 'minG="' + Std.string(radialPreset.startColor.min.g) + '" ';
+			startColor += 'maxG="' + Std.string(radialPreset.startColor.max.g) + '" ';
+			startColor += 'minB="' + Std.string(radialPreset.startColor.min.b) + '" ';
+			startColor += 'maxB="' + Std.string(radialPreset.startColor.max.b) + '" ';
+			startColor += 'minA="' + Std.string(radialPreset.startColor.min.a) + '" ';
+			startColor += 'maxA="' + Std.string(radialPreset.startColor.max.a) + '" ';
 			
-			endColor.set("minR", Std.string(radialPreset.endColor.min.r));
-			endColor.set("maxR", Std.string(radialPreset.endColor.max.r));
-			endColor.set("minG", Std.string(radialPreset.endColor.min.g));
-			endColor.set("maxG", Std.string(radialPreset.endColor.max.g));
-			endColor.set("minB", Std.string(radialPreset.endColor.min.b));
-			endColor.set("maxB", Std.string(radialPreset.endColor.max.b));
-			endColor.set("minA", Std.string(radialPreset.endColor.min.a));
-			endColor.set("maxA", Std.string(radialPreset.endColor.max.a));
+			endColor += 'minR="' + Std.string(radialPreset.endColor.min.r) + '" ';
+			endColor += 'maxR="' + Std.string(radialPreset.endColor.max.r) + '" ';
+			endColor += 'minG="' + Std.string(radialPreset.endColor.min.g) + '" ';
+			endColor += 'maxG="' + Std.string(radialPreset.endColor.max.g) + '" ';
+			endColor += 'minB="' + Std.string(radialPreset.endColor.min.b) + '" ';
+			endColor += 'maxB="' + Std.string(radialPreset.endColor.max.b) + '" ';
+			endColor += 'minA="' + Std.string(radialPreset.endColor.min.a) + '" ';
+			endColor += 'maxA="' + Std.string(radialPreset.endColor.max.a) + '" ';
 			
-			startScale.set("min", Std.string(radialPreset.startScale.min));
-			startScale.set("max", Std.string(radialPreset.startScale.max));
+			startScale += 'min="' + Std.string(radialPreset.startScale.min) + '" ';
+			startScale += 'max="' + Std.string(radialPreset.startScale.max) + '" ';
 			
-			endScale.set("min", Std.string(radialPreset.endScale.min));
-			endScale.set("max", Std.string(radialPreset.endScale.max));
+			endScale += 'min="' + Std.string(radialPreset.endScale.min) + '" ';
+			endScale += 'max="' + Std.string(radialPreset.endScale.max) + '" ';
 			
-			rotation.set("minX", Std.string(radialPreset.startRotation.min.x));
-			rotation.set("maxX", Std.string(radialPreset.startRotation.max.x));
-			rotation.set("minY", Std.string(radialPreset.startRotation.min.y));
-			rotation.set("maxY", Std.string(radialPreset.startRotation.max.y));
-			rotation.set("minZ", Std.string(radialPreset.startRotation.min.z));
-			rotation.set("maxZ", Std.string(radialPreset.startRotation.max.z));
+			rotation += 'minX="' + Std.string(radialPreset.startRotation.min.x) + '" ';
+			rotation += 'maxX="' + Std.string(radialPreset.startRotation.max.x) + '" ';
+			rotation += 'minY="' + Std.string(radialPreset.startRotation.min.y) + '" ';
+			rotation += 'maxY="' + Std.string(radialPreset.startRotation.max.y) + '" ';
+			rotation += 'minZ="' + Std.string(radialPreset.startRotation.min.z) + '" ';
+			rotation += 'maxZ="' + Std.string(radialPreset.startRotation.max.z) + '" ';
 			
-			var startAngle:Xml = Xml.createElement("startAngle");
-			startAngle.set("min", Std.string(radialPreset.startAngle.min));
-			startAngle.set("max", Std.string(radialPreset.startAngle.max));
-			config.addChild(startAngle);
+			output += '<startAngle min="' + Std.string(radialPreset.startAngle.min) + '" max="' + Std.string(radialPreset.startAngle.max) + '"/>\n';
 			
-			var angleSpeed:Xml = Xml.createElement("angleSpeed");
-			angleSpeed.set("min", Std.string(radialPreset.angleSpeed.min));
-			angleSpeed.set("max", Std.string(radialPreset.angleSpeed.max));
-			config.addChild(angleSpeed);
+			output += '<angleSpeed min="' + Std.string(radialPreset.angleSpeed.min) + '" max="' + Std.string(radialPreset.angleSpeed.max) + '"/>\n';
 			
-			var startDepth:Xml = Xml.createElement("startDepth");
-			startDepth.set("min", Std.string(radialPreset.startDepth.min));
-			startDepth.set("max", Std.string(radialPreset.startDepth.max));
-			config.addChild(startDepth);
+			output += '<startDepth min="' + Std.string(radialPreset.startDepth.min) + '" max="' + Std.string(radialPreset.startDepth.max) + '"/>\n';
 			
-			var depthSpeed:Xml = Xml.createElement("depthSpeed");
-			depthSpeed.set("min", Std.string(radialPreset.depthSpeed.min));
-			depthSpeed.set("max", Std.string(radialPreset.depthSpeed.max));
-			config.addChild(depthSpeed);
+			output += '<depthSpeed min="' + Std.string(radialPreset.depthSpeed.min) + '" max="' + Std.string(radialPreset.depthSpeed.max) + '"/>\n';
 			
-			var startRadius:Xml = Xml.createElement("startRadius");
-			startRadius.set("min", Std.string(radialPreset.startRadius.min));
-			startRadius.set("max", Std.string(radialPreset.startRadius.max));
-			config.addChild(startRadius);
+			output += '<startRadius min="' + Std.string(radialPreset.startRadius.min) + '" max="' + Std.string(radialPreset.startRadius.max) + '"/>\n';
 			
-			var endRadius:Xml = Xml.createElement("endRadius");
-			endRadius.set("min", Std.string(radialPreset.endRadius.min));
-			endRadius.set("max", Std.string(radialPreset.endRadius.max));
-			config.addChild(endRadius);
+			output += '<endRadius min="' + Std.string(radialPreset.endRadius.min) + '" max="' + Std.string(radialPreset.endRadius.max) + '"/>\n';
 		}
 		
-		config.addChild(startColor);
-		config.addChild(endColor);
-		config.addChild(startScale);
-		config.addChild(endScale);
-		config.addChild(rotation);
+		startColor += '/>\n';
+		endColor += '/>\n';
+		startScale += '/>\n';
+		endScale += '/>\n';
+		rotation += '/>\n';
 		
-		return config;
+		output += startColor;
+		output += endColor;
+		output += startScale;
+		output += endScale;
+		output += rotation;
+		
+		output += '</particleEmitterConfig>';
+		return output;
 	}
 	
 	private static function blendFactorToString(blendFactor:Context3DBlendFactor):String
