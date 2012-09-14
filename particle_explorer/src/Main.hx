@@ -14,9 +14,12 @@ import com.bit101.components.Style;
 import com.bit101.components.VRangeSlider;
 import com.bit101.components.VSlider;
 import com.bit101.components.Window;
+import deep.dd.display.render.RenderBase;
 import deep.dd.display.Scene2D;
+import deep.dd.particle.preset.parser.ParticleParser;
 import deep.dd.particle.preset.RadialParticlePreset;
 import deep.dd.particle.render.ParticleRenderBase;
+import deep.dd.particle.render.RadialParticleRender;
 import deep.dd.texture.Texture2D;
 import deep.dd.utils.Stats;
 import deep.dd.World2D;
@@ -54,8 +57,11 @@ class Main
     var scene:Scene2D;
 
     var gravityPreset:GravityParticlePreset;
+	var gravityRender:GPUGravityParticleRender;
 	var radialPreset:RadialParticlePreset;
+	var radialRender:GPURadialParticleRender;
 	var currentPreset:ParticlePresetBase;
+	var currentRender:ParticleRenderBase;
 	var currentPresetClass:Class<ParticlePresetBase>;
     var ps:ParticleSystem2D;
 	
@@ -93,8 +99,19 @@ class Main
 	var endB:HRangeSlider;
 	var endA:HRangeSlider;
 	
+	// Other settings
+	var otherSettingsWindow:Window;
+	var bgRed:HUISlider;
+	var bgGreen:HUISlider;
+	var bgBlue:HUISlider;
+	
+	var blendSource:ComboBox;
+	var blendDestination:ComboBox;
+	var blendMode:BlendMode;
+	
 	// Gravity system's parameters controls
 	var gravityWindow:Window;
+	var gravityPanel:Panel;
 	
 	var xPosition:HRangeSlider;
 	var yPosition:HRangeSlider;
@@ -108,15 +125,16 @@ class Main
 	var yGravity:HUISlider;
 	var zGravity:HUISlider;
 	
-	// Other settings
-	var otherSettingsWindow:Window;
-	var bgRed:HUISlider;
-	var bgGreen:HUISlider;
-	var bgBlue:HUISlider;
+	// Radial system's parameters controls
+	var radialWindow:Window;
+	var radialPanel:Panel;
 	
-	var blendSource:ComboBox;
-	var blendDestination:ComboBox;
-	var blendMode:BlendMode;
+	var startAngle:HRangeSlider;
+	var angleSpeed:HRangeSlider;
+	var startDepth:HRangeSlider;
+	var depthSpeed:HRangeSlider;
+	var startRadius:HRangeSlider;
+	var endRadius:HRangeSlider;
 	
 	var accordion:Accordion;
 	
@@ -175,13 +193,19 @@ class Main
 		radialPreset.startAngle = new Bounds<Float>(0, 360);
 		radialPreset.angleSpeed = new Bounds<Float>(0, 10);
 		radialPreset.startDepth = new Bounds<Float>(0, 0);
+		radialPreset.depthSpeed = new Bounds<Float>(-5, 5);
 		radialPreset.startRadius = new Bounds<Float>(0, 10);
 		radialPreset.endRadius = new Bounds<Float>(0, 100);
 		
 		currentPreset = gravityPreset;
 		currentPresetClass = GravityParticlePreset;
 		
-		ps = new ParticleSystem2D(GravityParticleRenderBuilder.gpuRender(gravityPreset));
+		gravityRender = GravityParticleRenderBuilder.gpuRender(gravityPreset);
+		currentRender = gravityRender;
+		
+		radialRender = RadialParticleRenderBuilder.gpuRender(radialPreset);
+		
+		ps = new ParticleSystem2D(currentRender);
         ps.x = s.stageWidth * 0.5;
         ps.y = s.stageHeight * 0.5;
 		blendMode = new BlendMode(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE);
@@ -279,7 +303,7 @@ class Main
 		
 		systemType = new ComboBox(particleWindow, rangeX, 297, 'Type', ['Gravity', 'Radial']);
 		systemType.selectedIndex = 0;
-		systemType.addEventListener(Event.SELECT, onSystemTypeSelect);
+		systemType.addEventListener(Event.SELECT, switchTypePanels);
 		
 		// Other settings
 		otherSettingsWindow = accordion.getWindowAt(1);
@@ -417,88 +441,174 @@ class Main
 		accordion.addWindow('Gravity System Settings');
 		gravityWindow = accordion.getWindowAt(4);
 		
-		var startPositionLabel:Label = new Label(gravityWindow, 0, 8, "Start Position");
-		startPositionLabel.x = (gravityWindow.width - startPositionLabel.width) * 0.5;
+		gravityPanel = new Panel(gravityWindow, 0, 0);
+		gravityPanel.setSize(350, 500);
 		
-		xPosition = new HRangeSlider(gravityWindow, rangeX, 30, onXChange);
+		var startPositionLabel:Label = new Label(gravityPanel, 0, 8, "Start Position");
+		startPositionLabel.x = (gravityPanel.width - startPositionLabel.width) * 0.5;
+		
+		xPosition = new HRangeSlider(gravityPanel, rangeX, 30, onXChange);
 		xPosition.minimum = -500;
 		xPosition.maximum = 500;
 		xPosition.lowValue = 0;
 		xPosition.highValue = 0;
 		xPosition.width = 136;
 		xPosition.labelPosition = 'bottom';
-		var label:Label = new Label(gravityWindow, labelX, 27, "X");
+		var label:Label = new Label(gravityPanel, labelX, 27, "X");
 		
-		yPosition = new HRangeSlider(gravityWindow, rangeX, 60, onYChange);
+		yPosition = new HRangeSlider(gravityPanel, rangeX, 60, onYChange);
 		yPosition.minimum = -500;
 		yPosition.maximum = 500;
 		yPosition.lowValue = 0;
 		yPosition.highValue = 0;
 		yPosition.width = 136;
 		yPosition.labelPosition = 'bottom';
-		label = new Label(gravityWindow, labelX, 57, "Y");
+		label = new Label(gravityPanel, labelX, 57, "Y");
 		
-		zPosition = new HRangeSlider(gravityWindow, rangeX, 90, onZChange);
+		zPosition = new HRangeSlider(gravityPanel, rangeX, 90, onZChange);
 		zPosition.minimum = -500;
 		zPosition.maximum = 500;
 		zPosition.lowValue = 0;
 		zPosition.highValue = 0;
 		zPosition.width = 136;
 		zPosition.labelPosition = 'bottom';
-		label = new Label(gravityWindow, labelX, 87, "Z");
+		label = new Label(gravityPanel, labelX, 87, "Z");
 		
-		var startVelocityLabel:Label = new Label(gravityWindow, 0, 120, "Start Velocity");
-		startVelocityLabel.x = (gravityWindow.width - startVelocityLabel.width) * 0.5;
+		var startVelocityLabel:Label = new Label(gravityPanel, 0, 120, "Start Velocity");
+		startVelocityLabel.x = (gravityPanel.width - startVelocityLabel.width) * 0.5;
 		
-		xVelocity = new HRangeSlider(gravityWindow, rangeX, 140, onVelocityXChange);
+		xVelocity = new HRangeSlider(gravityPanel, rangeX, 140, onVelocityXChange);
 		xVelocity.minimum = -500;
 		xVelocity.maximum = 500;
 		xVelocity.lowValue = 0;
 		xVelocity.highValue = 0;
 		xVelocity.width = 136;
 		xVelocity.labelPosition = 'bottom';
-		label = new Label(gravityWindow, labelX, 137, "X");
+		label = new Label(gravityPanel, labelX, 137, "X");
 		
-		yVelocity = new HRangeSlider(gravityWindow, rangeX, 170, onVelocityYChange);
+		yVelocity = new HRangeSlider(gravityPanel, rangeX, 170, onVelocityYChange);
 		yVelocity.minimum = -500;
 		yVelocity.maximum = 500;
 		yVelocity.lowValue = 0;
 		yVelocity.highValue = 0;
 		yVelocity.width = 136;
 		yVelocity.labelPosition = 'bottom';
-		var label:Label = new Label(gravityWindow, labelX, 167, "Y");
+		var label:Label = new Label(gravityPanel, labelX, 167, "Y");
 		
-		zVelocity = new HRangeSlider(gravityWindow, rangeX, 200, onVelocityZChange);
+		zVelocity = new HRangeSlider(gravityPanel, rangeX, 200, onVelocityZChange);
 		zVelocity.minimum = -500;
 		zVelocity.maximum = 500;
 		zVelocity.lowValue = 0;
 		zVelocity.highValue = 0;
 		zVelocity.width = 136;
 		zVelocity.labelPosition = 'bottom';
-		var label:Label = new Label(gravityWindow, labelX, 197, "Z");
+		var label:Label = new Label(gravityPanel, labelX, 197, "Z");
 		
-		var gravityLabel:Label = new Label(gravityWindow, 0, 230, "Gravity");
-		gravityLabel.x = (gravityWindow.width - gravityLabel.width) * 0.5;
+		var gravityLabel:Label = new Label(gravityPanel, 0, 230, "Gravity");
+		gravityLabel.x = (gravityPanel.width - gravityLabel.width) * 0.5;
 		
-		xGravity = new HUISlider(gravityWindow, sliderX, 247, onGravityXChange);
+		xGravity = new HUISlider(gravityPanel, sliderX, 247, onGravityXChange);
 		xGravity.setSliderParams( -500, 500, 0);
-		var label:Label = new Label(gravityWindow, labelX, 247, "X");
+		var label:Label = new Label(gravityPanel, labelX, 247, "X");
 		
-		yGravity = new HUISlider(gravityWindow, sliderX, 277, onGravityYChange);
+		yGravity = new HUISlider(gravityPanel, sliderX, 277, onGravityYChange);
 		yGravity.setSliderParams( -500, 500, 0);
-		var label:Label = new Label(gravityWindow, labelX, 277, "Y");
+		var label:Label = new Label(gravityPanel, labelX, 277, "Y");
 		
-		zGravity = new HUISlider(gravityWindow, sliderX, 307, onGravityYChange);
+		zGravity = new HUISlider(gravityPanel, sliderX, 307, onGravityYChange);
 		zGravity.setSliderParams( -500, 500, 0);
-		var label:Label = new Label(gravityWindow, labelX, 307, "Z");
+		var label:Label = new Label(gravityPanel, labelX, 307, "Z");
+		
+		// radial settings
+		radialWindow = gravityWindow;
+		
+		radialPanel = new Panel(radialWindow, 0, 0);
+		radialPanel.setSize(350, 500);
+		
+		startAngle = new HRangeSlider(radialPanel, rangeX, 30, onStartAngleChange);
+		startAngle.minimum = 0;
+		startAngle.maximum = 360;
+		startAngle.lowValue = 0;
+		startAngle.highValue = 0;
+		startAngle.width = 136;
+		startAngle.labelPosition = 'bottom';
+		label = new Label(radialPanel, labelX, 27, "startAngle");
+		
+		angleSpeed = new HRangeSlider(radialPanel, rangeX, 60, onAngleSpeedChange);
+		angleSpeed.minimum = 0;
+		angleSpeed.maximum = 10;
+		angleSpeed.lowValue = 0;
+		angleSpeed.highValue = 10;
+		angleSpeed.width = 136;
+		angleSpeed.labelPosition = 'bottom';
+		label = new Label(radialPanel, labelX, 57, "angleSpeed");
+		
+		startDepth = new HRangeSlider(radialPanel, rangeX, 90, onStartDepthChange);
+		startDepth.minimum = -100;
+		startDepth.maximum = 100;
+		startDepth.lowValue = 0;
+		startDepth.highValue = 0;
+		startDepth.width = 136;
+		startDepth.labelPosition = 'bottom';
+		label = new Label(radialPanel, labelX, 87, "startDepth");
+		
+		depthSpeed = new HRangeSlider(radialPanel, rangeX, 120, onDepthSpeedChange);
+		depthSpeed.minimum = -10;
+		depthSpeed.maximum = 10;
+		depthSpeed.lowValue = -5;
+		depthSpeed.highValue = 5;
+		depthSpeed.width = 136;
+		depthSpeed.labelPosition = 'bottom';
+		label = new Label(radialPanel, labelX, 117, "depthSpeed");
+		
+		startRadius = new HRangeSlider(radialPanel, rangeX, 150, onStartRadiusChange);
+		startRadius.minimum = 0;
+		startRadius.maximum = 500;
+		startRadius.lowValue = 0;
+		startRadius.highValue = 10;
+		startRadius.width = 136;
+		startRadius.labelPosition = 'bottom';
+		label = new Label(radialPanel, labelX, 147, "startRadius");
+		
+		endRadius = new HRangeSlider(radialPanel, rangeX, 180, onEndRadiusChange);
+		endRadius.minimum = 0;
+		endRadius.maximum = 500;
+		endRadius.lowValue = 0;
+		endRadius.highValue = 100;
+		endRadius.width = 136;
+		endRadius.labelPosition = 'bottom';
+		label = new Label(radialPanel, labelX, 177, "endRadius");
+		
+		switchTypePanels();
 		
 		s.addEventListener(MouseEvent.CLICK, onStageClick);
 		s.addEventListener(Event.ENTER_FRAME, onEnterFrame);
     }
 	
-	private function onSystemTypeSelect(e:Event):Void 
+	private function switchTypePanels(e:Event = null):Void 
 	{
-		trace(Std.string(systemType.selectedItem));
+		if (systemType.selectedItem == "Gravity")
+		{
+			gravityPanel.visible = true;
+			radialPanel.visible = false;
+			gravityWindow.title = "Gravity System Settings";
+			
+			currentPreset = gravityPreset;
+			currentRender = gravityRender;
+			currentPresetClass = GravityParticlePreset;
+		}
+		else
+		{
+			gravityPanel.visible = false;
+			radialPanel.visible = true;
+			radialWindow.title = "Radial System Settings";
+			
+			currentPreset = radialPreset;
+			currentRender = radialRender;
+			currentPresetClass = RadialParticlePreset;
+		}
+		
+		needUpdate = true;
 	}
 	
 	var needUpdate:Bool = false;
@@ -506,6 +616,7 @@ class Main
 	{
 		if (needUpdate)
 		{
+			ps.render = currentRender;
 			cast(ps.render, ParticleRenderBase).preset = currentPreset;
 			needUpdate = false;
 		}
@@ -592,10 +703,20 @@ class Main
 			return;
 		}
 		
+		var exist:Bool = (ps != null);
+		var psx:Float = world.bounds.width * 0.5;
+		var psy:Float = world.bounds.height * 0.5;
+		
+		if (exist)
+		{
+			psx = ps.x;
+			psy = ps.y;
+		}
+		
 		world.scene.removeChild(ps);
-		ps = ParticleSaver.parseXml(Xml.parse(fileContents));
-		ps.x = world.bounds.width * 0.5;
-        ps.y = world.bounds.height * 0.5;
+		ps = ParticleParser.parseXml(Xml.parse(fileContents));
+		ps.x = psx;
+        ps.y = psy;
 		ps.texture = texture;
 		blendMode = ps.blendMode;
 		world.scene.addChild(ps);
@@ -604,12 +725,15 @@ class Main
 		{
 			currentPreset = gravityPreset;
 			currentPresetClass = GravityParticlePreset;
+			gravityRender = cast ps.render;
 		}
 		else
 		{
 			currentPreset = radialPreset;
 			currentPresetClass = RadialParticlePreset;
+			radialRender = cast ps.render;
 		}
+		currentRender = cast ps.render;
 		
 		updateUI();
 	}
@@ -958,14 +1082,56 @@ class Main
 		needUpdate = true;
 	}
 	
+	private function onEndRadiusChange(param1:Dynamic) 
+	{
+		radialPreset.endRadius.min = endRadius.lowValue;
+		radialPreset.endRadius.max = endRadius.highValue;
+		needUpdate = true;
+	}
+	
+	private function onStartRadiusChange(param1:Dynamic) 
+	{
+		radialPreset.startRadius.min = startRadius.lowValue;
+		radialPreset.startRadius.max = startRadius.highValue;
+		needUpdate = true;
+	}
+	
+	private function onDepthSpeedChange(param1:Dynamic) 
+	{
+		radialPreset.depthSpeed.min = depthSpeed.lowValue;
+		radialPreset.depthSpeed.max = depthSpeed.highValue;
+		needUpdate = true;
+	}
+	
+	private function onStartDepthChange(param1:Dynamic) 
+	{
+		radialPreset.startDepth.min = startDepth.lowValue;
+		radialPreset.startDepth.max = startDepth.highValue;
+		needUpdate = true;
+	}
+	
+	private function onAngleSpeedChange(param1:Dynamic) 
+	{
+		radialPreset.angleSpeed.min = angleSpeed.lowValue;
+		radialPreset.angleSpeed.max = angleSpeed.highValue;
+		needUpdate = true;
+	}
+	
+	private function onStartAngleChange(param1:Dynamic) 
+	{
+		radialPreset.startAngle.min = startAngle.lowValue;
+		radialPreset.startAngle.max = startAngle.highValue;
+		needUpdate = true;
+	}
+	
 	private function updateUI():Void
 	{
 		blendSource.selectedItem = blendFactorToString(blendMode.src);
 		blendDestination.selectedItem = blendFactorToString(blendMode.dst);
 		
-		// TODO: set UI values according to particle system properties
 		if (currentPresetClass == GravityParticlePreset)
 		{
+			systemType.selectedItem = "Gravity";
 			var grav:GravityParticlePreset = cast(cast(ps.render, ParticleRenderBase).preset, GravityParticlePreset);
 			
 			xPosition.lowValue = grav.startPosition.min.x;
@@ -992,9 +1158,26 @@ class Main
 		}
 		else
 		{
+			systemType.selectedItem = "Radial";
 			var radial:RadialParticlePreset = cast(cast(ps.render, ParticleRenderBase).preset, RadialParticlePreset);
 			
+			startAngle.lowValue = radial.startAngle.min;
+			startAngle.highValue = radial.startAngle.max;
 			
+			angleSpeed.lowValue = radial.angleSpeed.min;
+			angleSpeed.highValue = radial.angleSpeed.max;
+			
+			startDepth.lowValue = radial.startDepth.min;
+			startDepth.highValue = radial.startDepth.max;
+			
+			depthSpeed.lowValue = radial.depthSpeed.min;
+			depthSpeed.highValue = radial.depthSpeed.max;
+			
+			startRadius.lowValue = radial.startRadius.min;
+			startRadius.highValue = radial.startRadius.max;
+			
+			endRadius.lowValue = radial.endRadius.min;
+			endRadius.highValue = radial.endRadius.max;
 		}
 		
 		var preset = cast(ps.render, ParticleRenderBase).preset;
@@ -1042,8 +1225,6 @@ class Main
 		
 		endA.lowValue = Reflect.field(preset, 'endColor').min.a;
 		endA.highValue = Reflect.field(preset, 'endColor').max.a;
-		
-		
 	}
 
     static function main()
