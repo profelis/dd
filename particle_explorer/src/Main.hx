@@ -223,7 +223,12 @@ class Main
 		var gap:Float = 10;
 		var gap2:Float = 19;
 		
-		accordion = new Accordion(s, 0, 0);
+		var guiWindow:Window = new Window(s, 0, 0, "Settings");
+		guiWindow.setSize(350, 446);
+		guiWindow.draggable = false;
+		guiWindow.hasMinimizeButton = true;
+		
+		accordion = new Accordion(guiWindow, 0, 0);
 		accordion.setSize(350, 600);
 		
 		// Particle config
@@ -784,7 +789,7 @@ class Main
 		fileRef = null;
 		
 		#if debug
-		throw "Unable to open DD particle system file";
+		throw "Unable to open DD particle system file"
 		#end
 	}
 	
