@@ -66,7 +66,7 @@ class Texture2D
         res.textureWidth = getNextPowerOfTwo(width);
         res.textureHeight = getNextPowerOfTwo(height);
 
-        res.frame = new Frame(width, height, new Vector3D(0, 0, 1, 1));
+        res.frame = new Frame(res.textureWidth, res.textureHeight, new Vector3D(0, 0, 1, 1));
 
         return res;
     }
@@ -212,6 +212,8 @@ class Texture2D
 	{
         if (useCount > 0) return;
 
+        unloadTexture();
+
         if (cache == null)
         {
             if (bitmapData != null && releaseBitmap) bitmapData.dispose();
@@ -220,7 +222,6 @@ class Texture2D
         }
         else
         {
-            unloadTexture();
             ctx = null;
         }
 	}
