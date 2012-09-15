@@ -176,7 +176,7 @@ class Main
         gravityPreset.startPosition = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(0, 0, 0));
         gravityPreset.velocity = new Bounds<Vector3D>(new Vector3D(0, -70, 0), new Vector3D(0, -130, 0));
 		gravityPreset.startColor = new Bounds<Color>(new Color(1, 0.3, 0, 0.6), new Color(1, 0.3, 0, 0.6));
-        gravityPreset.endColor = new Bounds<Color>(new Color(1, 0.3, 0, 0), new Color(1, 0.3, 0, 0));
+        gravityPreset.endColor = new Bounds<Color>(new Color(1, 0, 0, 0), new Color(1, 0, 0, 0));
         gravityPreset.gravity = new Vector3D(0, 0, 0);
         gravityPreset.startScale = new Bounds<Float>(1.3);
         gravityPreset.endScale = new Bounds<Float>(0.0);
@@ -188,7 +188,7 @@ class Main
         radialPreset.spawnStep = 0.03;
         radialPreset.life = new Bounds<Float>(1, 1.7);
 		radialPreset.startColor = new Bounds<Color>(new Color(1, 0.3, 0, 0.6), new Color(1, 0.3, 0, 0.6));
-        radialPreset.endColor = new Bounds<Color>(new Color(1, 0.3, 0, 0), new Color(1, 0.3, 0, 0));
+        radialPreset.endColor = new Bounds<Color>(new Color(1, 0, 0, 0), new Color(1, 0, 0, 0));
 		radialPreset.startRotation = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(0, 0, 0));
 		radialPreset.startScale = new Bounds<Float>(1.3);
         radialPreset.endScale = new Bounds<Float>(0.0);
@@ -254,11 +254,10 @@ class Main
 		life = new HRangeSlider(particleWindow, sliderX, 117, onLifeChange);
 		life.minimum = 1;
 		life.maximum = 20;
-		life.lowValue = 1;
-		life.highValue = 1.7;
-		life.width = 136;
 		life.labelPrecision = 1;
 		life.tick = 0.1;
+		setValuesForRangeSlider(life, 1, 1.7);
+		life.width = 136;
 		life.labelPosition = 'bottom';
 		
 		makeLabel(particleWindow, 142, "startScale", gap2);
@@ -267,8 +266,7 @@ class Main
 		startScale.tick = 0.01;
 		startScale.minimum = 0.0;
 		startScale.maximum = 50;
-		startScale.lowValue = 1.3;
-		startScale.highValue = 1.3;
+		setValuesForRangeSlider(startScale, 1.3, 1.3);
 		startScale.width = 136;
 		startScale.labelPosition = 'bottom';
 		
@@ -278,8 +276,7 @@ class Main
 		endScale.tick = 0.01;
 		endScale.minimum = 0.0;
 		endScale.maximum = 50;
-		endScale.lowValue = 0;
-		endScale.highValue = 0;
+		setValuesForRangeSlider(endScale, 0, 0);
 		endScale.width = 136;
 		endScale.labelPosition = 'bottom';
 		
@@ -287,8 +284,7 @@ class Main
 		angleX = new HRangeSlider(particleWindow, sliderX, 207, onAngleXChange);
 		angleX.minimum = 0;
 		angleX.maximum = 360;
-		angleX.lowValue = 0;
-		angleX.highValue = 0;
+		setValuesForRangeSlider(angleX, 0, 0);
 		angleX.width = 136;
 		angleX.labelPosition = 'bottom';
 		
@@ -296,8 +292,7 @@ class Main
 		angleY = new HRangeSlider(particleWindow, sliderX, 237, onAngleYChange);
 		angleY.minimum = 0;
 		angleY.maximum = 360;
-		angleY.lowValue = 0;
-		angleY.highValue = 0;
+		setValuesForRangeSlider(angleY, 0, 0);
 		angleY.width = 136;
 		angleY.labelPosition = 'bottom';
 		
@@ -305,8 +300,7 @@ class Main
 		angleZ = new HRangeSlider(particleWindow, sliderX, 267, onAngleYChange);
 		angleZ.minimum = 0;
 		angleZ.maximum = 360;
-		angleZ.lowValue = 0;
-		angleZ.highValue = 0;
+		setValuesForRangeSlider(angleZ, 0, 0);
 		angleZ.width = 136;
 		angleZ.labelPosition = 'bottom';
 		
@@ -374,8 +368,7 @@ class Main
 		startR.tick = 0.01;
 		startR.minimum = 0;
 		startR.maximum = 1;
-		startR.lowValue = 1;
-		startR.highValue = 1;
+		setValuesForRangeSlider(startR, 1, 1);
 		startR.width = 136;
 		startR.labelPosition = 'bottom';
 		
@@ -385,8 +378,7 @@ class Main
 		startG.tick = 0.01;
 		startG.minimum = 0;
 		startG.maximum = 1;
-		startG.lowValue = 0.3;
-		startG.highValue = 0.3;
+		setValuesForRangeSlider(startG, 0.3, 0.3);
 		startG.width = 136;
 		startG.labelPosition = 'bottom';
 		
@@ -396,8 +388,7 @@ class Main
 		startB.tick = 0.01;
 		startB.minimum = 0;
 		startB.maximum = 1;
-		startB.lowValue = 0;
-		startB.highValue = 0;
+		setValuesForRangeSlider(startB, 0, 0);
 		startB.width = 136;
 		startB.labelPosition = 'bottom';
 		
@@ -407,8 +398,7 @@ class Main
 		startA.tick = 0.01;
 		startA.minimum = 0;
 		startA.maximum = 1;
-		startA.lowValue = 0.6;
-		startA.highValue = 0.6;
+		setValuesForRangeSlider(startA, 0.6, 0.6);
 		startA.width = 136;
 		startA.labelPosition = 'bottom';
 		
@@ -419,8 +409,7 @@ class Main
 		endR.tick = 0.01;
 		endR.minimum = 0;
 		endR.maximum = 1;
-		endR.lowValue = 1;
-		endR.highValue = 1;
+		setValuesForRangeSlider(endR, 1, 1);
 		endR.width = 136;
 		endR.labelPosition = 'bottom';
 		
@@ -430,8 +419,7 @@ class Main
 		endG.tick = 0.01;
 		endG.minimum = 0;
 		endG.maximum = 1;
-		endG.lowValue = 0.3;
-		endG.highValue = 0.3;
+		setValuesForRangeSlider(endG, 0, 0);
 		endG.width = 136;
 		endG.labelPosition = 'bottom';
 		
@@ -441,8 +429,7 @@ class Main
 		endB.tick = 0.01;
 		endB.minimum = 0;
 		endB.maximum = 1;
-		endB.lowValue = 0;
-		endB.highValue = 0;
+		setValuesForRangeSlider(endB, 0, 0);
 		endB.width = 136;
 		endB.labelPosition = 'bottom';
 		
@@ -452,8 +439,7 @@ class Main
 		endA.tick = 0.01;
 		endA.minimum = 0;
 		endA.maximum = 1;
-		endA.lowValue = 0;
-		endA.highValue = 0;
+		setValuesForRangeSlider(endA, 0, 0);
 		endA.width = 136;
 		endA.labelPosition = 'bottom';
 		
@@ -476,8 +462,7 @@ class Main
 		xPosition = new HRangeSlider(gravityPanel, sliderX, 30, onXChange);
 		xPosition.minimum = -1000;
 		xPosition.maximum = 1000;
-		xPosition.lowValue = 0;
-		xPosition.highValue = 0;
+		setValuesForRangeSlider(xPosition, 0, 0);
 		xPosition.width = 136;
 		xPosition.labelPosition = 'bottom';
 		
@@ -485,8 +470,7 @@ class Main
 		yPosition = new HRangeSlider(gravityPanel, sliderX, 60, onYChange);
 		yPosition.minimum = -1000;
 		yPosition.maximum = 1000;
-		yPosition.lowValue = 0;
-		yPosition.highValue = 0;
+		setValuesForRangeSlider(yPosition, 0, 0);
 		yPosition.width = 136;
 		yPosition.labelPosition = 'bottom';
 		
@@ -494,8 +478,7 @@ class Main
 		zPosition = new HRangeSlider(gravityPanel, sliderX, 90, onZChange);
 		zPosition.minimum = -1000;
 		zPosition.maximum = 1000;
-		zPosition.lowValue = 0;
-		zPosition.highValue = 0;
+		setValuesForRangeSlider(zPosition, 0, 0);
 		zPosition.width = 136;
 		zPosition.labelPosition = 'bottom';
 		
@@ -506,8 +489,7 @@ class Main
 		xVelocity = new HRangeSlider(gravityPanel, sliderX, 140, onVelocityXChange);
 		xVelocity.minimum = -500;
 		xVelocity.maximum = 500;
-		xVelocity.lowValue = 0;
-		xVelocity.highValue = 0;
+		setValuesForRangeSlider(xVelocity, 0, 0);
 		xVelocity.width = 136;
 		xVelocity.labelPosition = 'bottom';
 		
@@ -515,8 +497,7 @@ class Main
 		yVelocity = new HRangeSlider(gravityPanel, sliderX, 170, onVelocityYChange);
 		yVelocity.minimum = -500;
 		yVelocity.maximum = 500;
-		yVelocity.lowValue = -130;
-		yVelocity.highValue = -70;
+		setValuesForRangeSlider(yVelocity, -130, -70);
 		yVelocity.width = 136;
 		yVelocity.labelPosition = 'bottom';
 		
@@ -524,8 +505,7 @@ class Main
 		zVelocity = new HRangeSlider(gravityPanel, sliderX, 200, onVelocityZChange);
 		zVelocity.minimum = -500;
 		zVelocity.maximum = 500;
-		zVelocity.lowValue = 0;
-		zVelocity.highValue = 0;
+		setValuesForRangeSlider(zVelocity, 0, 0);
 		zVelocity.width = 136;
 		zVelocity.labelPosition = 'bottom';
 		
@@ -553,8 +533,7 @@ class Main
 		startAngle = new HRangeSlider(radialPanel, sliderX, 30, onStartAngleChange);
 		startAngle.minimum = 0;
 		startAngle.maximum = 360;
-		startAngle.lowValue = 0;
-		startAngle.highValue = 360;
+		setValuesForRangeSlider(startAngle, 0, 360);
 		startAngle.width = 136;
 		startAngle.labelPosition = 'bottom';
 		
@@ -562,8 +541,7 @@ class Main
 		angleSpeed = new HRangeSlider(radialPanel, sliderX, 60, onAngleSpeedChange);
 		angleSpeed.minimum = -360;
 		angleSpeed.maximum = 360;
-		angleSpeed.lowValue = 0;
-		angleSpeed.highValue = 10;
+		setValuesForRangeSlider(angleSpeed, 0, 10);
 		angleSpeed.width = 136;
 		angleSpeed.labelPosition = 'bottom';
 		
@@ -571,8 +549,7 @@ class Main
 		startDepth = new HRangeSlider(radialPanel, sliderX, 90, onStartDepthChange);
 		startDepth.minimum = -5000;
 		startDepth.maximum = 5000;
-		startDepth.lowValue = 0;
-		startDepth.highValue = 0;
+		setValuesForRangeSlider(startDepth, 0, 0);
 		startDepth.width = 136;
 		startDepth.labelPosition = 'bottom';
 		
@@ -580,8 +557,7 @@ class Main
 		depthSpeed = new HRangeSlider(radialPanel, sliderX, 120, onDepthSpeedChange);
 		depthSpeed.minimum = -500;
 		depthSpeed.maximum = 500;
-		depthSpeed.lowValue = 0;
-		depthSpeed.highValue = 0;
+		setValuesForRangeSlider(depthSpeed, 0, 0);
 		depthSpeed.width = 136;
 		depthSpeed.labelPosition = 'bottom';
 		
@@ -589,8 +565,7 @@ class Main
 		startRadius = new HRangeSlider(radialPanel, sliderX, 150, onStartRadiusChange);
 		startRadius.minimum = 0;
 		startRadius.maximum = 500;
-		startRadius.lowValue = 0;
-		startRadius.highValue = 0;
+		setValuesForRangeSlider(startRadius, 0, 0);
 		startRadius.width = 136;
 		startRadius.labelPosition = 'bottom';
 		
@@ -598,8 +573,7 @@ class Main
 		endRadius = new HRangeSlider(radialPanel, sliderX, 180, onEndRadiusChange);
 		endRadius.minimum = 0;
 		endRadius.maximum = 500;
-		endRadius.lowValue = 0;
-		endRadius.highValue = 100;
+		setValuesForRangeSlider(endRadius, 0, 100);
 		endRadius.width = 136;
 		endRadius.labelPosition = 'bottom';
 		
