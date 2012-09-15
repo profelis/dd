@@ -372,89 +372,89 @@ class Main
 		startR = new HRangeSlider(colorWindow, sliderX, 27, onStartRChange);
 		startR.labelPrecision = 2;
 		startR.tick = 0.01;
-		startR.minimum = 0.0;
-		startR.maximum = 1.0;
-		startR.lowValue = 1.0;
-		startR.highValue = 1.0;
+		startR.minimum = 0;
+		startR.maximum = 1;
+		startR.lowValue = 1;
+		startR.highValue = 1;
 		startR.width = 136;
 		startR.labelPosition = 'bottom';
 		
 		makeLabel(colorWindow, 52, "Start G", gap2);
 		startG = new HRangeSlider(colorWindow, sliderX, 57, onStartGChange);
+		startG.labelPrecision = 2;
+		startG.tick = 0.01;
 		startG.minimum = 0;
 		startG.maximum = 1;
 		startG.lowValue = 0.3;
 		startG.highValue = 0.3;
 		startG.width = 136;
-		startG.labelPrecision = 2;
-		startG.tick = 0.01;
 		startG.labelPosition = 'bottom';
 		
 		makeLabel(colorWindow, 82, "Start B", gap2);
 		startB = new HRangeSlider(colorWindow, sliderX, 87, onStartBChange);
+		startB.labelPrecision = 2;
+		startB.tick = 0.01;
 		startB.minimum = 0;
 		startB.maximum = 1;
 		startB.lowValue = 0;
 		startB.highValue = 0;
 		startB.width = 136;
-		startB.labelPrecision = 2;
-		startB.tick = 0.01;
 		startB.labelPosition = 'bottom';
 		
 		makeLabel(colorWindow, 112, "Start A", gap2);
 		startA = new HRangeSlider(colorWindow, sliderX, 117, onStartAChange);
+		startA.labelPrecision = 2;
+		startA.tick = 0.01;
 		startA.minimum = 0;
 		startA.maximum = 1;
 		startA.lowValue = 0.6;
 		startA.highValue = 0.6;
 		startA.width = 136;
-		startA.labelPrecision = 2;
-		startA.tick = 0.01;
 		startA.labelPosition = 'bottom';
 		
 		//
 		makeLabel(colorWindow, 142, "End R", gap2);
 		endR = new HRangeSlider(colorWindow, sliderX, 147, onEndRChange);
+		endR.labelPrecision = 2;
+		endR.tick = 0.01;
 		endR.minimum = 0;
 		endR.maximum = 1;
 		endR.lowValue = 1;
 		endR.highValue = 1;
 		endR.width = 136;
-		endR.labelPrecision = 2;
-		endR.tick = 0.01;
 		endR.labelPosition = 'bottom';
 		
 		makeLabel(colorWindow, 172, "End G", gap2);
 		endG = new HRangeSlider(colorWindow, sliderX, 177, onEndGChange);
+		endG.labelPrecision = 2;
+		endG.tick = 0.01;
 		endG.minimum = 0;
 		endG.maximum = 1;
 		endG.lowValue = 0.3;
 		endG.highValue = 0.3;
 		endG.width = 136;
-		endG.labelPrecision = 2;
-		endG.tick = 0.01;
 		endG.labelPosition = 'bottom';
 		
 		makeLabel(colorWindow, 202, "End B", gap2);
 		endB = new HRangeSlider(colorWindow, sliderX, 207, onEndBChange);
+		endB.labelPrecision = 2;
+		endB.tick = 0.01;
 		endB.minimum = 0;
 		endB.maximum = 1;
 		endB.lowValue = 0;
 		endB.highValue = 0;
 		endB.width = 136;
-		endB.labelPrecision = 2;
-		endB.tick = 0.01;
 		endB.labelPosition = 'bottom';
 		
 		makeLabel(colorWindow, 232, "End A", gap2);
 		endA = new HRangeSlider(colorWindow, sliderX, 237, onEndAChange);
+		endA.labelPrecision = 2;
+		endA.tick = 0.01;
 		endA.minimum = 0;
 		endA.maximum = 1;
 		endA.lowValue = 0;
 		endA.highValue = 0;
 		endA.width = 136;
-		endA.labelPrecision = 2;
-		endA.tick = 0.01;
 		endA.labelPosition = 'bottom';
 		
 		//"Texture Editor"
@@ -1171,23 +1171,13 @@ class Main
 			systemType.selectedItem = "Gravity";
 			var grav:GravityParticlePreset = cast(cast(ps.render, ParticleRenderBase).preset, GravityParticlePreset);
 			
-			xPosition.lowValue = grav.startPosition.min.x;
-			xPosition.highValue = grav.startPosition.max.x;
+			setValuesForRangeSlider(xPosition, grav.startPosition.min.x, grav.startPosition.max.x);
+			setValuesForRangeSlider(yPosition, grav.startPosition.min.y, grav.startPosition.max.y);
+			setValuesForRangeSlider(zPosition, grav.startPosition.min.z, grav.startPosition.max.z);
 			
-			yPosition.lowValue = grav.startPosition.min.y;
-			yPosition.highValue = grav.startPosition.max.y;
-			
-			zPosition.lowValue = grav.startPosition.min.z;
-			zPosition.highValue = grav.startPosition.max.z;
-			
-			xVelocity.lowValue = grav.velocity.min.x;
-			xVelocity.highValue = grav.velocity.max.x;
-			
-			yVelocity.lowValue = grav.velocity.min.y;
-			yVelocity.highValue = grav.velocity.max.y;
-			
-			zVelocity.lowValue = grav.velocity.min.z;
-			zVelocity.highValue = grav.velocity.max.z;
+			setValuesForRangeSlider(xVelocity, grav.velocity.min.x, grav.velocity.max.x);
+			setValuesForRangeSlider(yVelocity, grav.velocity.min.y, grav.velocity.max.y);
+			setValuesForRangeSlider(zVelocity, grav.velocity.min.z, grav.velocity.max.z);
 			
 			xGravity.value = grav.gravity.x;
 			yGravity.value = grav.gravity.y;
@@ -1198,70 +1188,69 @@ class Main
 			systemType.selectedItem = "Radial";
 			var radial:RadialParticlePreset = cast(cast(ps.render, ParticleRenderBase).preset, RadialParticlePreset);
 			
-			startAngle.lowValue = radial.startAngle.min;
-			startAngle.highValue = radial.startAngle.max;
+			setValuesForRangeSlider(startAngle, radial.startAngle.min, radial.startAngle.max);
 			
-			angleSpeed.lowValue = radial.angleSpeed.min;
-			angleSpeed.highValue = radial.angleSpeed.max;
+			setValuesForRangeSlider(angleSpeed, radial.angleSpeed.min, radial.angleSpeed.max);
 			
-			startDepth.lowValue = radial.startDepth.min;
-			startDepth.highValue = radial.startDepth.max;
+			setValuesForRangeSlider(startDepth, radial.startDepth.min, radial.startDepth.max);
 			
-			depthSpeed.lowValue = radial.depthSpeed.min;
-			depthSpeed.highValue = radial.depthSpeed.max;
+			setValuesForRangeSlider(depthSpeed, radial.depthSpeed.min, radial.depthSpeed.max);
 			
-			startRadius.lowValue = radial.startRadius.min;
-			startRadius.highValue = radial.startRadius.max;
+			setValuesForRangeSlider(startRadius, radial.startRadius.min, radial.startRadius.max);
 			
-			endRadius.lowValue = radial.endRadius.min;
-			endRadius.highValue = radial.endRadius.max;
+			setValuesForRangeSlider(endRadius, radial.endRadius.min, radial.endRadius.max);
 		}
 		
-		var preset = cast(ps.render, ParticleRenderBase).preset;
+		var preset = currentPreset;// cast(ps.render, ParticleRenderBase).preset;
 		numParticles.value = preset.particleNum;
 		spawnNum.value = preset.spawnNum;
 		spawnStep.value = preset.spawnStep;
-		life.lowValue = preset.life.min;
-		life.highValue = preset.life.max;
 		
-		startScale.lowValue = Reflect.field(preset, 'startScale').min;
-		startScale.highValue = Reflect.field(preset, 'startScale').max;
+		setValuesForRangeSlider(life, preset.life.min, preset.life.max);
 		
-		endScale.lowValue = Reflect.field(preset, 'endScale').min;
-		endScale.highValue = Reflect.field(preset, 'endScale').max;
+		setValuesForRangeSlider(startScale, Reflect.field(preset, 'startScale').min, Reflect.field(preset, 'startScale').max);
 		
-		angleX.lowValue = Reflect.field(preset, 'startRotation').min.x;
-		angleX.highValue = Reflect.field(preset, 'startRotation').max.x;
+		setValuesForRangeSlider(endScale, Reflect.field(preset, 'endScale').min, Reflect.field(preset, 'endScale').max);
 		
-		angleY.lowValue = Reflect.field(preset, 'startRotation').min.y;
-		angleY.highValue = Reflect.field(preset, 'startRotation').max.y;
+		var startRotationMin:Vector3D = cast(Reflect.field(preset, 'startRotation').min, Vector3D);
+		var startRotationMax:Vector3D = cast(Reflect.field(preset, 'startRotation').max, Vector3D);
 		
-		angleZ.lowValue = Reflect.field(preset, 'startRotation').min.z;
-		angleZ.highValue = Reflect.field(preset, 'startRotation').max.z;
+		setValuesForRangeSlider(angleX, startRotationMin.x, startRotationMax.x);
+		setValuesForRangeSlider(angleY, startRotationMin.y, startRotationMax.y);
+		setValuesForRangeSlider(angleZ, startRotationMin.z, startRotationMax.z);
 		
-		startR.lowValue = Reflect.field(preset, 'startColor').min.r;
-		startR.highValue = Reflect.field(preset, 'startColor').max.r;
+		var startColorMin:Color = cast(Reflect.field(preset, 'startColor').min, Color);
+		var startColorMax:Color = cast(Reflect.field(preset, 'startColor').max, Color);
 		
-		startG.lowValue = Reflect.field(preset, 'startColor').min.g;
-		startG.highValue = Reflect.field(preset, 'startColor').max.g;
+		setValuesForRangeSlider(startR, startColorMin.r, startColorMax.r);
+		setValuesForRangeSlider(startG, startColorMin.g, startColorMax.g);
+		setValuesForRangeSlider(startB, startColorMin.b, startColorMax.b);
+		setValuesForRangeSlider(startA, startColorMin.a, startColorMax.a);
 		
-		startB.lowValue = Reflect.field(preset, 'startColor').min.b;
-		startB.highValue = Reflect.field(preset, 'startColor').max.b;
+		var endColorMin:Color = cast(Reflect.field(preset, 'endColor').min, Color);
+		var endColorMax:Color = cast(Reflect.field(preset, 'endColor').max, Color);
 		
-		startA.lowValue = Reflect.field(preset, 'startColor').min.a;
-		startA.highValue = Reflect.field(preset, 'startColor').max.a;
+		setValuesForRangeSlider(endR, endColorMin.r, endColorMax.r);
+		setValuesForRangeSlider(endG, endColorMin.g, endColorMax.g);
+		setValuesForRangeSlider(endB, endColorMin.b, endColorMax.b);
+		setValuesForRangeSlider(endA, endColorMin.a, endColorMax.a);
+	}
+	
+	private function setValuesForRangeSlider(slider:HRangeSlider, min:Float, max:Float)
+	{
+		var currentMin:Float = slider.lowValue;
+		var currentMax:Float = slider.highValue;
 		
-		endR.lowValue = Reflect.field(preset, 'endColor').min.r;
-		endR.highValue = Reflect.field(preset, 'endColor').max.r;
-		
-		endG.lowValue = Reflect.field(preset, 'endColor').min.g;
-		endG.highValue = Reflect.field(preset, 'endColor').max.g;
-		
-		endB.lowValue = Reflect.field(preset, 'endColor').min.b;
-		endB.highValue = Reflect.field(preset, 'endColor').max.b;
-		
-		endA.lowValue = Reflect.field(preset, 'endColor').min.a;
-		endA.highValue = Reflect.field(preset, 'endColor').max.a;
+		if (max <= currentMin)
+		{
+			slider.lowValue = min;
+			slider.highValue = max;
+		}
+		else// if (min >= currentMax)
+		{
+			slider.highValue = max;
+			slider.lowValue = min;
+		}
 	}
 
     static function main()
