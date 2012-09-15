@@ -29,8 +29,7 @@ import flash.display3D.Context3DRenderMode;
 import flash.display3D.Context3DBlendFactor;
 import mt.m3d.Color;
 
-@:bitmap("./assets/b390eb.jpg") class Image extends flash.display.BitmapData
-{}
+@:bitmap("./assets/b390eb.jpg") class Image extends flash.display.BitmapData {}
 
 class PerlinTest
 {
