@@ -1,0 +1,16 @@
+<particleEmitterConfig>
+<type value="gravity"/>
+<life min="0.3" max="1.5"/>
+<particleNum value="500"/>
+<spawnNum value="150"/>
+<spawnStep value="0.06"/>
+<blend source="SOURCE_ALPHA" destination="ONE"/>
+<startPosition minX="0" maxX="0" minY="0" maxY="0" minZ="0" maxZ="0" />
+<startVelocity minX="-3" maxX="3" minY="-215" maxY="-215" minZ="0" maxZ="0" />
+<gravity x="0" y="0" z="0" />
+<startColor minR="0.6" maxR="0.6" minG="0.5" maxG="0.5" minB="0.7" maxB="0.7" minA="0.7" maxA="0.7" />
+<endColor minR="1" maxR="1" minG="0.3" maxG="0.3" minB="0" maxB="0" minA="0" maxA="0" />
+<startScale min="0.27" max="1.14" />
+<endScale min="0.16" max="0.16" />
+<rotation minX="0" maxX="0" minY="0" maxY="0" minZ="0" maxZ="0" />
+</particleEmitterConfig>

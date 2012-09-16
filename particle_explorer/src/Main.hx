@@ -48,8 +48,16 @@ import flash.net.FileReference;
 import flash.utils.ByteArray;
 import mt.m3d.Color;
 
-@:bitmap("deep.png") class Image extends BitmapData {}
-@:bitmap("circle.png") class Circle extends BitmapData {}
+@:bitmap("../assets/img/deep.png") class Image extends BitmapData {}
+@:bitmap("../assets/img/circle.png") class Circle extends BitmapData { }
+
+@:file("../assets/xml/campFire.pxml") class CampFireData extends ByteArray { }
+@:file("../assets/xml/campFireSmoke.pxml") class CampFireSmokeData extends ByteArray { }
+@:file("../assets/xml/candle.pxml") class CandleData extends ByteArray { }
+@:file("../assets/xml/dungeonTorch.pxml") class DungeonTorchData extends ByteArray { }
+@:file("../assets/xml/heroField.pxml") class HeroFieldData extends ByteArray { }
+@:file("../assets/xml/rocketExhaust.pxml") class RocketExhaustData extends ByteArray { }
+@:file("../assets/xml/shower.pxml") class ShowerData extends ByteArray { }
 
 class Main
 {
@@ -108,6 +116,8 @@ class Main
 	var blendSource:ComboBox;
 	var blendDestination:ComboBox;
 	var blendMode:BlendMode;
+	
+	var preset:ComboBox;
 	
 	// Gravity system's parameters controls
 	var gravityWindow:Window;
@@ -252,7 +262,7 @@ class Main
 		
 		makeLabel(particleWindow, 112, "life", gap2);
 		life = new HRangeSlider(particleWindow, sliderX, 117, onLifeChange);
-		life.minimum = 1;
+		life.minimum = 0.1;
 		life.maximum = 20;
 		life.labelPrecision = 1;
 		life.tick = 0.1;
@@ -355,8 +365,21 @@ class Main
 		blendDestination.selectedItem = "ONE";
 		blendDestination.addEventListener(Event.SELECT, onBlendDestSelect);
 		
-		save = new PushButton(otherSettingsWindow, sliderX, 170, "Save The System", onSave);
-		load = new PushButton(otherSettingsWindow, sliderX, 200, "Load The System", onLoad);
+		makeLabel(otherSettingsWindow, 170, "Preset", gap2);
+		preset = new ComboBox(otherSettingsWindow, sliderX, 170, "Preset");
+		preset.addItem("Custom");
+		preset.addItem("CampFire");
+		preset.addItem("CampFireSmoke");
+		preset.addItem("Candle");
+		preset.addItem("DungeonTorch");
+		preset.addItem("HeroField");
+		preset.addItem("RocketExhaust");
+		preset.addItem("Shower");
+		setCustomPreset();
+		preset.addEventListener(Event.SELECT, onPresetSelect);
+		
+		save = new PushButton(otherSettingsWindow, sliderX, 200, "Save The System", onSave);
+		load = new PushButton(otherSettingsWindow, sliderX, 230, "Load The System", onLoad);
 		
 		// Color config
 		accordion.addWindow('Particle Color');
@@ -713,6 +736,11 @@ class Main
 			return;
 		}
 		
+		replaceParticleSystem(ParticleParser.parseXml(Xml.parse(fileContents)));
+	}
+	
+	private function replaceParticleSystem(newSystem:ParticleSystem2D):Void
+	{
 		var exist:Bool = (ps != null);
 		var psx:Float = world.bounds.width * 0.5;
 		var psy:Float = world.bounds.height * 0.5;
@@ -725,7 +753,7 @@ class Main
 			ps = null;
 		}
 		
-		ps = ParticleParser.parseXml(Xml.parse(fileContents));
+		ps = newSystem;
 		ps.x = psx;
         ps.y = psy;
 		ps.texture = texture;
@@ -763,7 +791,7 @@ class Main
 		fileRef = null;
 		
 		#if debug
-		throw "Unable to open DD particle system file"
+		throw "Unable to open DD particle system file";
 		#end
 	}
 	
@@ -801,6 +829,38 @@ class Main
 				str = "ONE_DST_COLOR";
 		}
 		return str;
+	}
+	
+	private function onPresetSelect(e:Event):Void 
+	{
+		var systemBytes:ByteArray = null;
+		switch (Std.string(preset.selectedItem))
+		{
+			case "CampFire":
+				systemBytes = new CampFireData();
+			case "CampFireSmoke":
+				systemBytes = new CampFireSmokeData();
+			case "Candle":
+				systemBytes = new CandleData();
+			case "DungeonTorch":
+				systemBytes = new DungeonTorchData();
+			case "HeroField":
+				systemBytes = new HeroFieldData();
+			case "RocketExhaust":
+				systemBytes = new RocketExhaustData();
+			case "Shower":
+				systemBytes = new ShowerData();
+		}
+		
+		if (systemBytes != null)
+		{
+			replaceParticleSystem(ParticleParser.parseXml(Xml.parse(Std.string(systemBytes))));
+		}
+	}
+	
+	private function setCustomPreset():Void
+	{
+		preset.selectedItem = "Custom";
 	}
 	
 	private function onBlendSrcSelect(e:Event):Void 
