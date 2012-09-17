@@ -643,6 +643,7 @@ class Main
 		
 		if (newRenderer != null)
 		{
+            if (ps.render != null) ps.render.dispose();
 			ps.render = newRenderer;
 		}
 	}

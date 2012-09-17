@@ -12,6 +12,19 @@ import deep.dd.material.sprite2d.Sprite2DMaterial;
 import deep.dd.geometry.Geometry;
 import deep.dd.utils.FastHaxe;
 
+class CenteredSprite2D extends Sprite2D
+{
+    public function new(material:Material = null)
+    {
+        super(material);
+    }
+
+    override function createGeometry()
+    {
+        setGeometry(Geometry.createTextured(_width = 1, _height = 1, 1, 1, -0.5, -0.5));
+    }
+}
+
 class Sprite2D extends DisplayNode2D
 {
     public function new(material:Material = null)

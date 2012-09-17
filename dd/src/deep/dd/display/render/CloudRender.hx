@@ -25,7 +25,7 @@ class CloudRender extends RenderBase
     static inline public var PER_VERTEX:UInt = 9; // xyz, uv, rgba
     static inline public var MAX_SIZE:UInt = 16383; //65535 / 4;
 
-	public function new(startSize:UInt = 20, incSize:UInt = 20)
+	public function new(startSize:UInt = 20, incSize:UInt = 20, geometry:CloudGeometry = null)
 	{
 		#if debug
         if (startSize > MAX_SIZE) throw "size > MAX_SIZE";
@@ -39,7 +39,7 @@ class CloudRender extends RenderBase
         ignoreInBatch = true;
 
         material = mat = new Cloud2DMaterial();
-        geometry = geom = CloudGeometry.createTexturedCloud(startSize, PER_VERTEX);
+        this.geometry = geom = geometry != null ? geometry : CloudGeometry.createTexturedCloud(startSize, PER_VERTEX);
 	}
 
     var geom:CloudGeometry;
@@ -110,10 +110,6 @@ class CloudRender extends RenderBase
 
         for (s in batchList)
         {
-            #if debug
-            if (!s.geometry.standart) throw "can't batch complex geometry";
-            #end
-
             if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
 
             if (s.invalidateTransform) s.updateTransform();

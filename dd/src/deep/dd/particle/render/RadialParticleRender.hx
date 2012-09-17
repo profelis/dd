@@ -24,14 +24,26 @@ class RadialParticleRenderBuilder
         return new GPURadialParticleRender(preset);
     }
 
-    static public function cpuCloudRender(preset:RadialParticlePreset)
+    static public function cpuCloudRender(preset:RadialParticlePreset, startSize:UInt = 20, incSize:UInt = 20)
     {
-        return new RadialParticleRender(preset, new deep.dd.display.render.CloudRender());
+        return new RadialParticleRender(
+            preset,
+            new deep.dd.display.render.CloudRender(
+                startSize,
+                incSize,
+                CloudGeometry.createTexturedCloud(startSize, deep.dd.display.render.CloudRender.PER_VERTEX, 1, 1, -0.5, -0.5)
+            )
+        );
     }
 
     static public function cpuBatchRender(preset:RadialParticlePreset)
     {
-        return new RadialParticleRender(preset, new deep.dd.display.render.BatchRender());
+        return new RadialParticleRender(
+            preset,
+            new deep.dd.display.render.BatchRender(
+                deep.dd.geometry.BatchGeometry.createTexturedBatch(deep.dd.display.render.BatchRender.MAX_SIZE, 1, 1, -0.5, -0.5)
+            )
+        );
     }
 }
 
@@ -86,7 +98,7 @@ class RadialParticleRender extends CPUParticleRenderBase
                     particles[idx] = p;
 
                     var s = sprites[idx];
-                    if (s == null) sprites[idx] = s = new Sprite2D();
+                    if (s == null) sprites[idx] = s = new CenteredSprite2D();
                     smartSprite.addChild(s);
                     s.rotationX = p.startRotation.x;
                     s.rotationY = p.startRotation.y;
