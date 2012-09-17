@@ -118,6 +118,7 @@ class Main
 	var blendMode:BlendMode;
 	
 	var preset:ComboBox;
+	var renderMode:ComboBox;
 	
 	// Gravity system's parameters controls
 	var gravityWindow:Window;
@@ -378,8 +379,15 @@ class Main
 		setCustomPreset();
 		preset.addEventListener(Event.SELECT, onPresetSelect);
 		
-		save = new PushButton(otherSettingsWindow, sliderX, 200, "Save The System", onSave);
-		load = new PushButton(otherSettingsWindow, sliderX, 230, "Load The System", onLoad);
+		makeLabel(otherSettingsWindow, 200, "RenderMode", gap2);
+		renderMode = new ComboBox(otherSettingsWindow, sliderX, 200, "RenderMode");
+		renderMode.addItem("GPU");
+		renderMode.addItem("CPU_Cloud");
+		renderMode.addItem("CPU_Batch");
+		renderMode.addEventListener(Event.SELECT, onRenderModeSelect);
+		
+		save = new PushButton(otherSettingsWindow, sliderX, 230, "Save The System", onSave);
+		load = new PushButton(otherSettingsWindow, sliderX, 260, "Load The System", onLoad);
 		
 		// Color config
 		accordion.addWindow('Particle Color');
@@ -606,6 +614,38 @@ class Main
 		s.addEventListener(MouseEvent.CLICK, onStageClick);
 		s.addEventListener(Event.ENTER_FRAME, onEnterFrame);
     }
+	
+	private function onRenderModeSelect(e:Event):Void 
+	{
+		/*renderMode.addItem("GPU");
+		renderMode.addItem("CPU_Cloud");
+		renderMode.addItem("CPU_Batch");*/
+		
+		var selectedRenderMode:String = Std.string(renderMode.selectedItem);
+		var newRenderer:ParticleRenderBase = null;
+		
+		if (Std.is(currentPreset, GravityParticlePreset))
+		{
+			switch (selectedRenderMode)
+			{
+				case "GPU":
+					newRenderer = GravityParticleRenderBuilder.gpuRender(gravityPreset);
+				case "CPU_Cloud":
+					newRenderer = GravityParticleRenderBuilder.cpuCloudRender(gravityPreset);
+				case "CPU_Batch":
+					newRenderer = GravityParticleRenderBuilder.cpuBatchRender(gravityPreset);
+			}
+		}
+		else if (Std.is(currentPreset, RadialParticlePreset))
+		{
+			
+		}
+		
+		if (newRenderer != null)
+		{
+			ps.render = newRenderer;
+		}
+	}
 	
 	private function makeLabel(parent:Dynamic, labelY:Float, labelText:String, gap:Float)
 	{
