@@ -643,8 +643,9 @@ class Main
 		
 		if (newRenderer != null)
 		{
-            if (ps.render != null) ps.render.dispose();
+            var old = ps.render;
 			ps.render = newRenderer;
+            if (old != null) old.dispose();
 		}
 	}
 	
