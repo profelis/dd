@@ -27,7 +27,7 @@ class TextureRenderer extends Sprite2D
 
         if (texture != null)
         {
-            cam.resize(texture.width, texture.height);
+            cam.resize(Math.ceil(texture.width), Math.ceil(texture.height));
         }
         return texture;
     }

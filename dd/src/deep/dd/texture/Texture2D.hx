@@ -23,8 +23,8 @@ class Texture2D
     var bitmapData:BitmapData;
 
     // preferred size
-    public var width(default, null):Int;
-    public var height(default, null):Int;
+    public var width(default, null):Float;
+    public var height(default, null):Float;
 
     // bitmap texture size
     public var bitmapWidth(default, null):Int;

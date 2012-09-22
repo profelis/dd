@@ -9,12 +9,12 @@ class Frame
     public var name(default, null):String;
 
     // clean size
-    public var frameWidth(default, null):Int;
-    public var frameHeight(default, null):Int;
+    public var frameWidth(default, null):Float;
+    public var frameHeight(default, null):Float;
 
     // preferred size
-    public var width(default, null):Int;
-    public var height(default, null):Int;
+    public var width(default, null):Float;
+    public var height(default, null):Float;
 
     // uvOffset & uvScale
     public var region(default, null):Vector3D;
