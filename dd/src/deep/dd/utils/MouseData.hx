@@ -16,7 +16,7 @@ class MouseData
 
     public function toString()
     {
-        var s = Std.format("{$type shift: $shift, alt: $alt, ctrl: $ctrl");
+        var s = Std.format("{MouseData: $type shift: $shift, alt: $alt, ctrl: $ctrl");
         if (touch) s += "touchIdx: " + pointId;
         return s + "}";
     }

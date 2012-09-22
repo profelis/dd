@@ -93,5 +93,9 @@ class FlashTexture2D extends Texture2D
         displayObject = null;
     }
 
+    override public function toString()
+    {
+        return Std.format("{FlashTexture2D: displayObject:$displayObject}");
+    }
 
 }

@@ -239,6 +239,11 @@ class Texture2D
             return result;
         }
     }
+
+    public function toString()
+    {
+        return Std.format("{Texture2D: $width, $height}");
+    }
 }
 
 // ND2D thanks

@@ -28,6 +28,6 @@ class Statistics
 
     public function toString()
     {
-        return Std.format("triangles: $triangles, drawCalls: $drawCalls");
+        return Std.format("{Statistics triangles: $triangles, drawCalls: $drawCalls}");
     }
 }

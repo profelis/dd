@@ -159,4 +159,9 @@ class Cache
         }
         bmpTextureCache.delete(bmp);
     }
+
+    public function toString()
+    {
+        return "{Cache}";
+    }
 }
