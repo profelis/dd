@@ -22,13 +22,13 @@ class BatchRender extends RenderBase
 
     static public inline var MAX_SIZE = 20;
 
-	public function new()
+	public function new(geometry:BatchGeometry = null)
 	{
         emptyMatrix = new Matrix3D();
         emptyVector = new Vector3D(0, 0, 0, 0);
 
         material = mat = new Batch2DMaterial();
-        geometry = BatchGeometry.createTexturedBatch(MAX_SIZE);
+        this.geometry = geometry != null ? geometry : BatchGeometry.createTexturedBatch(MAX_SIZE);
 
         mpos = new Vector<Matrix3D>(MAX_SIZE, true);
         cTrans = new Vector<Vector3D>(MAX_SIZE, true);
@@ -108,9 +108,6 @@ class BatchRender extends RenderBase
                     continue;
                 }
 
-                #if debug
-                if (!s.geometry.standart) throw "Batch2D ignore complex geometry";
-                #end
                 var sFrame = s.textureFrame;
 
                 if (s.animator != null && s.animator != animator)

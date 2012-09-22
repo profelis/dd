@@ -1,6 +1,7 @@
 
 package deep.dd.particle.render;
 
+import deep.dd.geometry.CloudGeometry;
 import deep.dd.particle.render.ParticleRenderBase;
 import deep.dd.material.gravityParticle2D.GravityParticle2DMaterial;
 import deep.dd.particle.preset.GravityParticlePreset;
@@ -10,7 +11,6 @@ import deep.dd.display.Sprite2D;
 import deep.dd.utils.FastHaxe;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.render.RenderBase;
-import deep.dd.geometry.CloudGeometry;
 import deep.dd.geometry.Geometry;
 import deep.dd.particle.preset.ParticlePresetBase;
 import deep.dd.particle.preset.ParticlePresetBase.Bounds;
@@ -24,14 +24,26 @@ class GravityParticleRenderBuilder
         return new GPUGravityParticleRender(preset);
     }
 
-    static public function cpuCloudRender(preset:GravityParticlePreset)
+    static public function cpuCloudRender(preset:GravityParticlePreset, startSize:UInt = 20, incSize:UInt = 20)
     {
-        return new GravityParticleRender(preset, new deep.dd.display.render.CloudRender());
+        return new GravityParticleRender(
+            preset,
+            new deep.dd.display.render.CloudRender(
+                startSize,
+                incSize,
+                CloudGeometry.createTexturedCloud(startSize, deep.dd.display.render.CloudRender.PER_VERTEX, 1, 1, -0.5, -0.5)
+            )
+        );
     }
 
     static public function cpuBatchRender(preset:GravityParticlePreset)
     {
-        return new GravityParticleRender(preset, new deep.dd.display.render.BatchRender());
+        return new GravityParticleRender(
+            preset,
+            new deep.dd.display.render.BatchRender(
+                deep.dd.geometry.BatchGeometry.createTexturedBatch(deep.dd.display.render.BatchRender.MAX_SIZE, 1, 1, -0.5, -0.5)
+            )
+        );
     }
 }
 
@@ -84,7 +96,7 @@ class GravityParticleRender extends CPUParticleRenderBase
                     particles[idx] = p;
 
                     var s = sprites[idx];
-                    if (s == null) sprites[idx] = s = new Sprite2D();
+                    if (s == null) sprites[idx] = s = new CenteredSprite2D();
                     smartSprite.addChild(s);
                     s.rotationX = p.startRotation.x;
                     s.rotationY = p.startRotation.y;
