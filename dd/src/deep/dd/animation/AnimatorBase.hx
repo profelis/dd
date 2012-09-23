@@ -11,11 +11,7 @@ class AnimatorBase
     // override default texture2d frame
     public var textureFrame(default, null):Frame;
 
-    // private constructor
-    function new()
-    {
-
-    }
+    function new() {}
 
     public function draw(time:Float):Void
     {

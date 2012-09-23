@@ -195,4 +195,9 @@ class Animator extends AnimatorBase
 		super.dispose();
 		animation = null;
 	}
+
+    public function toString()
+    {
+        return Std.format("{Animator: fps:$fps frame:$frame frameLabel:$frameLabel isPlaying:$isPlaying}");
+    }
 }

@@ -94,4 +94,9 @@ class Camera2D
 		needUpdate = true;
 		return val;
 	}
+
+    public function toString()
+    {
+        return Std.format("{Camera2D: $x $y scale:$scale}");
+    }
 }

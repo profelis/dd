@@ -24,5 +24,10 @@ class Animation
 	{
 		frames = null;
 	}
+
+    public function toString()
+    {
+        return Std.format("{Animation: $name numFrames:$numFrames}");
+    }
 	
 }
