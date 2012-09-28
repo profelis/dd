@@ -195,7 +195,7 @@ class BitmapFont2D extends SmartSprite2D
         var lineComplete:Bool;
 
         // get words
-        var lines:Array<String> = text.split("\n");
+        var lines:Array<String> = preparedText.split("\n");
         var i:Int = -1;
         var j:Int = -1;
         if (!multiLine)
