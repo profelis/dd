@@ -70,6 +70,9 @@ class Main extends Sprite
 		s.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
         s.addEventListener(Event.RESIZE, onResize);
 
+        s.addEventListener(flash.events.MouseEvent.DOUBLE_CLICK, function (_) nextDemo());
+        s.doubleClickEnabled = true;
+
         onResize(null);
     }
 
