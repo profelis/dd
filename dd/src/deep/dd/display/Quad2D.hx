@@ -6,11 +6,11 @@ import deep.dd.material.Quad2DMaterial;
 
 class Quad2D extends DisplayNode2D
 {
-    public function new()
+    public function new(width = 1, height = 1)
     {
         super(new Quad2DMaterial());
         ignoreInBatch = true;
-        setGeometry(Geometry.createSolid(_width = 1, _height = 1));
+        setGeometry(Geometry.createSolid(_width = width, _height = height));
     }
 
     var needUpdateColor:Bool = true;
