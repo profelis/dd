@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import msignal.Signal.Signal2;
 import deep.dd.utils.FastListUtils;
 import flash.Vector;
 import deep.dd.utils.MouseData;
@@ -122,7 +123,9 @@ class Node2D
         }
 
         transformChange.removeAll();
+        transformChange = null;
         colorTransformChange.removeAll();
+        colorTransformChange = null;
 
         for (child in children)
         {
@@ -135,6 +138,15 @@ class Node2D
         worldTransform = null;
         worldColorTransform = null;
         blendMode = null;
+
+        onMouseOver.removeAll();
+        onMouseOver = null;
+        onMouseOut.removeAll();
+        onMouseOut = null;
+        onMouseDown.removeAll();
+        onMouseDown = null;
+        onMouseUp.removeAll();
+        onMouseUp = null;
 
         Reflect.setField(this, "pivot", null);
         Reflect.setField(this, "colorTransform", null);
