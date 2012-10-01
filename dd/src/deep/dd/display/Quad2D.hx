@@ -6,7 +6,7 @@ import deep.dd.material.Quad2DMaterial;
 
 class Quad2D extends DisplayNode2D
 {
-    public function new(width = 1, height = 1)
+    public function new(width:Float = 1, height:Float = 1)
     {
         super(new Quad2DMaterial());
         ignoreInBatch = true;
