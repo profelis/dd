@@ -55,7 +55,12 @@ class Node2D
 
     public var alpha(default, set_alpha):Float = 1;
 
-    public var visible:Bool = true;
+    public var visible(default, set_visible):Bool = true;
+
+    function set_visible(v)
+    {
+        return visible = v;
+    }
 
     /**
     * @private
