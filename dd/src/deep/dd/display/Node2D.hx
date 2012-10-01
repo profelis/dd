@@ -320,13 +320,14 @@ class Node2D
                 }
         }
 
-        for (i in children)
-        {
-            if (i.mouseEnabled)
+        if (children != null)
+            for (i in children)
             {
-                i.mouseStep(pos, camera, md);
+                if (i.mouseEnabled)
+                {
+                    i.mouseStep(pos, camera, md);
+                }
             }
-        }
     }
 
     function checkMouseOver(p:Vector3D)
