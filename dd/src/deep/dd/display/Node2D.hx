@@ -284,6 +284,7 @@ class Node2D
 
     public function mouseStep(pos:Vector3D, camera:Camera2D, md:MouseData)
     {
+        var res:Node2D;
 
         mouseTransform.identity();
         mouseTransform.append(worldTransform);
@@ -307,39 +308,50 @@ class Node2D
         {
             if (!oldMouseOver)
                 onMouseOver.dispatch(this, md);
+
+            res = this;
         }
         else
         {
             if (oldMouseOver) onMouseOut.dispatch(this, md);
+
+            res = null;
         }
         oldMouseOver = mouseOver;
 
-
-        switch (md.type)
-        {
-            case MouseEvent.MOUSE_DOWN:
-                if (mouseOver)
-                {
-                    mouseDown = true;
-                    onMouseDown.dispatch(this, md);
-                }
-
-            case MouseEvent.MOUSE_UP:
-                if (mouseDown)
-                {
-                    mouseDown = false;
-                    onMouseUp.dispatch(this, md);
-                }
-        }
 
         if (children != null)
             for (i in children)
             {
                 if (i.mouseEnabled)
                 {
-                    i.mouseStep(pos, camera, md);
+                    var subRes = i.mouseStep(pos, camera, md);
+                    if (subRes != null) res = subRes;
                 }
             }
+
+        if (onMouseDown == null) res = null; // destrucred test
+        if (res != null)
+        {
+            switch (md.type)
+            {
+                case MouseEvent.MOUSE_DOWN:
+                    if (res.mouseOver)
+                    {
+                        res.mouseDown = true;
+                        onMouseDown.dispatch(res, md);
+                    }
+
+                case MouseEvent.MOUSE_UP:
+                    if (res.mouseDown)
+                    {
+                        res.mouseDown = false;
+                        onMouseUp.dispatch(res, md);
+                    }
+            }
+        }
+
+        return res;
     }
 
     function checkMouseOver(p:Vector3D)
