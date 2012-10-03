@@ -304,20 +304,7 @@ class Node2D
 
         checkMouseOver(p);
 
-        if (mouseOver)
-        {
-            if (!oldMouseOver)
-                onMouseOver.dispatch(this, md);
-
-            res = this;
-        }
-        else
-        {
-            if (oldMouseOver) onMouseOut.dispatch(this, md);
-
-            res = null;
-        }
-        oldMouseOver = mouseOver;
+        res = mouseOver ? this : null;
 
 
         if (children != null)
@@ -331,6 +318,25 @@ class Node2D
             }
 
         if (onMouseDown == null) res = null; // destrucred test
+        mouseOver = mouseOver || res != null;
+
+        if (mouseOver)
+        {
+            if (!oldMouseOver)
+            {
+                onMouseOver.dispatch(this, md);
+//                trace("mouse over " + res + " " + this);
+            }
+        }
+        else
+        {
+            if (oldMouseOver)
+            {
+                onMouseOut.dispatch(this, md);
+//                trace("mouse out " + res + " " + this);
+            }
+        }
+
         if (res != null)
         {
             switch (md.type)
@@ -340,6 +346,7 @@ class Node2D
                     {
                         res.mouseDown = true;
                         onMouseDown.dispatch(res, md);
+//                        trace("mouse down " + res + " " + this);
                     }
 
                 case MouseEvent.MOUSE_UP:
@@ -347,9 +354,12 @@ class Node2D
                     {
                         res.mouseDown = false;
                         onMouseUp.dispatch(res, md);
+//                        trace("mouse up " + res + " " + this);
                     }
             }
         }
+
+        oldMouseOver = mouseOver;
 
         return res;
     }
