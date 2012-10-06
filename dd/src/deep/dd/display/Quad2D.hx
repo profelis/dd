@@ -13,6 +13,10 @@ class Quad2D extends DisplayNode2D
         setGeometry(Geometry.createSolid(_width = width, _height = height));
     }
 
+    override function createGeometry()
+    {
+    }
+
     var needUpdateColor:Bool = true;
 
     public var color(default, set_color):Int = 0x0000FF;

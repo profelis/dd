@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import Reflect;
 import msignal.Signal.Signal2;
 import deep.dd.utils.FastListUtils;
 import flash.Vector;
@@ -87,10 +88,15 @@ class Node2D
 
     public var transformChange(default, null):Signal0;
     public var colorTransformChange(default, null):Signal0;
-    public var onMouseOver(default, null):Signal2<Node2D, MouseData>;
-    public var onMouseOut(default, null):Signal2<Node2D, MouseData>;
-    public var onMouseDown(default, null):Signal2<Node2D, MouseData>;
-    public var onMouseUp(default, null):Signal2<Node2D, MouseData>;
+    public var onMouseOver(get_onMouseOver, null):Signal2<Node2D, MouseData>;
+    public var onMouseOut(get_onMouseOut, null):Signal2<Node2D, MouseData>;
+    public var onMouseDown(get_onMouseDown, null):Signal2<Node2D, MouseData>;
+    public var onMouseUp(get_onMouseUp, null):Signal2<Node2D, MouseData>;
+
+    function get_onMouseOver() { if (onMouseOver == null) onMouseOver = new Signal2<Node2D, MouseData>(); return onMouseOver; }
+    function get_onMouseOut() { if (onMouseOut == null) onMouseOut = new Signal2<Node2D, MouseData>(); return onMouseOut; }
+    function get_onMouseDown() { if (onMouseDown == null) onMouseDown = new Signal2<Node2D, MouseData>(); return onMouseDown; }
+    function get_onMouseUp() { if (onMouseUp == null) onMouseUp = new Signal2<Node2D, MouseData>(); return onMouseUp; }
 
     public function new()
     {
@@ -134,19 +140,32 @@ class Node2D
 
         ctx = null;
         children = null;
+        childrenUtils = null;
         transform = null;
         worldTransform = null;
         worldColorTransform = null;
         blendMode = null;
 
-        onMouseOver.removeAll();
-        onMouseOver = null;
-        onMouseOut.removeAll();
-        onMouseOut = null;
-        onMouseDown.removeAll();
-        onMouseDown = null;
-        onMouseUp.removeAll();
-        onMouseUp = null;
+        if (Reflect.field(this, "onMouseOver") != null)
+        {
+            onMouseOver.removeAll();
+            Reflect.setField(this, "onMouseOver", null);
+        }
+        if (Reflect.field(this, "onMouseOut") != null)
+        {
+            onMouseOut.removeAll();
+            Reflect.setField(this, "onMouseOut", null);
+        }
+        if (Reflect.field(this, "onMouseDown") != null)
+        {
+            onMouseDown.removeAll();
+            Reflect.setField(this, "onMouseDown", null);
+        }
+        if (Reflect.field(this, "onMouseUp") != null)
+        {
+            onMouseUp.removeAll();
+            Reflect.setField(this, "onMouseUp", null);
+        }
 
         Reflect.setField(this, "pivot", null);
         Reflect.setField(this, "colorTransform", null);
@@ -404,30 +423,23 @@ class Node2D
     inline public function updateWorldTransform()
     {
         worldTransform.rawData = transform.rawData;
-
-        if (parent != null)
-        {
-            worldTransform.append(parent.worldTransform);
-        }
+        if (parent != null) worldTransform.append(parent.worldTransform);
 
         invalidateWorldTransform = false;
     }
 
-    var moved:Bool = false;
-    var scaled:Bool = false;
-    var rotatedX:Bool = false;
-    var rotatedY:Bool = false;
-    var rotatedZ:Bool = false;
-
     inline public function updateTransform()
     {
-
         transform.identity();
+
+        var moved = x != 0 || y != 0 || z != 0;
+        var scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
+
         if (usePivot) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
         if (scaled) transform.appendScale(scaleX, scaleY, scaleZ);
-        if (rotatedZ) transform.appendRotation(rotationZ, Vector3D.Z_AXIS);
-        if (rotatedY) transform.appendRotation(rotationY, Vector3D.Y_AXIS);
-        if (rotatedX) transform.appendRotation(rotationX, Vector3D.X_AXIS);
+        if (rotationZ != 0) transform.appendRotation(rotationZ, Vector3D.Z_AXIS);
+        if (rotationY != 0) transform.appendRotation(rotationY, Vector3D.Y_AXIS);
+        if (rotationX != 0) transform.appendRotation(rotationX, Vector3D.X_AXIS);
         if (moved) transform.appendTranslation(x, y, z);
         if (usePivot) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
 
@@ -471,7 +483,6 @@ class Node2D
     function set_x(v:Float)
     {
         x = v;
-        moved = x != 0 || y != 0 || z != 0;
         invalidateTransform = true;
         return v;
     }
@@ -479,7 +490,6 @@ class Node2D
     function set_y(v:Float)
     {
         y = v;
-        moved = x != 0 || y != 0 || z != 0;
         invalidateTransform = true;
         return v;
     }
@@ -487,7 +497,6 @@ class Node2D
     function set_z(v:Float)
     {
         z = z = v;
-        moved = x != 0 || y != 0 || z != 0;
         invalidateTransform = true;
         return v;
     }
@@ -495,7 +504,6 @@ class Node2D
     function set_rotationX(v:Float)
     {
         rotationX = v;
-        rotatedX = v != 0;
         invalidateTransform = true;
         return v;
     }
@@ -503,7 +511,6 @@ class Node2D
     function set_rotationY(v:Float)
     {
         rotationY = v;
-        rotatedY = v != 0;
         invalidateTransform = true;
         return v;
     }
@@ -511,7 +518,6 @@ class Node2D
     function set_rotationZ(v:Float)
     {
         rotationZ = v;
-        rotatedZ = v != 0;
         invalidateTransform = true;
         return v;
     }
@@ -519,7 +525,6 @@ class Node2D
     function set_scaleX(v:Float)
     {
         scaleX = v;
-        scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
         invalidateTransform = true;
         return v;
     }
@@ -527,7 +532,6 @@ class Node2D
     function set_scaleY(v:Float)
     {
         scaleY = v;
-        scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
         invalidateTransform = true;
         return v;
     }
@@ -535,7 +539,6 @@ class Node2D
     function set_scaleZ(v:Float)
     {
         scaleZ = v;
-        scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
         invalidateTransform = true;
         return v;
     }
@@ -547,6 +550,7 @@ class Node2D
         if (c == null) c = new Color(1, 1, 1, 1);
 
         colorTransform = c;
+        alpha = c.a;
         invalidateColorTransform = true;
 
         return c;
