@@ -71,9 +71,7 @@ class SmartSprite2D extends Sprite2D
 		ignoreInBatch = render.ignoreInBatch;
 
 		geometry = render.geometry;
-        if (geometry != null && ctx != null) geometry.init(ctx);
 		material = render.material;
-        if (material != null && ctx != null) material.init(ctx);
 
         if (texture == null)
         {

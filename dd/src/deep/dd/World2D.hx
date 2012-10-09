@@ -75,9 +75,9 @@ class World2D
 
         stage3d = stage.stage3Ds[stageId];
         stage3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);
-        stage3d.requestContext3D(Std.string(context3DRenderMode));
 
         if (stage3d.context3D != null && stage3d.context3D.driverInfo != "Disposed") onContext(null);
+        else stage3d.requestContext3D(Std.string(context3DRenderMode));
     }
 
     function onContext(_)

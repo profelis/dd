@@ -30,11 +30,11 @@ class Node2D
     /**
     * @private
     */
-    public var _width:Float = 1;
+    public var _width:Float;
     /**
     * @private
     */
-    public var _height:Float = 1;
+    public var _height:Float;
 
     public var transform(default, null):Matrix3D;
     /**
@@ -104,10 +104,6 @@ class Node2D
 
         transformChange = new Signal0();
         colorTransformChange = new Signal0();
-        onMouseOver = new Signal2<Node2D, MouseData>();
-        onMouseOut = new Signal2<Node2D, MouseData>();
-        onMouseDown = new Signal2<Node2D, MouseData>();
-        onMouseUp = new Signal2<Node2D, MouseData>();
 
         children = new FastList<Node2D>();
         childrenUtils = new FastListUtils<Node2D>(children);

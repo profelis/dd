@@ -21,7 +21,7 @@ class CenteredSprite2D extends Sprite2D
 
     override function createGeometry()
     {
-        setGeometry(Geometry.createTextured(_width = 1, _height = 1, 1, 1, -0.5, -0.5));
+        geometry = Geometry.createTextured(_width = 1, _height = 1, 1, 1, -0.5, -0.5);
     }
 }
 
@@ -36,7 +36,7 @@ class Sprite2D extends DisplayNode2D
 
     override function createGeometry()
     {
-        setGeometry(Geometry.createTextured(_width = 1, _height = 1));
+        geometry = Geometry.createTextured(_width = 1, _height = 1);
     }
 
     public var animator(default, set_animator):AnimatorBase;

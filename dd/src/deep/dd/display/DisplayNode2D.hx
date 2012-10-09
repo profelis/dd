@@ -10,7 +10,7 @@ import mt.m3d.Polygon;
 
 class DisplayNode2D extends Node2D
 {
-    public var geometry(default, null):Geometry;
+    public var geometry(default, set_geometry):Geometry;
 
     public var material(default, set_material):Material;
 
@@ -67,12 +67,14 @@ class DisplayNode2D extends Node2D
         }
     }
 	
-    function setGeometry(g:Geometry)
+    function set_geometry(g:Geometry):Geometry
     {
-        if (g == geometry) return;
+        if (g == geometry) return geometry;
 
         geometry = g;
         if (geometry != null && ctx != null) geometry.init(ctx);
+
+        return geometry;
     }
 
     function set_material(m:Material):Material
