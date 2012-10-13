@@ -61,26 +61,31 @@ class FlashTexture2D extends Texture2D
             var w = Std.int(displayObject.width) + 1;
             var h = Std.int(displayObject.height) + 1;
             bitmapData = new BitmapData(w, h, true, 0x00000000);
+            bitmapData.lock();
             f = true;
         }
         else if (bitmapData == null)
         {
             bitmapData = new BitmapData(displayObjectWidth, displayObjectHeight, true, 0x00000000);
+            bitmapData.lock();
             f = true;
+        }
+        else
+        {
+            bitmapData.fillRect(bitmapData.rect, 0x00000000);
         }
 
         if (f)
         {
-            bitmapData.lock();
             bitmapWidth = bitmapData.width;
             bitmapHeight = bitmapData.height;
             textureWidth = Texture2D.getNextPowerOfTwo(bitmapWidth);
             textureHeight = Texture2D.getNextPowerOfTwo(bitmapHeight);
 
-            frame = new Frame(bitmapWidth, bitmapHeight, new Vector3D(0, 0, bitmapWidth/textureWidth, bitmapHeight/textureHeight));
+            frame = new Frame(displayObject.width, displayObject.height, new Vector3D(0, 0, displayObject.width/textureWidth, displayObject.height/textureHeight));
         }
 
-        bitmapData.draw(displayObject);
+        bitmapData.draw(displayObject, null, null, null, null, true);
 
         uploadBitmapTexture();
 

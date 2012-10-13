@@ -357,17 +357,17 @@ class Node2D
             switch (md.type)
             {
                 case MouseEvent.MOUSE_DOWN:
-                    if (res.mouseOver)
+                    if (mouseOver)
                     {
-                        res.mouseDown = true;
+                        mouseDown = true;
                         onMouseDown.dispatch(res, md);
 //                        trace("mouse down " + res + " " + this);
                     }
 
                 case MouseEvent.MOUSE_UP:
-                    if (res.mouseDown)
+                    if (mouseDown)
                     {
-                        res.mouseDown = false;
+                        mouseDown = false;
                         onMouseUp.dispatch(res, md);
 //                        trace("mouse up " + res + " " + this);
                     }
