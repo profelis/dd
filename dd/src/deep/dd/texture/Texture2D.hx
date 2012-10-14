@@ -40,9 +40,15 @@ class Texture2D
 
     var ctx:Context3D;
 
+    static var uid:Int = 0;
+
+    public var name:String;
+
 	function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
     {
         this.options = options;
+
+        name = "texture_" + uid++;
     }
 
     public static function fromBitmap(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
@@ -242,7 +248,9 @@ class Texture2D
 
     public function toString()
     {
-        return Std.format("{Texture2D: $width, $height}");
+        var ref = Type.getClassName(Type.getClass(this)).split(".").pop();
+
+        return Std.format("{$ref: $name, $width x $height}");
     }
 }
 

@@ -218,7 +218,7 @@ class Stats extends Sprite {
         untyped xml.tris = "TRIS: " + wrld.statistics.triangles;
         untyped xml.draws = "DRW: " + wrld.statistics.drawCalls;
         var s = GlobalStatistics.stats.get(wrld.ctx);
-        untyped xml.tex = "TEX: " + s.textures + " / " + Math.round(s.texturesMemory * 0.000000954 * 100) / 100 + "mb";
+        untyped xml.tex = "TEX: " + s.textures + " / " + Math.round(s.texturesMemory * 0.0000009537 * 100) / 100 + "mb";
         #end
 
         untyped xml.ms = "MS: " + (timer - ms);

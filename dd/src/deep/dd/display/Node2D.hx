@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import msignal.Signal.Signal1;
 import Reflect;
 import msignal.Signal.Signal2;
 import deep.dd.utils.FastListUtils;
@@ -61,7 +62,11 @@ class Node2D
 
     function set_visible(v)
     {
-        return visible = v;
+        if (visible != v)
+        {
+            onVisibleChange.dispatch(this);
+        }
+        return visible;
     }
 
     /**
@@ -88,6 +93,8 @@ class Node2D
 
     public var transformChange(default, null):Signal0;
     public var colorTransformChange(default, null):Signal0;
+    public var onVisibleChange(get_onVisibleChange, null):Signal1<Node2D>;
+
     public var onMouseOver(get_onMouseOver, null):Signal2<Node2D, MouseData>;
     public var onMouseOut(get_onMouseOut, null):Signal2<Node2D, MouseData>;
     public var onMouseDown(get_onMouseDown, null):Signal2<Node2D, MouseData>;
@@ -100,6 +107,11 @@ class Node2D
     function get_onMouseDown() { if (onMouseDown == null) onMouseDown = new Signal2<Node2D, MouseData>(); return onMouseDown; }
     function get_onMouseUp() { if (onMouseUp == null) onMouseUp = new Signal2<Node2D, MouseData>(); return onMouseUp; }
     function get_onWorld() { if (onWorld == null) onWorld = new Signal2<World2D, World2D>(); return onWorld; }
+    function get_onVisibleChange() { if (onVisibleChange == null) onVisibleChange = new Signal1<Node2D>(); return onVisibleChange; }
+
+    static var uid:Int = 0;
+
+    public var name:String;
 
     public function new()
     {
@@ -118,6 +130,8 @@ class Node2D
         worldTransform = new Matrix3D();
 
         colorTransform = null;
+
+        name = "node_" + uid++;
     }
 
     public function dispose():Void
@@ -145,6 +159,11 @@ class Node2D
         worldColorTransform = null;
         blendMode = null;
 
+        if (Reflect.field(this, "onVisibleChange") != null)
+        {
+            onVisibleChange.removeAll();
+            Reflect.setField(this, "onVisibleChange", null);
+        }
         if (Reflect.field(this, "onMouseOver") != null)
         {
             onMouseOver.removeAll();
@@ -575,5 +594,12 @@ class Node2D
         }
 
         return v;
+    }
+
+    public function toString()
+    {
+        var ref = Type.getClassName(Type.getClass(this)).split(".").pop();
+
+        return Std.format("{$ref: $name, visible:$visible}");
     }
 }
