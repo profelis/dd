@@ -1,5 +1,6 @@
 package deep.dd;
 
+import msignal.Signal.Signal2;
 import deep.dd.utils.MouseData;
 import deep.dd.display.Node2D;
 import flash.events.TouchEvent;
@@ -55,6 +56,8 @@ class World2D
 
     public var statistics(default, null):Statistics;
 
+    public var onResize:Signal2<Int, Int>;
+
     public function new(context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stageId:Int = 0)
     {
         stage = flash.Lib.current.stage;
@@ -64,6 +67,8 @@ class World2D
         this.antialiasing = antialiasing;
         this.stageId = stageId;
 
+        onResize = new Signal2<Int, Int>();
+
         cache = new Cache(this);
         #if dd_stat
         statistics = new Statistics(this);
@@ -72,6 +77,8 @@ class World2D
         bgColor = new Color(1, 1, 1);
 
         camera = new Camera2D();
+
+        stage.addEventListener(Event.RESIZE, onResizeHandler);
 
         stage3d = stage.stage3Ds[stageId];
         stage3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);
@@ -99,28 +106,24 @@ class World2D
 		#if debug
         ctx.enableErrorChecking = true;
 		#end
+
         #if dd_stat
         GlobalStatistics.initContext(ctx);
         #end
 		
-        if (scene != null) 
-		{
-			scene.init(ctx);
-		}
-
-        stage.addEventListener(Event.ENTER_FRAME, onRender);
-        stage.addEventListener(Event.RESIZE, onResize);
+        if (scene != null) scene.init(ctx);
+        invalidateSize = true;
 
         stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseEvent);
         stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseEvent);
         stage.addEventListener(MouseEvent.MOUSE_UP, onMouseEvent);
+        stage.addEventListener(Event.MOUSE_LEAVE, onMouseLeave);
 
         stage.addEventListener(TouchEvent.TOUCH_MOVE, onTouchEvent);
         stage.addEventListener(TouchEvent.TOUCH_BEGIN, onTouchEvent);
         stage.addEventListener(TouchEvent.TOUCH_END, onTouchEvent);
 
-        //onResize();
-        invalidateSize = true;
+        stage.addEventListener(Event.ENTER_FRAME, onRender);
     }
 
     static var touchAlias = initTouchAlias();
@@ -135,9 +138,13 @@ class World2D
         return res;
     }
 
+    var mouseOut:Bool;
+
     function onTouchEvent(e:TouchEvent)
     {
-        if (!bounds.contains(e.stageX, e.stageY)) return;
+        if (scene == null) return;
+
+        if (mouseOut && (mouseOut = bounds.contains(e.stageX, e.stageY))) return;
 
         var md:MouseData = new MouseData();
         md.type = touchAlias.get(e.type);
@@ -150,9 +157,21 @@ class World2D
         mouseStep(e.stageX, e.stageY, md);
     }
 
+    function onMouseLeave(e:Event)
+    {
+        if (scene == null) return;
+
+        var md:MouseData = new MouseData();
+        md.type = MouseEvent.MOUSE_MOVE;
+
+        mouseStep(stage.mouseX, stage.mouseY, md);
+    }
+
     function onMouseEvent(e:MouseEvent)
     {
-        if (!bounds.contains(e.stageX, e.stageY)) return;
+        if (scene == null) return;
+
+        if (mouseOut && (mouseOut = bounds.contains(e.stageX, e.stageY))) return;
 
         var md:MouseData = new MouseData();
         md.type = e.type;
@@ -160,7 +179,7 @@ class World2D
         md.ctrl = e.ctrlKey;
         md.alt = e.altKey;
 
-        mouseStep(stage.mouseX, stage.mouseY, md);
+        mouseStep(e.stageX, e.stageY, md);
     }
 
     inline function mouseStep(mx:Float, my:Float, md:MouseData)
@@ -178,10 +197,8 @@ class World2D
         return ctx != null && ctx.driverInfo != "Disposed";
     }
 
-    function onResize(?_)
+    function onResizeHandler(?_)
     {
-		if (!ctxExist()) return;
-		
 		if (autoResize)
         {
             bounds.width = Std.int(stage.stageWidth);
@@ -198,6 +215,8 @@ class World2D
         stage3d.y = bounds.y;
         camera.resize(w, h);
         ctx.configureBackBuffer(w, h, antialiasing);
+
+        onResize.dispatch(w, h);
         invalidateSize = false;
     }
 
@@ -230,7 +249,7 @@ class World2D
 	{
 		stage3d.removeEventListener(Event.CONTEXT3D_CREATE, onContext);
 		stage.removeEventListener(Event.ENTER_FRAME, onRender);
-        stage.removeEventListener(Event.RESIZE, onResize);
+        stage.removeEventListener(Event.RESIZE, onResizeHandler);
 
         stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseEvent);
         stage.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseEvent);
@@ -275,12 +294,12 @@ class World2D
     {
         if (scene != null)
         {
-            Reflect.setProperty(scene, "world", null);
+            Reflect.callMethod(scene, Reflect.field(scene, "setWorld"), [null]);
         }
         scene = s;
         if (scene != null)
         {
-            Reflect.setProperty(scene, "world", this);
+            Reflect.callMethod(scene, Reflect.field(scene, "setWorld"), [this]);
             scene.init(ctx);
         }
 		

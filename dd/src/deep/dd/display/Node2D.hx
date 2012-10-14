@@ -23,7 +23,7 @@ class Node2D
 
     public var parent(default, null):Node2D;
     public var scene(default, null):Scene2D;
-    public var world(get_world, null):World2D;
+    public var world(default, null):World2D;
 
     public var extra:Dynamic;
 
@@ -93,10 +93,13 @@ class Node2D
     public var onMouseDown(get_onMouseDown, null):Signal2<Node2D, MouseData>;
     public var onMouseUp(get_onMouseUp, null):Signal2<Node2D, MouseData>;
 
+    public var onWorld(get_onWorld, null):Signal2<World2D, World2D>;
+
     function get_onMouseOver() { if (onMouseOver == null) onMouseOver = new Signal2<Node2D, MouseData>(); return onMouseOver; }
     function get_onMouseOut() { if (onMouseOut == null) onMouseOut = new Signal2<Node2D, MouseData>(); return onMouseOut; }
     function get_onMouseDown() { if (onMouseDown == null) onMouseDown = new Signal2<Node2D, MouseData>(); return onMouseDown; }
     function get_onMouseUp() { if (onMouseUp == null) onMouseUp = new Signal2<Node2D, MouseData>(); return onMouseUp; }
+    function get_onWorld() { if (onWorld == null) onWorld = new Signal2<World2D, World2D>(); return onWorld; }
 
     public function new()
     {
@@ -162,6 +165,11 @@ class Node2D
             onMouseUp.removeAll();
             Reflect.setField(this, "onMouseUp", null);
         }
+        if (Reflect.field(this, "onWorld") != null)
+        {
+            onWorld.removeAll();
+            Reflect.setField(this, "onWorld", null);
+        }
 
         Reflect.setField(this, "pivot", null);
         Reflect.setField(this, "colorTransform", null);
@@ -208,12 +216,17 @@ class Node2D
     function setScene(s:Scene2D):Void
     {
         scene = s;
+        var oldWorld = world;
+        world = s != null ? s.world : null;
+        if (Reflect.hasField(this, "onWorld")) onWorld.dispatch(oldWorld, world);
         for (i in children) i.setScene(s);
     }
 
-    function get_world():World2D
+    function setWorld(w:World2D):Void
     {
-        return scene != null ? scene.world : null;
+        if (Reflect.hasField(this, "onWorld")) onWorld.dispatch(world, world = w);
+        else world = w;
+        for (i in children) i.setWorld(w);
     }
 
     // children

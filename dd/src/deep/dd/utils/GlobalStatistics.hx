@@ -49,6 +49,6 @@ class Stat
 
     public function toString()
     {
-        return Std.format("{GlobalStatistics textures: $textures, $texturesMemory: ${texturesMemory / 1000} kb}");
+        return Std.format("{GlobalStatistics textures: $textures, $texturesMemory: ${texturesMemory / 1024} kb}");
     }
 }
