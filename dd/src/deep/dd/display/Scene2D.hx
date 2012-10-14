@@ -35,6 +35,7 @@ class Scene2D extends Node2D
 	{
 		super.dispose();
 		world = null;
+        scene = null;
 	}
 
     override function get_world():World2D
