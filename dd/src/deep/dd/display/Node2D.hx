@@ -64,7 +64,8 @@ class Node2D
     {
         if (visible != v)
         {
-            onVisibleChange.dispatch(this);
+            visible = v;
+            if (Reflect.hasField(this, "onVisibleChange")) onVisibleChange.dispatch(this);
         }
         return visible;
     }
