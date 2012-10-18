@@ -243,13 +243,9 @@ class Node2D
 
     function setScene(s:Scene2D):Void
     {
-        var oldScene = scene;
-        scene = s;
-        if (Reflect.hasField(this, "onScene")) onScene.dispatch(oldScene, scene);
+        if (Reflect.hasField(this, "onScene")) onScene.dispatch(scene, scene = s);
 
-        var oldWorld = world;
-        world = s != null ? s.world : null;
-        if (Reflect.hasField(this, "onWorld")) onWorld.dispatch(oldWorld, world);
+        if (Reflect.hasField(this, "onWorld")) onWorld.dispatch(world, world = s != null ? s.world : null);
 
         for (i in children) i.setScene(s);
     }
