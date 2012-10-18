@@ -102,12 +102,14 @@ class Node2D
     public var onMouseUp(get_onMouseUp, null):Signal2<Node2D, MouseData>;
 
     public var onWorld(get_onWorld, null):Signal2<World2D, World2D>;
+    public var onScene(get_onScene, null):Signal2<Scene2D, Scene2D>;
 
     function get_onMouseOver() { if (onMouseOver == null) onMouseOver = new Signal2<Node2D, MouseData>(); return onMouseOver; }
     function get_onMouseOut() { if (onMouseOut == null) onMouseOut = new Signal2<Node2D, MouseData>(); return onMouseOut; }
     function get_onMouseDown() { if (onMouseDown == null) onMouseDown = new Signal2<Node2D, MouseData>(); return onMouseDown; }
     function get_onMouseUp() { if (onMouseUp == null) onMouseUp = new Signal2<Node2D, MouseData>(); return onMouseUp; }
     function get_onWorld() { if (onWorld == null) onWorld = new Signal2<World2D, World2D>(); return onWorld; }
+    function get_onScene() { if (onScene == null) onScene = new Signal2<Scene2D, Scene2D>(); return onScene; }
     function get_onVisibleChange() { if (onVisibleChange == null) onVisibleChange = new Signal1<Node2D>(); return onVisibleChange; }
 
     static var uid:Int = 0;
@@ -160,6 +162,7 @@ class Node2D
         worldColorTransform = null;
         blendMode = null;
 
+        // TODO: replace with var o:Dynamic = this; o.onVisibleChange = null;
         if (Reflect.field(this, "onVisibleChange") != null)
         {
             onVisibleChange.removeAll();
@@ -189,6 +192,11 @@ class Node2D
         {
             onWorld.removeAll();
             Reflect.setField(this, "onWorld", null);
+        }
+        if (Reflect.field(this, "onScene") != null)
+        {
+            onScene.removeAll();
+            Reflect.setField(this, "onScene", null);
         }
 
         Reflect.setField(this, "pivot", null);
@@ -235,10 +243,14 @@ class Node2D
 
     function setScene(s:Scene2D):Void
     {
+        var oldScene = scene;
         scene = s;
+        if (Reflect.hasField(this, "onScene")) onScene.dispatch(oldScene, scene);
+
         var oldWorld = world;
         world = s != null ? s.world : null;
         if (Reflect.hasField(this, "onWorld")) onWorld.dispatch(oldWorld, world);
+
         for (i in children) i.setScene(s);
     }
 

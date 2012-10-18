@@ -53,17 +53,18 @@ class Material
             if (!shaderUseCount.exists(ctx)) shaderUseCount.set(ctx, new TypedDictionary());
 
             var useCount = shaderUseCount.get(ctx);
+            var cache = shaderCache.get(ctx);
 
             var key = Type.getClassName(shaderRef);
 
             if (useShaderCache)
             {
-                shader = shaderCache.get(ctx).get(key);
+                shader = cache.get(key);
                 if (shader != null) useCount.set(shader, useCount.get(shader) + 1);
             }
             if (shader == null)
             {
-                shaderCache.get(ctx).set(key, shader = Type.createInstance(shaderRef, [ctx]));
+                cache.set(key, shader = Type.createInstance(shaderRef, [ctx]));
                 useCount.set(shader, 1);
             }
         }
