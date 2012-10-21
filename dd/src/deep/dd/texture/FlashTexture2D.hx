@@ -58,8 +58,8 @@ class FlashTexture2D extends Texture2D
         if (autoSize && (bitmapData == null || (bitmapData.width != displayObject.width || bitmapData.height != displayObject.height)))
         {
             if (bitmapData != null) bitmapData.dispose();
-            var w = Std.int(displayObject.width) + 1;
-            var h = Std.int(displayObject.height) + 1;
+            var w = Math.ceil(displayObject.width);
+            var h = Math.ceil(displayObject.height);
             bitmapData = new BitmapData(w, h, true, 0x00000000);
             bitmapData.lock();
             f = true;
@@ -82,7 +82,7 @@ class FlashTexture2D extends Texture2D
             textureWidth = Texture2D.getNextPowerOfTwo(bitmapWidth);
             textureHeight = Texture2D.getNextPowerOfTwo(bitmapHeight);
 
-            frame = new Frame(displayObject.width, displayObject.height, new Vector3D(0, 0, displayObject.width/textureWidth, displayObject.height/textureHeight));
+            frame = new Frame(bitmapWidth, bitmapHeight, new Vector3D(0, 0, bitmapWidth/textureWidth, bitmapHeight/textureHeight));
         }
 
         bitmapData.draw(displayObject, null, null, null, null, true);
