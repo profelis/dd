@@ -21,10 +21,7 @@ class Cache
         w = null;
         if (disposeBitmaps)
         {
-            for (k in bmpCache)
-            {
-                bmpCache.get(k).dispose();
-            }
+            for (k in bmpCache) bmpCache.get(k).dispose();
             bmpCache = null;
             bmpUseCount = null;
         }
@@ -34,10 +31,7 @@ class Cache
             for (k in bmpTextureCache)
             {
                 var h = bmpTextureCache.get(k);
-                for (i in h)
-                {
-                    i.dispose();
-                }
+                for (i in h) i.dispose();
             }
         }
     }
@@ -52,7 +46,7 @@ class Cache
     }
 
     /**
-    * if true then all bitmapDatas will be deleted, can't be restored after context loss
+    * if true then all bitmapDatas without class references will be deleted, can't be restored after context loss
     **/
     public var autoDisposeBitmaps:Bool = false;
 
@@ -92,10 +86,7 @@ class Cache
 
         res = Type.createInstance(ref, [0, 0]);
         bmpCache.set(ref, res);
-        if (!bmpUseCount.exists(res))
-		{
-			bmpUseCount.set(res, 0);
-		}
+        bmpUseCount.set(res, 0);
         return res;
     }
 
@@ -154,10 +145,7 @@ class Cache
         if (disposeTexture)
         {
             var res = bmpTextureCache.get(bmp);
-            if (res != null)
-            {
-                for (i in res) i.dispose();
-            }
+            if (res != null) for (i in res) i.dispose();
         }
         bmpTextureCache.delete(bmp);
     }
