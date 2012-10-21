@@ -93,6 +93,7 @@ class Node2D
     public var ignoreInBatch:Bool = false;
 
     public var transformChange(default, null):Signal0;
+    public var worldTransformChange(default, null):Signal0;
     public var colorTransformChange(default, null):Signal0;
     public var onVisibleChange(get_onVisibleChange, null):Signal1<Node2D>;
 
@@ -121,6 +122,7 @@ class Node2D
         blendMode = BlendMode.NORMAL;
 
         transformChange = new Signal0();
+        worldTransformChange = new Signal0();
         colorTransformChange = new Signal0();
 
         children = new FastList<Node2D>();
@@ -146,6 +148,8 @@ class Node2D
 
         transformChange.removeAll();
         transformChange = null;
+        worldTransformChange.removeAll();
+        worldTransformChange = null;
         colorTransformChange.removeAll();
         colorTransformChange = null;
 
@@ -216,7 +220,7 @@ class Node2D
     {
         if (parent != null)
         {
-            parent.transformChange.remove(onParentTransformChange);
+            parent.worldTransformChange.remove(onParentTransformChange);
             parent.colorTransformChange.remove(onParentColorChange);
         }
 
@@ -226,7 +230,7 @@ class Node2D
 
         if (parent != null)
         {
-            parent.transformChange.add(onParentTransformChange);
+            parent.worldTransformChange.add(onParentTransformChange);
             parent.colorTransformChange.add(onParentColorChange);
         }
     }
@@ -363,15 +367,14 @@ class Node2D
         res = mouseOver ? this : null;
 
 
-        if (children != null)
-            for (i in children)
+        for (i in children)
+        {
+            if (i.mouseEnabled)
             {
-                if (i.mouseEnabled)
-                {
-                    var subRes = i.mouseStep(pos, camera, md);
-                    if (subRes != null) res = subRes;
-                }
+                var subRes = i.mouseStep(pos, camera, md);
+                if (subRes != null) res = subRes;
             }
+        }
 
         if (onMouseDown == null) res = null; // destrucred test
         mouseOver = mouseOver || res != null;
@@ -463,6 +466,8 @@ class Node2D
         if (parent != null) worldTransform.append(parent.worldTransform);
 
         invalidateWorldTransform = false;
+
+        worldTransformChange.dispatch();
     }
 
     inline public function updateTransform()

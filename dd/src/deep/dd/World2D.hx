@@ -197,7 +197,7 @@ class World2D
         return ctx != null && ctx.driverInfo != "Disposed";
     }
 
-    function onResizeHandler(?_)
+    function onResizeHandler(?event:Event)
     {
 		if (autoResize)
         {
