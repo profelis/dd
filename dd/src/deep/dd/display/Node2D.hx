@@ -258,7 +258,7 @@ class Node2D
     {
         if (Reflect.hasField(this, "onWorld")) onWorld.dispatch(world, world = w);
         else world = w;
-        for (i in children) i.setWorld(w);
+        if (children!= null) for (i in children) i.setWorld(w);
     }
 
     // children

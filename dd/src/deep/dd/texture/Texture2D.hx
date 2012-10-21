@@ -1,5 +1,6 @@
 package deep.dd.texture;
 
+import flash.utils.ByteArray;
 import flash.geom.Vector3D;
 import deep.dd.utils.Frame;
 import flash.geom.Matrix3D;
@@ -16,123 +17,45 @@ import flash.display3D.textures.Texture;
 import deep.dd.utils.GlobalStatistics;
 #end
 
-class Texture2D
+
+class BitmapTexture2D extends Texture2D
 {
-    public var options(default, null):UInt;
-
     var bitmapData:BitmapData;
+    var bitmapRef:Class<BitmapData>;
 
-    // preferred size
-    public var width(default, null):Float;
-    public var height(default, null):Float;
-
-    // bitmap texture size
     public var bitmapWidth(default, null):Int;
     public var bitmapHeight(default, null):Int;
 
-    // texture size 2^n
-    public var textureWidth(default, null):Int;
-    public var textureHeight(default, null):Int;
-
-    public var frame(default, set_frame):Frame;
-
-    public var texture(default, null):Texture;
-
-    var ctx:Context3D;
-
-    static var uid:Int = 0;
-
-    public var name:String;
-
-	function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    public function new(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA)
     {
-        this.options = options;
+        bitmapData = bmp;
+        bitmapWidth = bmp.width;
+        bitmapHeight = bmp.height;
+        textureWidth = Texture2D.getNextPowerOfTwo(bitmapWidth);
+        textureHeight = Texture2D.getNextPowerOfTwo(bitmapHeight);
 
-        name = "texture_" + uid++;
+        super(options);
+
+        frame = new Frame(bitmapWidth, bitmapHeight,
+            new Vector3D(0, 0, bitmapWidth/textureWidth, bitmapHeight/textureHeight));
     }
 
-    public static function fromBitmap(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
+    override public function dispose()
     {
-        var res = new Texture2D(options);
-        res.bitmapData = bmp;
-        res.bitmapWidth = bmp.width;
-        res.bitmapHeight = bmp.height;
-        res.textureWidth = getNextPowerOfTwo(res.bitmapWidth);
-        res.textureHeight = getNextPowerOfTwo(res.bitmapHeight);
+        super.dispose();
 
-        res.frame = new Frame(res.bitmapWidth, res.bitmapHeight,
-                new Vector3D(0, 0, res.bitmapWidth/res.textureWidth, res.bitmapHeight/res.textureHeight));
+        if (releaseRawData && bitmapData != null) bitmapData.dispose();
 
-        return res;
+        bitmapRef = null;
+        bitmapData = null;
     }
 
-    public static function emptyTexture(width:Int, height:Int):Texture2D
-    {
-        var res = new Texture2D();
-        res.textureWidth = getNextPowerOfTwo(width);
-        res.textureHeight = getNextPowerOfTwo(height);
-
-        res.frame = new Frame(res.textureWidth, res.textureHeight, new Vector3D(0, 0, 1, 1));
-
-        return res;
-    }
-
-    public var useCount(default, null):Int = 0;
-    public var cache(default, null):Cache;
-
-    public var releaseBitmap(default, #if debug set_releaseBitmap #else default #end):Bool = false;
-
-    #if debug
-    function set_releaseBitmap(v)
-    {
-        if (cache != null) throw "releaseBitmap conflict with cache";
-        return releaseBitmap = v;
-    }
-    #end
-
-    function set_frame(f:Frame):Frame
-    {
-        #if debug
-        if (f == null) throw "frame is null";
-        #end
-
-        frame = f;
-        width = frame.width;
-        height = frame.height;
-
-        return frame = f;
-    }
-
-    public var needUpdate:Bool = false;
-
-    public function update()
-    {
-
-    }
-
-    public var memory(default, null):UInt = 0;
-
-    public function init(ctx:Context3D)
+    override public function init(ctx:Context3D)
     {
         if (this.ctx == ctx) return;
+        super.init(ctx);
 
-        unloadTexture();
-
-        this.ctx = ctx;
-
-        if (bitmapData != null) uploadBitmapTexture();
-        else uploadEmptyTexture();
-    }
-
-    function uploadEmptyTexture()
-    {
-        texture = ctx.createTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, true);
-
-        memory = textureWidth * textureHeight * 4;
-
-        #if dd_stat
-        GlobalStatistics.addTexture(ctx, this);
-        #end
+        uploadBitmapTexture();
     }
 
     function uploadBitmapTexture()
@@ -141,6 +64,17 @@ class Texture2D
 
         texture = ctx.createTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, false);
 
+        if (bitmapRef != null)
+        {
+            try
+            {
+                bitmapData.getPixel(0, 0);
+            }
+            catch (e:Dynamic)
+            {
+                bitmapData = cache != null ? cache.getBitmap(bitmapRef) : Type.createInstance(bitmapRef, [0, 0]);
+            }
+        }
         var b = bitmapData;
         var rescale = textureWidth != bitmapWidth || textureHeight != bitmapHeight;
         if (rescale)
@@ -189,14 +123,186 @@ class Texture2D
         {
             cache.releaseBitmap(bitmapData);
         }
-        else if (releaseBitmap)
+        else if (releaseRawData)
         {
             bitmapData.dispose();
+            bitmapData = null;
         }
 
         #if dd_stat
         GlobalStatistics.addTexture(ctx, this);
         #end
+    }
+}
+
+//---------------------------
+
+class ATFTexture2D extends Texture2D
+{
+    var atfData:ByteArray;
+
+    public function new(data:ByteArray, options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    {
+        #if debug
+        if (String.fromCharCode(data[0]) + String.fromCharCode(data[1]) + String.fromCharCode(data[2]) != "ATF")
+            throw "error AF signature";
+        #end
+
+        width = textureWidth = Std.int(Math.pow(2, data[7]));
+        height = textureHeight = Std.int(Math.pow(2, data[8]));
+
+        super(options);
+    }
+
+    override public function dispose():Void
+    {
+        super.dispose();
+        atfData = null;
+    }
+
+    override public function init(ctx:Context3D)
+    {
+        if (this.ctx == ctx) return;
+        super.init(ctx);
+
+        uploadAtfTexture();
+    }
+
+    function uploadAtfTexture()
+    {
+        var w = textureWidth;
+        var h = textureWidth;
+        memory = 0;
+        var n = atfData[9];
+        while (n > 0)
+        {
+            memory += w * h * 4;
+            w >>= 1;
+            h >>= 1;
+            n--;
+        }
+
+        var format = switch (atfData[6])
+        {
+            case 0, 1: Context3DTextureFormat.BGRA;
+            case 2, 3: Context3DTextureFormat.COMPRESSED;
+            case 4, 5: Context3DTextureFormat.COMPRESSED_ALPHA;
+            default: throw "unknown atf format";
+        }
+
+        texture = ctx.createTexture(textureWidth, textureHeight, format, false);
+
+        texture.uploadCompressedTextureFromByteArray(atfData, 0);
+
+        if (releaseRawData) atfData = null;
+
+        #if dd_stat
+        GlobalStatistics.addTexture(ctx, this);
+        #end
+    }
+}
+
+//---------------------------
+
+class EmptyTexture extends Texture2D
+{
+    public function new(width:Int, height:Int, options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    {
+        textureWidth = Texture2D.getNextPowerOfTwo(width);
+        textureHeight = Texture2D.getNextPowerOfTwo(height);
+
+        super(options);
+
+        frame = new Frame(textureWidth, textureHeight, new Vector3D(0, 0, 1, 1));
+    }
+
+    override public function init(ctx:Context3D)
+    {
+        if (this.ctx == ctx) return;
+        super.init(ctx);
+        uploadEmptyTexture();
+    }
+
+    function uploadEmptyTexture()
+    {
+        texture = ctx.createTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, true);
+        memory = textureWidth * textureHeight * 4;
+
+        #if dd_stat
+        GlobalStatistics.addTexture(ctx, this);
+        #end
+    }
+}
+
+//---------------------------
+
+class Texture2D
+{
+    public var options(default, null):UInt;
+
+    // preferred size
+    public var width(default, null):Float;
+    public var height(default, null):Float;
+
+    // texture size 2^n
+    public var textureWidth(default, null):Int;
+    public var textureHeight(default, null):Int;
+
+    public var frame(default, set_frame):Frame;
+
+    public var texture(default, null):Texture;
+
+    var ctx:Context3D;
+
+    static var uid:Int = 0;
+
+    public var name:String;
+
+    function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    {
+        this.options = options;
+        name = "texture_" + uid++;
+    }
+
+    public var useCount(default, null):Int = 0;
+    public var cache(default, null):Cache;
+
+    public var releaseRawData(default, #if debug set_releaseBitmap #else default #end):Bool = false;
+
+    #if debug
+    function set_releaseBitmap(v)
+    {
+        if (cache != null) throw "releaseBitmap conflict with cache";
+        return releaseRawData = v;
+    }
+    #end
+
+    function set_frame(f:Frame):Frame
+    {
+        #if debug
+        if (f == null) throw "frame is null";
+        #end
+
+        frame = f;
+        width = frame.width;
+        height = frame.height;
+
+        return frame = f;
+    }
+
+    public var needUpdate:Bool = false;
+
+    public function update()
+    {
+    }
+
+    public var memory(default, null):UInt = 0;
+
+    public function init(ctx:Context3D)
+    {
+        if (this.ctx == ctx) return;
+        unloadTexture();
+        this.ctx = ctx;
     }
 
     function unloadTexture()
@@ -204,10 +310,7 @@ class Texture2D
         if (texture != null)
         {
             #if dd_stat
-            if (this.ctx != null)
-            {
-                GlobalStatistics.removeTexture(this.ctx, this);
-            }
+            if (this.ctx != null) GlobalStatistics.removeTexture(this.ctx, this);
             #end
             texture.dispose();
             texture = null;
@@ -222,14 +325,9 @@ class Texture2D
 
         if (cache == null)
         {
-            if (bitmapData != null && releaseBitmap) bitmapData.dispose();
-            bitmapData = null;
             Reflect.setField(this, "frame", null);
         }
-        else
-        {
-            ctx = null;
-        }
+        ctx = null;
 	}
 
     public static function getNextPowerOfTwo(n:Int):Int

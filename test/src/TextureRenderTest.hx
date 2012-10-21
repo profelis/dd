@@ -33,7 +33,7 @@ class TextureRenderTest
         //s.x = 100;
 		s.texture = world.cache.getTexture(Image);
 
-        ts = new TextureRenderer(Texture2D.emptyTexture(128, 128));
+        ts = new TextureRenderer(new EmptyTexture(128, 128));
         ts.bgColor = new Color(1, 0, 0, 1);
         //ts.colorTransform = new Color(0, 1, 0, 1);
         ts.addChild(s);

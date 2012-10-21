@@ -37,8 +37,8 @@ class SpriteSheetParser implements IAtlasParser
         var rh = h * ky;
 
         frames = new Array();
-        var bw = a.bitmapWidth;
-        var bh = a.bitmapHeight;
+        var bw = a.width;
+        var bh = a.height;
 
         var border:Rectangle = padding > 0 ? new Rectangle(padding, padding, iw, ih) : null;
         while (y < bh)

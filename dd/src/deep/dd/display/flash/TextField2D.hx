@@ -43,7 +43,7 @@ class TextField2D extends Sprite2D
 		gridFitType = flashField.gridFitType;
 		antiAliasType = flashField.antiAliasType;
 		
-		Reflect.setField(this, "texture", FlashTexture2D.fromDisplayObject(flashField));
+		Reflect.setField(this, "texture", new FlashTexture2D(flashField));
 		
 		needRedraw = true;
     }

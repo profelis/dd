@@ -162,8 +162,6 @@ class SubTexture2D extends Texture2D
         baseTexture = texture;
         super(baseTexture.options);
 
-        bitmapWidth = baseTexture.bitmapWidth;
-        bitmapHeight = baseTexture.bitmapHeight;
         textureWidth = baseTexture.textureWidth;
         textureHeight = baseTexture.textureHeight;
 

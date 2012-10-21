@@ -8,7 +8,7 @@ import flash.display3D.Context3D;
 import deep.dd.texture.Texture2D.Texture2DOptions;
 import flash.display.DisplayObject;
 
-class FlashTexture2D extends Texture2D
+class FlashTexture2D extends BitmapTexture2D
 {
     var displayObject:DisplayObject;
 
@@ -19,24 +19,19 @@ class FlashTexture2D extends Texture2D
 
     public var autoUpdate:Bool;
 
-    function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    public function new(d:DisplayObject, autoUpdate = false, width:UInt = 0, height:UInt = 0, options:UInt = Texture2DOptions.QUALITY_ULTRA)
     {
-        super(options);
+        displayObject = d;
+        this.autoUpdate = autoUpdate;
+        autoSize = width == 0 || height == 0;
+        displayObjectWidth = width;
+        displayObjectHeight = height;
+
+        update();
+
+        super(bitmapData, options);
     }
 
-    static public function fromDisplayObject(d:DisplayObject, autoUpdate = false, width:UInt = 0, height:UInt = 0, options:UInt = Texture2DOptions.QUALITY_ULTRA):FlashTexture2D
-    {
-        var res = new FlashTexture2D(options);
-        res.displayObject = d;
-        res.autoUpdate = autoUpdate;
-        res.autoSize = width == 0 || height == 0;
-        res.displayObjectWidth = width;
-        res.displayObjectHeight = height;
-
-        res.needUpdate = true;
-
-        return res;
-    }
 
     override public function init(ctx:Context3D)
     {
@@ -87,7 +82,7 @@ class FlashTexture2D extends Texture2D
 
         bitmapData.draw(displayObject, null, null, null, null, true);
 
-        uploadBitmapTexture();
+        if (ctx != null) uploadBitmapTexture();
 
         needUpdate = autoUpdate;
     }
