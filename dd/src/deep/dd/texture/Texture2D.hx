@@ -148,10 +148,14 @@ class ATFTexture2D extends Texture2D
             throw "error AF signature";
         #end
 
-        width = textureWidth = Std.int(Math.pow(2, data[7]));
-        height = textureHeight = Std.int(Math.pow(2, data[8]));
+        textureWidth = Std.int(Math.pow(2, data[7]));
+        textureHeight = Std.int(Math.pow(2, data[8]));
+
+        atfData = data;
 
         super(options);
+
+        frame = new Frame(textureWidth, textureHeight, new Vector3D(0, 0, 1, 1));
     }
 
     override public function dispose():Void
@@ -182,11 +186,13 @@ class ATFTexture2D extends Texture2D
             n--;
         }
 
-        var format = switch (atfData[6])
+        var format:Context3DTextureFormat;
+
+        switch (atfData[6])
         {
-            case 0, 1: Context3DTextureFormat.BGRA;
-            case 2, 3: Context3DTextureFormat.COMPRESSED;
-            case 4, 5: Context3DTextureFormat.COMPRESSED_ALPHA;
+            case 0, 1: format = Context3DTextureFormat.BGRA;
+            case 2, 3: format = Context3DTextureFormat.COMPRESSED;
+            case 4, 5: format = Context3DTextureFormat.COMPRESSED_ALPHA;
             default: throw "unknown atf format";
         }
 

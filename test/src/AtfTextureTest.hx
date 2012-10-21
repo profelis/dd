@@ -10,7 +10,6 @@ import deep.dd.utils.Stats;
 import deep.dd.animation.Animator;
 import flash.geom.Vector3D;
 import deep.dd.texture.atlas.parser.SpriteSheetParser;
-import deep.dd.display.Batch2D;
 import deep.dd.texture.atlas.parser.StarlingParser;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.display.MovieClip2D;
@@ -30,7 +29,10 @@ import flash.display3D.Context3DRenderMode;
 import deep.dd.World2D;
 import flash.events.Event;
 
-class FlashTextureTest
+@:file("atf.atf") class AtfData extends ByteArray {}
+
+
+class AtfTextureTest
 {
 
     var world:World2D;
@@ -53,16 +55,8 @@ class FlashTextureTest
         world.antialiasing = 2;
         world.bgColor.fromInt(0x666666);
 
-        var t = new TextField();
-        t.wordWrap = true;
-        t.multiline = true;
-        t.defaultTextFormat = new TextFormat(null, 20, 0x00FF00);
-        t.border = true;
-        t.borderColor = 0xFF0000;
-        t.text = "Test flash texture";
-
         sp = new Sprite2D();
-        sp.texture = FlashTexture2D.fromDisplayObject(t);
+        sp.texture = new ATFTexture2D(new AtfData());
         scene.addChild(sp);
         sp.x = 100;
         sp.y = 100;
@@ -89,6 +83,6 @@ class FlashTextureTest
 
     static function main()
     {
-        new FlashTextureTest();
+        new AtfTextureTest();
     }
 }

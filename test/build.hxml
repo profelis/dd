@@ -1,8 +1,8 @@
 -swf bin/app.swf
 -swf-header 800:600:60:FFFFFF
 --flash-strict
--swf-version 11
--main TextureRenderTest
+-swf-version 11.4
+-main AtfTextureTest
 -lib format
 -lib msignal
 -cp src
