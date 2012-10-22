@@ -1,5 +1,5 @@
 package deep.dd.display;
-import deep.dd.animation.Animation;
+
 import flash.geom.Point;
 import deep.dd.utils.FastHaxe;
 import deep.dd.texture.Texture2D;
