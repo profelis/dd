@@ -1,4 +1,6 @@
 package deep.dd.display;
+import deep.dd.animation.Animation;
+import flash.geom.Point;
 import deep.dd.utils.FastHaxe;
 import deep.dd.texture.Texture2D;
 import deep.dd.animation.Animator;
@@ -25,7 +27,10 @@ class BitmapFont2D extends SmartSprite2D
 		animator = new Animator(60);
 		this.fieldWidth = fieldWidth;
 		this.align = TextFormatAlign.LEFT;
+        this.bounds = new Point();
 	}
+
+    public var bounds:Point;
 	
 	public var font(default, set_font):FontAtlasTexture2D;
 	
@@ -44,7 +49,9 @@ class BitmapFont2D extends SmartSprite2D
 
     override function set_texture(t:Texture2D):Texture2D
     {
-        return (FastHaxe.is(t, FontAtlasTexture2D)) ? set_font(flash.Lib.as(t, FontAtlasTexture2D)) : super.set_texture(t);
+        throw "use set font";
+        return null;
+        //return (FastHaxe.is(t, FontAtlasTexture2D)) ? set_font(flash.Lib.as(t, FontAtlasTexture2D)) : super.set_texture(t);
     }
 	
 	public var text(default, set_text):String = "";
@@ -444,14 +451,19 @@ class BitmapFont2D extends SmartSprite2D
             row++;
         }
 
+        bounds.setTo(0, 0);
         var pos:Int = 0;
         var info:GlyphInfo;
         for (c in iterator())
         {
             info = glyphInfo[pos];
-            cast(cast(c, Sprite2D).animator).gotoFrame(info.symbol);
+            var s = cast(c, Sprite2D);
+            cast(s.animator, Animator).gotoFrame(info.symbol);
             c.x = info.x;
             c.y = info.y;
+            var f = font.getFrameByName(info.symbol);
+            if (bounds.x < c.x + f.width) bounds.x = c.x + f.width;
+            if (bounds.y < c.y + f.height) bounds.y = c.y + f.height;
             pos++;
         }
 
