@@ -119,7 +119,7 @@ class Node2D
 
     public function new()
     {
-        blendMode = BlendMode.NORMAL;
+        blendMode = BlendMode.NORMAL_A;
 
         transformChange = new Signal0();
         worldTransformChange = new Signal0();

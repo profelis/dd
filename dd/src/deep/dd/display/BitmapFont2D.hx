@@ -35,6 +35,8 @@ class BitmapFont2D extends SmartSprite2D
 		{
 			super.set_texture(font = f);
 			needUpdate = true;
+            for (s in spriteStorage) s.texture = f;
+            for (s in children) cast(s, Sprite2D).texture = f;
 		}
 		
 		return f;
@@ -42,7 +44,7 @@ class BitmapFont2D extends SmartSprite2D
 
     override function set_texture(t:Texture2D):Texture2D
     {
-        return (FastHaxe.is(t, FontAtlasTexture2D)) ? font = flash.Lib.as(t, FontAtlasTexture2D) : super.set_texture(t);
+        return (FastHaxe.is(t, FontAtlasTexture2D)) ? set_font(flash.Lib.as(t, FontAtlasTexture2D)) : super.set_texture(t);
     }
 	
 	public var text(default, set_text):String = "";
