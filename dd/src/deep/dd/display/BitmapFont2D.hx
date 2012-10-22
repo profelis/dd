@@ -416,6 +416,8 @@ class BitmapFont2D extends SmartSprite2D
 
         var glyphInfo:Array<GlyphInfo> = [];
 
+        bounds.setTo(0, 0);
+
         // render text
         var row:Int = 0;
 
@@ -451,7 +453,6 @@ class BitmapFont2D extends SmartSprite2D
             row++;
         }
 
-        bounds.setTo(0, 0);
         var pos:Int = 0;
         var info:GlyphInfo;
         for (c in iterator())
@@ -462,8 +463,6 @@ class BitmapFont2D extends SmartSprite2D
             c.x = info.x;
             c.y = info.y;
             var f = font.getFrameByName(info.symbol);
-            if (bounds.x < c.x + f.width) bounds.x = c.x + f.width;
-            if (bounds.y < c.y + f.height) bounds.y = c.y + f.height;
             pos++;
         }
 
@@ -473,27 +472,24 @@ class BitmapFont2D extends SmartSprite2D
 	function buildTextFromSprites(glyphInfo:Array<GlyphInfo>, lineText:String, startX:Float, startY:Float):Void
 	{
 		var glyph:Frame;
-		var glyphWidth:Float;
-		
+
 		var glyphX:Float = startX;
 		var glyphY:Float = startY;
 		var glyphWidth:Float = 0;
+        var maxHeight = 0.0;
 		var char:String;
 		
 		for (i in 0...lineText.length)
 		{
 			char = lineText.charAt(i);
 			glyph = font.getFrameByName(char);
+
+            if (bounds.x < glyphX + glyphWidth) bounds.x = glyphX + glyphWidth;
+            if (maxHeight < glyph.height) maxHeight = glyph.height;
+
 			if (glyph != null)
 			{
-				if (glyph.border != null)
-				{
-					glyphWidth = glyph.border.width;
-				}
-				else
-				{
-					glyphWidth = glyph.width;
-				}
+                glyphWidth = glyph.width;
 				glyphInfo.push(new GlyphInfo(glyphX, glyphY, char));
 				glyphX += glyphWidth + letterSpacing;
 			}
@@ -502,6 +498,7 @@ class BitmapFont2D extends SmartSprite2D
 				glyphX += font.spaceWidth + letterSpacing;
 			}
 		}
+        if (bounds.y < glyphY + maxHeight) bounds.y = glyphY + maxHeight;
 	}
 	
 	override public function dispose():Void 
