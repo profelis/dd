@@ -42,7 +42,7 @@ class FlashTexture2D extends BitmapTexture2D
         this.ctx = ctx;
 
         if (bitmapData == null) needUpdate = true;
-        else if (!needUpdate) uploadBitmapTexture();
+        else if (!needUpdate) uploadTexture();
     }
 
     override public function update()
@@ -82,7 +82,7 @@ class FlashTexture2D extends BitmapTexture2D
 
         bitmapData.draw(displayObject, null, null, null, null, true);
 
-        if (ctx != null) uploadBitmapTexture();
+        if (ctx != null) uploadTexture();
 
         needUpdate = autoUpdate;
     }

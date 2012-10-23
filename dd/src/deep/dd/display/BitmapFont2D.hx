@@ -485,13 +485,13 @@ class BitmapFont2D extends SmartSprite2D
 			glyph = font.getFrameByName(char);
 
             if (bounds.x < glyphX + glyphWidth) bounds.x = glyphX + glyphWidth;
-            if (maxHeight < glyph.height) maxHeight = glyph.height;
 
 			if (glyph != null)
 			{
                 glyphWidth = glyph.width;
 				glyphInfo.push(new GlyphInfo(glyphX, glyphY, char));
 				glyphX += glyphWidth + letterSpacing;
+                if (maxHeight < glyph.height) maxHeight = glyph.height;
 			}
 			else if (char == " ")
 			{

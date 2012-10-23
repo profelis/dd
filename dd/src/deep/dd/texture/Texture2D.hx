@@ -40,6 +40,13 @@ class BitmapTexture2D extends Texture2D
             new Vector3D(0, 0, bitmapWidth/textureWidth, bitmapHeight/textureHeight));
     }
 
+    public static function createFromRef(ref:Class<BitmapData>, options:UInt = Texture2DOptions.QUALITY_ULTRA):BitmapTexture2D
+    {
+        var res = new BitmapTexture2D(Type.createInstance(ref, [0, 0]));
+        res.bitmapRef = ref;
+        return res;
+    }
+
     override public function dispose()
     {
         super.dispose();
@@ -50,15 +57,7 @@ class BitmapTexture2D extends Texture2D
         bitmapData = null;
     }
 
-    override public function init(ctx:Context3D)
-    {
-        if (this.ctx == ctx) return;
-        super.init(ctx);
-
-        uploadBitmapTexture();
-    }
-
-    function uploadBitmapTexture()
+    override function uploadTexture()
     {
         memory = 0;
 
@@ -129,9 +128,7 @@ class BitmapTexture2D extends Texture2D
             bitmapData = null;
         }
 
-        #if dd_stat
-        GlobalStatistics.addTexture(ctx, this);
-        #end
+        super.uploadTexture();
     }
 }
 
@@ -164,15 +161,7 @@ class ATFTexture2D extends Texture2D
         atfData = null;
     }
 
-    override public function init(ctx:Context3D)
-    {
-        if (this.ctx == ctx) return;
-        super.init(ctx);
-
-        uploadAtfTexture();
-    }
-
-    function uploadAtfTexture()
+    override function uploadTexture()
     {
         var w = textureWidth;
         var h = textureWidth;
@@ -192,7 +181,7 @@ class ATFTexture2D extends Texture2D
         {
             case 0, 1: format = Context3DTextureFormat.BGRA;
             case 2, 3: format = Context3DTextureFormat.COMPRESSED;
-            case 4, 5: format = Context3DTextureFormat.COMPRESSED_ALPHA;
+            #if flash11_4 case 4, 5: format = Context3DTextureFormat.COMPRESSED_ALPHA;  #end
             default: throw "unknown atf format";
         }
 
@@ -202,9 +191,7 @@ class ATFTexture2D extends Texture2D
 
         if (releaseRawData) atfData = null;
 
-        #if dd_stat
-        GlobalStatistics.addTexture(ctx, this);
-        #end
+        super.uploadTexture();
     }
 }
 
@@ -222,21 +209,12 @@ class EmptyTexture extends Texture2D
         frame = new Frame(textureWidth, textureHeight, new Vector3D(0, 0, 1, 1));
     }
 
-    override public function init(ctx:Context3D)
-    {
-        if (this.ctx == ctx) return;
-        super.init(ctx);
-        uploadEmptyTexture();
-    }
-
-    function uploadEmptyTexture()
+    override function uploadTexture()
     {
         texture = ctx.createTexture(textureWidth, textureHeight, Context3DTextureFormat.BGRA, true);
         memory = textureWidth * textureHeight * 4;
 
-        #if dd_stat
-        GlobalStatistics.addTexture(ctx, this);
-        #end
+        super.uploadTexture();
     }
 }
 
@@ -309,6 +287,7 @@ class Texture2D
         if (this.ctx == ctx) return;
         unloadTexture();
         this.ctx = ctx;
+        uploadTexture();
     }
 
     function unloadTexture()
@@ -322,6 +301,14 @@ class Texture2D
             texture = null;
         }
     }
+
+    function uploadTexture()
+    {
+        #if dd_stat
+            GlobalStatistics.addTexture(ctx, this);
+        #end
+    }
+
 	
 	public function dispose():Void
 	{
