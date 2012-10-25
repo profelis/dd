@@ -46,7 +46,7 @@ class Main extends Sprite
         Style.fontSize = 12;
         Style.setStyle(Style.BLACK);
 
-        world = new World2D(Context3DRenderMode.AUTO, null, 0);
+        world = new World2D(Lib.current.stage, Context3DRenderMode.AUTO, null, 0);
 		world.bgColor = new Color(0.5, 0.5, 0.5, 1);
 		
 		var tf:TextFormat = new TextFormat("Arial", 11, 0xFFFFFF, true);

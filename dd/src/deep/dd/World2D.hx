@@ -1,5 +1,6 @@
 package deep.dd;
 
+import flash.display.Stage;
 import msignal.Signal.Signal2;
 import deep.dd.utils.MouseData;
 import deep.dd.display.Node2D;
@@ -24,7 +25,7 @@ import flash.geom.Rectangle;
 
 class World2D
 {
-    public var stageId(default, null):Int;
+    public var stage3dId(default, null):Int;
 
     public var context3DRenderMode(default, null):Context3DRenderMode;
 
@@ -58,14 +59,13 @@ class World2D
 
     public var onResize:Signal2<Int, Int>;
 
-    public function new(context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stageId:Int = 0)
+    public function new(stage:Stage, context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stage3dId:Int = 0)
     {
-        stage = flash.Lib.current.stage;
-
+        this.stage = stage;
         this.context3DRenderMode = context3DRenderMode;
         this.bounds =  bounds;
         this.antialiasing = antialiasing;
-        this.stageId = stageId;
+        this.stage3dId = stage3dId;
 
         onResize = new Signal2<Int, Int>();
 
@@ -80,10 +80,11 @@ class World2D
 
         stage.addEventListener(Event.RESIZE, onResizeHandler);
 
-        stage3d = stage.stage3Ds[stageId];
+        stage3d = stage.stage3Ds[stage3dId];
         stage3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);
 
-        if (stage3d.context3D != null && stage3d.context3D.driverInfo != "Disposed") onContext(null);
+        ctx = stage3d.context3D;
+        if (ctxExist()) onContext(null);
         else stage3d.requestContext3D(Std.string(context3DRenderMode));
     }
 
@@ -159,8 +160,9 @@ class World2D
 
     function onMouseLeave(e:Event)
     {
-        if (scene == null) return;
+        if (scene == null || mouseOut) return;
 
+        mouseOut = true;
         var md:MouseData = new MouseData();
         md.type = MouseEvent.MOUSE_MOVE;
 
@@ -207,7 +209,7 @@ class World2D
         }
     }
 
-    function updateSize()
+    function updateSize():Void
     {
         var w = Std.int(bounds.width);
         var h = Std.int(bounds.height);
@@ -301,6 +303,7 @@ class World2D
         {
             Reflect.callMethod(scene, Reflect.field(scene, "setWorld"), [this]);
             scene.init(ctx);
+            invalidateSize = true;
         }
 		
         return s;

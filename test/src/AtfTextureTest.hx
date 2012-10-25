@@ -46,7 +46,7 @@ class AtfTextureTest
         s.scaleMode = StageScaleMode.NO_SCALE;
         s.align = StageAlign.TOP_LEFT;
 
-        world = new World2D(Context3DRenderMode.AUTO);
+        world = new World2D(flash.Lib.current.stage, Context3DRenderMode.AUTO);
 
         s.addChild(new Stats(world));
 

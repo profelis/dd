@@ -168,7 +168,7 @@ class Main
         s.scaleMode = StageScaleMode.NO_SCALE;
         s.align = StageAlign.TOP_LEFT;
 		
-		world = new World2D(Context3DRenderMode.AUTO);
+		world = new World2D(s, Context3DRenderMode.AUTO);
 		
 		s.addChild(new Stats(world));
 		world.scene = scene = new Scene2D();

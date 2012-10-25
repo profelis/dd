@@ -41,7 +41,7 @@ class PerlinTest
 
     function new()
     {
-        world = new deep.dd.World2D(Context3DRenderMode.AUTO, 2);
+        world = new deep.dd.World2D(flash.Lib.current.stage, Context3DRenderMode.AUTO, 2);
         world.bgColor = new Color(0, 0, 0, 1);
         scene = world.scene = new Scene2D();
 

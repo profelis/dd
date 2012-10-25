@@ -133,7 +133,7 @@ class BitmapTexture2D extends Texture2D
 }
 
 //---------------------------
-
+// only RGBA
 class ATFTexture2D extends Texture2D
 {
     var atfData:ByteArray;
