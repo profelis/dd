@@ -24,8 +24,10 @@ class TestQuad extends Test
 		quad.geometry.setColor(0xffffff);
 		addChild(quad);
 	}
+
+
 	
-	override public function drawStep(camera:Camera2D):Void
+	override public function updateStep():Void
 	{
 		var time:Float = Lib.getTimer() / 1000;
 		quad.geometry.setVertexColor(0, mixColors(0xFF0000, 0x00FF00, sin0_1(time * 2.2)), 	sin0_1(time * 2.3));
@@ -33,7 +35,7 @@ class TestQuad extends Test
 		quad.geometry.setVertexColor(2, mixColors(0xFF00FF, 0xFFFF00, sin0_1(time * 2.6)), 	sin0_1(time * 2.7));
 		quad.geometry.setVertexColor(3, mixColors(0x00FF99, 0x9900FF, sin0_1(time * 2.8)), 	sin0_1(time * 2.9));
 
-        super.drawStep(camera);
+        super.updateStep();
 	}
 	
 	override public function dispose():Void 

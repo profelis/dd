@@ -23,13 +23,10 @@ class Scene2D extends Node2D
 
     public var time(default, null):Float;
 
-    override public function drawStep(camera:Camera2D):Void
+    public function update()
     {
-        if (!visible) return;
-
         time = flash.Lib.getTimer() * 0.001 * timeScale;
-
-        super.drawStep(camera);
+        updateStep();
     }
 
     override function checkMouseOver(p:Vector3D)

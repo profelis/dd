@@ -74,7 +74,7 @@ class BitmapFontTest extends Test
         }
 	}
 	
-	override public function drawStep(camera:Camera2D):Void
+	override public function updateStep():Void
 	{
 		var currAngle = -time * 10;
 
@@ -84,7 +84,7 @@ class BitmapFontTest extends Test
 
 		text2.text = Std.string(Lib.getTimer());
 
-        super.drawStep(camera);
+        super.updateStep();
 	}
 	
 	override public function dispose():Void 

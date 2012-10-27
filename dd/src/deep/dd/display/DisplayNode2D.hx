@@ -58,13 +58,18 @@ class DisplayNode2D extends Node2D
         super.init(ctx);
     }
 
-    override public function draw(camera:Camera2D):Void
+    override public function updateStep()
     {
-        if (material != null)
-        {
-            if (geometry.needUpdate) geometry.update();
-            material.draw(this, camera);
-        }
+        if (geometry != null && geometry.needUpdate) geometry.update();
+
+        super.updateStep();
+    }
+
+    override public function drawStep(camera:Camera2D):Void
+    {
+        if (material != null) material.draw(this, camera);
+
+        super.drawStep(camera);
     }
 	
     function set_geometry(g:Geometry):Geometry

@@ -44,14 +44,14 @@ class TextFieldTest extends Test
 		
 		wrld.scene.addChild(text);
 	}
-	
-	override public function drawStep(camera:Camera2D):Void
+
+	override public function updateStep():Void
 	{
 		text.rotationZ += 2;
 		text.rotationX += 1;
 		text.scaleX = text.scaleY = sin0_1(time);
 
-        super.drawStep(camera);
+        super.updateStep();
 	}
 	
 	override public function dispose():Void 

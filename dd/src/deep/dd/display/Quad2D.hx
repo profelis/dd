@@ -26,11 +26,11 @@ class Quad2D extends DisplayNode2D
         return color;
     }
 
-    override public function draw(camera:Camera2D):Void
+    override public function updateStep()
     {
         if (needUpdateColor) update();
 
-        super.draw(camera);
+        super.updateStep();
     }
 
     public function update():Void

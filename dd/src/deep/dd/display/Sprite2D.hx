@@ -80,7 +80,7 @@ class Sprite2D extends DisplayNode2D
     */
     public var textureFrame(default, default):Frame;
 
-    override public function drawStep(camera:Camera2D):Void
+    override public function updateStep()
     {
         if (texture != null)
         {
@@ -105,19 +105,9 @@ class Sprite2D extends DisplayNode2D
                 invalidateDrawTransform = true;
             }
         }
+        super.updateStep();
 
-        super.drawStep(camera);
-    }
-
-
-    override public function draw(camera:Camera2D):Void
-    {
-        if (texture != null)
-        {
-            if (invalidateDrawTransform) updateDrawTransform();
-
-            super.draw(camera);
-        }
+        if (invalidateDrawTransform) updateDrawTransform();
     }
 
     inline public function updateDrawTransform()

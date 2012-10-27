@@ -428,16 +428,19 @@ class Node2D
         mouseOver = p.x >= 0 && p.x <= _width && p.y >= 0 && p.y <= _height;
     }
 
-    // render
-
-    public function drawStep(camera:Camera2D):Void
+    public function updateStep()
     {
         if (invalidateTransform) updateTransform();
         if (invalidateWorldTransform) updateWorldTransform();
         if (invalidateColorTransform) updateWorldColor();
 
-        draw(camera);
+        for (i in children) if (i.visible) i.updateStep();
+    }
 
+    // render
+
+    public function drawStep(camera:Camera2D):Void
+    {
         for (i in children) if (i.visible) i.drawStep(camera);
     }
 
@@ -489,10 +492,6 @@ class Node2D
         invalidateWorldTransform = true;
 
         transformChange.dispatch();
-    }
-
-    public function draw(camera:Camera2D):Void
-    {
     }
 
     // transform

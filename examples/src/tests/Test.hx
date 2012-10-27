@@ -1,4 +1,5 @@
 package tests;
+
 import deep.dd.display.Scene2D;
 import deep.dd.World2D;
 

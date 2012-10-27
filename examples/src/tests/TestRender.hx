@@ -101,7 +101,7 @@ class TestRender extends Test
         c.y = world.stage.stageHeight * 0.5;
     }
 
-    override public function drawStep(camera:Camera2D):Void
+    override public function updateStep():Void
     {
         for (i in c.children)
         {
@@ -109,7 +109,7 @@ class TestRender extends Test
             i.rotationY += 2;
         }
 
-        super.drawStep(camera);
+        super.updateStep();
     }
 
     override public function dispose():Void

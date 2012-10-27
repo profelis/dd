@@ -241,6 +241,8 @@ class World2D
 
 			ctx.clear(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 
+			scene.update();
+
 			scene.drawStep(camera);
 
 			ctx.present();

@@ -181,11 +181,11 @@ class BitmapFont2D extends SmartSprite2D
 		return num;
 	}
 	
-	override public function drawStep(camera:Camera2D):Void 
-	{
-		if (needUpdate) updateField();
-		super.drawStep(camera);
-	}
+    override public function updateStep()
+    {
+        if (needUpdate) updateField();
+        super.updateStep();
+    }
 
     public function validateNow()
     {
