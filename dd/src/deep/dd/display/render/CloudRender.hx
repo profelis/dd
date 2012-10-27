@@ -110,32 +110,7 @@ class CloudRender extends RenderBase
 
         for (s in batchList)
         {
-            if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
-
-            if (s.invalidateTransform) s.updateTransform();
-            if (s.invalidateWorldTransform) s.updateWorldTransform();
-            if (s.invalidateColorTransform) s.updateWorldColor();
-
-            if (s.animator != null && s.animator != animator)
-            {
-                s.animator.draw(node.scene.time);
-                var frame = s.animator.textureFrame;
-
-                if (frame != s.textureFrame)
-                {
-                    s.invalidateDrawTransform = true;
-                    s.textureFrame = frame;
-                    s._width = frame.width;
-                    s._height= frame.height;
-                }
-            }
-            else if (invalidateTexture || s.textureFrame == null)
-            {
-                s.textureFrame = textureFrame;
-                s.invalidateDrawTransform = true;
-            }
-
-            if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
+            if (invalidateTexture) s.updateDrawTransform();
 
             var sPoly = s.geometry.poly;
 

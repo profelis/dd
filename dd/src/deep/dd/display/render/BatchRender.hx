@@ -92,14 +92,7 @@ class BatchRender extends RenderBase
             else
             {
                 var s:Sprite2D = flash.Lib.as(c, Sprite2D);
-                if (s != null)
-                {
-                    if (s.invalidateWorldTransform || s.invalidateTransform) s.invalidateDrawTransform = true;
-                }
 
-                if (c.invalidateTransform) c.updateTransform();
-                if (c.invalidateWorldTransform) c.updateWorldTransform();
-                if (c.invalidateColorTransform) c.updateWorldColor();
 
                 if (c.numChildren > 0 || s == null)
                 {
@@ -108,34 +101,11 @@ class BatchRender extends RenderBase
                     continue;
                 }
 
-                var sFrame = s.textureFrame;
-
-                if (s.animator != null && s.animator != animator)
-                {
-                    s.animator.draw(node.scene.time);
-                    var frame = s.animator.textureFrame;
-
-                    if (frame != sFrame)
-                    {
-                        s.invalidateDrawTransform = true;
-                        sFrame = frame;
-                        s._width = frame.width;
-                        s._height= frame.height;
-                    }
-                }
-                else if (invalidateTexture || s.textureFrame == null)
-                {
-                    sFrame = textureFrame;
-                    s.invalidateDrawTransform = true;
-                }
-
-                s.textureFrame = sFrame;
-
-                if (invalidateTexture || s.invalidateDrawTransform) s.updateDrawTransform();
+                if (invalidateTexture) s.updateDrawTransform();
 
                 mpos[idx] = s.drawTransform;
                 cTrans[idx] = s.worldColorTransform;
-                regions[idx] = sFrame.region;
+                regions[idx] = s.textureFrame.region;
 
                 idx ++;
                 if (idx == MAX_SIZE)
