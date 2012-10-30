@@ -21,13 +21,12 @@ function vertex(mproj:Matrix, mpos:Matrix, time:Float, region:Float4, texSize:Fl
     var t = k * life.y;                      // t = [0, life]
 
     var vertex = pos.xyzw;
-    vertex.xyz *= scale.z + scale.w * k; // vertex *= scale
+    vertex.xyz *= scale.x + scale.y * k; // vertex *= scale
 
     var a = radialData.x + radialData.y * t; // angle
     var r = radialData.z + radialData.w * k; // radius
-    var z = scale.x + scale.y * t;
 
-    var pos = [r * cos(a), r * sin(a), z];   // radial position
+    var pos = [r * cos(a), r * sin(a), 0];   // radial position
     pos.xy /= texSize;
 
     vertex.xyz += pos;                       // vertex += pos
