@@ -47,7 +47,18 @@ class BatchRender extends RenderBase
     var textureFrame:Frame;
     var animator:AnimatorBase;
 
-    override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
+    var invalidateTexture:Bool;
+
+    override public function updateStep()
+    {
+        var f = smartSprite.textureFrame;
+
+        smartSprite.nativeUpdateStep();
+
+        invalidateTexture = f != smartSprite.textureFrame;
+    }
+
+    override public function drawStep(camera:Camera2D):Void
     {
         if (smartSprite.texture == null)
         {
@@ -96,16 +107,16 @@ class BatchRender extends RenderBase
 
                 if (c.numChildren > 0 || s == null)
                 {
-                    trace("to subnode");
+                    //trace("to subnode");
                     subNodes.add(c);
                     continue;
                 }
 
-                if (invalidateTexture) s.updateDrawTransform();
+                if (invalidateTexture) s.updateDrawTransform(); // TODO: optimize
 
                 mpos[idx] = s.drawTransform;
                 cTrans[idx] = s.worldColorTransform;
-                regions[idx] = s.textureFrame.region;
+                regions[idx] = s.textureFrame != null ? s.textureFrame.region : smartSprite.textureFrame.region;
 
                 idx ++;
                 if (idx == MAX_SIZE)

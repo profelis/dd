@@ -1,5 +1,6 @@
 package ;
 
+import deep.dd.display.render.SimpleRender;
 import deep.dd.particle.render.RadialParticleRender;
 import deep.dd.particle.preset.ParticlePresetBase;
 import deep.dd.particle.preset.ParticlePresetBase.Bounds;
@@ -46,7 +47,7 @@ class RadialParticleTest
         s.scaleMode = StageScaleMode.NO_SCALE;
         s.align = StageAlign.TOP_LEFT;
 
-        world = new World2D(Context3DRenderMode.AUTO);
+        world = new World2D(flash.Lib.current.stage, Context3DRenderMode.AUTO);
 
         s.addChild(new Stats(world));
 
@@ -58,7 +59,7 @@ class RadialParticleTest
         var texture = world.cache.getTexture(Image);
 
         preset = new RadialParticlePreset();
-        preset.particleNum = 1000;
+        preset.particleNum = 100;
         preset.spawnNum = 25;
         preset.spawnStep = 0.05;
         preset.life = new Bounds<Float>(2, 3);
@@ -66,7 +67,7 @@ class RadialParticleTest
         preset.endColor = new Bounds<Color>(new Color(0, 0, 0, 0.01), new Color(1, 1, 1, 0.01));
         preset.startScale = new Bounds<Float>(0.25);
         preset.endScale = new Bounds<Float>(0.25);
-        preset.startRotation = new Bounds<Vector3D>(new Vector3D(0, 0, 0));
+        preset.startRotation = new Bounds<Float>(0, 0);
 
         preset.startRadius = new Bounds<Float>(0);
         preset.endRadius = new Bounds<Float>(300);
@@ -81,7 +82,7 @@ class RadialParticleTest
         ps = new ParticleSystem2D(RadialParticleRenderBuilder.gpuRender(preset));
         ps.x = 400;
         ps.y = 300;
-        ps.blendMode = BlendMode.ADD_A;
+        //ps.blendMode = BlendMode.ADD_A;
         ps.texture = texture;
         scene.addChild(ps);
 
@@ -98,8 +99,11 @@ class RadialParticleTest
 
     function onClick(_)
     {
-        ps.render.dispose();
+        var old = ps.render;
+        //ps.blendMode = BlendMode.NONE;
         ps.render = RadialParticleRenderBuilder.cpuCloudRender(preset);
+                    //new RadialParticleRender(preset, new SimpleRender(false));
+        old.dispose();
         //world.ctx.dispose();
 		//mc.animator.playAnimation(null);
     }

@@ -84,19 +84,16 @@ class SmartSprite2D extends Sprite2D
 
     override public function updateStep()
     {
-        var f = texture.frame;
-
-        super.updateStep();
-
-        invalidateTexture = f != textureFrame;
+        if (render != null) render.updateStep();
     }
 
-    var invalidateTexture:Bool;
+    public function nativeUpdateStep()
+    {
+        super.updateStep();
+    }
 
     override public function drawStep(camera:Camera2D):Void
     {
-        if (render != null) render.drawStep(camera, invalidateTexture);
-
-        //super.drawStep(camera);
+        if (render != null) render.drawStep(camera);
     }
 }

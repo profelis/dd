@@ -293,7 +293,7 @@ class Poly2D extends Polygon
         if (points == null) return;
 
 
-        var size = 3;
+        var size = 2;
         if (tcoords != null) size += 2;
         if (colors != null) size+=4;
         if (sup != null) size+=1;
@@ -306,7 +306,7 @@ class Poly2D extends Polygon
             var p = points[k];
             buf[i++] = p.x;
             buf[i++] = p.y;
-            buf[i++] = p.z;
+            //buf[i++] = p.z;
 
             if( tcoords != null )
             {

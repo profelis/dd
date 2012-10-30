@@ -1,10 +1,10 @@
 var input:
 {
-    pos:Float3,
+    pos:Float2,
     uv:Float2,
 
-    startPos:Float3,
-    velocity:Float3,
+    startPos:Float2,
+    velocity:Float2,
 
     color:Float4,
     dColor:Float4,
@@ -17,7 +17,7 @@ var input:
 var tuv:Float2;
 var cTrans:Float4;
 
-function vertex(mproj:Matrix, mpos:Matrix, time:Float, gravity:Float3, region:Float4, texSize:Float2, pcTrans:Float4)
+function vertex(mproj:Matrix, mpos:Matrix, time:Float, gravity:Float2, region:Float4, texSize:Float2, pcTrans:Float4)
 {
     var k = frc((time - life.x) / life.y);   // k = [0,1]
     var t = k * life.y;                      // t = [0, life]
@@ -25,13 +25,11 @@ function vertex(mproj:Matrix, mpos:Matrix, time:Float, gravity:Float3, region:Fl
     var vertex = pos.xyzw;
     vertex.xyz *= scale.x + scale.y * k;     // vertex *= scale
 
-    var v = velocity;                        // velocity
-    v.xy /= texSize.xy;
+    var v = velocity / texSize;              // velocity
     v += gravity * t;                        // velocity += gravity * t
 
-    var dt = startPos;
-    dt.xy /= texSize.xy;
-    vertex.xyz += dt + v * t;                // vertex += startPos + velocity * t
+    var dt = startPos / texSize;
+    vertex.xy += dt + v * t;                // vertex += startPos + velocity * t
 
     out = vertex * mpos * mproj;             // out
 

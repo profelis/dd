@@ -78,7 +78,7 @@ class GravityParticleRender extends CPUParticleRenderBase
 
     var lastSpawn:Float = 0;
 
-    override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
+    override public function updateStep()
     {
         var time = smartSprite.scene.time;
 
@@ -88,6 +88,8 @@ class GravityParticleRender extends CPUParticleRenderBase
             {
                 var spawn = Std.int(Math.min(gravityPreset.particleNum - size, gravityPreset.spawnNum));
 
+                var texture = smartSprite.texture;
+
                 for (i in 0...spawn)
                 {
                     var idx = size + i;
@@ -96,11 +98,13 @@ class GravityParticleRender extends CPUParticleRenderBase
                     particles[idx] = p;
 
                     var s = sprites[idx];
-                    if (s == null) sprites[idx] = s = new CenteredSprite2D();
+                    if (s == null)
+                    {
+                        sprites[idx] = s = new CenteredSprite2D();
+                        s.texture = texture;
+                    }
                     smartSprite.addChild(s);
-                    s.rotationX = p.startRotation.x;
-                    s.rotationY = p.startRotation.y;
-                    s.rotationZ = p.startRotation.z;
+                    s.rotation = p.startRotation;
                 }
                 size += spawn;
                 lastSpawn = time;
@@ -119,12 +123,10 @@ class GravityParticleRender extends CPUParticleRenderBase
 
             s.x = p.x + (p.vx + (gravity.x * t)) * t;
             s.y = p.y + (p.vy + (gravity.y * t)) * t;
-            s.z = p.z + (p.vz + (gravity.z * t)) * t;
 
             var scale = p.scale + p.dScale * k;
             s.scaleX = scale;
             s.scaleY = scale;
-            s.scaleZ = scale;
 
             var c = s.colorTransform;
             c.a = p.a + p.da * k;
@@ -134,7 +136,12 @@ class GravityParticleRender extends CPUParticleRenderBase
             s.colorTransform = c;
         }
 
-        render.drawStep(camera, invalidateTexture);
+        render.updateStep();
+    }
+
+    override public function drawStep(camera:Camera2D):Void
+    {
+        render.drawStep(camera);
     }
 
     override public function copy():RenderBase
@@ -155,7 +162,7 @@ class GravityParticleRender extends CPUParticleRenderBase
 
 class GPUGravityParticleRender extends ParticleRenderBase
 {
-	inline static public var PER_VERTEX:UInt = 23;
+	inline static public var PER_VERTEX:UInt = 20;
 
 	public function new(preset:GravityParticlePreset)
 	{
@@ -186,7 +193,7 @@ class GPUGravityParticleRender extends ParticleRenderBase
 
         gravityPreset = flash.Lib.as(p, GravityParticlePreset);
         super.set_preset(gravityPreset);
-        size = 0;
+        size = 0;//size < p.particleNum ? size : p.particleNum;
         lastSpawn = 0;
 
         gravityGeometry.resizeCloud(preset.particleNum);
@@ -194,7 +201,7 @@ class GPUGravityParticleRender extends ParticleRenderBase
         return p;
     }
 
-	override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
+    override public function drawStep(camera:Camera2D):Void
 	{
 		#if debug
 		if (smartSprite.texture == null)
@@ -232,9 +239,7 @@ class GPUGravityParticleRender extends ParticleRenderBase
 		var p = gravityPreset.createParticle();
 		p.startTime = time;
         var m = new Matrix3D();
-        m.appendRotation(p.startRotation.z, Vector3D.Z_AXIS);
-        m.appendRotation(p.startRotation.y, Vector3D.Y_AXIS);
-        m.appendRotation(p.startRotation.x, Vector3D.X_AXIS);
+        m.appendRotation(p.startRotation, Vector3D.Z_AXIS);
 
 		var buf = gravityGeometry.rawVBuf;
 
@@ -245,7 +250,6 @@ class GPUGravityParticleRender extends ParticleRenderBase
             v = m.transformVector(v);
 			buf[i++] = v.x;
 			buf[i++] = v.y;
-			buf[i++] = v.z;
 
 			var uv = poly.tcoords[idx];
 			buf[i++] = uv.u;
@@ -253,11 +257,9 @@ class GPUGravityParticleRender extends ParticleRenderBase
 
 			buf[i++] = p.x;
 			buf[i++] = p.y;
-			buf[i++] = p.z;
 
 			buf[i++] = p.vx;
 			buf[i++] = p.vy;
-			buf[i++] = p.vz;
 
 			buf[i++] = p.r;
 			buf[i++] = p.g;

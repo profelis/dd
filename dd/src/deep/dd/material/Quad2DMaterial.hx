@@ -24,7 +24,7 @@ class QuadShader extends Shader
 {
     static var SRC = {
         var input : {
-            pos : Float3,
+            pos : Float2,
             color: Float4
         };
         var c:Float4;

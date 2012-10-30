@@ -1,5 +1,6 @@
 package deep.dd.particle.preset.parser;
 
+import flash.geom.Point;
 import deep.dd.particle.ParticleSystem2D;
 import deep.dd.particle.preset.GravityParticlePreset;
 import deep.dd.particle.preset.ParticlePresetBase;
@@ -63,8 +64,8 @@ class ParticleParser
 		var endScaleMin:Float = 0;
 		var endScaleMax:Float = 0;
 		
-		var rotationMin:Vector3D = new Vector3D();
-		var rotationMax:Vector3D = new Vector3D();
+		var rotationMin:Float = 0;
+		var rotationMax:Float = 0;
 		
 		for (node in xml.elements())
 		{
@@ -130,13 +131,14 @@ class ParticleParser
 					}
 					else if (nodeChild.nodeName == "rotation")
 					{
+                        throw "deep was here";
+                        /*
 						rotationMin.x = Std.parseFloat(nodeChild.get("minX"));
 						rotationMin.y = Std.parseFloat(nodeChild.get("minY"));
-						rotationMin.z = Std.parseFloat(nodeChild.get("minZ"));
-						
+
 						rotationMax.x = Std.parseFloat(nodeChild.get("maxX"));
 						rotationMax.y = Std.parseFloat(nodeChild.get("maxY"));
-						rotationMax.z = Std.parseFloat(nodeChild.get("maxZ"));
+						*/
 					}
 				}
 			}
@@ -150,7 +152,7 @@ class ParticleParser
 			var startPositionMax:Vector3D = new Vector3D();
 			var startVelocityMin:Vector3D = new Vector3D();
 			var startVelocityMax:Vector3D = new Vector3D();
-			var gravity:Vector3D = new Vector3D();
+			var gravity:Point = new Point();
 			
 			for (node in xml.elements())
 			{
@@ -162,27 +164,22 @@ class ParticleParser
 						{
 							startPositionMin.x = Std.parseFloat(nodeChild.get("minX"));
 							startPositionMin.y = Std.parseFloat(nodeChild.get("minY"));
-							startPositionMin.z = Std.parseFloat(nodeChild.get("minZ"));
-							
+
 							startPositionMax.x = Std.parseFloat(nodeChild.get("maxX"));
 							startPositionMax.y = Std.parseFloat(nodeChild.get("maxY"));
-							startPositionMax.z = Std.parseFloat(nodeChild.get("maxZ"));
 						}
 						else if (nodeChild.nodeName == "startVelocity")
 						{
 							startVelocityMin.x = Std.parseFloat(nodeChild.get("minX"));
 							startVelocityMin.y = Std.parseFloat(nodeChild.get("minY"));
-							startVelocityMin.z = Std.parseFloat(nodeChild.get("minZ"));
-							
+
 							startVelocityMax.x = Std.parseFloat(nodeChild.get("maxX"));
 							startVelocityMax.y = Std.parseFloat(nodeChild.get("maxY"));
-							startVelocityMax.z = Std.parseFloat(nodeChild.get("maxZ"));
 						}
 						else if (nodeChild.nodeName == "gravity")
 						{
 							gravity.x = Std.parseFloat(nodeChild.get("x"));
 							gravity.y = Std.parseFloat(nodeChild.get("y"));
-							gravity.z = Std.parseFloat(nodeChild.get("z"));
 						}
 					}
 				}
@@ -196,7 +193,7 @@ class ParticleParser
 			gravityPreset.endColor = new Bounds<Color>(endColorMin, endColorMax);
 			gravityPreset.startScale = new Bounds<Float>(startScaleMin, startScaleMax);
 			gravityPreset.endScale = new Bounds<Float>(endScaleMin, endScaleMax);
-			gravityPreset.startRotation = new Bounds<Vector3D>(rotationMin, rotationMax);
+			gravityPreset.startRotation = new Bounds<Float>(rotationMin, rotationMax);
 			
 			preset = gravityPreset;
 		}
@@ -273,7 +270,7 @@ class ParticleParser
 			radialPreset.endColor = new Bounds<Color>(endColorMin, endColorMax);
 			radialPreset.startScale = new Bounds<Float>(startScaleMin, startScaleMax);
 			radialPreset.endScale = new Bounds<Float>(endScaleMin, endScaleMax);
-			radialPreset.startRotation = new Bounds<Vector3D>(rotationMin, rotationMax);
+			radialPreset.startRotation = new Bounds<Float>(rotationMin, rotationMax);
 			
 			preset = radialPreset;
 		}

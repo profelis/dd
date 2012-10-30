@@ -1,5 +1,5 @@
 var input : {
-    pos : Float3,
+    pos : Float2,
     uv: Float2,
     index:Float
 };

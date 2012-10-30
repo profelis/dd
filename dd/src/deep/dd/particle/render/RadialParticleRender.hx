@@ -80,7 +80,7 @@ class RadialParticleRender extends CPUParticleRenderBase
 
     var lastSpawn:Float = 0;
 
-    override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
+    override public function updateStep()
     {
         var time = smartSprite.scene.time;
 
@@ -90,6 +90,8 @@ class RadialParticleRender extends CPUParticleRenderBase
             {
                 var spawn = Std.int(Math.min(radialPreset.particleNum - size, radialPreset.spawnNum));
 
+                var texture = smartSprite.texture;
+
                 for (i in 0...spawn)
                 {
                     var idx = size + i;
@@ -98,11 +100,13 @@ class RadialParticleRender extends CPUParticleRenderBase
                     particles[idx] = p;
 
                     var s = sprites[idx];
-                    if (s == null) sprites[idx] = s = new CenteredSprite2D();
+                    if (s == null)
+                    {
+                        sprites[idx] = s = new CenteredSprite2D();
+                        s.texture = texture;
+                    }
                     smartSprite.addChild(s);
-                    s.rotationX = p.startRotation.x;
-                    s.rotationY = p.startRotation.y;
-                    s.rotationZ = p.startRotation.z;
+                    s.rotation = p.startRotation;
                 }
                 size += spawn;
                 lastSpawn = time;
@@ -122,12 +126,10 @@ class RadialParticleRender extends CPUParticleRenderBase
             var r = p.radius + p.dRadius * k;
             s.x = r * Math.cos(a);
             s.y = r * Math.sin(a);
-            s.z = p.z + p.vz * t;
 
             var scale = p.scale + p.dScale * k;
             s.scaleX = scale;
             s.scaleY = scale;
-            s.scaleZ = scale;
 
             var c = s.colorTransform;
             c.a = p.a + p.da * k;
@@ -137,7 +139,12 @@ class RadialParticleRender extends CPUParticleRenderBase
             s.colorTransform = c;
         }
 
-        render.drawStep(camera, invalidateTexture);
+        render.updateStep();
+    }
+
+    override public function drawStep(camera:Camera2D):Void
+    {
+        render.drawStep(camera);
     }
 
     override public function copy():RenderBase
@@ -158,7 +165,7 @@ class RadialParticleRender extends CPUParticleRenderBase
 
 class GPURadialParticleRender extends ParticleRenderBase
 {
-	inline static public var PER_VERTEX:UInt = 23;
+	inline static public var PER_VERTEX:UInt = 20;
 
 	public function new(preset:RadialParticlePreset)
 	{
@@ -189,7 +196,7 @@ class GPURadialParticleRender extends ParticleRenderBase
 
         radialPreset = flash.Lib.as(p, RadialParticlePreset);
         super.set_preset(radialPreset);
-        size = 0;
+        size = 0;//size < p.particleNum ? size : p.particleNum;
         lastSpawn = 0;
 
         radialGeometry.resizeCloud(preset.particleNum);
@@ -197,7 +204,7 @@ class GPURadialParticleRender extends ParticleRenderBase
         return p;
     }
 
-	override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
+	override public function drawStep(camera:Camera2D):Void
 	{
 		#if debug
 		if (smartSprite.texture == null)
@@ -235,9 +242,7 @@ class GPURadialParticleRender extends ParticleRenderBase
 		var p = radialPreset.createParticle();
 		p.startTime = time;
         var m = new Matrix3D();
-        m.appendRotation(p.startRotation.z, Vector3D.Z_AXIS);
-        m.appendRotation(p.startRotation.y, Vector3D.Y_AXIS);
-        m.appendRotation(p.startRotation.x, Vector3D.X_AXIS);
+        m.appendRotation(p.startRotation, Vector3D.Z_AXIS);
 
 		var buf = radialGeometry.rawVBuf;
 
@@ -248,14 +253,11 @@ class GPURadialParticleRender extends ParticleRenderBase
             v = m.transformVector(v);
 			buf[i++] = v.x;
 			buf[i++] = v.y;
-			buf[i++] = v.z;
 
 			var uv = poly.tcoords[idx];
 			buf[i++] = uv.u;
 			buf[i++] = uv.v;
 
-			buf[i++] = p.z;
-			buf[i++] = p.vz;
 			buf[i++] = p.scale;
 			buf[i++] = p.dScale;
 

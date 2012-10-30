@@ -1,9 +1,9 @@
 var input:
 {
-    pos:Float3,
+    pos:Float2,
     uv:Float2,
 
-    startPos:Float4,  // z, vz, startScale, dScale
+    scale:Float2,  // startScale, dScale
     radialData:Float4,  // angle, angleSpeed, radius, dRadius
 
     color:Float4,
@@ -21,11 +21,11 @@ function vertex(mproj:Matrix, mpos:Matrix, time:Float, region:Float4, texSize:Fl
     var t = k * life.y;                      // t = [0, life]
 
     var vertex = pos.xyzw;
-    vertex.xyz *= startPos.z + startPos.w * k; // vertex *= scale
+    vertex.xyz *= scale.z + scale.w * k; // vertex *= scale
 
     var a = radialData.x + radialData.y * t; // angle
     var r = radialData.z + radialData.w * k; // radius
-    var z = startPos.x + startPos.y * t;
+    var z = scale.x + scale.y * t;
 
     var pos = [r * cos(a), r * sin(a), z];   // radial position
     pos.xy /= texSize;

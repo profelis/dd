@@ -35,6 +35,21 @@ class CPUParticleRenderBase extends ParticleRenderBase
     {
         super.set_preset(p);
 
+        /*
+        if (size > p.particleNum)
+        {
+            if (smartSprite != null)
+            {
+
+                for (i in p.particleNum...size)
+                {
+                    var s = sprites[i];
+                    if (smartSprite.contains(s)) smartSprite.removeChild(s);
+                }
+            }
+            size = p.particleNum;
+        }
+         */
         size = 0;
 
         sprites.fixed = false;
@@ -90,9 +105,21 @@ class ParticleRenderBase extends RenderBase
         return preset = p;
     }
 
-	function new(preset:ParticlePresetBase)
+    override public function updateStep()
+    {
+        smartSprite.nativeUpdateStep();
+    }
+
+    function new(preset:ParticlePresetBase)
 	{
 		this.preset = preset;
         ignoreInBatch = true;
 	}
+
+    override public function dispose(deep = true)
+    {
+        super.dispose();
+        Reflect.setField(this, "preset", null);
+    }
+
 }

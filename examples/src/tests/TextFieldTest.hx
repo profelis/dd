@@ -47,8 +47,7 @@ class TextFieldTest extends Test
 
 	override public function updateStep():Void
 	{
-		text.rotationZ += 2;
-		text.rotationX += 1;
+		text.rotation += 2;
 		text.scaleX = text.scaleY = sin0_1(time);
 
         super.updateStep();

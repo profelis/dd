@@ -15,5 +15,5 @@
 
 #-D shaderDebug
 #-debug
-#--no-inline
+--no-inline
 #-D fdb

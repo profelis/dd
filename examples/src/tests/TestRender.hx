@@ -105,8 +105,7 @@ class TestRender extends Test
     {
         for (i in c.children)
         {
-            i.rotationX += 2;
-            i.rotationY += 2;
+            i.rotation += 2;
         }
 
         super.updateStep();

@@ -72,8 +72,7 @@ class AtfTextureTest
 
     function onRender(_)
     {
-       sp.rotationY ++;
-       sp.rotationZ ++;
+       sp.rotation ++;
 //world.camera.x = -world.stage.mouseX;
 //world.camera.y = -world.stage.mouseY;
 //    world.camera.scale += (Math.random()-0.5) * 0.003;

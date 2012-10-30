@@ -36,7 +36,7 @@ class Sprite2DMaterial extends Material
         var sp:Sprite2D = Lib.as(node, Sprite2D);
         var tex = sp.texture;
 
-        if (tex == null) return; // TODO:
+        if (tex == null) throw "error"; // TODO:
 
         if (texOpt != tex.options)
         {

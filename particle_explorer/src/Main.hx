@@ -1,4 +1,5 @@
 package;
+import flash.geom.Point;
 import com.bit101.components.Accordion;
 import com.bit101.components.ComboBox;
 import com.bit101.components.HRangeSlider;
@@ -188,10 +189,10 @@ class Main
         gravityPreset.velocity = new Bounds<Vector3D>(new Vector3D(0, -70, 0), new Vector3D(0, -130, 0));
 		gravityPreset.startColor = new Bounds<Color>(new Color(1, 0.3, 0, 0.6), new Color(1, 0.3, 0, 0.6));
         gravityPreset.endColor = new Bounds<Color>(new Color(1, 0, 0, 0), new Color(1, 0, 0, 0));
-        gravityPreset.gravity = new Vector3D(0, 0, 0);
+        gravityPreset.gravity = new Point(0, 0);
         gravityPreset.startScale = new Bounds<Float>(1.3);
         gravityPreset.endScale = new Bounds<Float>(0.0);
-        gravityPreset.startRotation = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(0, 0, 0));
+        gravityPreset.startRotation = new Bounds<Float>(0, 0);
 		
 		radialPreset = new RadialParticlePreset();
 		radialPreset.particleNum = 500;
@@ -200,7 +201,7 @@ class Main
         radialPreset.life = new Bounds<Float>(1, 1.7);
 		radialPreset.startColor = new Bounds<Color>(new Color(1, 0.3, 0, 0.6), new Color(1, 0.3, 0, 0.6));
         radialPreset.endColor = new Bounds<Color>(new Color(1, 0, 0, 0), new Color(1, 0, 0, 0));
-		radialPreset.startRotation = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(0, 0, 0));
+		radialPreset.startRotation = new Bounds<Float>(0, 0);
 		radialPreset.startScale = new Bounds<Float>(1.3);
         radialPreset.endScale = new Bounds<Float>(0.0);
 		radialPreset.startAngle = new Bounds<Float>(0, 360);
@@ -1030,8 +1031,6 @@ class Main
 	
 	function onGravityZChange(param1:Dynamic)
 	{
-		gravityPreset.gravity.z = zGravity.value;
-		needUpdate = true;
 	}
 	
 	function onNumParticlesChange(param1:Dynamic)
@@ -1087,31 +1086,21 @@ class Main
 	
 	function onAngleXChange(param1:Dynamic)
 	{
-		gravityPreset.startRotation.min.x = angleX.lowValue;
-		gravityPreset.startRotation.max.x = angleX.highValue;
-		
-		radialPreset.startRotation.min.x = angleX.lowValue;
-		radialPreset.startRotation.max.x = angleX.highValue;
-		needUpdate = true;
+        //throw "deep was here";
 	}
 	
 	function onAngleYChange(param1:Dynamic)
 	{
-		gravityPreset.startRotation.min.y = angleY.lowValue;
-		gravityPreset.startRotation.max.y = angleY.highValue;
-		
-		radialPreset.startRotation.min.y = angleY.lowValue;
-		radialPreset.startRotation.max.y = angleY.highValue;
-		needUpdate = true;
+        //throw "deep was here";
 	}
 	
 	function onAngleZChange(param1:Dynamic)
 	{
-		gravityPreset.startRotation.min.z = angleZ.lowValue;
-		gravityPreset.startRotation.max.z = angleZ.highValue;
+		gravityPreset.startRotation.min = angleZ.lowValue;
+		gravityPreset.startRotation.max = angleZ.highValue;
 		
-		radialPreset.startRotation.min.z = angleZ.lowValue;
-		radialPreset.startRotation.max.z = angleZ.highValue;
+		radialPreset.startRotation.min = angleZ.lowValue;
+		radialPreset.startRotation.max = angleZ.highValue;
 		needUpdate = true;
 	}
 	
@@ -1257,7 +1246,6 @@ class Main
 			
 			xGravity.value = grav.gravity.x;
 			yGravity.value = grav.gravity.y;
-			zGravity.value = grav.gravity.z;
 		}
 		else
 		{
@@ -1288,12 +1276,10 @@ class Main
 		
 		setValuesForRangeSlider(endScale, Reflect.field(preset, 'endScale').min, Reflect.field(preset, 'endScale').max);
 		
-		var startRotationMin:Vector3D = cast(Reflect.field(preset, 'startRotation').min, Vector3D);
-		var startRotationMax:Vector3D = cast(Reflect.field(preset, 'startRotation').max, Vector3D);
+		var startRotationMin:Float = cast(Reflect.field(preset, 'startRotation').min, Float);
+		var startRotationMax:Float = cast(Reflect.field(preset, 'startRotation').max, Float);
 		
-		setValuesForRangeSlider(angleX, startRotationMin.x, startRotationMax.x);
-		setValuesForRangeSlider(angleY, startRotationMin.y, startRotationMax.y);
-		setValuesForRangeSlider(angleZ, startRotationMin.z, startRotationMax.z);
+		setValuesForRangeSlider(angleZ, startRotationMin, startRotationMax);
 		
 		var startColorMin:Color = cast(Reflect.field(preset, 'startColor').min, Color);
 		var startColorMax:Color = cast(Reflect.field(preset, 'startColor').max, Color);

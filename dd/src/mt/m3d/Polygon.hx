@@ -46,7 +46,7 @@ class Polygon {
 			var p = points[k];
 			buf[i++] = p.x;
 			buf[i++] = p.y;
-			buf[i++] = p.z;
+			//buf[i++] = p.z;
 			if( normals != null ) {
 				var n = normals[k];
 				buf[i++] = n.x;
@@ -57,7 +57,7 @@ class Polygon {
 				var t = tangents[k];
 				buf[i++] = t.x;
 				buf[i++] = t.y;
-				buf[i++] = t.z;
+				//buf[i++] = t.z;
 			}
 			if( tcoords != null ) {
 				var t = tcoords[k];

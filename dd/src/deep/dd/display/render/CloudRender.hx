@@ -22,7 +22,7 @@ class CloudRender extends RenderBase
 	public var size(default, null):UInt;
 	public var incSize(default, null):UInt;
 
-    static inline public var PER_VERTEX:UInt = 9; // xyz, uv, rgba
+    static inline public var PER_VERTEX:UInt = 8; // xyz, uv, rgba
     static inline public var MAX_SIZE:UInt = 16383; //65535 / 4;
 
 	public function new(startSize:UInt = 20, incSize:UInt = 20, geometry:CloudGeometry = null)
@@ -55,7 +55,18 @@ class CloudRender extends RenderBase
     var textureFrame:Frame;
     var animator:AnimatorBase;
 
-    override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
+    var invalidateTexture:Bool;
+
+    override public function updateStep()
+    {
+        var f = smartSprite.textureFrame;
+
+        smartSprite.nativeUpdateStep();
+
+        invalidateTexture = f != smartSprite.textureFrame;
+    }
+
+    override public function drawStep(camera:Camera2D):Void
     {
 		if (smartSprite.texture == null)
         {
@@ -110,7 +121,7 @@ class CloudRender extends RenderBase
 
         for (s in batchList)
         {
-            if (invalidateTexture) s.updateDrawTransform();
+            if (invalidateTexture) s.updateDrawTransform(); // TODO: optimize
 
             var sPoly = s.geometry.poly;
 
@@ -120,17 +131,16 @@ class CloudRender extends RenderBase
             {
                 var px = p.x;
                 var py = p.y;
-                var pz = p.z;
 
-                buf[i] = m[0] * px + m[4] * py + m[8] * pz + m[12];
-                buf[i+1] = m[1] * px + m[5] * py + m[9] * pz + m[13];
-                buf[i+2] = m[2] * px + m[6] * py + m[10] * pz + m[14];
+                buf[i] = m[0] * px + m[4] * py + m[12];
+                buf[i+1] = m[1] * px + m[5] * py + m[13];
 
                 i+= PER_VERTEX;
             }
 
-            i = idx + 3;
-            var r = s.textureFrame.region;
+            i = idx + 2;
+            var f = s.textureFrame;
+            var r = f != null ? f.region : smartSprite.textureFrame.region;
             for (t in sPoly.tcoords)
             {
                 buf[i] = t.u * r.z + r.x;
@@ -139,7 +149,7 @@ class CloudRender extends RenderBase
                 i += PER_VERTEX;
             }
 
-            i = idx + 5;
+            i = idx + 4;
             var c = s.worldColorTransform;
             for (o in 0...4)
             {

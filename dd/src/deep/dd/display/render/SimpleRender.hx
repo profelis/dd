@@ -23,7 +23,12 @@ class SimpleRender extends RenderBase
 
     public var renderRoot:Bool;
 
-	override public function drawStep(camera:Camera2D, invalidateTexture:Bool):Void
+    override public function updateStep()
+    {
+        smartSprite.nativeUpdateStep();
+    }
+
+    override public function drawStep(camera:Camera2D):Void
 	{
 		if (renderRoot && smartSprite.texture != null) material.draw(smartSprite, camera);
 

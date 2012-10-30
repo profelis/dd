@@ -8,7 +8,7 @@ import deep.dd.particle.preset.ParticlePresetBase.Bounds;
 
 class RadialParticlePreset extends ParticlePresetBase
 {
-    public var startRotation:Bounds<Vector3D>;
+    public var startRotation:Bounds<Float>;
 
     public var startScale:Bounds<Float>;
     public var endScale:Bounds<Float>;
@@ -34,9 +34,6 @@ class RadialParticlePreset extends ParticlePresetBase
 
         res.life = BoundsTools.randomFloat(life);
 
-        res.z = BoundsTools.randomFloat(startDepth);
-        res.vz = BoundsTools.randomFloat(depthSpeed);
-
         res.angle = BoundsTools.randomFloat(startAngle);
         res.angleSpeed = BoundsTools.randomFloat(angleSpeed);
 
@@ -58,7 +55,7 @@ class RadialParticlePreset extends ParticlePresetBase
         res.db = dc.b - c.b;
         res.da = dc.a - c.a;
 
-        res.startRotation = BoundsTools.randomVector(startRotation);
+        res.startRotation = BoundsTools.randomFloat(startRotation);
 
         return res;
     }
@@ -66,9 +63,6 @@ class RadialParticlePreset extends ParticlePresetBase
 
 class RadialParticle extends ParticleBase
 {
-    public var z:Float;
-    public var vz:Float;
-
     public var angle:Float;
     public var angleSpeed:Float;
 
@@ -88,7 +82,7 @@ class RadialParticle extends ParticleBase
     public var scale:Float;
     public var dScale:Float;
 
-    public var startRotation:Vector3D;
+    public var startRotation:Float;
 
     public function new() {}
 }

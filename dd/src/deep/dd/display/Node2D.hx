@@ -346,8 +346,7 @@ class Node2D
     {
         var res:Node2D;
 
-        mouseTransform.identity();
-        mouseTransform.append(worldTransform);
+        mouseTransform.copyFrom(worldTransform);
         mouseTransform.append(camera.ort);
         mouseTransform.invert();
 
@@ -477,15 +476,13 @@ class Node2D
     {
         transform.identity();
 
-        var moved = x != 0 || y != 0 || z != 0;
-        var scaled = scaleX != 1 || scaleY != 1 || scaleZ != 1;
+        var moved = x != 0 || y != 0;
+        var scaled = scaleX != 1 || scaleY != 1;
 
         if (usePivot) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
-        if (scaled) transform.appendScale(scaleX, scaleY, scaleZ);
-        if (rotationZ != 0) transform.appendRotation(rotationZ, Vector3D.Z_AXIS);
-        if (rotationY != 0) transform.appendRotation(rotationY, Vector3D.Y_AXIS);
-        if (rotationX != 0) transform.appendRotation(rotationX, Vector3D.X_AXIS);
-        if (moved) transform.appendTranslation(x, y, z);
+        if (scaled) transform.appendScale(scaleX, scaleY, 1);
+        if (rotation != 0) transform.appendRotation(rotation, Vector3D.Z_AXIS);
+        if (moved) transform.appendTranslation(x, y, 0);
         if (usePivot) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
 
         invalidateTransform = false;
@@ -511,15 +508,11 @@ class Node2D
 
     public var x(default, set_x):Float = 0;
     public var y(default, set_y):Float = 0;
-    public var z(default, set_z):Float = 0;
 
-    public var rotationX(default, set_rotationX):Float = 0;
-    public var rotationY(default, set_rotationY):Float = 0;
-    public var rotationZ(default, set_rotationZ):Float = 0;
+    public var rotation(default, set_rotation):Float = 0;
 
     public var scaleX(default, set_scaleX):Float = 1;
     public var scaleY(default, set_scaleY):Float = 1;
-    public var scaleZ(default, set_scaleZ):Float = 1;
 
     function set_x(v:Float)
     {
@@ -535,30 +528,9 @@ class Node2D
         return v;
     }
 
-    function set_z(v:Float)
+    function set_rotation(v:Float)
     {
-        z = z = v;
-        invalidateTransform = true;
-        return v;
-    }
-
-    function set_rotationX(v:Float)
-    {
-        rotationX = v;
-        invalidateTransform = true;
-        return v;
-    }
-
-    function set_rotationY(v:Float)
-    {
-        rotationY = v;
-        invalidateTransform = true;
-        return v;
-    }
-
-    function set_rotationZ(v:Float)
-    {
-        rotationZ = v;
+        rotation = v;
         invalidateTransform = true;
         return v;
     }
@@ -577,12 +549,6 @@ class Node2D
         return v;
     }
 
-    function set_scaleZ(v:Float)
-    {
-        scaleZ = v;
-        invalidateTransform = true;
-        return v;
-    }
 
     // color transform
 

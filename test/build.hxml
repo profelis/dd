@@ -2,7 +2,7 @@
 -swf-header 800:600:60:FFFFFF
 --flash-strict
 -swf-version 11.4
--main AtfTextureTest
+-main RadialParticleTest
 -lib format
 -lib msignal
 -cp src
@@ -16,5 +16,5 @@
 #-debug
 -D dd_stat
 #-D fdb
-#--no-inline
+--no-inline
 

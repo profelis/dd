@@ -1,5 +1,6 @@
 package deep.dd.material.gravityParticle2D;
 
+import flash.geom.Point;
 import deep.dd.display.SmartSprite2D;
 import deep.dd.particle.ParticleSystem2D;
 import deep.dd.utils.Frame;
@@ -37,7 +38,7 @@ class GravityParticle2DMaterial extends Material
     var texSize:Vector3D;
     var gravity:Vector3D;
 
-    public function drawParticleSystem(node:SmartSprite2D, camera:Camera2D, renderSize:UInt, gravity:Vector3D)
+    public function drawParticleSystem(node:SmartSprite2D, camera:Camera2D, renderSize:UInt, gravity:Point)
     {
         var tex = node.texture;
 
@@ -51,7 +52,8 @@ class GravityParticle2DMaterial extends Material
         texSize.x = tex.width;
         texSize.y = tex.height;
 
-        this.gravity.setTo(gravity.x / texSize.x, gravity.y / texSize.y, gravity.z);
+        this.gravity.x = gravity.x / texSize.x;
+        this.gravity.y = gravity.y / texSize.y;
 
         untyped shader.init({time:node.scene.time, mproj:camera.proj, mpos:node.drawTransform, gravity:this.gravity, region:tex.frame.region, texSize:texSize, pcTrans:node.worldColorTransform}, {tex:tex.texture});
 

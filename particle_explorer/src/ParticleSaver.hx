@@ -78,12 +78,8 @@ class ParticleSaver
 			endScale += 'min="' + Std.string(gravityPreset.endScale.min) + '" ';
 			endScale += 'max="' + Std.string(gravityPreset.endScale.max) + '" ';
 			
-			rotation += 'minX="' + Std.string(gravityPreset.startRotation.min.x) + '" ';
-			rotation += 'maxX="' + Std.string(gravityPreset.startRotation.max.x) + '" ';
-			rotation += 'minY="' + Std.string(gravityPreset.startRotation.min.y) + '" ';
-			rotation += 'maxY="' + Std.string(gravityPreset.startRotation.max.y) + '" ';
-			rotation += 'minZ="' + Std.string(gravityPreset.startRotation.min.z) + '" ';
-			rotation += 'maxZ="' + Std.string(gravityPreset.startRotation.max.z) + '" ';
+			rotation += 'minZ="' + Std.string(gravityPreset.startRotation.min) + '" ';
+			rotation += 'maxZ="' + Std.string(gravityPreset.startRotation.max) + '" ';
 			
 			var startPosition:String = '<startPosition ';
 			startPosition += 'minX="' + Std.string(gravityPreset.startPosition.min.x) + '" ';
@@ -108,7 +104,6 @@ class ParticleSaver
 			var gravity:String = '<gravity ';
 			gravity += 'x="' + Std.string(gravityPreset.gravity.x) + '" ';
 			gravity += 'y="' + Std.string(gravityPreset.gravity.y) + '" ';
-			gravity += 'z="' + Std.string(gravityPreset.gravity.z) + '" ';
 			gravity += '/>\n';
 			output += gravity;
 		}
@@ -140,12 +135,8 @@ class ParticleSaver
 			endScale += 'min="' + Std.string(radialPreset.endScale.min) + '" ';
 			endScale += 'max="' + Std.string(radialPreset.endScale.max) + '" ';
 			
-			rotation += 'minX="' + Std.string(radialPreset.startRotation.min.x) + '" ';
-			rotation += 'maxX="' + Std.string(radialPreset.startRotation.max.x) + '" ';
-			rotation += 'minY="' + Std.string(radialPreset.startRotation.min.y) + '" ';
-			rotation += 'maxY="' + Std.string(radialPreset.startRotation.max.y) + '" ';
-			rotation += 'minZ="' + Std.string(radialPreset.startRotation.min.z) + '" ';
-			rotation += 'maxZ="' + Std.string(radialPreset.startRotation.max.z) + '" ';
+			rotation += 'minZ="' + Std.string(radialPreset.startRotation.min) + '" ';
+			rotation += 'maxZ="' + Std.string(radialPreset.startRotation.max) + '" ';
 			
 			output += '<startAngle min="' + Std.string(radialPreset.startAngle.min) + '" max="' + Std.string(radialPreset.startAngle.max) + '"/>\n';
 			
