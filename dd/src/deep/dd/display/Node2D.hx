@@ -631,6 +631,7 @@ class Node2D
 		if (boundRect == null)	boundRect = new Rectangle();
 		if (numChildren == 0)	return getAABB(boundRect);
 		
+		boundRect.x = boundRect.y = boundRect.width = boundRect.height = 0;
 		for (c in children) 
 		{
 			_boundRect2.x = _boundRect2.y = _boundRect2.width = _boundRect2.height = 0;
