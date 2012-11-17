@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import flash.geom.Rectangle;
 import msignal.Signal.Signal1;
 import msignal.Signal.Signal2;
 import Reflect;
@@ -605,6 +606,80 @@ class Node2D
 
         return v;
     }
+	
+	private function getAABB(boundRect:Rectangle = null):Rectangle
+	{
+		if (boundRect == null)	boundRect = new Rectangle();
+		
+		var xMin:Float = 0;
+		var yMin:Float = 0;
+		var xMax:Float = _width;
+		var yMax:Float = _height;
+		
+		if (usePivot)
+		{
+			xMin = -pivot.x;
+			yMin = -pivot.y;
+			xMax += xMin;
+			yMax += yMin;
+		}
+		
+		if ((rotation % 360) == 0)	// simple calculation
+		{
+			boundRect.x = (xMin + x) * scaleX;
+			boundRect.y = (yMin + y) * scaleY;
+			boundRect.width = (xMax - xMin) * scaleX;
+			boundRect.height = (yMax - yMin) * scaleY;
+			return boundRect;
+		}
+		
+		var xMinCos:Float = xMin * cos * scaleX;
+		var xMinSin:Float = xMin * sin * scaleX;
+		var xMaxCos:Float = xMax * cos * scaleX;
+		var xMaxSin:Float = xMax * sin * scaleX;
+		
+		var yMinSin:Float = yMin * sin * scaleY;
+		var yMinCos:Float = yMin * cos * scaleY;
+		var yMaxSin:Float = yMax * sin * scaleY;
+		var yMaxCos:Float = yMax * cos * scaleY;
+		
+		var x1:Float = xMinCos - yMinSin;
+		var y1:Float = xMinSin + yMinCos;
+		
+		var x2:Float = xMaxCos - yMinSin;
+		var y2:Float = xMaxSin + yMinCos;
+		
+		var x3:Float = xMaxCos - yMaxSin;
+		var y3:Float = xMaxSin + yMaxCos;
+		
+		var x4:Float = xMinCos - yMaxSin;
+		var y4:Float = xMinSin + yMaxCos;
+		
+		var minX:Float = Math.min(Math.min(Math.min(x1, x2), x3), x4);
+		var minY:Float = Math.min(Math.min(Math.min(y1, y2), y3), y4);
+		
+		var maxX:Float = Math.max(Math.max(Math.max(x1, x2), x3), x4);
+		var maxY:Float = Math.max(Math.max(Math.max(y1, y2), y3), y4);
+		
+		boundRect.x = minX + x;
+		boundRect.y = minY + y;
+		boundRect.width = maxX - minX;
+		boundRect.height = maxY - minY;
+		
+		return boundRect;
+	}
+	
+	public function getBounds(boundRect:Rectangle = null):Rectangle
+	{
+		if (boundRect == null)	boundRect = new Rectangle();
+		if (numChildren == 0)	return getAABB(boundRect);
+		
+		for (c in children) 
+		{
+			boundRect = boundRect.add(c.getBounds());
+		}
+		return boundRect;
+	}
 
     public function toString()
     {
