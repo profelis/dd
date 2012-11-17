@@ -39,7 +39,7 @@ class BatchRender extends RenderBase
 
     override public function copy():RenderBase
     {
-        return new BatchRender();
+        return new BatchRender(BatchGeometry.createTexturedBatch(cast(geometry, BatchGeometry).size, geometry.width, geometry.height, geometry.offsetX, geometry.offsetY));
     }
 
     var mat:Batch2DMaterial;

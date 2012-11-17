@@ -42,6 +42,10 @@ class BatchGeometry extends Geometry
         g.resizable = false;
         g.triangles *= size;
 
+        g.size = size;
+
         return g;
     }
+
+    public var size(default, null):int;
 }

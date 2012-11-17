@@ -88,6 +88,9 @@ class SmartSprite2D extends Sprite2D
         if (render != null) render.updateStep();
     }
 
+    /**
+    * @private
+    **/
     public function nativeUpdateStep()
     {
         super.updateStep();

@@ -30,7 +30,7 @@ class SimpleRender extends RenderBase
 
     override public function drawStep(camera:Camera2D):Void
 	{
-		if (renderRoot && smartSprite.texture != null) material.draw(smartSprite, camera);
+		if (renderRoot) material.draw(smartSprite, camera);
 
         for (i in smartSprite.children) if (i.visible) i.drawStep(camera);
 	}
