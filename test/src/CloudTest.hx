@@ -2,7 +2,7 @@ package ;
 
 import deep.dd.display.render.SimpleRender;
 import deep.dd.display.render.CloudRender;
-import deep.dd.display.SmartSprite2D;
+import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.utils.Stats;
 import deep.dd.animation.Animator;
 import flash.geom.Vector3D;

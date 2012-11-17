@@ -1,12 +1,12 @@
 package;
 
-import deep.dd.particle.ParticleSystem2D;
-import deep.dd.particle.preset.GravityParticlePreset;
-import deep.dd.particle.preset.ParticlePresetBase;
-import deep.dd.particle.preset.RadialParticlePreset;
-import deep.dd.particle.render.ParticleRenderBase;
-import deep.dd.particle.render.GravityParticleRender;
-import deep.dd.particle.render.RadialParticleRender;
+import deep.dd.display.particle.ParticleSystem2D;
+import deep.dd.display.particle.preset.GravityParticlePreset;
+import deep.dd.display.particle.preset.ParticlePresetBase;
+import deep.dd.display.particle.preset.RadialParticlePreset;
+import deep.dd.display.particle.render.ParticleRenderBase;
+import deep.dd.display.particle.render.GravityParticleRender;
+import deep.dd.display.particle.render.RadialParticleRender;
 import deep.dd.utils.BlendMode;
 import flash.geom.Vector3D;
 import mt.m3d.Color;

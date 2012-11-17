@@ -4,7 +4,7 @@ import deep.dd.display.render.RenderBase;
 import deep.dd.display.render.BatchRender;
 import deep.dd.display.render.CloudRender;
 import deep.dd.display.render.SimpleRender;
-import deep.dd.display.SmartSprite2D;
+import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.utils.Stats;
 import deep.dd.display.Cloud2D;
 import deep.dd.animation.Animator;

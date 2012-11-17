@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import deep.dd.display.smart.SmartSprite2D;
 import flash.geom.Point;
 import deep.dd.utils.FastHaxe;
 import deep.dd.texture.Texture2D;

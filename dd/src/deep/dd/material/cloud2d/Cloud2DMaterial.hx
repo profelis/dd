@@ -1,6 +1,6 @@
 package deep.dd.material.cloud2d;
 
-import deep.dd.display.SmartSprite2D;
+import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.display.DisplayNode2D;
 import deep.dd.texture.Texture2D;
 import deep.dd.material.Material;

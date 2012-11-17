@@ -1,6 +1,6 @@
 package deep.dd.particle.render;
 
-import deep.dd.display.SmartSprite2D;
+import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.display.render.RenderBase;
 import deep.dd.particle.preset.ParticlePresetBase;

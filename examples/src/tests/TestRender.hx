@@ -1,9 +1,9 @@
 package tests;
 
-import deep.dd.display.render.CloudRender;
-import deep.dd.display.render.RenderBase;
-import deep.dd.display.render.BatchRender;
-import deep.dd.display.render.SimpleRender;
+import deep.dd.display.smart.render.CloudRender;
+import deep.dd.display.smart.render.RenderBase;
+import deep.dd.display.smart.render.BatchRender;
+import deep.dd.display.smart.render.SimpleRender;
 import deep.dd.display.SmartSprite2D;
 import com.bit101.components.Label;
 import com.bit101.components.RadioButton;

@@ -1,32 +1,32 @@
 
 package deep.dd.particle.render;
 
-import deep.dd.geometry.CloudGeometry;
 import deep.dd.particle.render.ParticleRenderBase;
-import deep.dd.material.gravityParticle2D.GravityParticle2DMaterial;
-import deep.dd.particle.preset.GravityParticlePreset;
+import deep.dd.particle.preset.RadialParticlePreset;
 import flash.geom.Matrix3D;
-import deep.dd.display.SmartSprite2D;
+import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.utils.FastHaxe;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.render.RenderBase;
+import deep.dd.geometry.CloudGeometry;
 import deep.dd.geometry.Geometry;
+import deep.dd.material.radialParticle2D.RadialParticle2DMaterial;
 import deep.dd.particle.preset.ParticlePresetBase;
 import deep.dd.particle.preset.ParticlePresetBase.Bounds;
 import mt.m3d.Color;
 import flash.geom.Vector3D;
 
-class GravityParticleRenderBuilder
+class RadialParticleRenderBuilder
 {
-    static public function gpuRender(preset:GravityParticlePreset)
+    static public function gpuRender(preset:RadialParticlePreset)
     {
-        return new GPUGravityParticleRender(preset);
+        return new GPURadialParticleRender(preset);
     }
 
-    static public function cpuCloudRender(preset:GravityParticlePreset, startSize:UInt = 20, incSize:UInt = 20)
+    static public function cpuCloudRender(preset:RadialParticlePreset, startSize:UInt = 20, incSize:UInt = 20)
     {
-        return new GravityParticleRender(
+        return new RadialParticleRender(
             preset,
             new deep.dd.display.render.CloudRender(
                 startSize,
@@ -36,9 +36,9 @@ class GravityParticleRenderBuilder
         );
     }
 
-    static public function cpuBatchRender(preset:GravityParticlePreset)
+    static public function cpuBatchRender(preset:RadialParticlePreset)
     {
-        return new GravityParticleRender(
+        return new RadialParticleRender(
             preset,
             new deep.dd.display.render.BatchRender(
                 deep.dd.geometry.BatchGeometry.createTexturedBatch(deep.dd.display.render.BatchRender.MAX_SIZE, 1, 1, -0.5, -0.5)
@@ -47,30 +47,32 @@ class GravityParticleRenderBuilder
     }
 }
 
-class GravityParticleRender extends CPUParticleRenderBase
+//------------------
+
+class RadialParticleRender extends CPUParticleRenderBase
 {
-    public function new(preset:GravityParticlePreset, render:RenderBase)
+    public function new(preset:RadialParticlePreset, render:RenderBase)
     {
-        particles = new flash.Vector<GravityParticle>();
+        particles = new flash.Vector<RadialParticle>();
 
         super(preset, render);
     }
 
-    var gravityPreset:GravityParticlePreset;
+    var radialPreset:RadialParticlePreset;
 
-    var particles:flash.Vector<GravityParticle>;
+    var particles:flash.Vector<RadialParticle>;
 
     override function set_preset(p:ParticlePresetBase):ParticlePresetBase
     {
         #if debug
-        if (!FastHaxe.is(p, GravityParticlePreset)) throw "preset must be GravityParticlePreset";
+        if (!FastHaxe.is(p, RadialParticlePreset)) throw "preset must be RadialParticlePreset";
         #end
 
-        gravityPreset = flash.Lib.as(p, GravityParticlePreset);
-        super.set_preset(gravityPreset);
+        radialPreset = flash.Lib.as(p, RadialParticlePreset);
+        super.set_preset(radialPreset);
 
         particles.fixed = false;
-        particles.length = gravityPreset.particleNum;
+        particles.length = radialPreset.particleNum;
         particles.fixed = true;
 
         return p;
@@ -82,18 +84,18 @@ class GravityParticleRender extends CPUParticleRenderBase
     {
         var time = smartSprite.scene.time;
 
-        if (size < gravityPreset.particleNum)
+        if (size < radialPreset.particleNum)
         {
-            if (size == 0 || (time - lastSpawn) > gravityPreset.spawnStep)
+            if (size == 0 || (time - lastSpawn) > radialPreset.spawnStep)
             {
-                var spawn = Std.int(Math.min(gravityPreset.particleNum - size, gravityPreset.spawnNum));
+                var spawn = Std.int(Math.min(radialPreset.particleNum - size, radialPreset.spawnNum));
 
                 var texture = smartSprite.texture;
 
                 for (i in 0...spawn)
                 {
                     var idx = size + i;
-                    var p:GravityParticle = gravityPreset.createParticle();
+                    var p:RadialParticle = radialPreset.createParticle();
                     p.startTime = time;
                     particles[idx] = p;
 
@@ -111,18 +113,19 @@ class GravityParticleRender extends CPUParticleRenderBase
             }
         }
 
-        var gravity = gravityPreset.gravity;
         for (i in 0...size)
         {
-            var p:GravityParticle = particles[i];
+            var p:RadialParticle = particles[i];
             var s:Sprite2D = sprites[i];
 
             var k = (time - p.startTime) / p.life;
             k -= Std.int(k);
             var t = k * p.life;
 
-            s.x = p.x + (p.vx + (gravity.x * t)) * t;
-            s.y = p.y + (p.vy + (gravity.y * t)) * t;
+            var a = p.angle + p.angleSpeed * t;
+            var r = p.radius + p.dRadius * k;
+            s.x = r * Math.cos(a);
+            s.y = r * Math.sin(a);
 
             var scale = p.scale + p.dScale * k;
             s.scaleX = scale;
@@ -146,31 +149,31 @@ class GravityParticleRender extends CPUParticleRenderBase
 
     override public function copy():RenderBase
     {
-        return new GravityParticleRender(gravityPreset, render.copy());
+        return new RadialParticleRender(radialPreset, render.copy());
     }
 
     override public function dispose(deep = true)
     {
         super.dispose(deep);
 
-        gravityPreset = null;
+        radialPreset = null;
         particles = null;
     }
 }
 
 //---------------
 
-class GPUGravityParticleRender extends ParticleRenderBase
+class GPURadialParticleRender extends ParticleRenderBase
 {
 	inline static public var PER_VERTEX:UInt = 20;
 
-	public function new(preset:GravityParticlePreset)
+	public function new(preset:RadialParticlePreset)
 	{
-        geometry = gravityGeometry = CloudGeometry.createTexturedCloud(1, PER_VERTEX, 1, 1, -0.5, -0.5);
+        geometry = radialGeometry = CloudGeometry.createTexturedCloud(1, PER_VERTEX, 1, 1, -0.5, -0.5);
 
-        super(gravityPreset = preset);
+        super(radialPreset = preset);
 
-		material = gravityMaterial = new GravityParticle2DMaterial();
+		material = radialMaterial = new RadialParticle2DMaterial();
 
 		var g = Geometry.createTextured(1, 1, 1, 1, -0.5, -0.5);
 		poly = g.poly;
@@ -178,9 +181,9 @@ class GPUGravityParticleRender extends ParticleRenderBase
 
 	var poly:Poly2D;
 
-	var gravityGeometry:CloudGeometry;
-	var gravityMaterial:GravityParticle2DMaterial;
-	var gravityPreset:GravityParticlePreset;
+	var radialGeometry:CloudGeometry;
+	var radialMaterial:RadialParticle2DMaterial;
+	var radialPreset:RadialParticlePreset;
 
 	var size:UInt = 0;
 	var lastSpawn:Float = 0;
@@ -188,35 +191,35 @@ class GPUGravityParticleRender extends ParticleRenderBase
     override function set_preset(p:ParticlePresetBase):ParticlePresetBase
     {
         #if debug
-        if (!FastHaxe.is(p, GravityParticlePreset)) throw "preset must be GravityParticlePreset";
+        if (!FastHaxe.is(p, RadialParticlePreset)) throw "preset must be RadialParticlePreset";
         #end
 
-        gravityPreset = flash.Lib.as(p, GravityParticlePreset);
-        super.set_preset(gravityPreset);
+        radialPreset = flash.Lib.as(p, RadialParticlePreset);
+        super.set_preset(radialPreset);
         size = 0;//size < p.particleNum ? size : p.particleNum;
         lastSpawn = 0;
 
-        gravityGeometry.resizeCloud(preset.particleNum);
+        radialGeometry.resizeCloud(preset.particleNum);
 
         return p;
     }
 
-    override public function drawStep(camera:Camera2D):Void
+	override public function drawStep(camera:Camera2D):Void
 	{
 		#if debug
 		if (smartSprite.texture == null)
         {
-            trace("GPUGravityParticleRender reqired texture.");
+            trace("GPURadialParticleRender reqired texture.");
         }
         #end
 
 
-		if (size < gravityPreset.particleNum)
+		if (size < radialPreset.particleNum)
 		{
             var time = smartSprite.scene.time;
-            if (size == 0 || (time - lastSpawn) > gravityPreset.spawnStep)
+            if (size == 0 || (time - lastSpawn) > radialPreset.spawnStep)
             {
-                var spawn = Std.int(Math.min(gravityPreset.particleNum - size, gravityPreset.spawnNum));
+                var spawn = Std.int(Math.min(radialPreset.particleNum - size, radialPreset.spawnNum));
 
                 for (i in 0...spawn)
                 {
@@ -224,24 +227,24 @@ class GPUGravityParticleRender extends ParticleRenderBase
                 }
                 size += spawn;
 
-                gravityGeometry.uploadVBuf();
+                radialGeometry.uploadVBuf();
                 lastSpawn = time;
             }
 		}
 
-		gravityMaterial.drawParticleSystem(smartSprite, camera, size, gravityPreset.gravity);
+		radialMaterial.drawParticleSystem(smartSprite, camera, size);
 
 		for (i in smartSprite.children) if (i.visible) i.drawStep(camera);
 	}
 
 	inline function fillBuffer(time, pos:Int)
 	{
-		var p = gravityPreset.createParticle();
+		var p = radialPreset.createParticle();
 		p.startTime = time;
         var m = new Matrix3D();
         m.appendRotation(p.startRotation, Vector3D.Z_AXIS);
 
-		var buf = gravityGeometry.rawVBuf;
+		var buf = radialGeometry.rawVBuf;
 
 		var i = pos * PER_VERTEX * 4;
 		for (idx in 0...4)
@@ -255,11 +258,13 @@ class GPUGravityParticleRender extends ParticleRenderBase
 			buf[i++] = uv.u;
 			buf[i++] = uv.v;
 
-			buf[i++] = p.x;
-			buf[i++] = p.y;
+			buf[i++] = p.scale;
+			buf[i++] = p.dScale;
 
-			buf[i++] = p.vx;
-			buf[i++] = p.vy;
+			buf[i++] = p.angle;
+			buf[i++] = p.angleSpeed;
+			buf[i++] = p.radius;
+			buf[i++] = p.dRadius;
 
 			buf[i++] = p.r;
 			buf[i++] = p.g;
@@ -271,9 +276,6 @@ class GPUGravityParticleRender extends ParticleRenderBase
 			buf[i++] = p.db;
 			buf[i++] = p.da;
 
-			buf[i++] = p.scale;
-			buf[i++] = p.dScale;
-
 			buf[i++] = p.startTime;
 			buf[i++] = p.life;
 		}
@@ -281,7 +283,7 @@ class GPUGravityParticleRender extends ParticleRenderBase
 
 	override function copy():RenderBase
 	{
-		return new GPUGravityParticleRender(gravityPreset);
+		return new GPURadialParticleRender(radialPreset);
 	}
 
     override public function dispose(deep = true)
@@ -290,8 +292,8 @@ class GPUGravityParticleRender extends ParticleRenderBase
         poly.dispose();
         poly = null;
 
-        gravityGeometry = null;
-        gravityMaterial = null;
-        gravityPreset = null;
+        radialGeometry = null;
+        radialMaterial = null;
+        radialPreset = null;
     }
 }

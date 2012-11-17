@@ -3,7 +3,7 @@ package deep.dd.display.render;
 import mt.m3d.UV;
 import mt.m3d.Color;
 import mt.m3d.Vector;
-import deep.dd.display.SmartSprite2D;
+import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;

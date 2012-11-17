@@ -6,7 +6,7 @@ import deep.dd.particle.preset.ParticlePresetBase;
 import deep.dd.particle.preset.ParticlePresetBase.Bounds;
 import deep.dd.particle.preset.RadialParticlePreset;
 import deep.dd.particle.ParticleSystem2D;
-import deep.dd.display.SmartSprite2D;
+import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.utils.Stats;
 import deep.dd.animation.Animator;
 import flash.geom.Vector3D;

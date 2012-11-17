@@ -1,4 +1,4 @@
-package deep.dd.display;
+package deep.dd.display.smart;
 
 import deep.dd.display.render.RenderBase;
 import deep.dd.texture.atlas.AtlasTexture2D;

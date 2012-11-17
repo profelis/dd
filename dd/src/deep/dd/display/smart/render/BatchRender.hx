@@ -5,7 +5,7 @@ import flash.Vector;
 import flash.geom.Vector3D;
 import flash.geom.Matrix3D;
 import deep.dd.material.batch2d.Batch2DMaterial;
-import deep.dd.display.SmartSprite2D;
+import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;

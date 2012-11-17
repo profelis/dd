@@ -1,6 +1,6 @@
 package deep.dd.display.render;
 
-import deep.dd.display.SmartSprite2D;
+import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.camera.Camera2D;
 import deep.dd.geometry.Geometry;
 import deep.dd.material.Material;

@@ -1,11 +1,11 @@
 package tests;
 import deep.dd.display.Sprite2D;
 import flash.geom.Vector3D;
-import deep.dd.display.render.BatchRender;
+import deep.dd.display.smart.render.BatchRender;
 import mt.m3d.Color;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.BitmapFont2D;
-import deep.dd.display.render.CloudRender;
+import deep.dd.display.smart.render.CloudRender;
 import deep.dd.texture.atlas.FontAtlasTexture2D;
 import deep.dd.texture.atlas.parser.AngelCodeFontParser;
 import deep.dd.texture.atlas.parser.FontSheetParser;
