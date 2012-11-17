@@ -24,9 +24,6 @@ class DisplayNode2D extends Node2D
     */
     public var _height:Float = 0;
 
-    public var width(get_width, set_width):Float;
-    public var height(get_height, set_height):Float;
-
     public function new(material:Material = null)
     {
         super();
@@ -116,24 +113,24 @@ class DisplayNode2D extends Node2D
         return m;
     }
 
-    function get_width():Float
+    override function get_width():Float
     {
         return _width * scaleX;
     }
 
-    function set_width(v:Float):Float
+    override function set_width(v:Float):Float
     {
         if (_width == 0) _width = v;
         else scaleX = v / _width;
         return v;
     }
 
-    function get_height():Float
+    override function get_height():Float
     {
         return _height * scaleY;
     }
 
-    function set_height(v:Float):Float
+    override function set_height(v:Float):Float
     {
         if (_height == 0) _height = v;
         else scaleY = v / _height;
@@ -178,7 +175,11 @@ class DisplayNode2D extends Node2D
 			
 			return boundRect;
 		}
-		
+
+        var rads = this.rotation * Math.PI / 180;
+        var cos = Math.cos(rads);
+        var sin = Math.sin(rads);
+
 		var xMinCos:Float = xMin * cos;
 		var xMinSin:Float = xMin * sin;
 		var xMaxCos:Float = xMax * cos;

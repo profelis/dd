@@ -47,5 +47,5 @@ class BatchGeometry extends Geometry
         return g;
     }
 
-    public var size(default, null):int;
+    public var size(default, null):Int;
 }

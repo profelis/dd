@@ -637,19 +637,41 @@ class Node2D
 		return boundRect;
 	}
 	
-	public var width(get_width, null):Float;
+	public var width(get_width, set_width):Float;
 	
 	private function get_width():Float
 	{
 		return getBounds(_boundRect).width;
 	}
+
+    function set_width(v:Float):Float
+    {
+        var w = width;
+        if (w != 0)
+        {
+            scaleX = v / w;
+            return v;
+        }
+        return 0;
+    }
 	
-	public var height(get_height, null):Float;
+	public var height(get_height, set_height):Float;
 	
 	private function get_height():Float
 	{
 		return getBounds(_boundRect).height;
 	}
+
+    function set_height(v:Float):Float
+    {
+        var h = height;
+        if (h != 0)
+        {
+            scaleX = v / h;
+            return v;
+        }
+        return 0;
+    }
 
     public function toString()
     {
