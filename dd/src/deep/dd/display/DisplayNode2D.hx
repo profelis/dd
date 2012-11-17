@@ -14,6 +14,15 @@ class DisplayNode2D extends Node2D
 
     public var material(default, set_material):Material;
 
+    /**
+    * @private
+    */
+    public var _width:Float;
+    /**
+    * @private
+    */
+    public var _height:Float;
+
     public var width(get_width, set_width):Float;
     public var height(get_height, set_height):Float;
 
@@ -46,6 +55,11 @@ class DisplayNode2D extends Node2D
             material.dispose();
             Reflect.setField(this, "material", null);
         }
+    }
+
+    override function checkMouseOver(p:Vector3D)
+    {
+        mouseOver = p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height;
     }
 
     override public function init(ctx:Context3D):Void

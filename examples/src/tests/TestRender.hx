@@ -4,7 +4,7 @@ import deep.dd.display.smart.render.CloudRender;
 import deep.dd.display.smart.render.RenderBase;
 import deep.dd.display.smart.render.BatchRender;
 import deep.dd.display.smart.render.SimpleRender;
-import deep.dd.display.SmartSprite2D;
+import deep.dd.display.smart.SmartSprite2D;
 import com.bit101.components.Label;
 import com.bit101.components.RadioButton;
 import com.bit101.components.VBox;

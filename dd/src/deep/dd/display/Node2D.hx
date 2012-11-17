@@ -28,15 +28,6 @@ class Node2D
 
     public var extra:Dynamic;
 
-    /**
-    * @private
-    */
-    public var _width:Float;
-    /**
-    * @private
-    */
-    public var _height:Float;
-
     public var transform(get_transform, null):Matrix3D;
     /**
     * @private
@@ -62,11 +53,8 @@ class Node2D
 
     function set_visible(v)
     {
-        if (visible != v)
-        {
-            visible = v;
-            if (Reflect.hasField(this, "onVisibleChange")) onVisibleChange.dispatch(this);
-        }
+        visible = v;
+        if (Reflect.hasField(this, "onVisibleChange")) onVisibleChange.dispatch(this);
         return visible;
     }
 
@@ -81,6 +69,7 @@ class Node2D
     var ctx:Context3D;
 
     public var mouseEnabled:Bool = false;
+    public var mouseChildren:Bool = true;
     public var mouseX(default, null):Float;
     public var mouseY(default, null):Float;
 
@@ -378,16 +367,17 @@ class Node2D
         res = mouseOver ? this : null;
 
 
-        for (i in children)
-        {
-            if (i.mouseEnabled)
+        if (children != null)
+            for (i in children)
             {
-                var subRes = i.mouseStep(pos, camera, md);
-                if (subRes != null) res = subRes;
+                if (i.mouseChildren)
+                {
+                    var subRes = i.mouseStep(pos, camera, md);
+                    if (subRes != null) res = subRes;
+                }
             }
-        }
 
-        if (onMouseDown == null) res = null; // destrucred test
+        if (onTransformChange == null) res = null; // destrucred test
         mouseOver = mouseOver || res != null;
 
         if (mouseOver)
@@ -436,13 +426,11 @@ class Node2D
 
     function checkMouseOver(p:Vector3D)
     {
-        mouseOver = p.x >= 0 && p.x <= _width && p.y >= 0 && p.y <= _height;
+        mouseOver = false;
     }
 
     public function updateStep()
     {
-        if (invalidateColorTransform) updateWorldColor();
-
         for (i in children) if (i.visible) i.updateStep();
     }
 

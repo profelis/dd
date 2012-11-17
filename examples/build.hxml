@@ -1,3 +1,9 @@
+# IDEA FIX
+-cmd cd /Users/deep/Documents/dev/dd/examples
+
+--next
+# IDEA FIX
+
 -swf9 bin/dd_examples.swf
 -swf-header 800:600:60:FFFFFF
 --flash-strict
@@ -14,6 +20,6 @@
 --no-traces
 
 #-D shaderDebug
-#-debug
---no-inline
+-debug
+#--no-inline
 #-D fdb

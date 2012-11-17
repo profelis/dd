@@ -1,6 +1,7 @@
 package deep.dd.display.smart;
 
-import deep.dd.display.render.RenderBase;
+import deep.dd.display.smart.render.RenderBase;
+import deep.dd.display.Sprite2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.utils.Frame;
 import deep.dd.material.Material;
@@ -17,10 +18,10 @@ class Batch2D extends SmartSprite2D
 {
     public function new()
     {
-        super(batchRender = new deep.dd.display.render.BatchRender());
+        super(batchRender = new deep.dd.display.smart.render.BatchRender());
     }
 
-    public var batchRender(default, null):deep.dd.display.render.BatchRender;
+    public var batchRender(default, null):deep.dd.display.smart.render.BatchRender;
 }
 
 class Cloud2D extends SmartSprite2D
@@ -28,10 +29,10 @@ class Cloud2D extends SmartSprite2D
 
     public function new(startSize:UInt = 20, incSize:UInt = 20)
     {
-        super(cloudRender = new deep.dd.display.render.CloudRender(startSize, incSize));
+        super(cloudRender = new deep.dd.display.smart.render.CloudRender(startSize, incSize));
     }
 
-    public var cloudRender(default, null):deep.dd.display.render.CloudRender;
+    public var cloudRender(default, null):deep.dd.display.smart.render.CloudRender;
 
 }
 

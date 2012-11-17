@@ -1,7 +1,5 @@
 package deep.dd.geometry;
 
-import deep.dd.display.render.CloudRender;
-
 class CloudGeometry extends Geometry
 {
     static public function createTexturedCloud(size:UInt, perVertex:UInt, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):CloudGeometry

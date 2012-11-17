@@ -1,4 +1,4 @@
-package deep.dd.display.render;
+package deep.dd.display.smart.render;
 
 import mt.m3d.UV;
 import mt.m3d.Color;

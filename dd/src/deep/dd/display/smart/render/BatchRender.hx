@@ -1,4 +1,4 @@
-package deep.dd.display.render;
+package deep.dd.display.smart.render;
 
 import haxe.Timer;
 import flash.Vector;
