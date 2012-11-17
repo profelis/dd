@@ -63,6 +63,8 @@ class Geometry
 
     public function update():Void
     {
+        if (ctx == null) return;
+
         poly.alloc(ctx);
         ibuf = poly.ibuf;
         vbuf = poly.vbuf;

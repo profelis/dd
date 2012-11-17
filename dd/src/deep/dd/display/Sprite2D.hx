@@ -45,6 +45,9 @@ class Sprite2D extends DisplayNode2D
     * @private
     */
     public var invalidateDrawTransform:Bool;
+    /**
+    * @private
+    */
     public var drawTransform(default, null):Matrix3D;
 
     public var texture(default, set_texture):Texture2D;

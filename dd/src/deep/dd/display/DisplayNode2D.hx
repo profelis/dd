@@ -10,18 +10,18 @@ import mt.m3d.Polygon;
 
 class DisplayNode2D extends Node2D
 {
-    public var geometry(default, set_geometry):Geometry;
+    public var geometry(get_geometry, set_geometry):Geometry;
 
     public var material(default, set_material):Material;
 
     /**
     * @private
     */
-    public var _width:Float;
+    public var _width:Float = 0;
     /**
     * @private
     */
-    public var _height:Float;
+    public var _height:Float = 0;
 
     public var width(get_width, set_width):Float;
     public var height(get_height, set_height):Float;
@@ -59,7 +59,12 @@ class DisplayNode2D extends Node2D
 
     override function checkMouseOver(p:Vector3D)
     {
-        mouseOver = p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height;
+        var g = geometry;
+
+        if (g == null || g.standart)
+            mouseOver = p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height;
+        else
+            mouseOver = p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height; // TODO: check geometry offset
     }
 
     override public function init(ctx:Context3D):Void
@@ -72,28 +77,26 @@ class DisplayNode2D extends Node2D
         super.init(ctx);
     }
 
-    override public function updateStep()
-    {
-        if (geometry != null && geometry.needUpdate) geometry.update();
-
-        super.updateStep();
-    }
-
     override public function drawStep(camera:Camera2D):Void
     {
         if (material != null) material.draw(this, camera);
 
         super.drawStep(camera);
     }
+
+    function get_geometry():Geometry
+    {
+        if (geometry != null && geometry.needUpdate) geometry.update();
+
+        return geometry;
+    }
 	
     function set_geometry(g:Geometry):Geometry
     {
-        if (g == geometry) return geometry;
-
         geometry = g;
-        if (geometry != null && ctx != null) geometry.init(ctx);
+        if (g != null && ctx != null) g.init(ctx);
 
-        return geometry;
+        return g;
     }
 
     function set_material(m:Material):Material
@@ -119,7 +122,8 @@ class DisplayNode2D extends Node2D
 
     function set_width(v:Float):Float
     {
-        scaleX = v / _width;
+        if (_width == 0) _width = v;
+        else scaleX = v / _width;
         return v;
     }
 
@@ -130,7 +134,8 @@ class DisplayNode2D extends Node2D
 
     function set_height(v:Float):Float
     {
-        scaleY = v / _height;
+        if (_height == 0) _height = v;
+        else scaleY = v / _height;
         return v;
     }
 

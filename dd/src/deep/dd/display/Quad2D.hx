@@ -18,35 +18,27 @@ class Quad2D extends DisplayNode2D
 
     function set_color(v)
     {
-        if (color != v)
-        {
-            color = v;
-            needUpdateColor = true;
-        }
+        color = v;
+        needUpdateColor = true;
         return color;
     }
 
-    override public function updateStep()
+    override function get_geometry():Geometry
     {
-        if (needUpdateColor) update();
+        if (needUpdateColor && geometry != null)
+        {
+            geometry.setColor(0xFF << 24 | color);
 
-        super.updateStep();
-    }
-
-    public function update():Void
-    {
-        if (geometry != null) geometry.setColor(0xFF << 24 | color);
-
-        needUpdateColor = false;
+            needUpdateColor = false;
+        }
+        return super.get_geometry();
     }
 
     override function set_geometry(g:Geometry)
     {
-        if (g == geometry) return geometry;
-
         super.set_geometry(g);
-        if (geometry != null) needUpdateColor = true;
+        if (g != null) needUpdateColor = true;
 
-        return geometry;
+        return g;
     }
 }
