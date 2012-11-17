@@ -117,6 +117,12 @@ class Node2D
     static var uid:Int = 0;
 
     public var name:String;
+	
+	/**
+	 * Helpers for bound calculations
+	 */
+	private var _boundRect:Rectangle;
+	private var _boundRect2:Rectangle;
 
     public function new()
     {
@@ -138,6 +144,9 @@ class Node2D
         colorTransform = null;
 
         name = "node_" + uid++;
+		
+		_boundRect = new Rectangle();
+		_boundRect2 = new Rectangle();
     }
 
     public function dispose():Void
@@ -206,6 +215,9 @@ class Node2D
 
         Reflect.setField(this, "pivot", null);
         Reflect.setField(this, "colorTransform", null);
+		
+		_boundRect = null;
+		_boundRect2 = null;
     }
 
     public function init(ctx:Context3D):Void
@@ -626,22 +638,51 @@ class Node2D
 		
 		if ((rotation % 360) == 0)	// simple calculation
 		{
-			boundRect.x = (xMin + x) * scaleX;
-			boundRect.y = (yMin + y) * scaleY;
-			boundRect.width = (xMax - xMin) * scaleX;
-			boundRect.height = (yMax - yMin) * scaleY;
+			boundRect.x = (xMin + x);
+			boundRect.y = (yMin + y);
+			boundRect.width = (xMax - xMin);
+			boundRect.height = (yMax - yMin);
+			
+			if (scaleX != 1)
+			{
+				boundRect.x *= scaleX;
+				boundRect.width *= scaleX;
+			}
+			
+			if (scaleY != 1)
+			{
+				boundRect.y *= scaleY;
+				boundRect.height *= scaleY;
+			}
+			
 			return boundRect;
 		}
 		
-		var xMinCos:Float = xMin * cos * scaleX;
-		var xMinSin:Float = xMin * sin * scaleX;
-		var xMaxCos:Float = xMax * cos * scaleX;
-		var xMaxSin:Float = xMax * sin * scaleX;
+		var xMinCos:Float = xMin * cos;
+		var xMinSin:Float = xMin * sin;
+		var xMaxCos:Float = xMax * cos;
+		var xMaxSin:Float = xMax * sin;
 		
-		var yMinSin:Float = yMin * sin * scaleY;
-		var yMinCos:Float = yMin * cos * scaleY;
-		var yMaxSin:Float = yMax * sin * scaleY;
-		var yMaxCos:Float = yMax * cos * scaleY;
+		if (scaleX != 1)
+		{
+			xMinCos *= scaleX;
+			xMinSin *= scaleX;
+			xMaxCos *= scaleX;
+			xMaxSin *= scaleX;
+		}
+		
+		var yMinSin:Float = yMin * sin;
+		var yMinCos:Float = yMin * cos;
+		var yMaxSin:Float = yMax * sin;
+		var yMaxCos:Float = yMax * cos;
+		
+		if (scaleY != 1)
+		{
+			yMinSin *= scaleY;
+			yMinCos *= scaleY;
+			yMaxSin *= scaleY;
+			yMaxCos *= scaleY;
+		}
 		
 		var x1:Float = xMinCos - yMinSin;
 		var y1:Float = xMinSin + yMinCos;
@@ -655,11 +696,38 @@ class Node2D
 		var x4:Float = xMinCos - yMaxSin;
 		var y4:Float = xMinSin + yMaxCos;
 		
-		var minX:Float = Math.min(Math.min(Math.min(x1, x2), x3), x4);
-		var minY:Float = Math.min(Math.min(Math.min(y1, y2), y3), y4);
+		var mx1:Float = 0;
+		var Mx1:Float = 0;
+		var my1:Float = 0;
+		var My1:Float = 0;
 		
-		var maxX:Float = Math.max(Math.max(Math.max(x1, x2), x3), x4);
-		var maxY:Float = Math.max(Math.max(Math.max(y1, y2), y3), y4);
+		if (x2 >= x1)
+		{
+			mx1 = x1;
+			Mx1 = x2;
+		}
+		else
+		{
+			mx1 = x2;
+			Mx1 = x1;
+		}
+		
+		if (y2 >= y1)
+		{
+			my1 = y1;
+			My1 = y2;
+		}
+		else
+		{
+			my1 = y2;
+			My1 = y1;
+		}
+		
+		var minX:Float = Math.min(Math.min(mx1, x3), x4);
+		var minY:Float = Math.min(Math.min(my1, y3), y4);
+		
+		var maxX:Float = Math.max(Math.max(Mx1, x3), x4);
+		var maxY:Float = Math.max(Math.max(My1, y3), y4);
 		
 		boundRect.x = minX + x;
 		boundRect.y = minY + y;
@@ -676,9 +744,33 @@ class Node2D
 		
 		for (c in children) 
 		{
-			boundRect = boundRect.add(c.getBounds());
+			_boundRect2.x = _boundRect2.y = _boundRect2.width = _boundRect2.height = 0;
+			_boundRect2 = c.getBounds(_boundRect2);
+			
+			var x0:Float = (boundRect.x > _boundRect2.x) ? _boundRect2.x : boundRect.x;
+			var x1:Float = (boundRect.right < _boundRect2.right) ? _boundRect2.right : boundRect.right;
+			var y0:Float = (boundRect.y > _boundRect2.y) ? _boundRect2.y : boundRect.y;
+			var y1:Float = (boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : boundRect.bottom;
+			boundRect.x = x0;
+			boundRect.y = y0;
+			boundRect.width = x1 - x0;
+			boundRect.height = y1 - y0;
 		}
 		return boundRect;
+	}
+	
+	public var width(get_width, null):Float;
+	
+	private function get_width():Float
+	{
+		return getBounds(_boundRect).width;
+	}
+	
+	public var height(get_height, null):Float;
+	
+	private function get_height():Float
+	{
+		return getBounds(_boundRect).height;
 	}
 
     public function toString()
