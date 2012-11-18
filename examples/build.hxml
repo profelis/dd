@@ -1,7 +1,3 @@
--cmd cd /Users/deep/Documents/dev/dd/examples
-
---next
-
 -swf9 bin/dd_examples.swf
 -swf-header 800:600:60:FFFFFF
 --flash-strict
@@ -15,9 +11,9 @@
 --remap nme:flash
 -D dd_stat
 
---no-traces
+#--no-traces
 
 #-D shaderDebug
 -debug
-#--no-inline
+--no-inline
 -D fdb

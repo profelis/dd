@@ -20,6 +20,7 @@ import flash.Lib;
 import flash.text.TextField;
 import flash.ui.Keyboard;
 import tests.TestQuad;
+import tests.TestBounds;
 import tests.Test;
 
 class Main extends Sprite
@@ -57,7 +58,7 @@ class Main extends Sprite
 
 
 
-		scenes = [TestQuad, BitmapFontTest, TextFieldTest, TestRender];
+		scenes = [TestBounds, TestQuad, BitmapFontTest, TextFieldTest, TestRender];
 
 
 
