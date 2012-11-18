@@ -36,10 +36,12 @@ class Node2D
     public var invalidateTransform:Bool = true;
 
     public var worldTransform(get_worldTransform, null):Matrix3D;
+    public var invertWorldTransform(get_invertWorldTransform, null):Matrix3D;
     /**
     * @private
     */
     public var invalidateWorldTransform:Bool = true;
+    public var invalidateInvertWorldTransform:Bool = true;
 
     public var colorTransform(default, set_colorTransform):Color;
     public var worldColorTransform(get_worldColorTransform, null):Vector3D;
@@ -129,6 +131,7 @@ class Node2D
 
         worldColorTransform = new Vector3D();
         worldTransform = new Matrix3D();
+        invertWorldTransform = new Matrix3D();
 
         colorTransform = null;
 
@@ -247,6 +250,7 @@ class Node2D
     function onParentTransformChange()
     {
         invalidateWorldTransform = true;
+        invalidateInvertWorldTransform = true;
         onWorldTransformChange.dispatch();
     }
 
@@ -334,7 +338,6 @@ class Node2D
         if (!childrenUtils.remove(c)) throw "c must be child";
         numChildren = childrenUtils.length;
 
-        c.invalidateWorldTransform = true;
         c.parent = null;
         c.setParent(null);
         c.setScene(null);
@@ -464,6 +467,18 @@ class Node2D
             invalidateWorldTransform = false;
         }
         return worldTransform;
+    }
+
+    function get_invertWorldTransform():Matrix3D
+    {
+        if (invalidateTransform || invalidateWorldTransform || invalidateInvertWorldTransform)
+        {
+            invertWorldTransform.rawData = worldTransform.rawData;
+            invertWorldTransform.invert();
+
+            invalidateInvertWorldTransform = false;
+        }
+        return invertWorldTransform;
     }
 
     // transform
