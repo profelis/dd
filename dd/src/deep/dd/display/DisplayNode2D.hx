@@ -150,12 +150,12 @@ class DisplayNode2D extends Node2D
 	override public function getDisplayBounds(boundRect:Rectangle = null):Rectangle
 	{
 		boundRect = super.getDisplayBounds(boundRect);
-		
+
 		var xMin:Float = 0;
 		var yMin:Float = 0;
 		var xMax:Float = _displayWidth;
 		var yMax:Float = _displayHeight;
-		
+
 		if (usePivot)
 		{
 			xMin = -pivot.x;
@@ -170,22 +170,22 @@ class DisplayNode2D extends Node2D
 			boundRect.y = yMin;
 			boundRect.width = xMax - xMin;
 			boundRect.height = yMax - yMin;
-			
+
 			if (scaleX != 1)
 			{
 				boundRect.x *= scaleX;
 				boundRect.width *= scaleX;
 			}
-			
+
 			if (scaleY != 1)
 			{
 				boundRect.y *= scaleY;
 				boundRect.height *= scaleY;
 			}
-			
+
 			boundRect.x += x;
 			boundRect.y += y;
-			
+
 			return boundRect;
 		}
 
@@ -197,7 +197,7 @@ class DisplayNode2D extends Node2D
 		var xMinSin:Float = xMin * sin;
 		var xMaxCos:Float = xMax * cos;
 		var xMaxSin:Float = xMax * sin;
-		
+
 		if (scaleX != 1)
 		{
 			xMinCos *= scaleX;
@@ -205,12 +205,12 @@ class DisplayNode2D extends Node2D
 			xMaxCos *= scaleX;
 			xMaxSin *= scaleX;
 		}
-		
+
 		var yMinSin:Float = yMin * sin;
 		var yMinCos:Float = yMin * cos;
 		var yMaxSin:Float = yMax * sin;
 		var yMaxCos:Float = yMax * cos;
-		
+
 		if (scaleY != 1)
 		{
 			yMinSin *= scaleY;
@@ -218,24 +218,24 @@ class DisplayNode2D extends Node2D
 			yMaxSin *= scaleY;
 			yMaxCos *= scaleY;
 		}
-		
+
 		var x1:Float = xMinCos - yMinSin;
 		var y1:Float = xMinSin + yMinCos;
-		
+
 		var x2:Float = xMaxCos - yMinSin;
 		var y2:Float = xMaxSin + yMinCos;
-		
+
 		var x3:Float = xMaxCos - yMaxSin;
 		var y3:Float = xMaxSin + yMaxCos;
-		
+
 		var x4:Float = xMinCos - yMaxSin;
 		var y4:Float = xMinSin + yMaxCos;
-		
+
 		var mx1:Float = 0;
 		var Mx1:Float = 0;
 		var my1:Float = 0;
 		var My1:Float = 0;
-		
+
 		if (x2 >= x1)
 		{
 			mx1 = x1;
@@ -246,7 +246,7 @@ class DisplayNode2D extends Node2D
 			mx1 = x2;
 			Mx1 = x1;
 		}
-		
+
 		if (y2 >= y1)
 		{
 			my1 = y1;
@@ -257,19 +257,20 @@ class DisplayNode2D extends Node2D
 			my1 = y2;
 			My1 = y1;
 		}
-		
+
 		var minX:Float = Math.min(Math.min(mx1, x3), x4);
 		var minY:Float = Math.min(Math.min(my1, y3), y4);
-		
+
 		var maxX:Float = Math.max(Math.max(Mx1, x3), x4);
 		var maxY:Float = Math.max(Math.max(My1, y3), y4);
-		
+
 		boundRect.x = minX + x;
 		boundRect.y = minY + y;
 		boundRect.width = maxX - minX;
 		boundRect.height = maxY - minY;
-		
+
 		return boundRect;
+
 	}
 
 }

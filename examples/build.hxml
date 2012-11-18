@@ -3,7 +3,7 @@
 --next
 
 -swf9 bin/dd_examples.swf
--swf-header 800:600:60:FFFFFF
+-swf-header 800:600:30:FFFFFF
 --flash-strict
 -swf-version 11
 -main Main
@@ -15,7 +15,7 @@
 --remap nme:flash
 -D dd_stat
 
---no-traces
+#--no-traces
 
 #-D shaderDebug
 -debug

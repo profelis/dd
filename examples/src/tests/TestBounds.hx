@@ -26,6 +26,7 @@ class TestBounds extends Test
 	public function new(wrld:World2D) 
 	{
 		super(wrld);
+        //rotation = 10;
 		
 		boundQuad = new Quad2D();
 		boundQuad.color = 0xff0000ff;
@@ -41,15 +42,15 @@ class TestBounds extends Test
 		quad1 = new Quad2D();
         quad1.displayWidth = 200;
         quad1.displayHeight = 100;
-		quad1.x = 10;
-		quad1.y = 20;
+		//quad1.x = 10;
+		//quad1.y = 20;
 		quad1.geometry.setColor(0xff0000);
-		container.addChild(quad1);
+		//container.addChild(quad1);
 		
 		quad2 = new Quad2D();
         quad2.displayWidth = 50;
         quad2.displayHeight = 150;
-		quad2.rotation = 30;
+		//quad2.rotation = 30;
 		quad2.x = -10;
 		quad2.y = 10;
 		quad2.geometry.setColor(0x00ff00);
@@ -58,12 +59,14 @@ class TestBounds extends Test
 	
 	override public function updateStep():Void
 	{
-		quad1.rotation += 2;
+		//quad1.rotation += 2;
 		quad2.rotation -= 1;
 		
-	//	container.rotation += 0.5;
-		
-		bounds = container.getBounds(bounds);
+		container.rotation -= 0.2;
+		//if (container.scaleY < 2) container.scaleY += 0.002;
+		//container.y -= 0.02;
+
+		bounds = container.getRelativeBounds(this, bounds);
 		
 		boundQuad.x = bounds.x;
 		boundQuad.y = bounds.y;

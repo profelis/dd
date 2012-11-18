@@ -630,18 +630,20 @@ class Node2D
 	{
 		if (boundRect == null) boundRect = new Rectangle();
 
-		if (numChildren == 0)	return getDisplayBounds(boundRect);
+        boundRect = getDisplayBounds(boundRect);
+
+		if (numChildren == 0) return boundRect;
 		
-		boundRect = getDisplayBounds(boundRect);
-		var wasEmpty:Bool = boundRect.isEmpty();
-		
-		for (c in children) 
+		for (c in children)
 		{
+            if (!c.visible) continue;
 			//_boundRect2.x = _boundRect2.y = _boundRect2.width = _boundRect2.height = 0;
 			_boundRect2 = c.getBounds(_boundRect2);
-			
-			if (!_boundRect2.isEmpty())
+            boundRect = boundRect.union(_boundRect2);
+
+			//if (!_boundRect2.isEmpty())
 			{
+                /*
 				if (boundRect.isEmpty())
 				{
 					boundRect.x = _boundRect2.x;
@@ -660,18 +662,38 @@ class Node2D
 					boundRect.width = x1 - x0;
 					boundRect.height = y1 - y0;
 				}
+				*/
 			}
 		}
-		
-		if (wasEmpty)
-		{
-			boundRect.x += x;
-			boundRect.y += y;
-		}
-		
+
 		return boundRect;
 	}
-	
+
+    public function getRelativeBounds(target:Node2D, boundRect:Rectangle = null):Rectangle
+    {
+        boundRect = getBounds(boundRect);
+
+        var m:Matrix3D = target.invertWorldTransform.clone();
+        m.prepend(worldTransform);
+
+        var p1:Vector3D = new Vector3D(boundRect.x, boundRect.y, 0);
+        var p2:Vector3D = new Vector3D(boundRect.x, boundRect.bottom, 0);
+        var p3:Vector3D = new Vector3D(boundRect.right, boundRect.y, 0);
+        var p4:Vector3D = new Vector3D(boundRect.right, boundRect.bottom, 0);
+        p1 = m.transformVector(p1);
+        p2 = m.transformVector(p2);
+        p3 = m.transformVector(p3);
+        p4 = m.transformVector(p4);
+        //trace([p1, p2, p3, p4]);
+
+        boundRect.x = Math.min(p1.x, Math.min(p2.x, Math.min(p3.x, p4.x)));
+        boundRect.right = Math.max(p1.x, Math.max(p2.x, Math.max(p3.x, p4.x)));
+        boundRect.y = Math.min(p1.y, Math.min(p2.y, Math.min(p3.y, p4.y)));
+        boundRect.bottom = Math.max(p1.y, Math.max(p2.y, Math.max(p3.y, p4.y)));
+
+        return boundRect;
+    }
+
 	public var width(get_width, set_width):Float;
 	
 	private function get_width():Float
