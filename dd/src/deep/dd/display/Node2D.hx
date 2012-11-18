@@ -641,7 +641,7 @@ class Node2D
 	
 	private function get_width():Float
 	{
-		return getBounds(_boundRect).width;
+		return getBounds(_boundRect).width * scaleX;
 	}
 
     function set_width(v:Float):Float
@@ -649,7 +649,7 @@ class Node2D
         var w = width;
         if (w != 0)
         {
-            scaleX = v / w;
+            scaleX = v / scaleX / w;
             return v;
         }
         return 0;
@@ -659,7 +659,7 @@ class Node2D
 	
 	private function get_height():Float
 	{
-		return getBounds(_boundRect).height;
+		return getBounds(_boundRect).height * scaleY;
 	}
 
     function set_height(v:Float):Float
@@ -667,7 +667,7 @@ class Node2D
         var h = height;
         if (h != 0)
         {
-            scaleX = v / h;
+            scaleY = v / scaleY / h;
             return v;
         }
         return 0;

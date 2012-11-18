@@ -60,9 +60,9 @@ class DisplayNode2D extends Node2D
         var g = geometry;
 
         if (g == null || g.standart)
-            mouseOver = p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height;
+            mouseOver = p.x >= 0 && p.x <= _width && p.y >= 0 && p.y <= _height;
         else
-            mouseOver = p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height; // TODO: check geometry offset
+            mouseOver = p.x >= 0 && p.x <= _width && p.y >= 0 && p.y <= _height; // TODO: check geometry offset
     }
 
     override public function init(ctx:Context3D):Void
