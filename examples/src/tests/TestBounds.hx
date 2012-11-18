@@ -1,4 +1,5 @@
 package tests;
+import flash.geom.Vector3D;
 import deep.dd.camera.Camera2D;
 import flash.geom.Rectangle;
 import mt.m3d.Camera;
@@ -26,7 +27,7 @@ class TestBounds extends Test
 	public function new(wrld:World2D) 
 	{
 		super(wrld);
-        //rotation = 10;
+        rotation = 10;
 		
 		boundQuad = new Quad2D();
 		boundQuad.color = 0xff0000ff;
@@ -42,10 +43,10 @@ class TestBounds extends Test
 		quad1 = new Quad2D();
         quad1.displayWidth = 200;
         quad1.displayHeight = 100;
-		//quad1.x = 10;
-		//quad1.y = 20;
+		quad1.x = 10;
+		quad1.y = 20;
 		quad1.geometry.setColor(0xff0000);
-		//container.addChild(quad1);
+		container.addChild(quad1);
 		
 		quad2 = new Quad2D();
         quad2.displayWidth = 50;
@@ -53,21 +54,23 @@ class TestBounds extends Test
 		//quad2.rotation = 30;
 		quad2.x = -10;
 		quad2.y = 10;
+        quad2.pivot = new Vector3D(2, 1);
 		quad2.geometry.setColor(0x00ff00);
 		container.addChild(quad2);
 	}
 	
 	override public function updateStep():Void
 	{
-		//quad1.rotation += 2;
+		quad1.rotation += 2;
 		quad2.rotation -= 1;
 		
 		container.rotation -= 0.2;
-		//if (container.scaleY < 2) container.scaleY += 0.002;
+		if (container.scaleY < 2) container.scaleY += 0.002;
 		//container.y -= 0.02;
 
 		bounds = container.getRelativeBounds(this, bounds);
-		
+
+
 		boundQuad.x = bounds.x;
 		boundQuad.y = bounds.y;
 		boundQuad.displayWidth = bounds.width;

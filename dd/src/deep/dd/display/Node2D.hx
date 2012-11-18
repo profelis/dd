@@ -616,16 +616,22 @@ class Node2D
 
         return v;
     }
-	
+
+    /**
+    * область занимаемая графикой нода, без учета трансформации
+    **/
 	public function getDisplayBounds(boundRect:Rectangle = null):Rectangle
 	{
 		if (boundRect == null)	boundRect = new Rectangle();
-		boundRect.x = x;
-		boundRect.y = y;
+		boundRect.x = 0;
+		boundRect.y = 0;
 		boundRect.width = boundRect.height = 0;
 		return boundRect;
 	}
-	
+
+    /**
+    *
+    **/
 	public function getBounds(boundRect:Rectangle = null):Rectangle
 	{
 		if (boundRect == null) boundRect = new Rectangle();
@@ -637,13 +643,10 @@ class Node2D
 		for (c in children)
 		{
             if (!c.visible) continue;
-			//_boundRect2.x = _boundRect2.y = _boundRect2.width = _boundRect2.height = 0;
-			_boundRect2 = c.getBounds(_boundRect2);
-            boundRect = boundRect.union(_boundRect2);
+			_boundRect2 = c.getRelativeBounds(this, _boundRect2);
 
-			//if (!_boundRect2.isEmpty())
+			if (!_boundRect2.isEmpty())
 			{
-                /*
 				if (boundRect.isEmpty())
 				{
 					boundRect.x = _boundRect2.x;
@@ -662,7 +665,6 @@ class Node2D
 					boundRect.width = x1 - x0;
 					boundRect.height = y1 - y0;
 				}
-				*/
 			}
 		}
 
@@ -671,25 +673,57 @@ class Node2D
 
     public function getRelativeBounds(target:Node2D, boundRect:Rectangle = null):Rectangle
     {
-        boundRect = getBounds(boundRect);
+        if (boundRect == null) boundRect = new Rectangle();
+
+        boundRect = getDisplayBounds(boundRect);
 
         var m:Matrix3D = target.invertWorldTransform.clone();
         m.prepend(worldTransform);
 
-        var p1:Vector3D = new Vector3D(boundRect.x, boundRect.y, 0);
-        var p2:Vector3D = new Vector3D(boundRect.x, boundRect.bottom, 0);
-        var p3:Vector3D = new Vector3D(boundRect.right, boundRect.y, 0);
-        var p4:Vector3D = new Vector3D(boundRect.right, boundRect.bottom, 0);
+        var p1:Vector3D = new Vector3D(boundRect.x, boundRect.y);
+        var p2:Vector3D = new Vector3D(boundRect.x, boundRect.bottom);
+        var p3:Vector3D = new Vector3D(boundRect.right, boundRect.y);
+        var p4:Vector3D = new Vector3D(boundRect.right, boundRect.bottom);
         p1 = m.transformVector(p1);
         p2 = m.transformVector(p2);
         p3 = m.transformVector(p3);
         p4 = m.transformVector(p4);
-        //trace([p1, p2, p3, p4]);
 
         boundRect.x = Math.min(p1.x, Math.min(p2.x, Math.min(p3.x, p4.x)));
         boundRect.right = Math.max(p1.x, Math.max(p2.x, Math.max(p3.x, p4.x)));
         boundRect.y = Math.min(p1.y, Math.min(p2.y, Math.min(p3.y, p4.y)));
         boundRect.bottom = Math.max(p1.y, Math.max(p2.y, Math.max(p3.y, p4.y)));
+
+        if (numChildren == 0) return boundRect;
+
+        for (c in children)
+        {
+            if (!c.visible) continue;
+            _boundRect2 = c.getRelativeBounds(target, _boundRect2);
+            if (!_boundRect2.isEmpty())
+            {
+
+                if (boundRect.isEmpty())
+                {
+                    boundRect.x = _boundRect2.x;
+                    boundRect.y = _boundRect2.y;
+                    boundRect.width = _boundRect2.width;
+                    boundRect.height = _boundRect2.height;
+                }
+                else
+                {
+                    var x0:Float = (boundRect.x > _boundRect2.x) ? _boundRect2.x : boundRect.x;
+                    var y0:Float = (boundRect.y > _boundRect2.y) ? _boundRect2.y : boundRect.y;
+                    var x1:Float = (boundRect.right < _boundRect2.right) ? _boundRect2.right : boundRect.right;
+                    var y1:Float = (boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : boundRect.bottom;
+                    boundRect.x = x0;
+                    boundRect.y = y0;
+                    boundRect.width = x1 - x0;
+                    boundRect.height = y1 - y0;
+                }
+
+            }
+        }
 
         return boundRect;
     }
@@ -706,7 +740,7 @@ class Node2D
         var w = width;
         if (w != 0)
         {
-            scaleX = v / scaleX / w;
+            scaleX = v / (w / scaleX);
             return v;
         }
         return 0;
@@ -724,7 +758,7 @@ class Node2D
         var h = height;
         if (h != 0)
         {
-            scaleY = v / scaleY / h;
+            scaleY = v / (h / scaleY);
             return v;
         }
         return 0;
