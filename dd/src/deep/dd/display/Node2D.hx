@@ -143,10 +143,7 @@ class Node2D
 
     public function dispose():Void
     {
-        if (parent != null)
-        {
-            parent.removeChild(this);
-        }
+        if (parent != null) parent.removeChild(this);
 
         onTransformChange.removeAll();
         onTransformChange = null;
@@ -155,10 +152,8 @@ class Node2D
         onColorTransformChange.removeAll();
         onColorTransformChange = null;
 
-        for (child in children)
-        {
-            child.dispose();
-        }
+        if (children != null)
+            for (child in children) child.dispose();
 
         ctx = null;
         children = null;
@@ -166,6 +161,7 @@ class Node2D
         transform = null;
         worldTransform = null;
         worldColorTransform = null;
+        invertWorldTransform = null;
         blendMode = null;
 
         // TODO: replace with var o:Dynamic = this; o.onVisibleChange = null;
@@ -217,7 +213,7 @@ class Node2D
         if (this.ctx != ctx)
         {
             this.ctx = ctx;
-            for (i in children) i.init(ctx);
+            if (children != null) for (i in children) i.init(ctx);
         }
     }
 
@@ -257,8 +253,10 @@ class Node2D
     function setScene(s:Scene2D):Void
     {
         if (Reflect.hasField(this, "onScene")) onScene.dispatch(scene, scene = s);
+        else scene = s;
 
         if (Reflect.hasField(this, "onWorld")) onWorld.dispatch(world, world = s != null ? s.world : null);
+        else world = s != null ? s.world : null;
 
         if (children != null) for (i in children) i.setScene(s);
     }
@@ -612,30 +610,28 @@ class Node2D
     function set_alpha(v:Float):Float
     {
         v = Color.clamp(v);
-        if (v != colorTransform.a)
-        {
-            alpha = colorTransform.a = v;
-            invalidateColorTransform = true;
-            onColorTransformChange.dispatch();
-        }
+        alpha = colorTransform.a = v;
+        invalidateColorTransform = true;
+        onColorTransformChange.dispatch();
 
         return v;
     }
 	
-	private function getAABB(boundRect:Rectangle = null):Rectangle
+	public function getDisplayBounds(boundRect:Rectangle = null):Rectangle
 	{
-		if (boundRect == null)	boundRect = new Rectangle();
-		boundRect.x = boundRect.y = boundRect.width = boundRect.height = 0;
+		if (boundRect == null) boundRect = new Rectangle();
+		else boundRect.x = boundRect.y = boundRect.width = boundRect.height = 0;
 		return boundRect;
 	}
 	
 	public function getBounds(boundRect:Rectangle = null):Rectangle
 	{
-		if (boundRect == null)	boundRect = new Rectangle();
-		if (numChildren == 0)	return getAABB(boundRect);
+		if (boundRect == null) boundRect = new Rectangle();
+        else boundRect.x = boundRect.y = boundRect.width = boundRect.height = 0;
+
+		if (numChildren == 0)	return getDisplayBounds(boundRect);
 		
-		boundRect.x = boundRect.y = boundRect.width = boundRect.height = 0;
-		for (c in children) 
+		for (c in children)
 		{
 			_boundRect2.x = _boundRect2.y = _boundRect2.width = _boundRect2.height = 0;
 			_boundRect2 = c.getBounds(_boundRect2);

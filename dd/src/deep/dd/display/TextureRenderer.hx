@@ -46,6 +46,7 @@ class TextureRenderer extends Sprite2D
 
         cam.x = worldTransform.rawData[12];
         cam.y = worldTransform.rawData[13];
+        cam.resize(texture.width, texture.height);
         if (cam.needUpdate) cam.update();
 
         for (i in children) if (i.visible) i.drawStep(cam);

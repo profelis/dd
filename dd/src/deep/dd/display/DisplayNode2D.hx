@@ -60,9 +60,15 @@ class DisplayNode2D extends Node2D
         var g = geometry;
 
         if (g == null || g.standart)
+        {
             mouseOver = p.x >= 0 && p.x <= _displayWidth && p.y >= 0 && p.y <= _displayHeight;
+        }
         else
-            mouseOver = p.x >= 0 && p.x <= _displayWidth && p.y >= 0 && p.y <= _displayHeight; // TODO: check geometry offset
+        {
+            var dx = -g.offsetX / g.width * _displayWidth;
+            var dy = -g.offsetY / g.height * _displayHeight;
+            mouseOver = p.x >= dx && p.x <= (_displayWidth-dx) && p.y >= dy && p.y <= (_displayHeight-dy);
+        }
     }
 
     override public function init(ctx:Context3D):Void
@@ -141,9 +147,9 @@ class DisplayNode2D extends Node2D
         return v;
     }
 	
-	override private function getAABB(boundRect:Rectangle = null):Rectangle 
+	override public function getDisplayBounds(boundRect:Rectangle = null):Rectangle
 	{
-		boundRect = super.getAABB(boundRect);
+		boundRect = super.getDisplayBounds(boundRect);
 		
 		var xMin:Float = 0;
 		var yMin:Float = 0;
