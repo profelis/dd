@@ -166,10 +166,10 @@ class DisplayNode2D extends Node2D
 		
 		if ((rotation % 360) == 0)	// simple calculation
 		{
-			boundRect.x = (xMin + x);
-			boundRect.y = (yMin + y);
-			boundRect.width = (xMax - xMin);
-			boundRect.height = (yMax - yMin);
+			boundRect.x = xMin;
+			boundRect.y = yMin;
+			boundRect.width = xMax - xMin;
+			boundRect.height = yMax - yMin;
 			
 			if (scaleX != 1)
 			{
@@ -182,6 +182,9 @@ class DisplayNode2D extends Node2D
 				boundRect.y *= scaleY;
 				boundRect.height *= scaleY;
 			}
+			
+			boundRect.x += x;
+			boundRect.y += y;
 			
 			return boundRect;
 		}

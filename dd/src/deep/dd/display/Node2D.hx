@@ -619,32 +619,56 @@ class Node2D
 	
 	public function getDisplayBounds(boundRect:Rectangle = null):Rectangle
 	{
-		if (boundRect == null) boundRect = new Rectangle();
-		else boundRect.x = boundRect.y = boundRect.width = boundRect.height = 0;
+		if (boundRect == null)	boundRect = new Rectangle();
+		boundRect.x = x;
+		boundRect.y = y;
+		boundRect.width = boundRect.height = 0;
 		return boundRect;
 	}
 	
 	public function getBounds(boundRect:Rectangle = null):Rectangle
 	{
 		if (boundRect == null) boundRect = new Rectangle();
-        else boundRect.x = boundRect.y = boundRect.width = boundRect.height = 0;
 
 		if (numChildren == 0)	return getDisplayBounds(boundRect);
 		
-		for (c in children)
+		boundRect = getDisplayBounds(boundRect);
+		var wasEmpty:Bool = boundRect.isEmpty();
+		
+		for (c in children) 
 		{
-			_boundRect2.x = _boundRect2.y = _boundRect2.width = _boundRect2.height = 0;
+			//_boundRect2.x = _boundRect2.y = _boundRect2.width = _boundRect2.height = 0;
 			_boundRect2 = c.getBounds(_boundRect2);
 			
-			var x0:Float = (boundRect.x > _boundRect2.x) ? _boundRect2.x : boundRect.x;
-			var x1:Float = (boundRect.right < _boundRect2.right) ? _boundRect2.right : boundRect.right;
-			var y0:Float = (boundRect.y > _boundRect2.y) ? _boundRect2.y : boundRect.y;
-			var y1:Float = (boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : boundRect.bottom;
-			boundRect.x = x0;
-			boundRect.y = y0;
-			boundRect.width = x1 - x0;
-			boundRect.height = y1 - y0;
+			if (!_boundRect2.isEmpty())
+			{
+				if (boundRect.isEmpty())
+				{
+					boundRect.x = _boundRect2.x;
+					boundRect.y = _boundRect2.y;
+					boundRect.width = _boundRect2.width;
+					boundRect.height = _boundRect2.height;
+				}
+				else
+				{
+					var x0:Float = (boundRect.x > _boundRect2.x) ? _boundRect2.x : boundRect.x;
+					var y0:Float = (boundRect.y > _boundRect2.y) ? _boundRect2.y : boundRect.y;
+					var x1:Float = (boundRect.right < _boundRect2.right) ? _boundRect2.right : boundRect.right;
+					var y1:Float = (boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : boundRect.bottom;
+					boundRect.x = x0;
+					boundRect.y = y0;
+					boundRect.width = x1 - x0;
+					boundRect.height = y1 - y0;
+				}
+			}
 		}
+		
+		if (wasEmpty)
+		{
+			boundRect.x += x;
+			boundRect.y += y;
+		}
+		
 		return boundRect;
 	}
 	
