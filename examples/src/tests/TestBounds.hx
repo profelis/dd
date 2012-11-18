@@ -61,7 +61,7 @@ class TestBounds extends Test
 		quad1.rotation += 2;
 		quad2.rotation -= 1;
 		
-		container.rotation += 0.5;
+	//	container.rotation += 0.5;
 		
 		bounds = container.getBounds(bounds);
 		
