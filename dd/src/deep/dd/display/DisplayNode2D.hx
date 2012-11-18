@@ -18,11 +18,11 @@ class DisplayNode2D extends Node2D
     /**
     * @private
     */
-    public var _width:Float = 0;
+    public var _displayWidth:Float = 0;
     /**
     * @private
     */
-    public var _height:Float = 0;
+    public var _displayHeight:Float = 0;
 
     public function new(material:Material = null)
     {
@@ -34,7 +34,7 @@ class DisplayNode2D extends Node2D
 
     function createGeometry()
     {
-        geometry = Geometry.createSolid(_width = 1, _height = 1);
+        geometry = Geometry.createSolid(_displayWidth = 1, _displayHeight = 1);
     }
 
     override public function dispose():Void
@@ -60,9 +60,9 @@ class DisplayNode2D extends Node2D
         var g = geometry;
 
         if (g == null || g.standart)
-            mouseOver = p.x >= 0 && p.x <= _width && p.y >= 0 && p.y <= _height;
+            mouseOver = p.x >= 0 && p.x <= _displayWidth && p.y >= 0 && p.y <= _displayHeight;
         else
-            mouseOver = p.x >= 0 && p.x <= _width && p.y >= 0 && p.y <= _height; // TODO: check geometry offset
+            mouseOver = p.x >= 0 && p.x <= _displayWidth && p.y >= 0 && p.y <= _displayHeight; // TODO: check geometry offset
     }
 
     override public function init(ctx:Context3D):Void
@@ -113,27 +113,31 @@ class DisplayNode2D extends Node2D
         return m;
     }
 
-    override function get_width():Float
+    public var displayWidth(get_displayWidth, set_displayWidth):Float;
+
+    function get_displayWidth():Float
     {
-        return _width * scaleX;
+        return _displayWidth * scaleX;
     }
 
-    override function set_width(v:Float):Float
+    function set_displayWidth(v:Float):Float
     {
-        if (_width == 0) _width = v;
-        else scaleX = v / _width;
+        if (_displayWidth == 0) _displayWidth = v;
+        else scaleX = v / _displayWidth;
         return v;
     }
 
-    override function get_height():Float
+    public var displayHeight(get_displayHeight, set_displayHeight):Float;
+
+    function get_displayHeight():Float
     {
-        return _height * scaleY;
+        return _displayHeight * scaleY;
     }
 
-    override function set_height(v:Float):Float
+    function set_displayHeight(v:Float):Float
     {
-        if (_height == 0) _height = v;
-        else scaleY = v / _height;
+        if (_displayHeight == 0) _displayHeight = v;
+        else scaleY = v / _displayHeight;
         return v;
     }
 	
@@ -143,8 +147,8 @@ class DisplayNode2D extends Node2D
 		
 		var xMin:Float = 0;
 		var yMin:Float = 0;
-		var xMax:Float = _width;
-		var yMax:Float = _height;
+		var xMax:Float = _displayWidth;
+		var yMax:Float = _displayHeight;
 		
 		if (usePivot)
 		{

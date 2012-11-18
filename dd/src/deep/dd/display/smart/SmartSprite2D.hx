@@ -76,8 +76,8 @@ class SmartSprite2D extends Sprite2D
 
         if (texture == null)
         {
-            _width = geometry.width;
-            _height = geometry.height;	
+            _displayWidth = geometry.width;
+            _displayHeight = geometry.height;
         }
 
     	return r;

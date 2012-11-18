@@ -21,7 +21,7 @@ class CenteredSprite2D extends Sprite2D
 
     override function createGeometry()
     {
-        geometry = Geometry.createTextured(_width = 1, _height = 1, 1, 1, -0.5, -0.5);
+        geometry = Geometry.createTextured(_displayWidth = 1, _displayHeight = 1, 1, 1, -0.5, -0.5);
     }
 }
 
@@ -36,7 +36,7 @@ class Sprite2D extends DisplayNode2D
 
     override function createGeometry()
     {
-        geometry = Geometry.createTextured(_width = 1, _height = 1);
+        geometry = Geometry.createTextured(_displayWidth = 1, _displayHeight = 1);
     }
 
     public var animator(default, set_animator):AnimatorBase;
@@ -100,8 +100,8 @@ class Sprite2D extends DisplayNode2D
             {
                 invalidateDrawTransform = true;
                 textureFrame = f;
-                _width = textureFrame.width;
-                _height = textureFrame.height;
+                _displayWidth = textureFrame.width;
+                _displayHeight = textureFrame.height;
             }
             else if (invalidateWorldTransform || invalidateTransform)
             {
@@ -138,8 +138,8 @@ class Sprite2D extends DisplayNode2D
             Reflect.setField(texture, "useCount", texture.useCount + 1);
             if (ctx != null) texture.init(ctx);
             textureFrame = texture.frame;
-            _width = texture.width;
-            _height = texture.height;
+            _displayWidth = texture.width;
+            _displayHeight = texture.height;
 
             if (FastHaxe.is(texture, AtlasTexture2D) && animator != null) animator.atlas = flash.Lib.as(texture, AtlasTexture2D);
 
