@@ -11,6 +11,8 @@ import mt.m3d.Polygon;
 
 class DisplayNode2D extends Node2D
 {
+    var invalidateDisplayBounds:Bool = true;
+
     public var geometry(get_geometry, set_geometry):Geometry;
 
     public var material(default, set_material):Material;
@@ -57,18 +59,7 @@ class DisplayNode2D extends Node2D
 
     override function checkMouseOver(p:Vector3D)
     {
-        var g = geometry;
-
-        if (g == null || g.standart)
-        {
-            mouseOver = p.x >= 0 && p.x <= _displayWidth && p.y >= 0 && p.y <= _displayHeight;
-        }
-        else
-        {
-            var dx = -g.offsetX / g.width * _displayWidth;
-            var dy = -g.offsetY / g.height * _displayHeight;
-            mouseOver = p.x >= dx && p.x <= (_displayWidth-dx) && p.y >= dy && p.y <= (_displayHeight-dy);
-        }
+        mouseOver = displayBounds.contains(p.x, p.y);
     }
 
     override public function init(ctx:Context3D):Void
@@ -100,6 +91,7 @@ class DisplayNode2D extends Node2D
         geometry = g;
         if (g != null && ctx != null) g.init(ctx);
         invalidateBounds = true;
+        invalidateDisplayBounds = true;
 
         return g;
     }
@@ -129,7 +121,11 @@ class DisplayNode2D extends Node2D
 
     function set_displayWidth(v:Float):Float
     {
-        if (_displayWidth == 0) _displayWidth = v;
+        if (_displayWidth == 0)
+        {
+            _displayWidth = v;
+            invalidateDisplayBounds = true;
+        }
         else scaleX = v / _displayWidth;
         return v;
     }
@@ -143,28 +139,37 @@ class DisplayNode2D extends Node2D
 
     function set_displayHeight(v:Float):Float
     {
-        if (_displayHeight == 0) _displayHeight = v;
+        if (_displayHeight == 0)
+        {
+            _displayHeight = v;
+            invalidateDisplayBounds = true;
+        }
         else scaleY = v / _displayHeight;
         return v;
     }
 	
-	override function getDisplayBounds(boundRect:Rectangle = null):Rectangle
+	override function get_displayBounds():Rectangle
 	{
-		boundRect = super.getDisplayBounds(boundRect);
-
-        boundRect.width = _displayWidth;
-        boundRect.height = _displayHeight;
-
-        var g = geometry;
-        if (g != null && !g.standart)
+        if (invalidateDisplayBounds)
         {
-            var dx = -g.offsetX / g.width * _displayWidth;
-            var dy = -g.offsetY / g.height * _displayHeight;
-            boundRect.x -= dx;
-            boundRect.y -= dy;
+            displayBounds = super.get_displayBounds();
+
+            displayBounds.width = _displayWidth;
+            displayBounds.height = _displayHeight;
+
+            var g = geometry;
+            if (g != null && !g.standart)
+            {
+                var dx = -g.offsetX / g.width * _displayWidth;
+                var dy = -g.offsetY / g.height * _displayHeight;
+                displayBounds.x -= dx;
+                displayBounds.y -= dy;
+            }
+
+            invalidateDisplayBounds = false;
         }
 
-        return boundRect;
+        return displayBounds;
 	}
 
 }

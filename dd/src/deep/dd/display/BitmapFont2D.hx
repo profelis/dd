@@ -28,11 +28,8 @@ class BitmapFont2D extends SmartSprite2D
 		animator = new Animator(60);
 		this.fieldWidth = fieldWidth;
 		this.align = TextFormatAlign.LEFT;
-        this.bounds = new Point();
 	}
 
-    public var bounds:Point;
-	
 	public var font(default, set_font):FontAtlasTexture2D;
 	
 	function set_font(f:FontAtlasTexture2D):FontAtlasTexture2D
@@ -417,8 +414,6 @@ class BitmapFont2D extends SmartSprite2D
 
         var glyphInfo:Array<GlyphInfo> = [];
 
-        bounds.setTo(0, 0);
-
         // render text
         var row:Int = 0;
 
@@ -485,8 +480,6 @@ class BitmapFont2D extends SmartSprite2D
 			char = lineText.charAt(i);
 			glyph = font.getFrameByName(char);
 
-            if (bounds.x < glyphX + glyphWidth) bounds.x = glyphX + glyphWidth;
-
 			if (glyph != null)
 			{
                 glyphWidth = glyph.width;
@@ -499,7 +492,6 @@ class BitmapFont2D extends SmartSprite2D
 				glyphX += font.spaceWidth + letterSpacing;
 			}
 		}
-        if (bounds.y < glyphY + maxHeight) bounds.y = glyphY + maxHeight;
 	}
 	
 	override public function dispose():Void 

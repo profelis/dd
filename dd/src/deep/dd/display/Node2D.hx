@@ -29,19 +29,6 @@ class Node2D
 
     public var extra:Dynamic;
 
-    /**
-    * @private
-    */
-    public var invalidateBounds(default, set_invalidateBounds):Bool = true;
-
-    function set_invalidateBounds(v:Bool):Bool
-    {
-        invalidateBounds = v;
-        if (v && parent != null) parent.invalidateBounds = v;
-
-        return v;
-    }
-
     public var transform(get_transform, null):Matrix3D;
     /**
     * @private
@@ -122,11 +109,23 @@ class Node2D
 
     public var name:String;
 	
-	/**
-	 * Helpers for bound calculations
-	 */
-	private var _boundRect:Rectangle;
+    /**
+    * @private
+    */
+    public var invalidateBounds(default, set_invalidateBounds):Bool = true;
+
+    function set_invalidateBounds(v:Bool):Bool
+    {
+        invalidateBounds = v;
+        if (v && parent != null) parent.invalidateBounds = v;
+
+        return v;
+    }
+
+	public var bounds(get_bounds, null):Rectangle;
 	private var _boundRect2:Rectangle;
+
+    public var displayBounds(get_displayBounds, null):Rectangle;
 
     public function new()
     {
@@ -150,8 +149,9 @@ class Node2D
 
         name = "node_" + uid++;
 		
-		_boundRect = new Rectangle();
+		bounds = new Rectangle();
 		_boundRect2 = new Rectangle();
+        displayBounds = new Rectangle();
     }
 
     public function dispose():Void
@@ -217,8 +217,9 @@ class Node2D
         Reflect.setField(this, "pivot", null);
         Reflect.setField(this, "colorTransform", null);
 		
-		_boundRect = null;
+		bounds = null;
 		_boundRect2 = null;
+		displayBounds = null;
     }
 
     public function init(ctx:Context3D):Void
@@ -377,29 +378,31 @@ class Node2D
 
     public function mouseStep(pos:Vector3D, camera:Camera2D, md:MouseData)
     {
-        var res:Node2D;
+        var res:Node2D = null;
 
-        mouseTransform.copyFrom(worldTransform);
-        mouseTransform.append(camera.ort);
-        mouseTransform.invert();
+        if (!displayBounds.isEmpty())
+        {
+            mouseTransform.copyFrom(worldTransform);
+            mouseTransform.append(camera.ort);
+            mouseTransform.invert();
 
-        var p = mouseTransform.transformVector(pos);
+            var p = mouseTransform.transformVector(pos);
 
-        var inv = 1 / p.w;
-        p.x *= inv;
-        p.y *= inv;
-        p.z *= inv;
-        p.w = 1;
+            var inv = 1 / p.w;
+            p.x *= inv;
+            p.y *= inv;
+            p.z *= inv;
+            p.w = 1;
 
-        mouseX = p.x;
-        mouseY = p.y;
+            mouseX = p.x;
+            mouseY = p.y;
 
-        checkMouseOver(p);
+            checkMouseOver(p);
 
-        res = mouseOver ? this : null;
+            res = mouseOver ? this : null;
+        }
 
-
-        if (children != null)
+        if (children != null && numChildren > 0)
             for (i in children)
             {
                 if (i.mouseChildren)
@@ -414,19 +417,11 @@ class Node2D
 
         if (mouseOver)
         {
-            if (!oldMouseOver)
-            {
-                onMouseOver.dispatch(this, md);
-//                trace("mouse over " + res + " " + this);
-            }
+            if (!oldMouseOver) onMouseOver.dispatch(this, md);
         }
         else
         {
-            if (oldMouseOver)
-            {
-                onMouseOut.dispatch(this, md);
-//                trace("mouse out " + res + " " + this);
-            }
+            if (oldMouseOver) onMouseOut.dispatch(this, md);
         }
 
         if (res != null)
@@ -641,61 +636,57 @@ class Node2D
         return v;
     }
 
-	function getDisplayBounds(boundRect:Rectangle = null):Rectangle
+	function get_displayBounds():Rectangle
 	{
-		if (boundRect == null)	boundRect = new Rectangle();
-		boundRect.x = 0;
-		boundRect.y = 0;
-		boundRect.width = boundRect.height = 0;
-		return boundRect;
+		return displayBounds;
 	}
 
-	public function getBounds(boundRect:Rectangle = null):Rectangle
+	function get_bounds():Rectangle
 	{
         if (invalidateBounds)
         {
-            getDisplayBounds(_boundRect);
+            bounds.copyFrom(displayBounds);
 
-            if (numChildren == 0) return _boundRect;
+            if (numChildren == 0) return bounds;
 
             for (c in children)
             {
                 if (!c.visible) continue;
-                _boundRect2 = c.getRelativeBounds(this, _boundRect2);
+                _boundRect2 = c.getBounds(this, _boundRect2);
 
                 if (!_boundRect2.isEmpty())
                 {
-                    if (_boundRect.isEmpty())
+                    if (bounds.isEmpty())
                     {
-                        _boundRect.x = _boundRect2.x;
-                        _boundRect.y = _boundRect2.y;
-                        _boundRect.width = _boundRect2.width;
-                        _boundRect.height = _boundRect2.height;
+                        bounds.x = _boundRect2.x;
+                        bounds.y = _boundRect2.y;
+                        bounds.width = _boundRect2.width;
+                        bounds.height = _boundRect2.height;
                     }
                     else
                     {
-                        var x0:Float = (_boundRect.x > _boundRect2.x) ? _boundRect2.x : _boundRect.x;
-                        var y0:Float = (_boundRect.y > _boundRect2.y) ? _boundRect2.y : _boundRect.y;
-                        var x1:Float = (_boundRect.right < _boundRect2.right) ? _boundRect2.right : _boundRect.right;
-                        var y1:Float = (_boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : _boundRect.bottom;
-                        _boundRect.x = x0;
-                        _boundRect.y = y0;
-                        _boundRect.width = x1 - x0;
-                        _boundRect.height = y1 - y0;
+                        var x0:Float = (bounds.x > _boundRect2.x) ? _boundRect2.x : bounds.x;
+                        var y0:Float = (bounds.y > _boundRect2.y) ? _boundRect2.y : bounds.y;
+                        var x1:Float = (bounds.right < _boundRect2.right) ? _boundRect2.right : bounds.right;
+                        var y1:Float = (bounds.bottom < _boundRect2.bottom) ? _boundRect2.bottom : bounds.bottom;
+                        bounds.x = x0;
+                        bounds.y = y0;
+                        bounds.width = x1 - x0;
+                        bounds.height = y1 - y0;
                     }
                 }
             }
             invalidateBounds = false;
         }
 
-		return _boundRect;
+		return bounds;
 	}
 
-    public function getRelativeBounds(target:Node2D, boundRect:Rectangle = null):Rectangle
+    public function getBounds(target:Node2D, boundRect:Rectangle = null):Rectangle
     {
         if (boundRect == null) boundRect = new Rectangle();
 
-        boundRect = getDisplayBounds(boundRect);
+        boundRect.copyFrom(displayBounds);
 
         var m:Matrix3D = target.invertWorldTransform.clone();
         m.prepend(worldTransform);
@@ -719,7 +710,7 @@ class Node2D
         for (c in children)
         {
             if (!c.visible) continue;
-            _boundRect2 = c.getRelativeBounds(target, _boundRect2);
+            _boundRect2 = c.getBounds(target, _boundRect2);
             if (!_boundRect2.isEmpty())
             {
                 if (boundRect.isEmpty())
@@ -761,7 +752,7 @@ class Node2D
 	
 	private function get_width():Float
 	{
-		return getBounds(_boundRect).width * scaleX;
+		return bounds.width * scaleX;
 	}
 
     function set_width(v:Float):Float
@@ -779,7 +770,7 @@ class Node2D
 	
 	private function get_height():Float
 	{
-		return getBounds(_boundRect).height * scaleY;
+		return bounds.height * scaleY;
 	}
 
     function set_height(v:Float):Float

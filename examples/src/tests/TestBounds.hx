@@ -25,7 +25,7 @@ class TestBounds extends Test
 	var quad1:Quad2D;
 	var quad2:Sprite2D;
 	
-	var bounds:Rectangle;
+	var b:Rectangle;
 	
 	public function new(wrld:World2D) 
 	{
@@ -50,7 +50,10 @@ class TestBounds extends Test
 		quad1.y = 20;
 		quad1.geometry.setColor(0xff0000);
 		container.addChild(quad1);
-		
+        quad1.mouseEnabled = true;
+        quad1.onMouseOver.add(function (_,_) quad1.color = 0xFFFF00);
+        quad1.onMouseOut.add(function (_,_) quad1.color = 0xFFFFFF);
+
 		quad2 = new Sprite2D();
         var b = new BitmapData(64, 64, false, 0x00ff00);
         quad2.texture = new BitmapTexture2D(b);
@@ -70,13 +73,13 @@ class TestBounds extends Test
 		if (container.scaleY < 2) container.scaleY += 0.002;
 		//container.y -= 0.02;
 
-		bounds = container.getRelativeBounds(this, bounds);
+		b = container.getBounds(this, b);
 
 
-		boundQuad.x = bounds.x;
-		boundQuad.y = bounds.y;
-		boundQuad.displayWidth = bounds.width;
-		boundQuad.displayHeight = bounds.height;
+		boundQuad.x = b.x;
+		boundQuad.y = b.y;
+		boundQuad.displayWidth = b.width;
+		boundQuad.displayHeight = b.height;
 
         super.updateStep();
 	}
@@ -89,7 +92,7 @@ class TestBounds extends Test
 		container = null;
 		boundQuad = null;
 		
-		bounds = null;
+		b = null;
 	}
 	
 }

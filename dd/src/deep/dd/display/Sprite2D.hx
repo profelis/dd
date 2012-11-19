@@ -100,6 +100,7 @@ class Sprite2D extends DisplayNode2D
             {
                 invalidateBounds = true;
                 invalidateDrawTransform = true;
+                invalidateDisplayBounds = true;
                 textureFrame = f;
                 _displayWidth = textureFrame.width;
                 _displayHeight = textureFrame.height;
@@ -138,6 +139,7 @@ class Sprite2D extends DisplayNode2D
 
         texture = tex;
         invalidateBounds = true;
+        invalidateDisplayBounds = true;
 
         if (texture != null)
         {
