@@ -92,25 +92,30 @@ class Sprite2D extends DisplayNode2D
             var f = texture.frame;
             if (animator != null)
             {
-                animator.draw(scene.time);
+                animator.update(scene.time);
                 f = animator.textureFrame;
             }
 
             if (textureFrame != f)
             {
+                invalidateBounds = true;
                 invalidateDrawTransform = true;
                 textureFrame = f;
                 _displayWidth = textureFrame.width;
                 _displayHeight = textureFrame.height;
             }
-            else if (invalidateWorldTransform || invalidateTransform)
-            {
-                invalidateDrawTransform = true;
-            }
         }
+
         super.updateStep();
 
         if (invalidateDrawTransform) updateDrawTransform();
+    }
+
+    override function get_worldTransform():Matrix3D
+    {
+        if (invalidateTransform || invalidateWorldTransform) invalidateDrawTransform = true;
+
+        return super.get_worldTransform();
     }
 
     inline public function updateDrawTransform()
@@ -132,6 +137,7 @@ class Sprite2D extends DisplayNode2D
         }
 
         texture = tex;
+        invalidateBounds = true;
 
         if (texture != null)
         {
@@ -144,6 +150,11 @@ class Sprite2D extends DisplayNode2D
             if (FastHaxe.is(texture, AtlasTexture2D) && animator != null) animator.atlas = flash.Lib.as(texture, AtlasTexture2D);
 
             invalidateDrawTransform = true;
+        }
+        else
+        {
+            _displayWidth = 0;
+            _displayHeight = 0;
         }
 
         return tex;

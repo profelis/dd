@@ -13,7 +13,7 @@ class AnimatorBase
 
     function new() {}
 
-    public function draw(time:Float):Void
+    public function update(time:Float):Void
     {
 
     }

@@ -29,6 +29,19 @@ class Node2D
 
     public var extra:Dynamic;
 
+    /**
+    * @private
+    */
+    public var invalidateBounds(default, set_invalidateBounds):Bool = true;
+
+    function set_invalidateBounds(v:Bool):Bool
+    {
+        invalidateBounds = v;
+        if (v && parent != null) parent.invalidateBounds = v;
+
+        return v;
+    }
+
     public var transform(get_transform, null):Matrix3D;
     /**
     * @private
@@ -245,6 +258,7 @@ class Node2D
 
     function onParentTransformChange()
     {
+        invalidateBounds = true;
         invalidateWorldTransform = true;
         invalidateInvertWorldTransform = true;
         onWorldTransformChange.dispatch();
@@ -315,6 +329,8 @@ class Node2D
         c.setParent(this);
         if (scene != null) c.setScene(scene);
         if (ctx != null) c.init(ctx);
+
+        invalidateBounds = true;
     }
 
     public function addChild(c:Node2D):Void
@@ -339,6 +355,8 @@ class Node2D
         c.parent = null;
         c.setParent(null);
         c.setScene(null);
+
+        invalidateBounds = true;
     }
 
     public function getChildAt(pos:UInt):Node2D
@@ -512,6 +530,7 @@ class Node2D
 
         pivot = v;
         usePivot = v != null;
+        invalidateBounds = true;
         invalidateTransform = true;
         onTransformChange.dispatch();
         return v;
@@ -528,6 +547,7 @@ class Node2D
     function set_x(v:Float)
     {
         x = v;
+        invalidateBounds = true;
         invalidateTransform = true;
         onTransformChange.dispatch();
         onWorldTransformChange.dispatch();
@@ -537,6 +557,7 @@ class Node2D
     function set_y(v:Float)
     {
         y = v;
+        invalidateBounds = true;
         invalidateTransform = true;
         onTransformChange.dispatch();
         onWorldTransformChange.dispatch();
@@ -546,6 +567,7 @@ class Node2D
     function set_rotation(v:Float)
     {
         rotation = v;
+        invalidateBounds = true;
         invalidateTransform = true;
         onTransformChange.dispatch();
         onWorldTransformChange.dispatch();
@@ -555,6 +577,7 @@ class Node2D
     function set_scaleX(v:Float)
     {
         scaleX = v;
+        invalidateBounds = true;
         invalidateTransform = true;
         onTransformChange.dispatch();
         onWorldTransformChange.dispatch();
@@ -564,6 +587,7 @@ class Node2D
     function set_scaleY(v:Float)
     {
         scaleY = v;
+        invalidateBounds = true;
         invalidateTransform = true;
         onTransformChange.dispatch();
         onWorldTransformChange.dispatch();
@@ -617,10 +641,7 @@ class Node2D
         return v;
     }
 
-    /**
-    * область занимаемая графикой нода, без учета трансформации
-    **/
-	public function getDisplayBounds(boundRect:Rectangle = null):Rectangle
+	function getDisplayBounds(boundRect:Rectangle = null):Rectangle
 	{
 		if (boundRect == null)	boundRect = new Rectangle();
 		boundRect.x = 0;
@@ -629,46 +650,45 @@ class Node2D
 		return boundRect;
 	}
 
-    /**
-    *
-    **/
 	public function getBounds(boundRect:Rectangle = null):Rectangle
 	{
-		if (boundRect == null) boundRect = new Rectangle();
+        if (invalidateBounds)
+        {
+            getDisplayBounds(_boundRect);
 
-        boundRect = getDisplayBounds(boundRect);
+            if (numChildren == 0) return _boundRect;
 
-		if (numChildren == 0) return boundRect;
-		
-		for (c in children)
-		{
-            if (!c.visible) continue;
-			_boundRect2 = c.getRelativeBounds(this, _boundRect2);
+            for (c in children)
+            {
+                if (!c.visible) continue;
+                _boundRect2 = c.getRelativeBounds(this, _boundRect2);
 
-			if (!_boundRect2.isEmpty())
-			{
-				if (boundRect.isEmpty())
-				{
-					boundRect.x = _boundRect2.x;
-					boundRect.y = _boundRect2.y;
-					boundRect.width = _boundRect2.width;
-					boundRect.height = _boundRect2.height;
-				}
-				else
-				{
-					var x0:Float = (boundRect.x > _boundRect2.x) ? _boundRect2.x : boundRect.x;
-					var y0:Float = (boundRect.y > _boundRect2.y) ? _boundRect2.y : boundRect.y;
-					var x1:Float = (boundRect.right < _boundRect2.right) ? _boundRect2.right : boundRect.right;
-					var y1:Float = (boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : boundRect.bottom;
-					boundRect.x = x0;
-					boundRect.y = y0;
-					boundRect.width = x1 - x0;
-					boundRect.height = y1 - y0;
-				}
-			}
-		}
+                if (!_boundRect2.isEmpty())
+                {
+                    if (_boundRect.isEmpty())
+                    {
+                        _boundRect.x = _boundRect2.x;
+                        _boundRect.y = _boundRect2.y;
+                        _boundRect.width = _boundRect2.width;
+                        _boundRect.height = _boundRect2.height;
+                    }
+                    else
+                    {
+                        var x0:Float = (_boundRect.x > _boundRect2.x) ? _boundRect2.x : _boundRect.x;
+                        var y0:Float = (_boundRect.y > _boundRect2.y) ? _boundRect2.y : _boundRect.y;
+                        var x1:Float = (_boundRect.right < _boundRect2.right) ? _boundRect2.right : _boundRect.right;
+                        var y1:Float = (_boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : _boundRect.bottom;
+                        _boundRect.x = x0;
+                        _boundRect.y = y0;
+                        _boundRect.width = x1 - x0;
+                        _boundRect.height = y1 - y0;
+                    }
+                }
+            }
+            invalidateBounds = false;
+        }
 
-		return boundRect;
+		return _boundRect;
 	}
 
     public function getRelativeBounds(target:Node2D, boundRect:Rectangle = null):Rectangle
@@ -702,7 +722,6 @@ class Node2D
             _boundRect2 = c.getRelativeBounds(target, _boundRect2);
             if (!_boundRect2.isEmpty())
             {
-
                 if (boundRect.isEmpty())
                 {
                     boundRect.x = _boundRect2.x;
@@ -726,6 +745,16 @@ class Node2D
         }
 
         return boundRect;
+    }
+
+    public function localToGlobal(v:Vector3D):Vector3D
+    {
+        return worldTransform.transformVector(v);
+    }
+
+    public function globalToLocal(v:Vector3D):Vector3D
+    {
+        return invertWorldTransform.transformVector(v);
     }
 
 	public var width(get_width, set_width):Float;

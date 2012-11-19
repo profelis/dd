@@ -1,4 +1,7 @@
 package tests;
+import deep.dd.texture.Texture2D.BitmapTexture2D;
+import flash.display.BitmapData;
+import deep.dd.display.Sprite2D;
 import flash.geom.Vector3D;
 import deep.dd.camera.Camera2D;
 import flash.geom.Rectangle;
@@ -20,7 +23,7 @@ class TestBounds extends Test
 	var boundQuad:Quad2D;
 	
 	var quad1:Quad2D;
-	var quad2:Quad2D;
+	var quad2:Sprite2D;
 	
 	var bounds:Rectangle;
 	
@@ -48,14 +51,13 @@ class TestBounds extends Test
 		quad1.geometry.setColor(0xff0000);
 		container.addChild(quad1);
 		
-		quad2 = new Quad2D();
-        quad2.displayWidth = 50;
-        quad2.displayHeight = 150;
+		quad2 = new Sprite2D();
+        var b = new BitmapData(64, 64, false, 0x00ff00);
+        quad2.texture = new BitmapTexture2D(b);
 		//quad2.rotation = 30;
 		quad2.x = -10;
 		quad2.y = 10;
         quad2.pivot = new Vector3D(2, 1);
-		quad2.geometry.setColor(0x00ff00);
 		container.addChild(quad2);
 	}
 	

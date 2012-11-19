@@ -99,6 +99,7 @@ class DisplayNode2D extends Node2D
     {
         geometry = g;
         if (g != null && ctx != null) g.init(ctx);
+        invalidateBounds = true;
 
         return g;
     }
@@ -147,7 +148,7 @@ class DisplayNode2D extends Node2D
         return v;
     }
 	
-	override public function getDisplayBounds(boundRect:Rectangle = null):Rectangle
+	override function getDisplayBounds(boundRect:Rectangle = null):Rectangle
 	{
 		boundRect = super.getDisplayBounds(boundRect);
 

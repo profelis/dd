@@ -28,7 +28,7 @@ class Animator extends AnimatorBase
         this.fps = fps;
     }
 
-    override public function draw(time:Float)
+    override public function update(time:Float)
     {
         frameTime += fps * (time - prevTime);
         prevTime = time;
