@@ -378,10 +378,16 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
-	override public function drawStep(camera:Camera2D):Void 
+
+    override public function updateStep()
+    {
+        if (needRedraw) updateField();
+        super.updateStep();
+    }
+
+
+    override public function drawStep(camera:Camera2D):Void
 	{
-		if (needRedraw) updateField();
 		super.drawStep(camera);
 	}
 	

@@ -109,6 +109,7 @@ class Sprite2D extends DisplayNode2D
 
         super.updateStep();
 
+        get_worldTransform();
         if (invalidateDrawTransform) updateDrawTransform();
     }
 

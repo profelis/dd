@@ -155,7 +155,7 @@ class World2D
         md.ctrl = e.ctrlKey;
         md.alt = e.altKey;
 
-        mouseStep(e.stageX, e.stageY, md);
+        mouseStep(md);
     }
 
     function onMouseLeave(e:Event)
@@ -166,7 +166,7 @@ class World2D
         var md:MouseData = new MouseData();
         md.type = MouseEvent.MOUSE_MOVE;
 
-        mouseStep(stage.mouseX, stage.mouseY, md);
+        mouseStep(md);
     }
 
     function onMouseEvent(e:MouseEvent)
@@ -181,17 +181,12 @@ class World2D
         md.ctrl = e.ctrlKey;
         md.alt = e.altKey;
 
-        mouseStep(e.stageX, e.stageY, md);
+        mouseStep(md);
     }
 
-    inline function mouseStep(mx:Float, my:Float, md:MouseData)
+    inline function mouseStep(md:MouseData)
     {
-        var m = new Vector3D(0, 0, 0, 1);
-
-        m.x = (mx - bounds.x) / bounds.width * 2 - 1;
-        m.y = -(my - bounds.y) / bounds.height * 2 + 1;
-
-        scene.mouseStep(m, camera, md);
+        scene.mouseStep(mousePos, md);
     }
 
     inline function ctxExist():Bool
@@ -402,4 +397,11 @@ class World2D
 		}
 		return val;
 	}
+
+    public var mousePos(get_mousePos, null):Vector3D;
+
+    public function get_mousePos()
+    {
+        return new Vector3D(stage.mouseX - bounds.x + camera.x, stage.mouseY - bounds.y + camera.y);
+    }
 }

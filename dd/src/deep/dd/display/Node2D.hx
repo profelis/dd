@@ -73,14 +73,12 @@ class Node2D
 
     public var mouseEnabled:Bool = false;
     public var mouseChildren:Bool = true;
-    public var mouseX(default, null):Float;
-    public var mouseY(default, null):Float;
+    public var mouseX(get_mouseX, null):Float;
+    public var mouseY(get_mouseY, null):Float;
 
     var oldMouseOver:Bool = false;
     public var mouseOver(default, null):Bool = false;
     public var mouseDown(default, null):Bool = false;
-
-    var mouseTransform:Matrix3D;
 
     public var ignoreInBatch:Bool = false;
 
@@ -138,8 +136,6 @@ class Node2D
         children = new FastList<Node2D>();
         childrenUtils = new FastListUtils<Node2D>(children);
         transform = new Matrix3D();
-
-        mouseTransform = new Matrix3D();
 
         worldColorTransform = new Vector3D();
         worldTransform = new Matrix3D();
@@ -376,40 +372,42 @@ class Node2D
 
     // mouse
 
-    public function mouseStep(pos:Vector3D, camera:Camera2D, md:MouseData)
+    function get_mouseX()
+    {
+        if (mouseX != mouseX)
+        {
+            return world != null ? globalToLocal(world.mousePos).x : Math.NaN;
+        }
+        return mouseX;
+    }
+
+    function get_mouseY()
+    {
+        if (mouseY != mouseY)
+        {
+            return world != null ? globalToLocal(world.mousePos).y : Math.NaN;
+        }
+        return mouseY;
+    }
+
+    function displayMouseStep(pos:Vector3D)
+    {
+        mouseX = Math.NaN;
+        mouseY = Math.NaN;
+        return false;
+    }
+
+    public function mouseStep(pos:Vector3D, md:MouseData)
     {
         var res:Node2D = null;
 
-        if (!displayBounds.isEmpty())
-        {
-            mouseTransform.copyFrom(worldTransform);
-            mouseTransform.append(camera.ort);
-            mouseTransform.invert();
+        if (mouseEnabled && (mouseOver = displayMouseStep(pos))) res = this;
 
-            var p = mouseTransform.transformVector(pos);
-
-            var inv = 1 / p.w;
-            p.x *= inv;
-            p.y *= inv;
-            p.z *= inv;
-            p.w = 1;
-
-            mouseX = p.x;
-            mouseY = p.y;
-
-            checkMouseOver(p);
-
-            res = mouseOver ? this : null;
-        }
-
-        if (children != null && numChildren > 0)
+        if (mouseChildren && children != null && numChildren > 0)
             for (i in children)
             {
-                if (i.mouseChildren)
-                {
-                    var subRes = i.mouseStep(pos, camera, md);
-                    if (subRes != null) res = subRes;
-                }
+                var subRes = i.mouseStep(pos, md);
+                if (subRes != null) res = subRes;
             }
 
         if (onTransformChange == null) res = null; // destrucred test
@@ -449,11 +447,6 @@ class Node2D
         oldMouseOver = mouseOver;
 
         return res;
-    }
-
-    function checkMouseOver(p:Vector3D)
-    {
-        mouseOver = false;
     }
 
     public function updateStep()

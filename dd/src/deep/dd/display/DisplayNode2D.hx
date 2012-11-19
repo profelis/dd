@@ -57,9 +57,21 @@ class DisplayNode2D extends Node2D
         }
     }
 
-    override function checkMouseOver(p:Vector3D)
+    override function displayMouseStep(p:Vector3D)
     {
-        mouseOver = displayBounds.contains(p.x, p.y);
+        if (!displayBounds.isEmpty())
+        {
+            p = globalToLocal(p);
+            if (displayBounds.contains(p.x, p.y))
+            {
+                mouseX = p.x;
+                mouseY = p.y;
+                return true;
+            }
+        }
+        mouseX = Math.NaN;
+        mouseY = Math.NaN;
+        return false;
     }
 
     override public function init(ctx:Context3D):Void

@@ -31,7 +31,9 @@ class TestBounds extends Test
 	{
 		super(wrld);
         rotation = 10;
-		
+        //wrld.camera.x = -300;
+        //wrld.camera.y = -300;
+
 		boundQuad = new Quad2D();
 		boundQuad.color = 0xff0000ff;
 		boundQuad.displayWidth = 200;
@@ -70,7 +72,7 @@ class TestBounds extends Test
 		quad2.rotation -= 1;
 		
 		container.rotation -= 0.2;
-		if (container.scaleY < 2) container.scaleY += 0.002;
+		//if (container.scaleY < 2) container.scaleY += 0.002;
 		//container.y -= 0.02;
 
 		b = container.getBounds(this, b);
