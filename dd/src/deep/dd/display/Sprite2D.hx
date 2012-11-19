@@ -113,7 +113,7 @@ class Sprite2D extends DisplayNode2D
 
     override function get_worldTransform():Matrix3D
     {
-        if (invalidateTransform || invalidateWorldTransform) invalidateDrawTransform = true;
+        invalidateDrawTransform = invalidateDrawTransform || invalidateTransform || invalidateWorldTransform;
 
         return super.get_worldTransform();
     }
