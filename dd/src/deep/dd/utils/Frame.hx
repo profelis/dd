@@ -50,14 +50,9 @@ class Frame
 
     inline public function applyFrame(m:Matrix3D)
     {
-        if (border != null)
-        {
-            m.prependTranslation(border.x, border.y, 0);
-        }
+        if (border != null) m.prependTranslation(border.x, border.y, 0);
 
         m.prependScale(frameWidth, frameHeight, 1);
-
-
     }
 
 

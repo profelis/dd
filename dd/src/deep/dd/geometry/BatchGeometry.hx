@@ -47,5 +47,10 @@ class BatchGeometry extends Geometry
         return g;
     }
 
+    override public function copy():Geometry
+    {
+        return createTexturedBatch(size, width, height, offsetX, offsetY);
+    }
+
     public var size(default, null):Int;
 }

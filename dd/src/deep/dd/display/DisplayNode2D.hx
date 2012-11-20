@@ -59,10 +59,11 @@ class DisplayNode2D extends Node2D
 
     override function displayMouseStep(p:Vector3D)
     {
-        if (!displayBounds.isEmpty())
+        var d = displayBounds;
+        if (!d.isEmpty())
         {
             p = globalToLocal(p);
-            if (displayBounds.contains(p.x, p.y))
+            if (d.contains(p.x, p.y))
             {
                 mouseX = p.x;
                 mouseY = p.y;

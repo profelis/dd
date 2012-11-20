@@ -89,6 +89,11 @@ class Geometry
         }
     }
 
+    public function copy():Geometry
+    {
+        return create(Geometry, textured, width, height, stepsX, stepsY, offsetX, offsetY);
+    }
+
     static public function createTextured(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
     {
         return create(Geometry, true, width, height, stepsX, stepsY, offsetX, offsetY);

@@ -22,9 +22,16 @@ class CloudGeometry extends Geometry
         return g;
     }
 
+    override public function copy():Geometry
+    {
+        return createTexturedCloud(size, perVertex, width, height, offsetX, offsetY);
+    }
+
     var perVertex:UInt;
 
     public var rawVBuf:flash.Vector<Float>;
+
+    var size(default, null):UInt;
 
     public function resizeCloud(size:UInt)
     {
@@ -33,6 +40,7 @@ class CloudGeometry extends Geometry
 
         if (csize == size) return;
 
+        this.size = size;
         poly.idx.fixed = false;
         rawVBuf.fixed = false;
         rawVBuf.length = size * 4 * perVertex;

@@ -71,10 +71,7 @@ class Sprite2D extends DisplayNode2D
 
     override public function init(ctx:Context3D):Void
     {
-        if (this.ctx != ctx && texture != null)
-        {
-            texture.init(ctx);
-        }
+        if (this.ctx != ctx && texture != null) texture.init(ctx);
         super.init(ctx);
     }
 
@@ -109,13 +106,13 @@ class Sprite2D extends DisplayNode2D
 
         super.updateStep();
 
-        get_worldTransform();
+        invalidateDrawTransform = invalidateDrawTransform || invalidateWorldTransform;
         if (invalidateDrawTransform) updateDrawTransform();
     }
 
     override function get_worldTransform():Matrix3D
     {
-        invalidateDrawTransform = invalidateDrawTransform || invalidateTransform || invalidateWorldTransform;
+        invalidateDrawTransform = invalidateDrawTransform || invalidateWorldTransform;
 
         return super.get_worldTransform();
     }
@@ -172,13 +169,9 @@ class Sprite2D extends DisplayNode2D
 		if (animator != null)
 		{
 			if (animator.atlas != null)
-			{
-				texture = animator.atlas;
-			}
+                texture = animator.atlas;
 			else if (FastHaxe.is(texture, AtlasTexture2D))
-			{
 				animator.atlas = flash.Lib.as(texture, AtlasTexture2D);
-			}
 		}
 
         return animator;

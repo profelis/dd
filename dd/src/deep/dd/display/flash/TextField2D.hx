@@ -385,12 +385,6 @@ class TextField2D extends Sprite2D
         super.updateStep();
     }
 
-
-    override public function drawStep(camera:Camera2D):Void
-	{
-		super.drawStep(camera);
-	}
-	
 	override public function dispose():Void 
 	{
 		super.dispose();

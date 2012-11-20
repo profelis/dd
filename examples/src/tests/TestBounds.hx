@@ -50,11 +50,11 @@ class TestBounds extends Test
         quad1.displayHeight = 100;
 		quad1.x = 10;
 		quad1.y = 20;
-		quad1.geometry.setColor(0xff0000);
+		quad1.color = 0xff0000;
 		container.addChild(quad1);
         quad1.mouseEnabled = true;
         quad1.onMouseOver.add(function (_,_) quad1.color = 0xFFFF00);
-        quad1.onMouseOut.add(function (_,_) quad1.color = 0xFFFFFF);
+        quad1.onMouseOut.add(function (_,_) quad1.color = 0xff0000);
 
 		quad2 = new Sprite2D();
         var b = new BitmapData(64, 64, false, 0x00ff00);

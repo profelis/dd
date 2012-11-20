@@ -1,5 +1,7 @@
 package deep.dd;
 
+import flash.ui.MultitouchInputMode;
+import flash.ui.Multitouch;
 import flash.display.Stage;
 import msignal.Signal.Signal2;
 import deep.dd.utils.MouseData;
@@ -86,6 +88,9 @@ class World2D
         ctx = stage3d.context3D;
         if (ctxExist()) onContext(null);
         else stage3d.requestContext3D(Std.string(context3DRenderMode));
+
+        if (Multitouch.inputMode == MultitouchInputMode.NONE)
+            Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
     }
 
     function onContext(_)

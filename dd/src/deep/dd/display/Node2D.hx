@@ -41,6 +41,9 @@ class Node2D
     * @private
     */
     public var invalidateWorldTransform:Bool = true;
+    /**
+    * @private
+    */
     public var invalidateInvertWorldTransform:Bool = true;
 
     public var colorTransform(default, set_colorTransform):Color;
@@ -73,8 +76,8 @@ class Node2D
 
     public var mouseEnabled:Bool = false;
     public var mouseChildren:Bool = true;
-    public var mouseX(get_mouseX, null):Float;
-    public var mouseY(get_mouseY, null):Float;
+    public var mouseX(get_mouseX, null):Float = 0/0; // NaN
+    public var mouseY(get_mouseY, null):Float = 0/0;
 
     var oldMouseOver:Bool = false;
     public var mouseOver(default, null):Bool = false;
@@ -82,9 +85,9 @@ class Node2D
 
     public var ignoreInBatch:Bool = false;
 
-    public var onTransformChange(default, null):Signal0;
-    public var onWorldTransformChange(default, null):Signal0;
-    public var onColorTransformChange(default, null):Signal0;
+    public var onTransformChange(default, null):Signal1<Node2D>;
+    public var onWorldTransformChange(default, null):Signal1<Node2D>;
+    public var onColorTransformChange(default, null):Signal1<Node2D>;
     public var onVisibleChange(get_onVisibleChange, null):Signal1<Node2D>;
 
     public var onMouseOver(get_onMouseOver, null):Signal2<Node2D, MouseData>;
@@ -121,7 +124,7 @@ class Node2D
     }
 
 	public var bounds(get_bounds, null):Rectangle;
-	private var _boundRect2:Rectangle;
+	var _boundRect2:Rectangle;
 
     public var displayBounds(get_displayBounds, null):Rectangle;
 
@@ -129,9 +132,9 @@ class Node2D
     {
         blendMode = BlendMode.NORMAL_A;
 
-        onTransformChange = new Signal0();
-        onWorldTransformChange = new Signal0();
-        onColorTransformChange = new Signal0();
+        onTransformChange = new Signal1<Node2D>();
+        onWorldTransformChange = new Signal1<Node2D>();
+        onColorTransformChange = new Signal1<Node2D>();
 
         children = new FastList<Node2D>();
         childrenUtils = new FastListUtils<Node2D>(children);
@@ -247,18 +250,18 @@ class Node2D
         onParentTransformChange();
     }
 
-    function onParentColorChange()
+    function onParentColorChange(?_)
     {
         invalidateColorTransform = true;
-        onColorTransformChange.dispatch();
+        onColorTransformChange.dispatch(this);
     }
 
-    function onParentTransformChange()
+    function onParentTransformChange(?_)
     {
         invalidateBounds = true;
         invalidateWorldTransform = true;
         invalidateInvertWorldTransform = true;
-        onWorldTransformChange.dispatch();
+        onWorldTransformChange.dispatch(this);
     }
 
     function setScene(s:Scene2D):Void
@@ -374,26 +377,18 @@ class Node2D
 
     function get_mouseX()
     {
-        if (mouseX != mouseX)
-        {
-            return world != null ? globalToLocal(world.mousePos).x : Math.NaN;
-        }
-        return mouseX;
+        if (mouseX == mouseX) return mouseX;
+        return world != null ? globalToLocal(world.mousePos).x : Math.NaN;
     }
 
     function get_mouseY()
     {
-        if (mouseY != mouseY)
-        {
-            return world != null ? globalToLocal(world.mousePos).y : Math.NaN;
-        }
-        return mouseY;
+        if (mouseY == mouseY) return mouseY;
+        return world != null ? globalToLocal(world.mousePos).y : Math.NaN;
     }
 
     function displayMouseStep(pos:Vector3D)
     {
-        mouseX = Math.NaN;
-        mouseY = Math.NaN;
         return false;
     }
 
@@ -463,7 +458,7 @@ class Node2D
 
     function get_worldTransform():Matrix3D
     {
-        if (invalidateTransform || invalidateWorldTransform)
+        if (invalidateWorldTransform)
         {
             worldTransform.rawData = transform.rawData;
             if (parent != null) worldTransform.append(parent.worldTransform);
@@ -475,7 +470,7 @@ class Node2D
 
     function get_invertWorldTransform():Matrix3D
     {
-        if (invalidateTransform || invalidateWorldTransform || invalidateInvertWorldTransform)
+        if (invalidateWorldTransform || invalidateInvertWorldTransform)
         {
             invertWorldTransform.rawData = worldTransform.rawData;
             invertWorldTransform.invert();
@@ -503,7 +498,6 @@ class Node2D
             if (usePivot) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
 
             invalidateTransform = false;
-            invalidateWorldTransform = true;
         }
 
         return transform;
@@ -516,11 +510,15 @@ class Node2D
     {
         if (v != null && v.x == 0 && v.y == 0 && v.z == 0) v = null;
 
-        pivot = v;
-        usePivot = v != null;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
+        if (pivot == null || !v.equals(pivot))
+        {
+            pivot = v;
+            usePivot = v != null;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+        }
         return v;
     }
 
@@ -534,54 +532,73 @@ class Node2D
 
     function set_x(v:Float)
     {
-        x = v;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
-        onWorldTransformChange.dispatch();
+        if (x != v)
+        {
+            x = v;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+            onWorldTransformChange.dispatch(this);
+        }
         return v;
     }
 
     function set_y(v:Float)
     {
-        y = v;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
-        onWorldTransformChange.dispatch();
+        if (y != v)
+        {
+            y = v;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+            onWorldTransformChange.dispatch(this);
+        }
         return v;
     }
 
     function set_rotation(v:Float)
     {
-        rotation = v;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
-        onWorldTransformChange.dispatch();
+        if (rotation != v)
+        {
+            rotation = v;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+            onWorldTransformChange.dispatch(this);
+        }
         return v;
     }
 
     function set_scaleX(v:Float)
     {
-        scaleX = v;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
-        onWorldTransformChange.dispatch();
+        if (scaleX != v)
+        {
+            scaleX = v;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+            onWorldTransformChange.dispatch(this);
+        }
         return v;
     }
 
     function set_scaleY(v:Float)
     {
-        scaleY = v;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
-        onWorldTransformChange.dispatch();
+        if (scaleY != v)
+        {
+            scaleY = v;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+            onWorldTransformChange.dispatch(this);
+        }
         return v;
     }
-
 
     // color transform
 
@@ -611,10 +628,13 @@ class Node2D
     {
         if (c == null) c = new Color(1, 1, 1, 1);
 
-        colorTransform = c;
-        alpha = c.a;
-        invalidateColorTransform = true;
-        onColorTransformChange.dispatch();
+        if (colorTransform == null || !c.equals(colorTransform))
+        {
+            colorTransform = c;
+            alpha = c.a;
+            invalidateColorTransform = true;
+            onColorTransformChange.dispatch(this);
+        }
 
         return c;
     }
@@ -622,10 +642,12 @@ class Node2D
     function set_alpha(v:Float):Float
     {
         v = Color.clamp(v);
-        alpha = colorTransform.a = v;
-        invalidateColorTransform = true;
-        onColorTransformChange.dispatch();
-
+        if (v != alpha)
+        {
+            alpha = colorTransform.a = v;
+            invalidateColorTransform = true;
+            onColorTransformChange.dispatch(this);
+        }
         return v;
     }
 
@@ -645,7 +667,7 @@ class Node2D
             for (c in children)
             {
                 if (!c.visible) continue;
-                _boundRect2 = c.getBounds(this, _boundRect2);
+                c.getBounds(this, _boundRect2);
 
                 if (!_boundRect2.isEmpty())
                 {
@@ -675,6 +697,11 @@ class Node2D
 		return bounds;
 	}
 
+    static var p1:Vector3D = new Vector3D();
+    static var p2:Vector3D = new Vector3D();
+    static var p3:Vector3D = new Vector3D();
+    static var p4:Vector3D = new Vector3D();
+
     public function getBounds(target:Node2D, boundRect:Rectangle = null):Rectangle
     {
         if (boundRect == null) boundRect = new Rectangle();
@@ -684,26 +711,37 @@ class Node2D
         var m:Matrix3D = target.invertWorldTransform.clone();
         m.prepend(worldTransform);
 
-        var p1:Vector3D = new Vector3D(boundRect.x, boundRect.y);
-        var p2:Vector3D = new Vector3D(boundRect.x, boundRect.bottom);
-        var p3:Vector3D = new Vector3D(boundRect.right, boundRect.y);
-        var p4:Vector3D = new Vector3D(boundRect.right, boundRect.bottom);
-        p1 = m.transformVector(p1);
-        p2 = m.transformVector(p2);
-        p3 = m.transformVector(p3);
-        p4 = m.transformVector(p4);
+        if (!boundRect.isEmpty())
+        {
+            p1.setTo(boundRect.x, boundRect.y, 0);
+            p2.setTo(boundRect.x, boundRect.bottom, 0);
+            p3.setTo(boundRect.right, boundRect.y, 0);
+            p4.setTo(boundRect.right, boundRect.bottom, 0);
+            p1 = m.transformVector(p1);
+            p2 = m.transformVector(p2);
+            p3 = m.transformVector(p3);
+            p4 = m.transformVector(p4);
 
-        boundRect.x = Math.min(p1.x, Math.min(p2.x, Math.min(p3.x, p4.x)));
-        boundRect.right = Math.max(p1.x, Math.max(p2.x, Math.max(p3.x, p4.x)));
-        boundRect.y = Math.min(p1.y, Math.min(p2.y, Math.min(p3.y, p4.y)));
-        boundRect.bottom = Math.max(p1.y, Math.max(p2.y, Math.max(p3.y, p4.y)));
+            boundRect.x = Math.min(p1.x, Math.min(p2.x, Math.min(p3.x, p4.x)));
+            boundRect.right = Math.max(p1.x, Math.max(p2.x, Math.max(p3.x, p4.x)));
+            boundRect.y = Math.min(p1.y, Math.min(p2.y, Math.min(p3.y, p4.y)));
+            boundRect.bottom = Math.max(p1.y, Math.max(p2.y, Math.max(p3.y, p4.y)));
+        }
+        else
+        {
+            p1.setTo(boundRect.x, boundRect.y, 0);
+            p1 = m.transformVector(p1);
+            boundRect.x = p1.x;
+            boundRect.y = p1.y;
+        }
 
         if (numChildren == 0) return boundRect;
 
         for (c in children)
         {
             if (!c.visible) continue;
-            _boundRect2 = c.getBounds(target, _boundRect2);
+            c.getBounds(target, _boundRect2);
+
             if (!_boundRect2.isEmpty())
             {
                 if (boundRect.isEmpty())
@@ -724,19 +762,18 @@ class Node2D
                     boundRect.width = x1 - x0;
                     boundRect.height = y1 - y0;
                 }
-
             }
         }
 
         return boundRect;
     }
 
-    public function localToGlobal(v:Vector3D):Vector3D
+    public inline function localToGlobal(v:Vector3D):Vector3D
     {
         return worldTransform.transformVector(v);
     }
 
-    public function globalToLocal(v:Vector3D):Vector3D
+    public inline function globalToLocal(v:Vector3D):Vector3D
     {
         return invertWorldTransform.transformVector(v);
     }
