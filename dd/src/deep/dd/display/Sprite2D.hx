@@ -89,13 +89,14 @@ class Sprite2D extends DisplayNode2D
                 {
                     x -= border.x;
                     y -= border.y;
-                    if (x < 0 || y < 0 || x > textureFrame.frameWidth || y > textureFrame.frameHeight) return false;
                 }
+                if (x < 0 || y < 0 || x > textureFrame.frameWidth || y > textureFrame.frameHeight) return false;
 
-                x *= textureFrame.region.z;
-                y *= textureFrame.region.w;
-                x += textureFrame.region.x;
-                y += textureFrame.region.y;
+                var region = textureFrame.region;
+                x *= region.z;
+                y *= region.w;
+                x += region.x;
+                y += region.y;
 
                 if ((texture.options & Texture2DOptions.REPEAT_NORMAL) > 0)
                 {
@@ -105,8 +106,7 @@ class Sprite2D extends DisplayNode2D
                 x *= texture.textureWidth / b.width;
                 y *= texture.textureHeight / b.height;
 
-                if (b.rect.contains(x, y)) return (b.getPixel32(Std.int(x), Std.int(y)) >>> 24) > 0;
-                else return false;
+                return b.rect.contains(x, y) && (b.getPixel32(Std.int(x), Std.int(y)) >>> 24) > 0;
             }
 
             return true;
