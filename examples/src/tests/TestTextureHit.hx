@@ -17,13 +17,15 @@ import flash.display.BitmapData;
 
 class TestTextureHit extends Test
 {
+    var t:Sprite2D;
+
     public function new(w:World2D)
     {
         super(w);
 
         var i = new Image(0,0);
 
-        var t = new Sprite2D();
+        t = new Sprite2D();
         t.x = 200;
         t.y = 20;
         t.texture = w.cache.getBitmapTexture(i);
@@ -46,4 +48,12 @@ class TestTextureHit extends Test
 
         addChild(t);
     }
+
+    override public function updateStep()
+    {
+        super.updateStep();
+        //trace(t.hitTest(t.mouseX, t.mouseY));
+    }
+
+
 }

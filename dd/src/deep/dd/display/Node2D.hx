@@ -387,7 +387,7 @@ class Node2D
         return world != null ? globalToLocal(world.mousePos).y : Math.NaN;
     }
 
-    function displayMouseStep(pos:Vector3D)
+    function displayHitTest(pos:Vector3D, mouseHit = true)
     {
         return false;
     }
@@ -396,7 +396,12 @@ class Node2D
     {
         var res:Node2D = null;
 
-        if (mouseEnabled && (mouseOver = displayMouseStep(pos))) res = this;
+        if (mouseEnabled && (mouseOver = displayHitTest(pos))) res = this;
+        if (!mouseOver)
+        {
+            mouseX = Math.NaN;
+            mouseY = Math.NaN;
+        }
 
         if (mouseChildren && children != null && numChildren > 0)
             for (i in children)
@@ -442,6 +447,24 @@ class Node2D
         oldMouseOver = mouseOver;
 
         return res;
+    }
+
+    public function hitTest(x:Float, y:Float):Bool
+    {
+        if (!bounds.contains(x, y)) return false;
+
+        return globalHitTest(localToGlobal(new Vector3D(x, y)));
+    }
+
+    function globalHitTest(pos:Vector3D):Bool
+    {
+        if (displayHitTest(pos)) return true;
+
+        if (numChildren == 0 || children == null) return false;
+
+        for (c in children) if (c.globalHitTest(pos)) return true;
+
+        return false;
     }
 
     public function updateStep()

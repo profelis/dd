@@ -56,9 +56,9 @@ class Sprite2D extends DisplayNode2D
 
     public var textureHitTest:Bool = false;
 
-    override function displayMouseStep(p:Vector3D)
+    override function displayHitTest(p:Vector3D, mouseHit = true)
     {
-        if (super.displayMouseStep(p))
+        if (super.displayHitTest(p))
         {
             if (textureHitTest && texture != null && FastHaxe.is(texture, BitmapTexture2D))
             {

@@ -57,7 +57,7 @@ class DisplayNode2D extends Node2D
         }
     }
 
-    override function displayMouseStep(p:Vector3D)
+    override function displayHitTest(p:Vector3D, mouseHit = true)
     {
         var d = displayBounds;
         if (!d.isEmpty())
@@ -65,13 +65,14 @@ class DisplayNode2D extends Node2D
             p = globalToLocal(p);
             if (d.contains(p.x, p.y))
             {
-                mouseX = p.x;
-                mouseY = p.y;
+                if (mouseHit)
+                {
+                    mouseX = p.x;
+                    mouseY = p.y;
+                }
                 return true;
             }
         }
-        mouseX = Math.NaN;
-        mouseY = Math.NaN;
         return false;
     }
 
