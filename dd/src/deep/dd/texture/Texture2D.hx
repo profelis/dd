@@ -20,7 +20,7 @@ import deep.dd.utils.GlobalStatistics;
 
 class BitmapTexture2D extends Texture2D
 {
-    var bitmapData:BitmapData;
+    public var bitmapData(default, null):BitmapData;
     var bitmapRef:Class<BitmapData>;
 
     public var bitmapWidth(default, null):Int;

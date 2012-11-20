@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import flash.geom.Vector3D;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.utils.Frame;
 import deep.dd.material.Material;
@@ -51,6 +52,59 @@ class Sprite2D extends DisplayNode2D
     public var drawTransform(default, null):Matrix3D;
 
     public var texture(default, set_texture):Texture2D;
+
+    public var textureHitTest:Bool = false;
+
+    override function displayMouseStep(p:Vector3D)
+    {
+        if (super.displayMouseStep(p))
+        {
+            if (textureHitTest && texture != null && FastHaxe.is(texture, BitmapTexture2D))
+            {
+                var b = flash.Lib.as(texture, BitmapTexture2D).bitmapData;
+                try
+                {
+                    b.getPixel(0, 0);
+                }
+                catch (e:Dynamic)
+                {
+                    return true;
+                }
+                if (!b.transparent) return true;
+
+                var x = p.x * textureFrame.width;
+                var y = p.y * textureFrame.height;
+
+                var border = textureFrame.border;
+                if (border != null)
+                {
+                    if (x < border.x || y < border.y) return false;
+                    x -= border.x;
+                    y -= border.y;
+                    if (x > textureFrame.frameWidth || y > textureFrame.frameHeight) return false;
+                }
+                if ((texture.options & Texture2DOptions.REPEAT_NORMAL) > 0)
+                {
+                    x %= b.width;
+                    y %= b.height;
+                }
+
+                try
+                {
+                    var res = ((b.getPixel32(x, y) >> 24) > 0);
+                    return res;
+                }
+                catch (e:Dynamic)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 
     override public function dispose():Void
     {
