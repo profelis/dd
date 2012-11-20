@@ -63,7 +63,11 @@ class Sprite2D extends DisplayNode2D
             if (textureHitTest && texture != null && FastHaxe.is(texture, BitmapTexture2D))
             {
                 var b:BitmapData = flash.Lib.as(texture, BitmapTexture2D).bitmapData;
-                if (b != null) return true;
+                if (b == null)
+                {
+                    #if debug trace("bitmap is null"); #end
+                    return true;
+                }
 
                 try
                 {
@@ -71,12 +75,14 @@ class Sprite2D extends DisplayNode2D
                 }
                 catch (e:Dynamic)
                 {
+                    #if debug trace("bitmap is disposed"); #end
                     return true;
                 }
                 if (!b.transparent) return true;
 
-                var x = p.x * textureFrame.width;
-                var y = p.y * textureFrame.height;
+                p = globalToLocal(p);
+                var x = p.x;
+                var y = p.y;
 
                 var border = textureFrame.border;
                 if (border != null)
@@ -85,12 +91,21 @@ class Sprite2D extends DisplayNode2D
                     y -= border.y;
                     if (x < 0 || y < 0 || x > textureFrame.frameWidth || y > textureFrame.frameHeight) return false;
                 }
+
+                x *= textureFrame.region.z;
+                y *= textureFrame.region.w;
+                x += textureFrame.region.x;
+                y += textureFrame.region.y;
+
                 if ((texture.options & Texture2DOptions.REPEAT_NORMAL) > 0)
                 {
                     x %= b.width;
                     y %= b.height;
                 }
-                if (b.rect.contains(x, y)) return (b.getPixel32(Std.int(x), Std.int(y)) >> 24) > 0;
+                x *= texture.textureWidth / b.width;
+                y *= texture.textureHeight / b.height;
+
+                if (b.rect.contains(x, y)) return (b.getPixel32(Std.int(x), Std.int(y)) >>> 24) > 0;
                 else return false;
             }
 
