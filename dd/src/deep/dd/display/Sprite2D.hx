@@ -91,7 +91,7 @@ class Sprite2D extends DisplayNode2D
 
                 try
                 {
-                    var res = ((b.getPixel32(x, y) >> 24) > 0);
+                    var res = (b.getPixel32(x, y) >> 24) > 0;
                     return res;
                 }
                 catch (e:Dynamic)
