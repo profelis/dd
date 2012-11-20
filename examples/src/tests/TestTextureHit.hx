@@ -12,6 +12,7 @@ import mt.m3d.Color;
 import deep.dd.World2D;
 import deep.dd.display.Sprite2D;
 import flash.display.BitmapData;
+
 @:bitmap("../assets/test3d/haxe.png") class Image extends BitmapData {}
 
 class TestTextureHit extends Test

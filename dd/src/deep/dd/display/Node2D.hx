@@ -562,6 +562,8 @@ class Node2D
     {
         if (rotation != v)
         {
+            while (rotation < -Math.PI) rotation += 2 * Math.PI;
+            while (rotation > Math.PI) rotation -= 2 * Math.PI;
             rotation = v;
             invalidateBounds = true;
             invalidateTransform = true;
