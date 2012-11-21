@@ -458,7 +458,7 @@ class BitmapFont2D extends SmartSprite2D
             cast(s.animator, Animator).gotoFrame(info.symbol);
             c.x = info.x;
             c.y = info.y;
-            var f = font.getFrameByName(info.symbol);
+            var f = font.glyphs.get(info.symbol);
             pos++;
         }
 
@@ -478,7 +478,7 @@ class BitmapFont2D extends SmartSprite2D
 		for (i in 0...lineText.length)
 		{
 			char = lineText.charAt(i);
-			glyph = font.getFrameByName(char);
+			glyph = font.glyphs.get(char);
 
 			if (glyph != null)
 			{

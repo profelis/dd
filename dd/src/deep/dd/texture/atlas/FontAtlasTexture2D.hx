@@ -1,26 +1,50 @@
 package deep.dd.texture.atlas;
 
+/**
+*  @author Zaphod
+*/
+
 import deep.dd.utils.Frame;
 import deep.dd.texture.Texture2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
 
+/**
+* Атлас, для хранения символов шрифта
+* @lang ru
+**/
 class FontAtlasTexture2D extends AtlasTexture2D
 {
+    /**
+    * Ширина символа пробела
+    * @lang ru
+    **/
 	public var spaceWidth(default, null):Int = 0;
-	public var fontHeight(default, null):Int = 0;
-	public var hasSpaceGlyph(default, null):Bool = false;
-	
-	var glyphs:Hash<Frame>;
 
-    var fontParser:IFontAtlasParser;
+    /**
+    * Высота символов шрифта
+    * @lang ru
+    **/
+	public var fontHeight(default, null):Int = 0;
+
+    /**
+    * Задан ли символ пробела, как отдельный фрейм
+    * @lang ru
+    **/
+	public var hasSpaceGlyph(default, null):Bool = false;
+
+    /**
+    * Набор символов
+    * @lang ru
+    **/
+	public var glyphs(default, null):Hash<Frame>;
 
     public function new(texture:Texture2D, parser:IFontAtlasParser)
     {
-        super(texture, fontParser = parser);
+        super(texture, parser);
 
-        spaceWidth = fontParser.spaceWidth;
-        fontHeight = fontParser.fontHeight;
-        hasSpaceGlyph = fontParser.hasSpaceGlyph;
+        spaceWidth = parser.spaceWidth;
+        fontHeight = parser.fontHeight;
+        hasSpaceGlyph = parser.hasSpaceGlyph;
 
 		glyphs = new Hash<Frame>();
 		for (f in frames)
@@ -28,22 +52,33 @@ class FontAtlasTexture2D extends AtlasTexture2D
 			glyphs.set(f.name, f);
 		}
     }
-	
+
+    /**
+    * Возвращает фрейм символа
+    * @param name буква, кадр которой надо получить
+    * @lang ru
+    **/
 	public function getFrameByName(name:String):Frame
 	{
 		return glyphs.get(name);
 	}
-	
+
+    /**
+    * Возвращает субтекстуру символа
+    * @param name буква, кадр которой надо получить
+    * @lang ru
+    **/
 	override public function getTextureByName(name:String):Texture2D 
 	{
 		var f:Frame = glyphs.get(name);
-		if (f != null)
-		{
-			return getTextureByFrame(f);
-		}
+		if (f != null) return getTextureByFrame(f);
 		return null;
 	}
-	
+
+    /**
+    * Возвращает ширину текста с учетом пробела между символами и шириной пробела
+    * @lang ru
+    **/
 	public function getTextWidth(text:String, spacing:Int = 0, numSpacesInTab:Int = 4):Float
 	{
 		var w:Float = 0;
@@ -80,6 +115,10 @@ class FontAtlasTexture2D extends AtlasTexture2D
 
 }
 
+/**
+* Парсер атласа шрифтов
+* @lang ru
+**/
 interface IFontAtlasParser implements IAtlasParser
 {
     var fontHeight(default, null):Int;

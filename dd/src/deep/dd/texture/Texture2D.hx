@@ -22,15 +22,28 @@ import deep.dd.utils.GlobalStatistics;
 #end
 
 /**
-* Битмап текстура
+* Текстура отображающая битмапу
 * @lang ru
 **/
 class BitmapTexture2D extends Texture2D
 {
+    /**
+    * Ссылка на битмапу текстуры. Может и не существовать
+    * @lang ru
+    **/
     public var bitmapData(default, null):BitmapData;
     var bitmapRef:Class<BitmapData>;
 
+    /**
+    * Ширина битмапы
+    * @lang ru
+    **/
     public var bitmapWidth(default, null):Int;
+
+    /**
+    * Высота битмапы
+    * @lang ru
+    **/
     public var bitmapHeight(default, null):Int;
 
     public function new(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA)
@@ -47,6 +60,10 @@ class BitmapTexture2D extends Texture2D
             new Vector3D(0, 0, bitmapWidth/textureWidth, bitmapHeight/textureHeight));
     }
 
+    /**
+    * Билд метод для создания битмап текстуры на основе класса битмапы
+    * @lang ru
+    **/
     public static function createFromRef(ref:Class<BitmapData>, options:UInt = Texture2DOptions.QUALITY_ULTRA):BitmapTexture2D
     {
         var res = new BitmapTexture2D(Type.createInstance(ref, [0, 0]));
@@ -139,13 +156,16 @@ class BitmapTexture2D extends Texture2D
     }
 }
 
-//---------------------------
-// only RGBA
+/**
+* ATF текстура.
+* Пока не поддерживается
+* @lang ru
+**/
 class ATFTexture2D extends Texture2D
 {
     var atfData:ByteArray;
 
-    public function new(data:ByteArray, options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    function new(data:ByteArray, options:UInt = Texture2DOptions.QUALITY_ULTRA)
     {
         #if debug
         if (String.fromCharCode(data[0]) + String.fromCharCode(data[1]) + String.fromCharCode(data[2]) != "ATF")
@@ -202,8 +222,10 @@ class ATFTexture2D extends Texture2D
     }
 }
 
-//---------------------------
-
+/**
+* Пустая текстура, обычно используется для рендера на текстуру
+* @lang ru
+**/
 class EmptyTexture extends Texture2D
 {
     public function new(width:Int, height:Int, options:UInt = Texture2DOptions.QUALITY_ULTRA)
@@ -225,22 +247,52 @@ class EmptyTexture extends Texture2D
     }
 }
 
-//---------------------------
-
+/**
+* Базовый класс текстуры
+* @lang ru
+**/
 class Texture2D
 {
+    /**
+    * Свойства текстуры
+    * @lang ru
+    **/
     public var options(default, null):UInt;
 
-    // preferred size
+    /**
+    * Предпочтительная ширина текстуры с учетом фрейма
+    * @lang ru
+    **/
     public var width(default, null):Float;
+    /**
+    * Предпочтительная высота текстуры с учетом фрейма
+    * @lang ru
+    **/
     public var height(default, null):Float;
 
-    // texture size 2^n
+    /**
+    * Ширина загруженой текстуры
+    * @lang ru
+    **/
     public var textureWidth(default, null):Int;
+
+    /**
+    * Высота загруженой текстуры
+    * @lang ru
+    **/
     public var textureHeight(default, null):Int;
 
+    /**
+    * Кадр текстуры
+    * @see deep.dd.utils.Frame
+    * @lang ru
+    **/
     public var frame(default, set_frame):Frame;
 
+    /**
+    * Загруженная текстура в гпу
+    * @lang ru
+    **/
     public var texture(default, null):Texture;
 
     var ctx:Context3D;
@@ -255,16 +307,31 @@ class Texture2D
         name = "texture_" + uid++;
     }
 
+    /**
+    * Счетчик использования текстуры
+    * @lang ru
+    **/
     public var useCount(default, null):Int = 0;
+
+    /**
+    * Ссылка на кеш, если текстура было создана через кеш
+    * @lang ru
+    **/
     public var cache(default, null):Cache;
 
+    /**
+    * Удалять ссылку на битмапу или атф данные.
+    * Если значение true, то в случае потери контекста не удастся восстановить текстуру
+    * Не
+    * @lang ru
+    **/
     public var releaseRawData(default, #if debug set_releaseBitmap #else default #end):Bool = false;
 
     #if debug
     function set_releaseBitmap(v)
     {
         if (cache != null) throw "releaseBitmap conflict with cache";
-        return releaseRawData = v;
+        return releaseRawData = false;
     }
     #end
 
@@ -281,14 +348,30 @@ class Texture2D
         return frame = f;
     }
 
+    /**
+    * Флаг, что нужно обновить текстуру
+    * @lang ru
+    **/
     public var needUpdate:Bool = false;
 
+    /**
+    * Обновление текстуры
+    * @lang ru
+    **/
     public function update()
     {
     }
 
+    /**
+    * Размер текстуры в байтах занимаемый в памяти
+    * @lang ru
+    **/
     public var memory(default, null):UInt = 0;
 
+    /**
+    * Метод инициализации контекста, вызывается при создании контекста
+    * @lang ru
+    **/
     public function init(ctx:Context3D)
     {
         if (this.ctx == ctx) return;
@@ -297,6 +380,10 @@ class Texture2D
         uploadTexture();
     }
 
+    /**
+    * Выгрузка текстуры
+    * @lang ru
+    **/
     function unloadTexture()
     {
         if (texture != null)
@@ -309,6 +396,10 @@ class Texture2D
         }
     }
 
+    /**
+    * Загрузка текстуры
+    * @lang ru
+    **/
     function uploadTexture()
     {
         #if dd_stat
@@ -353,6 +444,10 @@ class Texture2D
 }
 
 // ND2D thanks
+/**
+* Свойства текстуры. Параметры мипмапинга, сглаживания и повтора текстуры
+* @lang ru
+**/
 class Texture2DOptions
 {
 

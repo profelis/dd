@@ -1,5 +1,10 @@
 package deep.dd.texture.atlas.parser;
 
+/**
+*  @author Dima Granetchi <system.grand@gmail.com>, <deep@e-citrus.ru>
+*/
+
+import deep.dd.utils.FastHaxe;
 import deep.dd.utils.Frame;
 import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
@@ -7,6 +12,11 @@ import flash.geom.Point;
 import deep.dd.texture.atlas.AtlasTexture2D;
 import flash.geom.Vector3D;
 
+/**
+* Разбивает текстуру на прямоугольные кадры заданого размера
+* двигаясь слева направо и сверху вниз
+* @lang ru
+**/
 class SpriteSheetParser implements IAtlasParser
 {
     var iw:Float;
@@ -27,8 +37,19 @@ class SpriteSheetParser implements IAtlasParser
         var x = 0.0;
         var y = 0.0;
 
-        var kx = 1.0 / a.textureWidth;
-        var ky = 1.0 / a.textureHeight;
+        var kx = 1.0;
+        var ky = 1.0;
+        if (FastHaxe.is(a.baseTexture, BitmapTexture2D))
+        {
+            var bt:BitmapTexture2D = flash.Lib.as(a.baseTexture, BitmapTexture2D);
+            kx /= bt.bitmapWidth;
+            ky /= bt.bitmapHeight;
+        }
+        else
+        {
+            kx /= a.textureWidth;
+            ky /= a.textureHeight;
+        }
 
         var w = iw - padding * 2;
         var h = ih - padding * 2;
