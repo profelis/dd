@@ -1,8 +1,20 @@
 package deep.dd.geometry;
 
+/**
+* @author Dima Granetchi <system.grand@gmail.com>, <deep@e-citrus.ru>
+*/
+
+/**
+* Геометрия для BatchRender-а
+* @lang ru
+**/
 
 class BatchGeometry extends Geometry
 {
+    /**
+    * Билдер батч геометрии
+    * @lang ru
+    **/
     static public function createTexturedBatch(size:Int, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):BatchGeometry
     {
         var g:BatchGeometry = Geometry.create(BatchGeometry, true, width, height, 1, 1, offsetX, offsetY);
@@ -52,5 +64,9 @@ class BatchGeometry extends Geometry
         return createTexturedBatch(size, width, height, offsetX, offsetY);
     }
 
+    /**
+    * Размер батча
+    * @lang ru
+    **/
     public var size(default, null):Int;
 }

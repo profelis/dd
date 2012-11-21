@@ -1,7 +1,19 @@
 package deep.dd.geometry;
 
+/**
+* @author Dima Granetchi <system.grand@gmail.com>, <deep@e-citrus.ru>
+*/
+
+/**
+* Геометрия для CloudRender-а
+* @lang ru
+**/
 class CloudGeometry extends Geometry
 {
+    /**
+    * Билдер клауд геометрии
+    * @lang ru
+    **/
     static public function createTexturedCloud(size:UInt, perVertex:UInt, width = 1.0, height = 1.0, offsetX = 0.0, offsetY = 0.0):CloudGeometry
     {
         var g:CloudGeometry = Geometry.create(CloudGeometry, true, width, height, 1, 1, offsetX, offsetY);
@@ -29,10 +41,21 @@ class CloudGeometry extends Geometry
 
     var perVertex:UInt;
 
+    /**
+    * @private
+    **/
     public var rawVBuf:flash.Vector<Float>;
 
-    var size(default, null):UInt;
+    /**
+    * Размер батча
+    * @lang ru
+    **/
+    public var size(default, null):UInt;
 
+    /**
+    * динамическое изменение размера батча
+    * @lang ru
+    **/
     public function resizeCloud(size:UInt)
     {
         if (size <= 0) size = 1;

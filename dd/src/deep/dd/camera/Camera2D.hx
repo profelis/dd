@@ -1,11 +1,19 @@
 package deep.dd.camera;
 
+/**
+* @author Dima Granetchi <system.grand@gmail.com>, <deep@e-citrus.ru>
+*/
+
 import flash.geom.Vector3D;
 import mt.m3d.Matrix;
 import flash.geom.Matrix3D;
 import mt.m3d.Vector;
 import mt.m3d.Camera;
 
+/**
+* 2D камера
+* @lang ru
+**/
 class Camera2D
 {
     var c:Camera;
@@ -15,12 +23,9 @@ class Camera2D
         c = new Camera();
         c.up = new Vector(0, 1, 0);
         c.zFar = 10000;
-        scale = c.zoom;
-
-        needUpdate = true;
     }
 
-    public var needUpdate:Bool = false;
+    public var needUpdate:Bool = true;
 
     public function update()
     {
@@ -39,12 +44,24 @@ class Camera2D
         needUpdate = false;
     }
 
+    /**
+    * Проекционная матраца
+    * @lang ru
+    **/
     public var proj:Matrix3D;
+
+    /**
+    * Ортографическая матрица
+    * @lang ru
+    **/
     public var ort:Matrix3D;
 
     var w:Int;
     var h:Int;
 
+    /**
+    * @private
+    **/
     public function resize(w:Int, h:Int)
     {
         if (this.w != w || this.h != h)
@@ -62,8 +79,16 @@ class Camera2D
 		proj = null;
 		ort = null;
 	}
-	
+
+    /**
+    * Смещение камеры по оси X
+    * @lang ru
+    **/
 	public var x(default, set_x):Float = 0;
+    /**
+    * Смещение камеры по оси Y
+    * @lang ru
+    **/
     public var y(default, set_y):Float = 0;
 
 	function set_x(val:Float):Float
@@ -85,18 +110,9 @@ class Camera2D
         }
 		return val;
 	}
-	
-	public var scale(default, set_scale):Float;
-	
-	function set_scale(val:Float):Float
-	{
-		c.zoom = scale = val;
-		needUpdate = true;
-		return val;
-	}
 
     public function toString()
     {
-        return Std.format("{Camera2D: $x $y scale:$scale}");
+        return Std.format("{Camera2D: $x $y}");
     }
 }

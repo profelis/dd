@@ -63,13 +63,13 @@ class World2D
 
     public function new(stage:Stage, context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stage3dId:Int = 0)
     {
+        onResize = new Signal2<Int, Int>();
+
         this.stage = stage;
         this.context3DRenderMode = context3DRenderMode;
         this.bounds =  bounds;
         this.antialiasing = antialiasing;
         this.stage3dId = stage3dId;
-
-        onResize = new Signal2<Int, Int>();
 
         cache = new Cache(this);
         #if dd_stat
@@ -218,7 +218,6 @@ class World2D
         camera.resize(w, h);
         ctx.configureBackBuffer(w, h, antialiasing);
 
-        onResize.dispatch(w, h);
         invalidateSize = false;
     }
 
@@ -288,7 +287,7 @@ class World2D
 		stage = null;
 		stage3d = null;
 
-        if (disposeContext3D) ctx.dispose();
+        if (disposeContext3D && ctxExist()) ctx.dispose();
         ctx = null;
 
         Reflect.setField(this, "bounds", null);
@@ -304,7 +303,7 @@ class World2D
         if (scene != null)
         {
             Reflect.callMethod(scene, Reflect.field(scene, "setWorld"), [this]);
-            scene.init(ctx);
+            if (ctxExist()) scene.init(ctx);
             invalidateSize = true;
         }
 		
@@ -324,12 +323,17 @@ class World2D
 		{
             if (rect.width <= 0) throw "bounds.width < 0";
             if (rect.height <= 0) throw "bounds.height < 0";
+            if (rect.x < 0 || rect.y < 0 || rect.right > stage.stageHeight || rect.bottom > stage.stageWidth)
+                throw "rect out of stage";
         }
         #end
 
 		bounds = rect != null ? rect : new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+        bounds.width = Std.int(bounds.width);
+        bounds.height = Std.int(bounds.height);
         autoResize = (rect == null);
 		invalidateSize = true;
+        onResize.dispatch(Std.int(bounds.width), Std.int(bounds.height));
 		return bounds;
 	}
 	
@@ -380,6 +384,7 @@ class World2D
 			bounds.width = val;
 			invalidateSize = true;
 			autoResize = false;
+            onResize.dispatch(val, Std.int(bounds.height));
 		}
 		return val;
 	}
@@ -399,6 +404,7 @@ class World2D
 			bounds.height = val;
 			invalidateSize = true;
 			autoResize = false;
+            onResize.dispatch(Std.int(bounds.width), val);
 		}
 		return val;
 	}

@@ -1,5 +1,9 @@
 package deep.dd.texture;
 
+/**
+* @author Dima Granetchi <system.grand@gmail.com>, <deep@e-citrus.ru>
+*/
+
 import flash.utils.ByteArray;
 import flash.geom.Vector3D;
 import deep.dd.utils.Frame;
@@ -17,7 +21,10 @@ import flash.display3D.textures.Texture;
 import deep.dd.utils.GlobalStatistics;
 #end
 
-
+/**
+* Битмап текстура
+* @lang ru
+**/
 class BitmapTexture2D extends Texture2D
 {
     public var bitmapData(default, null):BitmapData;
