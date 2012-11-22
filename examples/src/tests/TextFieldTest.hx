@@ -1,4 +1,5 @@
 package tests;
+import flash.geom.Point;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Sprite2D;
 import flash.geom.Vector3D;
@@ -37,7 +38,7 @@ class TextFieldTest extends Test
 		var fieldHeight = field.height;
 		
 		text = new TextField2D(field);
-		text.pivot = new Vector3D(fieldWidth * 0.5, fieldHeight * 0.5, 0);
+		text.pivot = new Point(fieldWidth * 0.5, fieldHeight * 0.5);
 
         text.x = (world.width - fieldWidth) * 0.5;
         text.y = (world.height - fieldHeight) * 0.5;

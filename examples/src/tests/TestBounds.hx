@@ -1,5 +1,6 @@
 package tests;
 
+import flash.geom.Point;
 import deep.dd.texture.Texture2D.BitmapTexture2D;
 import flash.display.BitmapData;
 import deep.dd.display.Sprite2D;
@@ -63,7 +64,7 @@ class TestBounds extends Test
 		//quad2.rotation = 30;
 		quad2.x = -10;
 		quad2.y = 10;
-        quad2.pivot = new Vector3D(2, 1);
+        quad2.pivot = new Point(2, 1);
 		container.addChild(quad2);
 	}
 	

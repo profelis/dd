@@ -1,5 +1,6 @@
 package tests;
 
+import flash.geom.Point;
 import deep.dd.display.smart.render.CloudRender;
 import deep.dd.display.smart.render.RenderBase;
 import deep.dd.display.smart.render.BatchRender;
@@ -47,7 +48,7 @@ class TestRender extends Test
         c.texture = t;
         scene.addChild(c);
 
-        var pivot = new Vector3D(iw * 0.5, ih * 0.5);
+        var pivot = new Point(iw * 0.5, ih * 0.5);
         for (y in 0...ny)
         {
             for (x in 0...nx)

@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import flash.geom.Point;
 import flash.geom.Rectangle;
 import msignal.Signal.Signal1;
 import msignal.Signal.Signal2;
@@ -514,11 +515,11 @@ class Node2D
             var moved = x != 0 || y != 0;
             var scaled = scaleX != 1 || scaleY != 1;
 
-            if (usePivot) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
+            if (usePivot) transform.appendTranslation(-pivot.x, -pivot.y, 0);
             if (scaled) transform.appendScale(scaleX, scaleY, 1);
             if (rotation != 0) transform.appendRotation(rotation, Vector3D.Z_AXIS);
             if (moved) transform.appendTranslation(x, y, 0);
-            if (usePivot) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
+            if (usePivot) transform.appendTranslation(pivot.x, pivot.y, 0);
 
             invalidateTransform = false;
         }
@@ -526,12 +527,12 @@ class Node2D
         return transform;
     }
 
-    public var pivot(default, set_pivot):Vector3D;
+    public var pivot(default, set_pivot):Point;
     public var usePivot(default, null):Bool;
 
-    function set_pivot(v:Vector3D):Vector3D
+    function set_pivot(v:Point):Point
     {
-        if (v != null && v.x == 0 && v.y == 0 && v.z == 0) v = null;
+        if (v != null && v.x == 0 && v.y == 0) v = null;
 
         if (pivot == null || !v.equals(pivot))
         {
