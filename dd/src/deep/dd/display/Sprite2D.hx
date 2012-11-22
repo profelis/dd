@@ -84,7 +84,6 @@ class Sprite2D extends DisplayNode2D
                 p = globalToLocal(p);
                 var x = p.x - displayBounds.x;
                 var y = p.y - displayBounds.y;
-                //trace(["~", x, y]);
 
                 var border = textureFrame.border;
                 if (border != null)
@@ -92,8 +91,7 @@ class Sprite2D extends DisplayNode2D
                     x -= border.x;
                     y -= border.y;
                 }
-                //trace(["~~", x, y]);
-                //if (x < 0 || y < 0 || x > textureFrame.frameWidth || y > textureFrame.frameHeight) return false;
+                if (x < 0 || y < 0 || x > textureFrame.frameWidth || y > textureFrame.frameHeight) return false;
 
                 var region = textureFrame.region;
                 x = x * region.z + region.x;
@@ -106,7 +104,7 @@ class Sprite2D extends DisplayNode2D
                 }
                 x *= texture.textureWidth / b.width;
                 y *= texture.textureHeight / b.height;
-                //trace(["~~~", x, y]);
+
                 return b.rect.contains(x, y) && (b.getPixel32(Std.int(x), Std.int(y)) >>> 24) > 0;
             }
 

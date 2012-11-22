@@ -55,9 +55,9 @@ class TestTextureHit extends Test
     override public function updateStep()
     {
         super.updateStep();
-        trace(t.bounds);
+        //trace(t.bounds);
         //trace(t.hitTest(t.mouseX, t.mouseY));
-        trace([t.mouseX, t.mouseY]);
+        //trace([t.mouseX, t.mouseY]);
     }
 
 
