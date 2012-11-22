@@ -142,10 +142,6 @@ class ParticleSaver
 			
 			output += '<angleSpeed min="' + Std.string(radialPreset.angleSpeed.min) + '" max="' + Std.string(radialPreset.angleSpeed.max) + '"/>\n';
 			
-			output += '<startDepth min="' + Std.string(radialPreset.startDepth.min) + '" max="' + Std.string(radialPreset.startDepth.max) + '"/>\n';
-			
-			output += '<depthSpeed min="' + Std.string(radialPreset.depthSpeed.min) + '" max="' + Std.string(radialPreset.depthSpeed.max) + '"/>\n';
-			
 			output += '<startRadius min="' + Std.string(radialPreset.startRadius.min) + '" max="' + Std.string(radialPreset.startRadius.max) + '"/>\n';
 			
 			output += '<endRadius min="' + Std.string(radialPreset.endRadius.min) + '" max="' + Std.string(radialPreset.endRadius.max) + '"/>\n';

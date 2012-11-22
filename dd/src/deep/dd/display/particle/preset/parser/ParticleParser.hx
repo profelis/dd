@@ -201,12 +201,6 @@ class ParticleParser
 			var angleSpeedMin:Float = 0;
 			var angleSpeedMax:Float = 0;
 			
-			var startDepthMin:Float = 0;
-			var startDepthMax:Float = 0;
-			
-			var depthSpeedMin:Float = 0;
-			var depthSpeedMax:Float = 0;
-			
 			var startRadiusMin:Float = 0;
 			var startRadiusMax:Float = 0;
 			
@@ -229,16 +223,6 @@ class ParticleParser
 							angleSpeedMin = Std.parseFloat(nodeChild.get("min"));
 							angleSpeedMax = Std.parseFloat(nodeChild.get("max"));
 						}
-						else if (nodeChild.nodeName == "startDepth")
-						{
-							startDepthMin = Std.parseFloat(nodeChild.get("min"));
-							startDepthMax = Std.parseFloat(nodeChild.get("max"));
-						}
-						else if (nodeChild.nodeName == "depthSpeed")
-						{
-							depthSpeedMin = Std.parseFloat(nodeChild.get("min"));
-							depthSpeedMax = Std.parseFloat(nodeChild.get("max"));
-						}
 						else if (nodeChild.nodeName == "startRadius")
 						{
 							startRadiusMin = Std.parseFloat(nodeChild.get("min"));
@@ -255,8 +239,6 @@ class ParticleParser
 			
 			radialPreset.startAngle = new Bounds<Float>(startAngleMin, startAngleMax);
 			radialPreset.angleSpeed = new Bounds<Float>(angleSpeedMin, angleSpeedMax);
-			radialPreset.startDepth = new Bounds<Float>(startDepthMin, startDepthMax);
-			radialPreset.depthSpeed = new Bounds<Float>(depthSpeedMin, depthSpeedMax);
 			radialPreset.startRadius = new Bounds<Float>(startRadiusMin, startRadiusMax);
 			radialPreset.endRadius = new Bounds<Float>(endRadiusMin, endRadiusMax);
 			

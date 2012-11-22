@@ -138,8 +138,6 @@ class Main
 	
 	var startAngle:HRangeSlider;
 	var angleSpeed:HRangeSlider;
-	var startDepth:HRangeSlider;
-	var depthSpeed:HRangeSlider;
 	var startRadius:HRangeSlider;
 	var endRadius:HRangeSlider;
 	
@@ -201,8 +199,6 @@ class Main
         radialPreset.endScale = new Bounds<Float>(0.0);
 		radialPreset.startAngle = new Bounds<Float>(0, 360);
 		radialPreset.angleSpeed = new Bounds<Float>(0, 10);
-		radialPreset.startDepth = new Bounds<Float>(0, 0);
-		radialPreset.depthSpeed = new Bounds<Float>(0, 0);
 		radialPreset.startRadius = new Bounds<Float>(0, 0);
 		radialPreset.endRadius = new Bounds<Float>(100, 100);
 		
@@ -536,32 +532,16 @@ class Main
 		angleSpeed.width = 136;
 		angleSpeed.labelPosition = 'bottom';
 		
-		makeLabel(radialPanel, 87, "startDepth", gap2);
-		startDepth = new HRangeSlider(radialPanel, sliderX, 90, onStartDepthChange);
-		startDepth.minimum = -5000;
-		startDepth.maximum = 5000;
-		setValuesForRangeSlider(startDepth, 0, 0);
-		startDepth.width = 136;
-		startDepth.labelPosition = 'bottom';
-		
-		makeLabel(radialPanel, 117, "depthSpeed", gap2);
-		depthSpeed = new HRangeSlider(radialPanel, sliderX, 120, onDepthSpeedChange);
-		depthSpeed.minimum = -500;
-		depthSpeed.maximum = 500;
-		setValuesForRangeSlider(depthSpeed, 0, 0);
-		depthSpeed.width = 136;
-		depthSpeed.labelPosition = 'bottom';
-		
-		makeLabel(radialPanel, 147, "startRadius", gap2);
-		startRadius = new HRangeSlider(radialPanel, sliderX, 150, onStartRadiusChange);
+		makeLabel(radialPanel, 87, "startRadius", gap2);
+		startRadius = new HRangeSlider(radialPanel, sliderX, 90, onStartRadiusChange);
 		startRadius.minimum = 0;
 		startRadius.maximum = 500;
 		setValuesForRangeSlider(startRadius, 0, 0);
 		startRadius.width = 136;
 		startRadius.labelPosition = 'bottom';
 		
-		makeLabel(radialPanel, 177, "endRadius", gap2);
-		endRadius = new HRangeSlider(radialPanel, sliderX, 180, onEndRadiusChange);
+		makeLabel(radialPanel, 117, "endRadius", gap2);
+		endRadius = new HRangeSlider(radialPanel, sliderX, 120, onEndRadiusChange);
 		endRadius.minimum = 0;
 		endRadius.maximum = 500;
 		setValuesForRangeSlider(endRadius, 0, 100);
@@ -577,10 +557,6 @@ class Main
 	
 	private function onRenderModeSelect(e:Event):Void 
 	{
-		/*renderMode.addItem("GPU");
-		renderMode.addItem("CPU_Cloud");
-		renderMode.addItem("CPU_Batch");*/
-		
 		var selectedRenderMode:String = Std.string(renderMode.selectedItem);
 		var newRenderer:ParticleRenderBase = null;
 		
@@ -1133,20 +1109,6 @@ class Main
 		needUpdate = true;
 	}
 	
-	private function onDepthSpeedChange(param1:Dynamic) 
-	{
-		radialPreset.depthSpeed.min = depthSpeed.lowValue;
-		radialPreset.depthSpeed.max = depthSpeed.highValue;
-		needUpdate = true;
-	}
-	
-	private function onStartDepthChange(param1:Dynamic) 
-	{
-		radialPreset.startDepth.min = startDepth.lowValue;
-		radialPreset.startDepth.max = startDepth.highValue;
-		needUpdate = true;
-	}
-	
 	private function onAngleSpeedChange(param1:Dynamic) 
 	{
 		radialPreset.angleSpeed.min = angleSpeed.lowValue;
@@ -1188,10 +1150,6 @@ class Main
 			setValuesForRangeSlider(startAngle, radial.startAngle.min, radial.startAngle.max);
 			
 			setValuesForRangeSlider(angleSpeed, radial.angleSpeed.min, radial.angleSpeed.max);
-			
-			setValuesForRangeSlider(startDepth, radial.startDepth.min, radial.startDepth.max);
-			
-			setValuesForRangeSlider(depthSpeed, radial.depthSpeed.min, radial.depthSpeed.max);
 			
 			setValuesForRangeSlider(startRadius, radial.startRadius.min, radial.startRadius.max);
 			

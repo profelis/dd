@@ -22,10 +22,6 @@ class RadialParticlePreset extends ParticlePresetBase
     public var startAngle:Bounds<Float>;
     public var angleSpeed:Bounds<Float>;
 
-    public var startDepth:Bounds<Float>;
-    public var depthSpeed:Bounds<Float>;
-
-
     public function new() {}
 
     inline public function createParticle():RadialParticle
