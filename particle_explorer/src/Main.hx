@@ -85,9 +85,7 @@ class Main
 	
 	var startScale:HRangeSlider;
 	var endScale:HRangeSlider;
-	
-	var angleX:HRangeSlider;
-	var angleY:HRangeSlider;
+
 	var angleZ:HRangeSlider;
 	
 	// Particles Color
@@ -127,15 +125,12 @@ class Main
 	
 	var xPosition:HRangeSlider;
 	var yPosition:HRangeSlider;
-	var zPosition:HRangeSlider;
 	
 	var xVelocity:HRangeSlider;
 	var yVelocity:HRangeSlider;
-	var zVelocity:HRangeSlider;
 	
 	var xGravity:HUISlider;
 	var yGravity:HUISlider;
-	var zGravity:HUISlider;
 	
 	// Radial system's parameters controls
 	var radialWindow:Window;
@@ -292,24 +287,8 @@ class Main
 		endScale.width = 136;
 		endScale.labelPosition = 'bottom';
 		
-		makeLabel(particleWindow, 202, "rotation X", gap2);
-		angleX = new HRangeSlider(particleWindow, sliderX, 207, onAngleXChange);
-		angleX.minimum = 0;
-		angleX.maximum = 360;
-		setValuesForRangeSlider(angleX, 0, 0);
-		angleX.width = 136;
-		angleX.labelPosition = 'bottom';
-		
-		makeLabel(particleWindow, 232, "rotation Y", gap2);
-		angleY = new HRangeSlider(particleWindow, sliderX, 237, onAngleYChange);
-		angleY.minimum = 0;
-		angleY.maximum = 360;
-		setValuesForRangeSlider(angleY, 0, 0);
-		angleY.width = 136;
-		angleY.labelPosition = 'bottom';
-		
-		makeLabel(particleWindow, 262, "rotation Z", gap2);
-		angleZ = new HRangeSlider(particleWindow, sliderX, 267, onAngleYChange);
+		makeLabel(particleWindow, 202, "rotation", gap2);
+		angleZ = new HRangeSlider(particleWindow, sliderX, 207, onAngleZChange);
 		angleZ.minimum = 0;
 		angleZ.maximum = 360;
 		setValuesForRangeSlider(angleZ, 0, 0);
@@ -506,55 +485,35 @@ class Main
 		yPosition.width = 136;
 		yPosition.labelPosition = 'bottom';
 		
-		makeLabel(gravityPanel, 87, "Z", gap2);
-		zPosition = new HRangeSlider(gravityPanel, sliderX, 90, onZChange);
-		zPosition.minimum = -1000;
-		zPosition.maximum = 1000;
-		setValuesForRangeSlider(zPosition, 0, 0);
-		zPosition.width = 136;
-		zPosition.labelPosition = 'bottom';
-		
-		var startVelocityLabel:Label = new Label(gravityPanel, 0, 120, "Start Velocity");
+		var startVelocityLabel:Label = new Label(gravityPanel, 0, 90, "Start Velocity");
 		startVelocityLabel.x = (gravityPanel.width - startVelocityLabel.width) * 0.5;
 		
-		makeLabel(gravityPanel, 137, "X", gap2);
-		xVelocity = new HRangeSlider(gravityPanel, sliderX, 140, onVelocityXChange);
+		makeLabel(gravityPanel, 107, "X", gap2);
+		xVelocity = new HRangeSlider(gravityPanel, sliderX, 110, onVelocityXChange);
 		xVelocity.minimum = -500;
 		xVelocity.maximum = 500;
 		setValuesForRangeSlider(xVelocity, 0, 0);
 		xVelocity.width = 136;
 		xVelocity.labelPosition = 'bottom';
 		
-		makeLabel(gravityPanel, 167, "Y", gap2);
-		yVelocity = new HRangeSlider(gravityPanel, sliderX, 170, onVelocityYChange);
+		makeLabel(gravityPanel, 137, "Y", gap2);
+		yVelocity = new HRangeSlider(gravityPanel, sliderX, 140, onVelocityYChange);
 		yVelocity.minimum = -500;
 		yVelocity.maximum = 500;
 		setValuesForRangeSlider(yVelocity, -130, -70);
 		yVelocity.width = 136;
 		yVelocity.labelPosition = 'bottom';
 		
-		makeLabel(gravityPanel, 197, "Z", gap2);
-		zVelocity = new HRangeSlider(gravityPanel, sliderX, 200, onVelocityZChange);
-		zVelocity.minimum = -500;
-		zVelocity.maximum = 500;
-		setValuesForRangeSlider(zVelocity, 0, 0);
-		zVelocity.width = 136;
-		zVelocity.labelPosition = 'bottom';
-		
-		var gravityLabel:Label = new Label(gravityPanel, 0, 230, "Gravity");
+		var gravityLabel:Label = new Label(gravityPanel, 0, 170, "Gravity");
 		gravityLabel.x = (gravityPanel.width - gravityLabel.width) * 0.5;
 		
-		makeLabel(gravityPanel, 247, "X", gap);
-		xGravity = new HUISlider(gravityPanel, sliderX, 247, onGravityXChange);
+		makeLabel(gravityPanel, 187, "X", gap);
+		xGravity = new HUISlider(gravityPanel, sliderX, 187, onGravityXChange);
 		xGravity.setSliderParams( -500, 500, 0);
 		
-		makeLabel(gravityPanel, 277, "Y", gap);
-		yGravity = new HUISlider(gravityPanel, sliderX, 277, onGravityYChange);
+		makeLabel(gravityPanel, 217, "Y", gap);
+		yGravity = new HUISlider(gravityPanel, sliderX, 217, onGravityYChange);
 		yGravity.setSliderParams( -500, 500, 0);
-		
-		makeLabel(gravityPanel, 307, "Z", gap);
-		zGravity = new HUISlider(gravityPanel, sliderX, 307, onGravityYChange);
-		zGravity.setSliderParams( -500, 500, 0);
 		
 		// radial settings
 		radialWindow = gravityWindow;
@@ -989,13 +948,6 @@ class Main
 		needUpdate = true;
 	}
 	
-	function onZChange(param1:Dynamic)
-	{
-		gravityPreset.startPosition.min.z = zPosition.lowValue;
-		gravityPreset.startPosition.max.z = zPosition.highValue;
-		needUpdate = true;
-	}
-	
 	function onVelocityXChange(param1:Dynamic)
 	{
 		gravityPreset.velocity.min.x = xVelocity.lowValue;
@@ -1007,13 +959,6 @@ class Main
 	{
 		gravityPreset.velocity.min.y = yVelocity.lowValue;
 		gravityPreset.velocity.max.y = yVelocity.highValue;
-		needUpdate = true;
-	}
-	
-	function onVelocityZChange(param1:Dynamic)
-	{
-		gravityPreset.velocity.min.z = zVelocity.lowValue;
-		gravityPreset.velocity.max.z = zVelocity.highValue;
 		needUpdate = true;
 	}
 	
@@ -1082,16 +1027,6 @@ class Main
 		radialPreset.endScale.min = endScale.lowValue;
 		radialPreset.endScale.max = endScale.highValue;
 		needUpdate = true;
-	}
-	
-	function onAngleXChange(param1:Dynamic)
-	{
-        //throw "deep was here";
-	}
-	
-	function onAngleYChange(param1:Dynamic)
-	{
-        //throw "deep was here";
 	}
 	
 	function onAngleZChange(param1:Dynamic)
@@ -1238,11 +1173,9 @@ class Main
 			
 			setValuesForRangeSlider(xPosition, grav.startPosition.min.x, grav.startPosition.max.x);
 			setValuesForRangeSlider(yPosition, grav.startPosition.min.y, grav.startPosition.max.y);
-			setValuesForRangeSlider(zPosition, grav.startPosition.min.z, grav.startPosition.max.z);
 			
 			setValuesForRangeSlider(xVelocity, grav.velocity.min.x, grav.velocity.max.x);
 			setValuesForRangeSlider(yVelocity, grav.velocity.min.y, grav.velocity.max.y);
-			setValuesForRangeSlider(zVelocity, grav.velocity.min.z, grav.velocity.max.z);
 			
 			xGravity.value = grav.gravity.x;
 			yGravity.value = grav.gravity.y;
