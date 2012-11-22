@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import flash.geom.Rectangle;
 import flash.display.BitmapData;
 import flash.geom.Vector3D;
 import deep.dd.texture.atlas.AtlasTexture2D;
@@ -81,8 +82,9 @@ class Sprite2D extends DisplayNode2D
                 if (!b.transparent) return true;
 
                 p = globalToLocal(p);
-                var x = p.x;
-                var y = p.y;
+                var x = p.x - displayBounds.x;
+                var y = p.y - displayBounds.y;
+                //trace(["~", x, y]);
 
                 var border = textureFrame.border;
                 if (border != null)
@@ -90,13 +92,12 @@ class Sprite2D extends DisplayNode2D
                     x -= border.x;
                     y -= border.y;
                 }
-                if (x < 0 || y < 0 || x > textureFrame.frameWidth || y > textureFrame.frameHeight) return false;
+                //trace(["~~", x, y]);
+                //if (x < 0 || y < 0 || x > textureFrame.frameWidth || y > textureFrame.frameHeight) return false;
 
                 var region = textureFrame.region;
-                x *= region.z;
-                y *= region.w;
-                x += region.x;
-                y += region.y;
+                x = x * region.z + region.x;
+                y = y * region.w + region.y;
 
                 if ((texture.options & Texture2DOptions.REPEAT_NORMAL) > 0)
                 {
@@ -105,7 +106,7 @@ class Sprite2D extends DisplayNode2D
                 }
                 x *= texture.textureWidth / b.width;
                 y *= texture.textureHeight / b.height;
-
+                //trace(["~~~", x, y]);
                 return b.rect.contains(x, y) && (b.getPixel32(Std.int(x), Std.int(y)) >>> 24) > 0;
             }
 
@@ -238,6 +239,38 @@ class Sprite2D extends DisplayNode2D
 		}
 
         return animator;
+    }
+
+    override function get_displayBounds():Rectangle
+    {
+        if (invalidateDisplayBounds)
+        {
+            displayBounds.setTo(0, 0, _displayWidth, _displayHeight);
+
+            var g = geometry;
+            if (g != null && !g.standart)
+            {
+                var dx = g.offsetX / g.width;
+                var dy = g.offsetY / g.height;
+                var t = texture;
+                if (t == null || t.frame == null)
+                {
+                    dx *= _displayWidth;
+                    dy *= _displayHeight;
+                }
+                else
+                {
+                    dx *= texture.frame.frameWidth;
+                    dy *= texture.frame.frameHeight;
+                }
+                displayBounds.x += dx;
+                displayBounds.y += dy;
+            }
+
+            invalidateDisplayBounds = false;
+        }
+
+        return displayBounds;
     }
 
 }

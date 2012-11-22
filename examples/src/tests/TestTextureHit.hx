@@ -26,8 +26,9 @@ class TestTextureHit extends Test
         var i = new Image(0,0);
 
         t = new Sprite2D();
+        t = new CenteredSprite2D();
         t.x = 200;
-        t.y = 20;
+        t.y = 200;
         t.texture = w.cache.getBitmapTexture(i);
         t.textureHitTest = true;
 
@@ -42,7 +43,9 @@ class TestTextureHit extends Test
         q.displayWidth = i.width + 50;
         q.displayHeight= i.height + 50;
         q.x = t.x;
+        q.x -= i.width * 0.5;
         q.y = t.y;
+        q.y -= i.height * 0.5;
         addChild(q);
         q.color = 0x00FFFF;
 
@@ -52,7 +55,9 @@ class TestTextureHit extends Test
     override public function updateStep()
     {
         super.updateStep();
+        trace(t.bounds);
         //trace(t.hitTest(t.mouseX, t.mouseY));
+        trace([t.mouseX, t.mouseY]);
     }
 
 

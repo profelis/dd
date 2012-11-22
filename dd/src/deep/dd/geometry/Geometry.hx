@@ -36,7 +36,7 @@ class Geometry
     public var resizable(default, null):Bool = false;
 
     /**
-    * Стандартная ли текстура (стандартной считается текстура с размером 1 на 1 и с центром в 0,0)
+    * Стандартная ли текстура (стандартной считается текстура с размером 1 на 1 и с началом отсчета в 0,0)
     * @lang ru
     **/
     public var standart(default, null):Bool = false;

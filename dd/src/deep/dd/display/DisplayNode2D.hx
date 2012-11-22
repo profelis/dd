@@ -166,18 +166,15 @@ class DisplayNode2D extends Node2D
 	{
         if (invalidateDisplayBounds)
         {
-            displayBounds = super.get_displayBounds();
-
-            displayBounds.width = _displayWidth;
-            displayBounds.height = _displayHeight;
+            displayBounds.setTo(0, 0, _displayWidth, _displayHeight);
 
             var g = geometry;
             if (g != null && !g.standart)
             {
-                var dx = -g.offsetX / g.width * _displayWidth;
-                var dy = -g.offsetY / g.height * _displayHeight;
-                displayBounds.x -= dx;
-                displayBounds.y -= dy;
+                var dx = g.offsetX / g.width * _displayWidth;
+                var dy = g.offsetY / g.height * _displayHeight;
+                displayBounds.x += dx;
+                displayBounds.y += dy;
             }
 
             invalidateDisplayBounds = false;
