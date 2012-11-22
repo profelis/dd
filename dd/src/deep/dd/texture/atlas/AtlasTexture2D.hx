@@ -235,8 +235,11 @@ class SubTexture2D extends Texture2D
     {
         if (useCount > 0) return;
 
-        baseTexture.useCount --;
-        baseTexture.dispose();
-        baseTexture = null;
+        if (baseTexture != null)
+        {
+            baseTexture.useCount --;
+            baseTexture.dispose();
+            baseTexture = null;
+        }
     }
 }

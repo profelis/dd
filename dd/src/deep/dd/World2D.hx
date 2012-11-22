@@ -203,9 +203,12 @@ class World2D
     {
 		if (autoResize)
         {
-            bounds.width = Std.int(stage.stageWidth);
-            bounds.height = Std.int(stage.stageHeight);
+            var w = Std.int(stage.stageWidth);
+            var h = Std.int(stage.stageHeight);
+            bounds.width = w;
+            bounds.height = h;
             invalidateSize = true;
+            onResize.dispatch(w, h);
         }
     }
 
