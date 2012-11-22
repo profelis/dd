@@ -458,7 +458,7 @@ class Node2D
 
     function globalHitTest(pos:Vector3D):Bool
     {
-        if (displayHitTest(pos)) return true;
+        if (displayHitTest(pos, false)) return true;
 
         if (numChildren == 0 || children == null) return false;
 

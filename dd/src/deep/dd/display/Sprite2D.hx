@@ -59,59 +59,65 @@ class Sprite2D extends DisplayNode2D
 
     override function displayHitTest(p:Vector3D, mouseHit = true)
     {
-        if (super.displayHitTest(p))
+        var d = displayBounds;
+        if (d.isEmpty()) return false;
+
+        p = globalToLocal(p);
+        if (!d.contains(p.x, p.y)) return false;
+
+        if (mouseHit)
         {
-            if (textureHitTest && texture != null && FastHaxe.is(texture, BitmapTexture2D))
-            {
-                var b:BitmapData = flash.Lib.as(texture, BitmapTexture2D).bitmapData;
-                if (b == null)
-                {
-                    #if debug trace("bitmap is null"); #end
-                    return true;
-                }
-
-                try
-                {
-                    b.getPixel(0, 0);
-                }
-                catch (e:Dynamic)
-                {
-                    #if debug trace("bitmap is disposed"); #end
-                    return true;
-                }
-                if (!b.transparent) return true;
-
-                p = globalToLocal(p);
-                var x = p.x - displayBounds.x;
-                var y = p.y - displayBounds.y;
-
-                var border = textureFrame.border;
-                if (border != null)
-                {
-                    x -= border.x;
-                    y -= border.y;
-                }
-                if (x < 0 || y < 0 || x > textureFrame.frameWidth || y > textureFrame.frameHeight) return false;
-
-                var region = textureFrame.region;
-                x = x * region.z + region.x;
-                y = y * region.w + region.y;
-
-                if ((texture.options & Texture2DOptions.REPEAT_NORMAL) > 0)
-                {
-                    x %= b.width;
-                    y %= b.height;
-                }
-                x *= texture.textureWidth / b.width;
-                y *= texture.textureHeight / b.height;
-
-                return b.rect.contains(x, y) && (b.getPixel32(Std.int(x), Std.int(y)) >>> 24) > 0;
-            }
-
-            return true;
+            mouseX = p.x;
+            mouseY = p.y;
         }
 
-        return false;
+        if (textureHitTest && texture != null && FastHaxe.is(texture, BitmapTexture2D))
+        {
+            var b:BitmapData = flash.Lib.as(texture, BitmapTexture2D).bitmapData;
+            if (b == null)
+            {
+                #if debug trace("textureHitTest error. Bitmap is null"); #end
+                return true;
+            }
+
+            try
+            {
+                b.getPixel(0, 0);
+            }
+            catch (e:Dynamic)
+            {
+                #if debug trace("textureHitTest error. Bitmap is disposed"); #end
+                return true;
+            }
+            if (!b.transparent) return true;
+
+            var x = p.x - d.x;
+            var y = p.y - d.y;
+
+            var border = textureFrame.border;
+            if (border != null)
+            {
+                x -= border.x;
+                y -= border.y;
+            }
+            if (x < 0 || y < 0 || x > textureFrame.frameWidth || y > textureFrame.frameHeight) return false;
+
+            var region = textureFrame.region;
+            x = x * region.z + region.x;
+            y = y * region.w + region.y;
+
+            if ((texture.options & Texture2DOptions.REPEAT_NORMAL) > 0)
+            {
+                x %= b.width;
+                y %= b.height;
+            }
+            x *= texture.textureWidth / b.width;
+            y *= texture.textureHeight / b.height;
+
+            return (b.getPixel32(Std.int(x), Std.int(y)) >>> 24) > 0;
+        }
+
+        return true;
     }
 
     override public function dispose():Void
@@ -168,8 +174,7 @@ class Sprite2D extends DisplayNode2D
 
         super.updateStep();
 
-        invalidateDrawTransform = invalidateDrawTransform || invalidateWorldTransform;
-        if (invalidateDrawTransform) updateDrawTransform();
+        if (invalidateDrawTransform || invalidateWorldTransform) updateDrawTransform();
     }
 
     override function get_worldTransform():Matrix3D
