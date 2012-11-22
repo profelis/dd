@@ -43,6 +43,8 @@ class SmartSprite2D extends Sprite2D
         super();
 
         this.render = render;
+
+        mouseChildren = false;
     }
 
     override function createGeometry()
