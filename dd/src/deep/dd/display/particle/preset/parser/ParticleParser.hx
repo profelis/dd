@@ -1,14 +1,14 @@
-package deep.dd.particle.preset.parser;
+package deep.dd.display.particle.preset.parser;
 
 import flash.geom.Point;
-import deep.dd.particle.ParticleSystem2D;
-import deep.dd.particle.preset.GravityParticlePreset;
-import deep.dd.particle.preset.ParticlePresetBase;
-import deep.dd.particle.preset.RadialParticlePreset;
+import deep.dd.display.particle.ParticleSystem2D;
+import deep.dd.display.particle.preset.GravityParticlePreset;
+import deep.dd.display.particle.preset.ParticlePresetBase;
+import deep.dd.display.particle.preset.RadialParticlePreset;
 import deep.dd.utils.BlendMode;
 
-import deep.dd.particle.render.GravityParticleRender;
-import deep.dd.particle.render.RadialParticleRender;
+import deep.dd.display.particle.render.GravityParticleRender;
+import deep.dd.display.particle.render.RadialParticleRender;
 
 import flash.display3D.Context3DBlendFactor;
 import flash.geom.Vector3D;

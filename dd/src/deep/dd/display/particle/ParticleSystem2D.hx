@@ -1,6 +1,6 @@
-package deep.dd.particle;
+package deep.dd.display.particle;
 
-import deep.dd.particle.render.ParticleRenderBase;
+import deep.dd.display.particle.render.ParticleRenderBase;
 import deep.dd.display.smart.SmartSprite2D;
 
 class ParticleSystem2D extends SmartSprite2D
