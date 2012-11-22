@@ -78,8 +78,8 @@ class ParticleSaver
 			endScale += 'min="' + Std.string(gravityPreset.endScale.min) + '" ';
 			endScale += 'max="' + Std.string(gravityPreset.endScale.max) + '" ';
 			
-			rotation += 'minZ="' + Std.string(gravityPreset.startRotation.min) + '" ';
-			rotation += 'maxZ="' + Std.string(gravityPreset.startRotation.max) + '" ';
+			rotation += 'min="' + Std.string(gravityPreset.startRotation.min) + '" ';
+			rotation += 'max="' + Std.string(gravityPreset.startRotation.max) + '" ';
 			
 			var startPosition:String = '<startPosition ';
 			startPosition += 'minX="' + Std.string(gravityPreset.startPosition.min.x) + '" ';
@@ -135,8 +135,8 @@ class ParticleSaver
 			endScale += 'min="' + Std.string(radialPreset.endScale.min) + '" ';
 			endScale += 'max="' + Std.string(radialPreset.endScale.max) + '" ';
 			
-			rotation += 'minZ="' + Std.string(radialPreset.startRotation.min) + '" ';
-			rotation += 'maxZ="' + Std.string(radialPreset.startRotation.max) + '" ';
+			rotation += 'min="' + Std.string(radialPreset.startRotation.min) + '" ';
+			rotation += 'max="' + Std.string(radialPreset.startRotation.max) + '" ';
 			
 			output += '<startAngle min="' + Std.string(radialPreset.startAngle.min) + '" max="' + Std.string(radialPreset.startAngle.max) + '"/>\n';
 			

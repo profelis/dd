@@ -131,14 +131,8 @@ class ParticleParser
 					}
 					else if (nodeChild.nodeName == "rotation")
 					{
-                        throw "deep was here";
-                        /*
-						rotationMin.x = Std.parseFloat(nodeChild.get("minX"));
-						rotationMin.y = Std.parseFloat(nodeChild.get("minY"));
-
-						rotationMax.x = Std.parseFloat(nodeChild.get("maxX"));
-						rotationMax.y = Std.parseFloat(nodeChild.get("maxY"));
-						*/
+                        rotationMin = Std.parseFloat(nodeChild.get("min"));
+						rotationMax = Std.parseFloat(nodeChild.get("max"));
 					}
 				}
 			}

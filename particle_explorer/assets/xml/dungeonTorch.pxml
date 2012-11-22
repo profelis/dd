@@ -12,5 +12,5 @@
 <endColor minR="0" maxR="0" minG="0.1" maxG="0.1" minB="0" maxB="0" minA="0" maxA="0" />
 <startScale min="0.43" max="1.21" />
 <endScale min="0.8300000000000001" max="0.8300000000000001" />
-<rotation minX="0" maxX="0" minY="0" maxY="0" minZ="0" maxZ="0" />
+<rotation min="0" max="0" />
 </particleEmitterConfig>
