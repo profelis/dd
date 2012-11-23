@@ -1,4 +1,5 @@
 package;
+import flash.display.Bitmap;
 import flash.geom.Point;
 import com.bit101.components.Accordion;
 import com.bit101.components.ComboBox;
@@ -48,6 +49,8 @@ import flash.net.FileFilter;
 import flash.net.FileReference;
 import flash.utils.ByteArray;
 import mt.m3d.Color;
+
+import msignal.Signal.Signal1;
 
 @:bitmap("../assets/img/deep.png") class Image extends BitmapData {}
 @:bitmap("../assets/img/circle.png") class Circle extends BitmapData { }
@@ -163,69 +166,9 @@ class Main
         s.align = StageAlign.TOP_LEFT;
 		
 		world = new World2D(s, Context3DRenderMode.AUTO);
-		
-		s.addChild(new Stats(world));
-		world.scene = scene = new Scene2D();
+		world.onStage3d.add(onStage3dCreate);
 
-		world.antialiasing = 2;
-        world.bgColor.fromInt(0x333333);
-		
-		textureBmd = Type.createInstance(Circle, [0, 0]);
-		texture = world.cache.getBitmapTexture(textureBmd);
-		
-		gravityPreset = new GravityParticlePreset();
-        gravityPreset.particleNum = 500;
-        gravityPreset.spawnNum = 500;
-        gravityPreset.spawnStep = 0.03;
-        gravityPreset.life = new Bounds<Float>(1, 1.7);
-        gravityPreset.startPosition = new Bounds<Vector3D>(new Vector3D(0, 0, 0), new Vector3D(0, 0, 0));
-        gravityPreset.velocity = new Bounds<Vector3D>(new Vector3D(0, -70, 0), new Vector3D(0, -130, 0));
-		gravityPreset.startColor = new Bounds<Color>(new Color(1, 0.3, 0, 0.6), new Color(1, 0.3, 0, 0.6));
-        gravityPreset.endColor = new Bounds<Color>(new Color(1, 0, 0, 0), new Color(1, 0, 0, 0));
-        gravityPreset.gravity = new Point(0, 0);
-        gravityPreset.startScale = new Bounds<Float>(1.3);
-        gravityPreset.endScale = new Bounds<Float>(0.0);
-        gravityPreset.startRotation = new Bounds<Float>(0, 0);
-		
-		radialPreset = new RadialParticlePreset();
-		radialPreset.particleNum = 500;
-		radialPreset.spawnNum = 500;
-        radialPreset.spawnStep = 0.03;
-        radialPreset.life = new Bounds<Float>(1, 1.7);
-		radialPreset.startColor = new Bounds<Color>(new Color(1, 0.3, 0, 0.6), new Color(1, 0.3, 0, 0.6));
-        radialPreset.endColor = new Bounds<Color>(new Color(1, 0, 0, 0), new Color(1, 0, 0, 0));
-		radialPreset.startRotation = new Bounds<Float>(0, 0);
-		radialPreset.startScale = new Bounds<Float>(1.3);
-        radialPreset.endScale = new Bounds<Float>(0.0);
-		radialPreset.startAngle = new Bounds<Float>(0, 360);
-		radialPreset.angleSpeed = new Bounds<Float>(0, 10);
-		radialPreset.startRadius = new Bounds<Float>(0, 0);
-		radialPreset.endRadius = new Bounds<Float>(100, 100);
-		
-		currentPreset = gravityPreset;
-		currentPresetClass = GravityParticlePreset;
-		
-		gravityRender = GravityParticleRenderBuilder.gpuRender(gravityPreset);
-		currentRender = gravityRender;
-		
-		radialRender = RadialParticleRenderBuilder.gpuRender(radialPreset);
-		
-		ps = new ParticleSystem2D(currentRender);
-        ps.x = s.stageWidth * 0.5;
-        ps.y = s.stageHeight * 0.5;
-		blendMode = new BlendMode(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE);
-        ps.blendMode = blendMode;
-        ps.texture = texture;
-        scene.addChild(ps);
-		
-		Style.embedFonts = false;
-        Style.fontSize = 10;
-		Style.fontName = "arial";
-        Style.setStyle(Style.LIGHT);
-		
-		var gap:Float = 10;
-		var gap2:Float = 19;
-		
+		/*
 		var guiWindow:Window = new Window(s, 0, 0, "Settings");
 		guiWindow.setSize(350, 446);
 		guiWindow.draggable = false;
@@ -553,7 +496,77 @@ class Main
 		
 		s.addEventListener(MouseEvent.CLICK, onStageClick);
 		s.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		*/
     }
+	
+	public function onStage3dCreate(stageID:Int) 
+	{
+		var s = flash.Lib.current.stage;
+		s.addChild(new Stats(world));
+
+		world.antialiasing = 2;
+        world.bgColor.fromInt(0x333333);
+		
+		scene = new Scene2D();
+		world.scene = scene;
+		
+		textureBmd = Type.createInstance(Circle, [0, 0]);
+		
+		texture = world.cache.getBitmapTexture(textureBmd);
+		
+		gravityPreset = new GravityParticlePreset();
+        gravityPreset.particleNum = 500;
+        gravityPreset.spawnNum = 500;
+        gravityPreset.spawnStep = 0.03;
+        gravityPreset.life = new Bounds<Float>(1, 1.7);
+        gravityPreset.startPosition = new Bounds<Vector3D>(new Vector3D(0, 0), new Vector3D(0, 0));
+        gravityPreset.velocity = new Bounds<Vector3D>(new Vector3D(0, -70), new Vector3D(0, -130));
+		gravityPreset.startColor = new Bounds<Color>(new Color(1, 0.3, 0, 0.6), new Color(1, 0.3, 0, 0.6));
+		gravityPreset.endColor = new Bounds<Color>(new Color(1, 0, 0, 0), new Color(1, 0, 0, 0));
+        gravityPreset.gravity = new Point(0, 0);
+        gravityPreset.startScale = new Bounds<Float>(1.3, 1.3);
+        gravityPreset.endScale = new Bounds<Float>(0.0, 0.0);
+        gravityPreset.startRotation = new Bounds<Float>(0, 0);
+		
+		radialPreset = new RadialParticlePreset();
+		radialPreset.particleNum = 500;
+		radialPreset.spawnNum = 500;
+        radialPreset.spawnStep = 0.03;
+        radialPreset.life = new Bounds<Float>(1, 1.7);
+		radialPreset.startColor = new Bounds<Color>(new Color(1, 0.3, 0, 0.6), new Color(1, 0.3, 0, 0.6));
+        radialPreset.endColor = new Bounds<Color>(new Color(1, 0, 0, 0), new Color(1, 0, 0, 0));
+		radialPreset.startRotation = new Bounds<Float>(0, 0);
+		radialPreset.startScale = new Bounds<Float>(1.3);
+        radialPreset.endScale = new Bounds<Float>(0.0);
+		radialPreset.startAngle = new Bounds<Float>(0, 360);
+		radialPreset.angleSpeed = new Bounds<Float>(0, 10);
+		radialPreset.startRadius = new Bounds<Float>(0, 0);
+		radialPreset.endRadius = new Bounds<Float>(100, 100);
+		
+		currentPreset = gravityPreset;
+		currentPresetClass = GravityParticlePreset;
+		
+		gravityRender = GravityParticleRenderBuilder.gpuRender(gravityPreset);
+		currentRender = gravityRender;
+		
+		radialRender = RadialParticleRenderBuilder.gpuRender(radialPreset);
+		
+		ps = new ParticleSystem2D(gravityRender);
+        ps.x = world.width * 0.5;
+        ps.y = world.height * 0.5;
+		blendMode = new BlendMode(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE);
+        ps.blendMode = blendMode;
+        ps.texture = texture;
+        scene.addChild(ps);
+		
+		Style.embedFonts = false;
+        Style.fontSize = 10;
+		Style.fontName = "arial";
+        Style.setStyle(Style.LIGHT);
+		
+		var gap:Float = 10;
+		var gap2:Float = 19;
+	}
 	
 	private function onRenderModeSelect(e:Event):Void 
 	{
@@ -950,10 +963,6 @@ class Main
 		needUpdate = true;
 	}
 	
-	function onGravityZChange(param1:Dynamic)
-	{
-	}
-	
 	function onNumParticlesChange(param1:Dynamic)
 	{
 		gravityPreset.particleNum = cast(Std.int(numParticles.value), UInt);
@@ -1148,11 +1157,8 @@ class Main
 			var radial:RadialParticlePreset = cast(cast(ps.render, ParticleRenderBase).preset, RadialParticlePreset);
 			
 			setValuesForRangeSlider(startAngle, radial.startAngle.min, radial.startAngle.max);
-			
 			setValuesForRangeSlider(angleSpeed, radial.angleSpeed.min, radial.angleSpeed.max);
-			
 			setValuesForRangeSlider(startRadius, radial.startRadius.min, radial.startRadius.max);
-			
 			setValuesForRangeSlider(endRadius, radial.endRadius.min, radial.endRadius.max);
 		}
 		

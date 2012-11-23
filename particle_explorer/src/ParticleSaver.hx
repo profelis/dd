@@ -86,8 +86,6 @@ class ParticleSaver
 			startPosition += 'maxX="' + Std.string(gravityPreset.startPosition.max.x) + '" ';
 			startPosition += 'minY="' + Std.string(gravityPreset.startPosition.min.y) + '" ';
 			startPosition += 'maxY="' + Std.string(gravityPreset.startPosition.max.y) + '" ';
-			startPosition += 'minZ="' + Std.string(gravityPreset.startPosition.min.z) + '" ';
-			startPosition += 'maxZ="' + Std.string(gravityPreset.startPosition.max.z) + '" ';
 			startPosition += '/>\n';
 			output += startPosition;
 			
@@ -96,8 +94,6 @@ class ParticleSaver
 			startVelocity += 'maxX="' + Std.string(gravityPreset.velocity.max.x) + '" ';
 			startVelocity += 'minY="' + Std.string(gravityPreset.velocity.min.y) + '" ';
 			startVelocity += 'maxY="' + Std.string(gravityPreset.velocity.max.y) + '" ';
-			startVelocity += 'minZ="' + Std.string(gravityPreset.velocity.min.z) + '" ';
-			startVelocity += 'maxZ="' + Std.string(gravityPreset.velocity.max.z) + '" ';
 			startVelocity += '/>\n';
 			output += startVelocity;
 			

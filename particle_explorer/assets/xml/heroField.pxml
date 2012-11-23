@@ -5,9 +5,9 @@
 <spawnNum value="50"/>
 <spawnStep value="0.06"/>
 <blend source="SOURCE_ALPHA" destination="ONE"/>
-<startPosition minX="0" maxX="0" minY="0" maxY="0" minZ="0" maxZ="0" />
-<startVelocity minX="-325" maxX="-325" minY="-2" maxY="2" minZ="0" maxZ="0" />
-<gravity x="0" y="0" z="0" />
+<startPosition minX="0" maxX="0" minY="0" maxY="0" />
+<startVelocity minX="-325" maxX="-325" minY="-2" maxY="2" />
+<gravity x="0" y="0" />
 <startColor minR="0" maxR="0" minG="0.4" maxG="0.4" minB="0.5" maxB="0.5" minA="1" maxA="1" />
 <endColor minR="1" maxR="1" minG="0" maxG="0" minB="0" maxB="0" minA="0" maxA="0" />
 <startScale min="1.09" max="1.09" />
