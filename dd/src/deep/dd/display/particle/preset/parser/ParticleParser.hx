@@ -257,6 +257,12 @@ class ParticleParser
 		#end
 		preset.life = new Bounds<Float>(lifeMin, lifeMax);
 		preset.particleNum = particleNum;
+		
+		if (spawnNum >= particleNum) // Particle system won't appear on the screen if I not check this
+		{
+			spawnNum = particleNum - 1;
+		}
+		
 		preset.spawnNum = spawnNum;
 		preset.spawnStep = spawnStep;
 		

@@ -494,7 +494,6 @@ class Main
 		switchTypePanels();
 		updateUI();
 		
-		s.addEventListener(MouseEvent.CLICK, onStageClick);
 		s.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		*/
     }
@@ -516,7 +515,7 @@ class Main
 		
 		gravityPreset = new GravityParticlePreset();
         gravityPreset.particleNum = 500;
-        gravityPreset.spawnNum = 500;
+        gravityPreset.spawnNum = 30;
         gravityPreset.spawnStep = 0.03;
         gravityPreset.life = new Bounds<Float>(1, 1.7);
         gravityPreset.startPosition = new Bounds<Vector3D>(new Vector3D(0, 0), new Vector3D(0, 0));
@@ -530,7 +529,7 @@ class Main
 		
 		radialPreset = new RadialParticlePreset();
 		radialPreset.particleNum = 500;
-		radialPreset.spawnNum = 500;
+		radialPreset.spawnNum = 30;
         radialPreset.spawnStep = 0.03;
         radialPreset.life = new Bounds<Float>(1, 1.7);
 		radialPreset.startColor = new Bounds<Color>(new Color(1, 0.3, 0, 0.6), new Color(1, 0.3, 0, 0.6));
@@ -552,12 +551,12 @@ class Main
 		radialRender = RadialParticleRenderBuilder.gpuRender(radialPreset);
 		
 		ps = new ParticleSystem2D(gravityRender);
-        ps.x = world.width * 0.5;
-        ps.y = world.height * 0.5;
 		blendMode = new BlendMode(Context3DBlendFactor.ONE, Context3DBlendFactor.ONE);
         ps.blendMode = blendMode;
-        ps.texture = texture;
+		ps.texture = texture;
         scene.addChild(ps);
+		ps.x = world.width * 0.5;
+        ps.y = world.height * 0.5;
 		
 		Style.embedFonts = false;
         Style.fontSize = 10;
@@ -566,6 +565,8 @@ class Main
 		
 		var gap:Float = 10;
 		var gap2:Float = 19;
+		
+		s.addEventListener(MouseEvent.CLICK, onStageClick);
 	}
 	
 	private function onRenderModeSelect(e:Event):Void 
