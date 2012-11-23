@@ -135,6 +135,8 @@ class Sprite2D extends DisplayNode2D
             animator.dispose();
             Reflect.setField(this, "animator", null);
         }
+        textureFrame = null;
+        drawTransform = null;
     }
 
     override public function init(ctx:Context3D):Void

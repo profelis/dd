@@ -158,15 +158,15 @@ class Node2D
     {
         if (parent != null) parent.removeChild(this);
 
+        if (children != null)
+            for (child in children) child.dispose();
+
         onTransformChange.removeAll();
         onTransformChange = null;
         onWorldTransformChange.removeAll();
         onWorldTransformChange = null;
         onColorTransformChange.removeAll();
         onColorTransformChange = null;
-
-        if (children != null)
-            for (child in children) child.dispose();
 
         ctx = null;
         children = null;
@@ -353,7 +353,6 @@ class Node2D
         if (!childrenUtils.remove(c)) throw "c must be child";
         numChildren = childrenUtils.length;
 
-        c.parent = null;
         c.setParent(null);
         c.setScene(null);
 
