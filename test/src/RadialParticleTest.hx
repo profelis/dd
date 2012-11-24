@@ -1,11 +1,7 @@
 package ;
 
-import deep.dd.display.render.SimpleRender;
-import deep.dd.particle.render.RadialParticleRender;
-import deep.dd.particle.preset.ParticlePresetBase;
-import deep.dd.particle.preset.ParticlePresetBase.Bounds;
-import deep.dd.particle.preset.RadialParticlePreset;
 import deep.dd.particle.ParticleSystem2D;
+import deep.dd.particle.preset.RadialParticlePreset;
 import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.utils.Stats;
 import deep.dd.animation.Animator;

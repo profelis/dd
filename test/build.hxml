@@ -1,8 +1,12 @@
+-cmd cd /Users/deep/Documents/dev/dd/test
+
+--next
+
 -swf bin/app.swf
 -swf-header 800:600:60:FFFFFF
 --flash-strict
--swf-version 11.4
--main RadialParticleTest
+-swf-version 11.2
+-main TextureRenderTest
 -lib format
 -lib msignal
 -cp src
@@ -13,8 +17,8 @@
 
 #-D shaderDebug
 #-D shaderCompDebug
-#-debug
+-debug
 -D dd_stat
-#-D fdb
+-D fdb
 --no-inline
 

@@ -82,7 +82,7 @@ class Sprite2D extends DisplayNode2D
 
             try
             {
-                b.getPixel(0, 0);
+                b.width;
             }
             catch (e:Dynamic)
             {
@@ -190,7 +190,6 @@ class Sprite2D extends DisplayNode2D
     {
         drawTransform.rawData = worldTransform.rawData;
         if (textureFrame != null) textureFrame.applyFrame(drawTransform);
-        //drawTransform.rawData = textureFrame.drawMatrix.rawData;
 
         invalidateDrawTransform = false;
     }
