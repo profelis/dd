@@ -189,7 +189,7 @@ class Sprite2D extends DisplayNode2D
     inline public function updateDrawTransform()
     {
         drawTransform.rawData = worldTransform.rawData;
-        textureFrame.applyFrame(drawTransform);
+        if (textureFrame != null) textureFrame.applyFrame(drawTransform);
         //drawTransform.rawData = textureFrame.drawMatrix.rawData;
 
         invalidateDrawTransform = false;
@@ -217,14 +217,15 @@ class Sprite2D extends DisplayNode2D
             _displayHeight = texture.height;
 
             if (FastHaxe.is(texture, AtlasTexture2D) && animator != null) animator.atlas = flash.Lib.as(texture, AtlasTexture2D);
-
-            invalidateDrawTransform = true;
         }
         else
         {
+            textureFrame = null;
             _displayWidth = 0;
             _displayHeight = 0;
         }
+
+        invalidateDrawTransform = true;
 
         return tex;
     }
