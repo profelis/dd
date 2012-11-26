@@ -64,14 +64,15 @@ class World2D
 
     public var onResize:Signal2<Int, Int>;
 	
-	public var onContext:Signal0;
+	public var onContext(default, null):Signal0;
+	public var onPreRender(default, null):Signal0;
 
     public function new(stage:Stage, context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stage3dId:Int = 0)
     {
         WORLDS.push(this);
 
         onResize = new Signal2<Int, Int>();
-		
+        onPreRender = new Signal0();
 		onContext = new Signal0();
 
         this.stage = stage;
@@ -237,6 +238,8 @@ class World2D
 
         if (ctxExist())
 		{
+            onPreRender.dispatch();
+
             #if dd_stat
             statistics.reset();
             #end
