@@ -1,14 +1,14 @@
-package deep.dd.particle.preset.parser;
+package deep.dd.display.particle.preset.parser;
 
 import flash.geom.Point;
-import deep.dd.particle.ParticleSystem2D;
-import deep.dd.particle.preset.GravityParticlePreset;
-import deep.dd.particle.preset.ParticlePresetBase;
-import deep.dd.particle.preset.RadialParticlePreset;
+import deep.dd.display.particle.ParticleSystem2D;
+import deep.dd.display.particle.preset.GravityParticlePreset;
+import deep.dd.display.particle.preset.ParticlePresetBase;
+import deep.dd.display.particle.preset.RadialParticlePreset;
 import deep.dd.utils.BlendMode;
 
-import deep.dd.particle.render.GravityParticleRender;
-import deep.dd.particle.render.RadialParticleRender;
+import deep.dd.display.particle.render.GravityParticleRender;
+import deep.dd.display.particle.render.RadialParticleRender;
 
 import flash.display3D.Context3DBlendFactor;
 import flash.geom.Vector3D;
@@ -39,7 +39,6 @@ class ParticleParser
 					}
 				}
 			}
-			
 		}
 		
 		var preset:ParticlePresetBase = null;
@@ -131,14 +130,8 @@ class ParticleParser
 					}
 					else if (nodeChild.nodeName == "rotation")
 					{
-                        throw "deep was here";
-                        /*
-						rotationMin.x = Std.parseFloat(nodeChild.get("minX"));
-						rotationMin.y = Std.parseFloat(nodeChild.get("minY"));
-
-						rotationMax.x = Std.parseFloat(nodeChild.get("maxX"));
-						rotationMax.y = Std.parseFloat(nodeChild.get("maxY"));
-						*/
+                        rotationMin = Std.parseFloat(nodeChild.get("min"));
+						rotationMax = Std.parseFloat(nodeChild.get("max"));
 					}
 				}
 			}
@@ -207,12 +200,6 @@ class ParticleParser
 			var angleSpeedMin:Float = 0;
 			var angleSpeedMax:Float = 0;
 			
-			var startDepthMin:Float = 0;
-			var startDepthMax:Float = 0;
-			
-			var depthSpeedMin:Float = 0;
-			var depthSpeedMax:Float = 0;
-			
 			var startRadiusMin:Float = 0;
 			var startRadiusMax:Float = 0;
 			
@@ -235,16 +222,6 @@ class ParticleParser
 							angleSpeedMin = Std.parseFloat(nodeChild.get("min"));
 							angleSpeedMax = Std.parseFloat(nodeChild.get("max"));
 						}
-						else if (nodeChild.nodeName == "startDepth")
-						{
-							startDepthMin = Std.parseFloat(nodeChild.get("min"));
-							startDepthMax = Std.parseFloat(nodeChild.get("max"));
-						}
-						else if (nodeChild.nodeName == "depthSpeed")
-						{
-							depthSpeedMin = Std.parseFloat(nodeChild.get("min"));
-							depthSpeedMax = Std.parseFloat(nodeChild.get("max"));
-						}
 						else if (nodeChild.nodeName == "startRadius")
 						{
 							startRadiusMin = Std.parseFloat(nodeChild.get("min"));
@@ -261,8 +238,6 @@ class ParticleParser
 			
 			radialPreset.startAngle = new Bounds<Float>(startAngleMin, startAngleMax);
 			radialPreset.angleSpeed = new Bounds<Float>(angleSpeedMin, angleSpeedMax);
-			radialPreset.startDepth = new Bounds<Float>(startDepthMin, startDepthMax);
-			radialPreset.depthSpeed = new Bounds<Float>(depthSpeedMin, depthSpeedMax);
 			radialPreset.startRadius = new Bounds<Float>(startRadiusMin, startRadiusMax);
 			radialPreset.endRadius = new Bounds<Float>(endRadiusMin, endRadiusMax);
 			
@@ -282,6 +257,12 @@ class ParticleParser
 		#end
 		preset.life = new Bounds<Float>(lifeMin, lifeMax);
 		preset.particleNum = particleNum;
+		
+		if (spawnNum >= particleNum) // Particle system won't appear on the screen if I not check this
+		{
+			spawnNum = particleNum - 1;
+		}
+		
 		preset.spawnNum = spawnNum;
 		preset.spawnStep = spawnStep;
 		

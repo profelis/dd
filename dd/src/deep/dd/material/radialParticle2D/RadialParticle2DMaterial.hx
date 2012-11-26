@@ -1,7 +1,7 @@
 package deep.dd.material.radialParticle2D;
 
 import deep.dd.display.smart.SmartSprite2D;
-import deep.dd.particle.ParticleSystem2D;
+import deep.dd.display.particle.ParticleSystem2D;
 import deep.dd.utils.Frame;
 import flash.Vector;
 import deep.dd.display.DisplayNode2D;

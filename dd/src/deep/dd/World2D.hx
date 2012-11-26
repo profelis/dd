@@ -3,7 +3,7 @@ package deep.dd;
 import flash.ui.MultitouchInputMode;
 import flash.ui.Multitouch;
 import flash.display.Stage;
-import msignal.Signal.Signal2;
+import msignal.Signal;
 import deep.dd.utils.MouseData;
 import deep.dd.display.Node2D;
 import flash.events.TouchEvent;
@@ -60,10 +60,14 @@ class World2D
     public var statistics(default, null):Statistics;
 
     public var onResize:Signal2<Int, Int>;
+	
+	public var onStage3d:Signal1<Int>;
 
     public function new(stage:Stage, context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stage3dId:Int = 0)
     {
         onResize = new Signal2<Int, Int>();
+		
+		onStage3d = new Signal1<Int>();
 
         this.stage = stage;
         this.context3DRenderMode = context3DRenderMode;
@@ -119,6 +123,8 @@ class World2D
 		
         if (scene != null) scene.init(ctx);
         invalidateSize = true;
+		
+		onStage3d.dispatch(stage3dId);
 
         stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseEvent);
         stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseEvent);
