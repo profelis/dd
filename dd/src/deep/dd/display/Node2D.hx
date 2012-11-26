@@ -533,15 +533,13 @@ class Node2D
     {
         if (v != null && v.x == 0 && v.y == 0) v = null;
 
-        if (pivot == null || !v.equals(pivot))
-        {
-            pivot = v;
-            usePivot = v != null;
-            invalidateBounds = true;
-            invalidateTransform = true;
-            invalidateWorldTransform = true;
-            onTransformChange.dispatch(this);
-        }
+        pivot = v;
+        usePivot = v != null;
+        invalidateBounds = true;
+        invalidateTransform = true;
+        invalidateWorldTransform = true;
+        onTransformChange.dispatch(this);
+
         return v;
     }
 
