@@ -150,7 +150,7 @@ class World2D
     {
         if (scene == null) return;
 
-        if (mouseOut && (mouseOut = bounds.contains(e.stageX, e.stageY))) return;
+        if (mouseOut && (mouseOut = !bounds.contains(e.stageX, e.stageY))) return;
 
         var md:MouseData = new MouseData();
         md.type = touchAlias.get(e.type);
@@ -178,7 +178,7 @@ class World2D
     {
         if (scene == null) return;
 
-        if (mouseOut && (mouseOut = bounds.contains(e.stageX, e.stageY))) return;
+        if (mouseOut && (mouseOut = !bounds.contains(e.stageX, e.stageY))) return;
 
         var md:MouseData = new MouseData();
         md.type = e.type;
