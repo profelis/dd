@@ -406,8 +406,11 @@ class Node2D
         if (mouseChildren && children != null && numChildren > 0)
             for (i in children)
             {
-                var subRes = i.mouseStep(pos, md);
-                if (subRes != null) res = subRes;
+                if (i.mouseChildren || i.mouseEnabled)
+                {
+                    var subRes = i.mouseStep(pos, md);
+                    if (subRes != null) res = subRes;
+                }
             }
 
         if (onTransformChange == null) res = null; // destrucred test
