@@ -653,13 +653,10 @@ class Node2D
     {
         if (c == null) c = new Color(1, 1, 1, 1);
 
-        if (colorTransform == null || !c.equals(colorTransform))
-        {
-            colorTransform = c;
-            alpha = c.a;
-            invalidateColorTransform = true;
-            onColorTransformChange.dispatch(this);
-        }
+        colorTransform = c;
+        alpha = c.a;
+        invalidateColorTransform = true;
+        onColorTransformChange.dispatch(this);
 
         return c;
     }

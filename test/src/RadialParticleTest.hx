@@ -1,11 +1,9 @@
 package ;
 
-import deep.dd.display.render.SimpleRender;
-import deep.dd.particle.render.RadialParticleRender;
-import deep.dd.particle.preset.ParticlePresetBase;
-import deep.dd.particle.preset.ParticlePresetBase.Bounds;
-import deep.dd.particle.preset.RadialParticlePreset;
-import deep.dd.particle.ParticleSystem2D;
+import deep.dd.display.particle.render.RadialParticleRender.RadialParticleRenderBuilder;
+import deep.dd.display.particle.preset.ParticlePresetBase.Bounds;
+import deep.dd.display.particle.ParticleSystem2D;
+import deep.dd.display.particle.preset.RadialParticlePreset;
 import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.utils.Stats;
 import deep.dd.animation.Animator;
@@ -59,24 +57,21 @@ class RadialParticleTest
         var texture = world.cache.getTexture(Image);
 
         preset = new RadialParticlePreset();
-        preset.particleNum = 100;
-        preset.spawnNum = 25;
-        preset.spawnStep = 0.05;
+        preset.particleNum = 700;
+        preset.spawnNum = 5;
+        preset.spawnStep = 0.005;
         preset.life = new Bounds<Float>(2, 3);
         preset.startColor = new Bounds<Color>(new Color(1, 1, 1, 0.6));
         preset.endColor = new Bounds<Color>(new Color(0, 0, 0, 0.01), new Color(1, 1, 1, 0.01));
-        preset.startScale = new Bounds<Float>(0.25);
+        preset.startScale = new Bounds<Float>(0.05);
         preset.endScale = new Bounds<Float>(0.25);
         preset.startRotation = new Bounds<Float>(0, 0);
 
         preset.startRadius = new Bounds<Float>(0);
         preset.endRadius = new Bounds<Float>(300);
 
-        preset.startDepth = new Bounds<Float>(-1000);
-        preset.depthSpeed = new Bounds<Float>(500);
-
         preset.startAngle = new Bounds<Float>(0, 360);
-        preset.angleSpeed = new Bounds<Float>(-5);
+        preset.angleSpeed = new Bounds<Float>(-2);
 
 
         ps = new ParticleSystem2D(RadialParticleRenderBuilder.gpuRender(preset));
@@ -101,7 +96,7 @@ class RadialParticleTest
     {
         var old = ps.render;
         //ps.blendMode = BlendMode.NONE;
-        ps.render = RadialParticleRenderBuilder.cpuCloudRender(preset);
+        ps.render = RadialParticleRenderBuilder.cpuBatchRender(preset);
                     //new RadialParticleRender(preset, new SimpleRender(false));
         old.dispose();
         //world.ctx.dispose();

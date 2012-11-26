@@ -1,7 +1,7 @@
 -swf bin/app.swf
 -swf-header 800:600:60:FFFFFF
 --flash-strict
--swf-version 11.4
+-swf-version 11.2
 -main RadialParticleTest
 -lib format
 -lib msignal
@@ -16,5 +16,5 @@
 #-debug
 -D dd_stat
 #-D fdb
---no-inline
+#--no-inline
 
