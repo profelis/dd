@@ -4,7 +4,6 @@ import mt.m3d.UV;
 import mt.m3d.Color;
 import mt.m3d.Vector;
 import deep.dd.display.smart.SmartSprite2D;
-import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;
 import deep.dd.display.Sprite2D;
@@ -53,7 +52,6 @@ class CloudRender extends RenderBase
     var mat:Cloud2DMaterial;
 
     var textureFrame:Frame;
-    var animator:AnimatorBase;
 
     var invalidateTexture:Bool;
 
@@ -79,7 +77,6 @@ class CloudRender extends RenderBase
 
         renderSize = 0;
 		textureFrame = smartSprite.textureFrame;
-        animator = smartSprite.animator;
 
 		drawBatch(smartSprite, camera, invalidateTexture);
     }
@@ -121,8 +118,6 @@ class CloudRender extends RenderBase
 
         for (s in batchList)
         {
-            if (invalidateTexture) s.updateDrawTransform(); // TODO: optimize
-
             var sPoly = s.geometry.poly;
 
             var i = idx;
@@ -181,6 +176,5 @@ class CloudRender extends RenderBase
         super.dispose(deep);
         mat = null;
         textureFrame = null;
-        animator = null;
     }
 }

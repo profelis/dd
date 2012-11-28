@@ -18,8 +18,11 @@ class Quad2D extends DisplayNode2D
 
     function set_color(v)
     {
-        color = v;
-        needUpdateColor = true;
+        if (color != v)
+        {
+            color = v;
+            needUpdateColor = true;
+        }
         return color;
     }
 

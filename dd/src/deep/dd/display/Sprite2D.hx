@@ -231,8 +231,6 @@ class Sprite2D extends DisplayNode2D
 
     function set_animator(v)
     {
-        //if (animator != null) animator.atlas = null;
-
         animator = v;
 		
 		if (animator != null)
@@ -270,6 +268,8 @@ class Sprite2D extends DisplayNode2D
                 }
                 displayBounds.x += dx;
                 displayBounds.y += dy;
+                displayBounds.width *= g.width;
+                displayBounds.height *= g.height;
             }
 
             invalidateDisplayBounds = false;

@@ -16,7 +16,9 @@ class Scene2D extends Node2D
 
     override function setParent(n)
     {
+        #if debug
         throw "scene can't has parent";
+        #end
     }
 
     public var timeScale:Float = 1;

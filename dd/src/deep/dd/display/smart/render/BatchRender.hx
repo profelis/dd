@@ -1,12 +1,10 @@
 package deep.dd.display.smart.render;
 
-import haxe.Timer;
 import flash.Vector;
 import flash.geom.Vector3D;
 import flash.geom.Matrix3D;
 import deep.dd.material.batch2d.Batch2DMaterial;
 import deep.dd.display.smart.SmartSprite2D;
-import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;
 import deep.dd.display.Sprite2D;
@@ -45,7 +43,6 @@ class BatchRender extends RenderBase
     var mat:Batch2DMaterial;
 
     var textureFrame:Frame;
-    var animator:AnimatorBase;
 
     var invalidateTexture:Bool;
 
@@ -70,7 +67,6 @@ class BatchRender extends RenderBase
         }
 
 		textureFrame = smartSprite.textureFrame;
-        animator = smartSprite.animator;
 
         mat.startBatch(smartSprite, smartSprite.texture);
 
@@ -104,7 +100,6 @@ class BatchRender extends RenderBase
             {
                 var s:Sprite2D = flash.Lib.as(c, Sprite2D);
 
-
                 if (c.numChildren > 0 || s == null)
                 {
                     //trace("to subnode");
@@ -112,11 +107,9 @@ class BatchRender extends RenderBase
                     continue;
                 }
 
-                if (invalidateTexture) s.updateDrawTransform(); // TODO: optimize
-
                 mpos[idx] = s.drawTransform;
                 cTrans[idx] = s.worldColorTransform;
-                regions[idx] = s.textureFrame != null ? s.textureFrame.region : smartSprite.textureFrame.region;
+                regions[idx] = s.textureFrame != null ? s.textureFrame.region : textureFrame.region;
 
                 idx ++;
                 if (idx == MAX_SIZE)
@@ -163,7 +156,6 @@ class BatchRender extends RenderBase
         emptyVector = null;
         emptyMatrix = null;
         textureFrame = null;
-        animator = null;
 
         mpos = null;
         cTrans = null;
