@@ -3,6 +3,7 @@
 .idea
 *.iml
 *.sublime-project
+*.sublime-workspace
 
 bin
 out
