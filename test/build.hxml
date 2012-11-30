@@ -1,7 +1,7 @@
 -swf bin/app.swf
 -swf-header 800:600:60:FFFFFF
 --flash-strict
--swf-version 11.2
+-swf-version 11
 -main RadialParticleTest
 -lib format
 -lib msignal
