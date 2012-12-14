@@ -110,7 +110,6 @@ class World2D
 
         if (ctx != null)
         {
-            Material.freeContextCache(ctx);
             cache.reinitBitmapTextureCache();
             #if dd_stat
             GlobalStatistics.freeContext(ctx);

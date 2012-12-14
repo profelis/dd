@@ -9,13 +9,13 @@ import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
 import mt.m3d.Polygon;
 
-class DisplayNode2D extends Node2D
+class DisplayNode2D<K:hxsl.Shader> extends Node2D
 {
     var invalidateDisplayBounds:Bool = true;
 
     public var geometry(get_geometry, set_geometry):Geometry;
 
-    public var material(default, set_material):Material;
+    public var material(default, set_material):Material<K>;
 
     /**
     * @private
@@ -26,7 +26,7 @@ class DisplayNode2D extends Node2D
     */
     public var _displayHeight:Float = 0;
 
-    public function new(material:Material = null)
+    public function new(material:Material<K> = null)
     {
         super();
         this.material = material;
@@ -51,7 +51,7 @@ class DisplayNode2D extends Node2D
 
         if (material != null)
         {
-            Reflect.setField(material, "useCount", material.useCount - 1);
+	        material.useCount --;
             material.dispose();
             Reflect.setField(this, "material", null);
         }
@@ -110,7 +110,7 @@ class DisplayNode2D extends Node2D
         return g;
     }
 
-    function set_material(m:Material):Material
+    function set_material(m:Material<K>):Material<K>
     {
         if (m == material) return m;
 

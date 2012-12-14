@@ -40,24 +40,30 @@ class Batch2DMaterial extends Material
 
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 
-        shader.select();
-        shader.send(false, untyped shader.getFragmentConstants({tex:tex.texture}));
+	    untyped shader.tex = tex.texture;
 
-        shader.bind(node.geometry.vbuf);
+        shader.bind(ctx, node.geometry.vbuf);
     }
 
     var node:Sprite2D;
 
     public function stopBatch()
     {
-        shader.unbind();
+        shader.unbind(ctx);
         node = null;
     }
 
     public function drawBatch(camera:Camera2D, size:Int, mpos:Vector<Matrix3D>, cTrans:Vector<Vector3D>, regions:Vector<Vector3D>)
     {
         //untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}, {tex:tex.texture});
-        shader.send(true, untyped shader.getVertexConstants({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}));
+        //shader.send(true, untyped shader.getVertexConstants({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}));
+	    untyped
+	    {
+		    shader.mpos = mpos;
+		    shader.mproj = camera.proj;
+		    shader.cTransArr = cTrans;
+		    shader.regions = regions;
+	    }
 
         #if dd_stat
         node.world.statistics.drawCalls ++;

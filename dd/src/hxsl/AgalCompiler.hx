@@ -23,8 +23,13 @@
  */
 package hxsl;
 
+#if (haxe_211 || haxe3)
+import hxsl.Data;
+import format.agal.Data;
+#else
 import format.agal.Data;
 import hxsl.Data;
+#end
 
 private typedef Temp = {
 	var liveBits : Array<Null<Int>>;
@@ -81,12 +86,12 @@ class AgalCompiler {
 	function reg( v : Variable, ?swiz ) {
 		var swiz = if( swiz == null ) initSwiz(v.type) else convertSwiz(swiz);
 		var t = switch( v.kind ) {
-		case VParam: RConst;
+		case VConst: RConst;
 		case VOut: ROut;
 		case VTmp: RTemp;
 		case VVar: RVar;
 		case VInput: RAttr;
-		case VTexture, VCompileConstant: throw "assert";
+		case VTexture, VParam: throw "assert";
 		}
 		return { t : t, index : v.index, swiz : swiz, access : null };
 	}
@@ -194,8 +199,8 @@ class AgalCompiler {
 				compileTo(t, e);
 				mov(d, t, v.t);
 				return;
-			case CVar(_), CSwiz(_), CBlock(_), CAccess(_):
-			case CLiteral(_), CVector(_), CIf(_), CFor(_), CTexE(_): throw "assert";
+			case CVar(_), CSwiz(_), CAccess(_), CSubBlock(_):
+			case CConst(_), CVector(_), CIf(_), CFor(_), CRow(_), CCond(_): throw "assert";
 			}
 		compileTo(d, e);
 	}
@@ -282,6 +287,7 @@ class AgalCompiler {
 			}
 			// set last-write per-component codepos
 			if( r.access != null ) {
+				// if we have an access, our index is good but our swiz is not
 				t.lastWritePos[Type.enumIndex(r.access.comp)] = codePos;
 				t.assignedTo[Type.enumIndex(r.access.comp)] = null;
 			} else if( r.swiz == null ) {
@@ -319,9 +325,8 @@ class AgalCompiler {
 			}
 		} else {
 			if( t == null ) throw "assert";
-			// I don't think it makes sense to use the r.access.comp as the swizzle here...
-			//var s = if( r.access != null ) [r.access.comp] else if( r.swiz == null ) [X, Y, Z, W] else r.swiz;
-			var s = if( r.swiz == null ) [X, Y, Z, W] else r.swiz;
+			// if we have an access, our index is good but our swiz is not
+			var s = if( r.access != null ) [r.access.comp] else if( r.swiz == null ) [X, Y, Z, W] else r.swiz;
 
 			// if we need to read some components at some time
 			// make sure that we reserve all the components as soon
@@ -340,7 +345,7 @@ class AgalCompiler {
 			for ( c in s ) {
 				var ci = Type.enumIndex(c);
 				var from = t.assignedTo[ci];
-				if ( from != null && (copy == null || from == copy) ) {
+				if( from != null && (copy == null || from == copy) ) {
 					copy = from;
 
 					var fromTemp = temps[from];
@@ -349,12 +354,11 @@ class AgalCompiler {
 						continue;
 					}
 				}
-
 				copy = null;
 				break;
 			}
 
-			if ( copy != null ) {
+			if( copy != null ) {
 				r.index = t.assignedTo[Type.enumIndex(s[0])];
 				r.swiz = [];
 				for( c in s )
@@ -362,8 +366,9 @@ class AgalCompiler {
 				regLive(r, write);
 				return;
 			}
-
+			
 			if( minPos < 0 ) throw "assert";
+			
 			for( p in minPos+1...codePos ) {
 				var k = t.liveBits[p];
 				if( k == null ) k = 0;
@@ -578,6 +583,21 @@ class AgalCompiler {
 					return;
 				default:
 				}
+			// some specific handling
+			switch( op ) {
+			case CLte:
+				var tmp = e2;
+				e2 = e1;
+				e1 = tmp;
+				op = CGte;
+			case CGt:
+				var tmp = e2;
+				e2 = e1;
+				e1 = tmp;
+				op = CLt;
+			default:
+			}
+			// -
 			var v1 = compileSrc(e1);
 			var v2 = compileSrc(e2);
 			// it is not allowed to apply an operation on two constants or two vars at the same time : use a temp var
@@ -597,7 +617,7 @@ class AgalCompiler {
 				switch( e2.t ) {
 				case TMatrix(_):
 					switch( e1.t ) {
-					case TFloat4: if( v1.t == RTemp || v2.t == RTemp ) callback(matrixOp,ODp4,4) else OM44;
+					case TFloat4: if( v1.t == RTemp || v2.t == RTemp ) callback(matrixOp,ODp4,e.t == TFloat4 ? 4 : 3) else if( e.t == TFloat4 ) OM44 else OM34;
 					case TFloat3: if( v1.t == RTemp || v2.t == RTemp ) callback(matrixOp,e.t == TFloat4 ? ODp4 : ODp3,3) else if( e.t == TFloat4 ) OM34 else OM33;
 					case TMatrix(w, h, _):
 						if( w == 4 && h == 4 )
@@ -619,7 +639,7 @@ class AgalCompiler {
 			case CNeq: OSne;
 			case CLt: OSlt;
 			case CMod: modGenerate;
-			case COr, CAnd: throw "assert";
+			case COr, CAnd, CLte, CGt: throw "assert";
 			})(dst, v1, v2));
 		case CUnop(op, p):
 			var v = compileSrc(p);
@@ -680,26 +700,30 @@ class AgalCompiler {
 				if( cube ) tflags.push(TCube);
 			default:
 			}
-			for( f in flags ) {
-				if( f == TSingle ) continue;
-				tflags.push(switch(f) {
-				case TMipMapDisable: TMipMapDisable;
-				case TMipMapNearest: TMipMapNearest;
-				case TMipMapLinear: TMipMapLinear;
-				case TWrap: TWrap;
-				case TClamp: TClamp;
-				case TFilterNearest: TFilterNearest;
-				case TFilterLinear: TFilterLinear;
-				case TLodBias(v): TLodBias(v);
-				case TSingle: null;
-				});
-			}
+			for( f in flags )
+				switch( f.f ) {
+				case CTFlag(f):
+					if( f == TSingle ) continue;
+					tflags.push(switch(f) {
+					case TMipMapDisable: TMipMapDisable;
+					case TMipMapNearest: TMipMapNearest;
+					case TMipMapLinear: TMipMapLinear;
+					case TWrap: TWrap;
+					case TClamp: TClamp;
+					case TFilterNearest: TFilterNearest;
+					case TFilterLinear: TFilterLinear;
+					case TLodBias(v): TLodBias(v);
+					case TSingle: null;
+					});
+				case CTParam(_):
+					throw "asset";
+				}
 			code.push(OTex(dst, vtmp, { index : v.index, flags : tflags } ));
-		case CBlock(el, v):
+		case CSubBlock(el, v):
 			for( e in el )
 				compileExpr(e.e, e.v);
 			compileTo(dst,v);
-		case CLiteral(_), CVector(_), CIf(_), CFor(_), CTexE(_):
+		case CConst(_), CVector(_), CIf(_), CFor(_), CRow(_), CCond(_):
 			throw "assert";
 		}
 	}
@@ -715,15 +739,15 @@ class AgalCompiler {
 			var t = allocTemp(e.t);
 			compileTo(t, e);
 			return t;
-		case CBlock(el, v):
-			for( e in el )
-				compileExpr(e.e, e.v);
-			return compileSrc(v);
 		case CAccess(v1, e2):
 			var r1 = reg(v1);
 			var r2 = compileSrc(e2);
 			return { t : r2.t, index : r2.index, access : { t : r1.t, comp : r2.swiz[0], offset : r1.index }, swiz : initSwiz(e.t) };
-		case CLiteral(_), CVector(_), CIf(_), CFor(_), CTexE(_): throw "assert";
+		case CSubBlock(el, v):
+			for( e in el )
+				compileExpr(e.e, e.v);
+			return compileSrc(v);
+		case CConst(_), CVector(_), CIf(_), CFor(_), CRow(_), CCond(_): throw "assert "+Type.enumConstructor(e.d);
 		}
 	}
 

@@ -13,21 +13,14 @@ import flash.display3D.Context3D;
 import hxsl.Shader;
 import flash.Lib;
 
-class Sprite2DMaterial extends Material
+class Sprite2DMaterial extends Material<Sprite2DShader>
 {
     public function new()
     {
-        super(null);
+        super(new Sprite2DShader());
     }
 
-    var texOpt:UInt = 0;
-
-    inline function updateShaderRef()
-    {
-        shaderRef = SHADERS.get(texOpt & 0x60).get(texOpt & 0x18).get(texOpt & 0x7);
-    }
-
-    override public function draw(node:DisplayNode2D, camera:Camera2D)
+    override public function draw(node:DisplayNode2D<Sprite2DShader>, camera:Camera2D)
     {
         #if debug
         if (!FastHaxe.is(node, Sprite2D)) throw "Sprite2DMaterial can't draw " + node;
@@ -36,177 +29,46 @@ class Sprite2DMaterial extends Material
         var sp:Sprite2D = Lib.as(node, Sprite2D);
         var tex = sp.texture;
 
+	    shader.pWrap = true;
+	    shader.pFilter = true;
+	    shader.pMipmap = null;
+
         if (tex == null) throw "error"; // TODO:
 
-        if (texOpt != tex.options)
-        {
-            texOpt = tex.options;
-            updateShaderRef();
-            attachShader();
-        }
-
-        untyped shader.init({mpos:sp.drawTransform, mproj:camera.proj, region:sp.textureFrame.region}, {tex:tex.texture, cTrans:node.worldColorTransform});
+        //shader.init({mpos:sp.drawTransform, mproj:camera.proj, region:sp.textureFrame.region}, {tex:tex.texture, cTrans:node.worldColorTransform});
+	    shader.mpos = sp.drawTransform;
+	    shader.mproj = camera.proj;
+	    shader.region = sp.textureFrame.region;
+	    shader.tex = tex.texture;
+	    shader.cTrans = node.worldColorTransform;
 
         super.draw(node, camera);
     }
-	
-    public static var SHADERS(default, null):IntHash<IntHash<IntHash<Class<Shader>>>> = initSHADERS();
-
-    static function initSHADERS()
-    {
-        var res = new IntHash();
-
-        var a = new IntHash<Class<Shader>>();
-        a.set(Texture2DOptions.MIPMAP_DISABLE, WrapNearestNo);
-        a.set(Texture2DOptions.MIPMAP_NEAREST, WrapNearestNearest);
-        a.set(Texture2DOptions.MIPMAP_LINEAR, WrapNearestLinear);
-
-        var b = new IntHash<Class<Shader>>();
-        b.set(Texture2DOptions.MIPMAP_DISABLE, WrapLinearNo);
-        b.set(Texture2DOptions.MIPMAP_NEAREST, WrapLinearNearest);
-        b.set(Texture2DOptions.MIPMAP_LINEAR, WrapLinearLinear);
-
-        var ab = new IntHash();
-        ab.set(Texture2DOptions.FILTERING_NEAREST, a);
-        ab.set(Texture2DOptions.FILTERING_LINEAR, b);
-        res.set(Texture2DOptions.REPEAT_NORMAL, ab);
-
-        var c = new IntHash<Class<Shader>>();
-        c.set(Texture2DOptions.MIPMAP_DISABLE, ClampNearestNo);
-        c.set(Texture2DOptions.MIPMAP_NEAREST, ClampNearestNearest);
-        c.set(Texture2DOptions.MIPMAP_LINEAR, ClampNearestLinear);
-
-        var d = new IntHash<Class<Shader>>();
-        d.set(Texture2DOptions.MIPMAP_DISABLE, ClampLinearNo);
-        d.set(Texture2DOptions.MIPMAP_NEAREST, ClampLinearNearest);
-        d.set(Texture2DOptions.MIPMAP_LINEAR, ClampLinearLinear);
-
-        var cd = new IntHash();
-        cd.set(Texture2DOptions.FILTERING_NEAREST, c);
-        cd.set(Texture2DOptions.FILTERING_LINEAR, d);
-        res.set(Texture2DOptions.REPEAT_CLAMP, cd);
-
-        return res;
-    }
 
 }
 
-class WrapNearestNo extends Shader
+class Sprite2DShader extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+	    var input : {
+		    pos : Float2,
+		    uv: Float2
+	    };
 
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, nearest, mm_no);
-    };
-}
+		var tuv:Float2;
+		var pWrap:Param<Bool>;
+		var pFilter:Param<Bool>;
+		var pMipmap:Param<Bool>;
 
-class WrapNearestNearest extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
+		function vertex(mpos:M44, mproj:M44, region:Float4)
+		{
+			out = pos.xyzw * mpos * mproj;
+			tuv = uv * region.zw + region.xy;
+		}
 
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, nearest, mm_near);
-    };
-}
-
-class WrapNearestLinear extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, nearest, mm_linear);
-    };
-}
-
-class WrapLinearNo extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, linear, mm_no);
-    };
-}
-
-class WrapLinearNearest extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, linear, mm_near);
-    };
-}
-
-class WrapLinearLinear extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, linear, mm_linear);
-    };
-}
-
-class ClampNearestNo extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, nearest, mm_no);
-    };
-}
-
-class ClampNearestNearest extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, nearest, mm_near);
-    };
-}
-
-class ClampNearestLinear extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, nearest, mm_linear);
-    };
-}
-
-class ClampLinearNo extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, linear, mm_no);
-    };
-}
-
-class ClampLinearNearest extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, linear, mm_near);
-    };
-}
-
-class ClampLinearLinear extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/sprite2d/Sprite2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, linear, mm_linear);
+		function fragment(tex:Texture, cTrans:Float4)
+		{
+			out = tex.get(tuv, wrap=pWrap, filter=pFilter, mipmap=pMipmap) * cTrans;
+		}
     };
 }

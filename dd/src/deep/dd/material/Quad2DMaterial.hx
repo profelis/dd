@@ -5,22 +5,25 @@ import hxsl.Shader;
 import deep.dd.display.DisplayNode2D;
 import deep.dd.camera.Camera2D;
 
-class Quad2DMaterial extends Material
+class Quad2DMaterial extends Material<Quad2DShader>
 {
     public function new()
     {
-        super(QuadShader);
+        super(new Quad2DShader());
     }
 
-    override public function draw(node:DisplayNode2D, camera:Camera2D)
+    override public function draw(node:DisplayNode2D<Quad2DShader>, camera:Camera2D)
     {
-        untyped shader.init({ mpos : node.worldTransform, mproj : camera.proj }, {cTrans:node.worldColorTransform});
+        //shader.init({ mpos : node.worldTransform, mproj : camera.proj }, {cTrans:node.worldColorTransform});
+	    shader.mpos = node.worldTransform;
+	    shader.mproj = camera.proj;
+        shader.cTrans = node.worldColorTransform;
 
         super.draw(node, camera);
     }
 }
 
-class QuadShader extends Shader
+class Quad2DShader extends Shader
 {
     static var SRC = {
         var input : {

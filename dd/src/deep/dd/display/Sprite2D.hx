@@ -17,7 +17,7 @@ import deep.dd.utils.FastHaxe;
 
 class CenteredSprite2D extends Sprite2D
 {
-    public function new(material:Material = null)
+    public function new(material:Sprite2DMaterial = null)
     {
         super(material);
     }
@@ -28,9 +28,9 @@ class CenteredSprite2D extends Sprite2D
     }
 }
 
-class Sprite2D extends DisplayNode2D
+class Sprite2D extends DisplayNode2D<Sprite2DShader>
 {
-    public function new(material:Material = null)
+    public function new(material:Sprite2DMaterial = null)
     {
         drawTransform = new Matrix3D();
 

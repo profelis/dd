@@ -27,22 +27,14 @@
 package hxsl;
 import hxsl.Data;
 
-private class CustomU extends haxe.Unserializer {
-	public function resetCache() {
-		cache = [];
-		scache = [];
-		pos++; // skip #
-	}
-}
-
 class Unserialize {
 
-	var s : CustomU;
+	var s : haxe.Unserializer;
 	var vars : IntHash<Variable>;
 	var debug : Bool;
 	
 	function new(str) {
-		s = new CustomU(str);
+		s = new haxe.Unserializer(str);
 		vars = new IntHash();
 	}
 	
@@ -52,71 +44,47 @@ class Unserialize {
 	
 	function doUnserialize() {
 		debug = s.unserialize();
-		var numVars = s.unserialize();
-		var allVars = [];
-		var varKinds = Type.allEnums(VarKind);
-		for ( i in 0...numVars ) {
-			var id:Int = s.unserialize();
-			var refId:Int = s.unserialize();
-			var index = 0;
-			if( refId != 0 )
-				index = s.unserialize();
-			var type = unserializeVarType();
-			var kind = varKinds[s.unserialize()];
-			var name = switch ( kind ) {
-				case VTmp, VOut: "";
-				default: s.unserialize();
-			}
-			var pos = unserializePos();
-			var v:Variable = {
-				name:name,
-				id:id,
-				refId:refId-1,
-				index:index,
-				type:type,
-				kind:kind,
-				pos:pos,
-				read:false,
-				write:0,
-				assign:null
-			};
-			vars.set(id, v);
-			if( v.kind != VTmp )
-				allVars.push(v);
-		}
-		
-		s.resetCache();
-		
+		var globals = [];
+		for( i in 0...s.unserialize() )
+			globals.push(unserializeVar());
 		var vertex = unserializeCode(true);
 		var fragment = unserializeCode(false);
-
-		return { vars : allVars, vertex:vertex, fragment:fragment };
+		return { globals : globals, vertex:vertex, fragment:fragment };
 	}
 
 	function unserializeCode( vertex:Bool ) : Code {
-		var numArgs = s.unserialize();
 		var args = [];
-		for ( i in 0...numArgs )
+		for( i in 0...s.unserialize() )
 			args.push( unserializeVar() );
-		var tex = [];
-		if ( !vertex ) {
-			var numTex = s.unserialize();
-			for ( i in 0...numTex )
-				tex.push( unserializeVar() );
-		}
-
-		var numExprs = s.unserialize();
 		var exprs = [];
-		for ( i in 0...numExprs )
-			exprs.push( {v:unserializeCodeValue(), e:unserializeCodeValue()} );
-
+		for( i in 0...s.unserialize() )
+			exprs.push( { v:unserializeCodeValue(), e:unserializeCodeValue() } );
 		var consts:Array<Array<Float>> = s.unserialize();
 		var pos = unserializePos();
-		return { pos:pos, args:args, tex:tex, exprs:exprs, consts:consts, vertex:vertex, tempSize:0 };
+		return { pos:pos, args:args, exprs:exprs, consts:consts, vertex:vertex, tempSize:0 };
 	}
 
-	inline function unserializeVar() {
-		return vars.get(s.unserialize());
+	function unserializeVar() : Variable {
+		var id : Int = s.unserialize();
+		var v = vars.get(id);
+		if( v != null ) return v;
+		var type = unserializeVarType();
+		var kind = Type.createEnumIndex(VarKind,s.unserialize());
+		var name = switch ( kind ) {
+			case VTmp, VOut: "";
+			default: s.unserialize();
+		}
+		var pos = unserializePos();
+		var v:Variable = {
+			id:id,
+			name:name,
+			type:type,
+			kind:kind,
+			pos:pos,
+			index:0,
+		};
+		vars.set(v.id, v);
+		return v;
 	}
 	
 	function unserializeCodeValue() : CodeValue {
@@ -143,28 +111,36 @@ class Unserialize {
 			CAccess(v, idx);
 		case 4:
 			var v = unserializeVar();
-			var flags = unserializeTexFlags();
 			var acc = unserializeCodeValue();
+			var flags = unserializeTexFlags();
 			CTex(v, acc, flags);
 		case 5:
-			var swiz = unserializeSwiz();
 			var e = unserializeCodeValue();
+			var swiz = unserializeSwiz();
 			CSwiz(e, swiz);
 		case 6:
-			var numExprs:Int = s.unserialize();
 			var exprs = [];
-			for ( i in 0...numExprs ) {
-				var v = unserializeCodeValue();
-				var e = unserializeCodeValue();
-				exprs.push( {v : v, e : e} );
-			}
-			var v = unserializeCodeValue();
-			CBlock(exprs, v);
+			for( i in 0...s.unserialize() )
+				exprs.push( {
+					v : unserializeCodeValue(),
+					e : unserializeCodeValue(),
+				});
+			CSubBlock(exprs, unserializeCodeValue());
 		case 7:
+			CConst(switch( s.unserialize() ) {
+			case 0: CNull;
+			case 1: CInt(s.unserialize());
+			case 2: CBool(s.unserialize());
+			case 3: CFloat(s.unserialize());
+			case 4: CFloats(s.unserialize());
+			default:
+				throw "assert";
+			});
+		case 8:
 			var cond = unserializeCodeValue();
 			var eifLen:Int = s.unserialize();
 			var eif = [];
-			for ( i in 0...eifLen ) {
+			for( i in 0...eifLen ) {
 				var v = unserializeCodeValue();
 				var e = unserializeCodeValue();
 				eif.push({ v : v, e : e });
@@ -180,10 +156,12 @@ class Unserialize {
 				}
 			}
 			CIf(cond, eif, eelse);
-		case 8:
-			var value = s.unserialize();
-			CLiteral(value);
 		case 9:
+			var cond = unserializeCodeValue();
+			var e1 = unserializeCodeValue();
+			var e2 = unserializeCodeValue();
+			CCond(cond, e1, e2);
+		case 10:
 			var it = unserializeVar();
 			var start = unserializeCodeValue();
 			var end = unserializeCodeValue();
@@ -195,22 +173,15 @@ class Unserialize {
 				exprs.push( {v : v, e : e} );
 			}
 			CFor(it, start, end, exprs);
-		case 10:
-			var v = unserializeVar();
-			var numFlags:Int = s.unserialize();
-			var flags = [];
-			for ( i in 0...numFlags ) {
-				var t = Type.createEnumIndex(TexParam, s.unserialize());
-				var e = unserializeCodeValue();
-				flags.push({t:t, e:e});
-			}
-			var acc = unserializeCodeValue();
-			CTexE(v, acc, flags);
 		case 11:
 			var numVals = s.unserialize();
 			var vals = [];
 			for ( i in 0...numVals ) vals.push(unserializeCodeValue());
 			CVector(vals);
+		case 12:
+			var e1 = unserializeCodeValue();
+			var e2 = unserializeCodeValue();
+			CRow(e1, e2);
 		default:
 			throw "assert";
 		}
@@ -233,15 +204,15 @@ class Unserialize {
 		var typeIndex:Null<Int> = s.unserialize();
 		if ( typeIndex == null ) return null;
 		switch ( typeIndex ) {
-		case 6:
+		case Type.enumIndex(TMatrix(0,0,null)):
 			var r:Int = s.unserialize();
 			var c:Int = s.unserialize();
 			var transpose = s.unserialize();
 			return TMatrix(r,c,{t:transpose});
-		case 7:
+		case Type.enumIndex(TTexture(true)):
 			var cube = s.unserialize();
 			return TTexture(cube);
-		case 8:
+		case Type.enumIndex(TArray(null,0)):
 			var type = unserializeVarType();
 			var size = s.unserialize();
 			return TArray(type, size);
@@ -263,15 +234,14 @@ class Unserialize {
 	function unserializeTexFlags() {
 		var len:Int = s.unserialize();
 		var flags = [];
-		for ( i in 0...len ) {
-			var enumIndex:Int = s.unserialize();
-			switch ( enumIndex ) {
-			case Type.enumIndex(TLodBias(0)):
-				var lod = s.unserialize();
-				flags.push(TLodBias(lod));
-			default:
-				flags.push(Type.createEnumIndex(TexFlag, enumIndex));
+		for( i in 0...len ) {
+			var f = if( !s.unserialize() ) {
+				CTFlag(Type.createEnumIndex(TexFlag, s.unserialize()));
+			} else {
+				var p = Type.createEnumIndex(TexParam, s.unserialize());
+				CTParam(p, unserializeCodeValue());
 			}
+			flags.push( { f : f, p : unserializePos() } );
 		}
 		return flags;
 	}

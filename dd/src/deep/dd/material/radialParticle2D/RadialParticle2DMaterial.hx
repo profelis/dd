@@ -58,9 +58,9 @@ class RadialParticle2DMaterial extends Material
 
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 
-        shader.bind(node.geometry.vbuf);
+        shader.bind(ctx, node.geometry.vbuf);
         ctx.drawTriangles(node.geometry.ibuf, 0, renderSize * 2);
-        shader.unbind();
+        shader.unbind(ctx);
     }
 
     override public function draw(node:DisplayNode2D, camera:Camera2D)
