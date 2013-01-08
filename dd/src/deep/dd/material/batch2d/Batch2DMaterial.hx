@@ -13,7 +13,7 @@ import deep.dd.display.DisplayNode2D;
 import flash.display3D.Context3D;
 import hxsl.Shader;
 
-class Batch2DMaterial extends Material
+class Batch2DMaterial extends Material<BatchShader>
 {
     public function new()
     {

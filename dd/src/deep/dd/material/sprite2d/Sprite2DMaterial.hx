@@ -31,7 +31,7 @@ class Sprite2DMaterial extends Material<Sprite2DShader>
 
 	    shader.pWrap = true;
 	    shader.pFilter = true;
-	    shader.pMipmap = null;
+	    shader.pMipmap = true;
 
         if (tex == null) throw "error"; // TODO:
 

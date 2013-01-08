@@ -1,4 +1,5 @@
 package ;
+import deep.dd.utils.Stats;
 import deep.dd.material.sprite2d.Sprite2DMaterial;
 import deep.dd.texture.atlas.parser.StarlingParser;
 import deep.dd.display.MovieClip2D;
@@ -46,6 +47,8 @@ class Main
 
         world = new World2D(s, Context3DRenderMode.AUTO);
 
+	    s.addChild(new Stats(world));
+
         world.scene = scene = new Scene2D();
 
 		world.antialiasing = 2;
@@ -71,9 +74,7 @@ class Main
 		mc2.fps = 25;
 		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc2.texture = st;
-		mc2.scaleX = mc2.scaleY = 10;
 		world.scene.addChild(mc2);
-	    mc2.stop();
 		//cast(mc2.animator, Animator).stop();
 
 
