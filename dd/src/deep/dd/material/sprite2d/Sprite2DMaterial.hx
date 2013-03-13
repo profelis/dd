@@ -26,16 +26,11 @@ class Sprite2DMaterial extends Material<Sprite2DShader>
         if (!FastHaxe.is(node, Sprite2D)) throw "Sprite2DMaterial can't draw " + node;
         #end
 
-        var sp:Sprite2D = Lib.as(node, Sprite2D);
+        var sp:Sprite2D = cast(node);
         var tex = sp.texture;
-
-	    shader.pWrap = true;
-	    shader.pFilter = true;
-	    shader.pMipmap = true;
 
         if (tex == null) throw "error"; // TODO:
 
-        //shader.init({mpos:sp.drawTransform, mproj:camera.proj, region:sp.textureFrame.region}, {tex:tex.texture, cTrans:node.worldColorTransform});
 	    shader.mpos = sp.drawTransform;
 	    shader.mproj = camera.proj;
 	    shader.region = sp.textureFrame.region;
@@ -44,7 +39,6 @@ class Sprite2DMaterial extends Material<Sprite2DShader>
 
         super.draw(node, camera);
     }
-
 }
 
 class Sprite2DShader extends Shader

@@ -14,7 +14,6 @@ class Quad2DMaterial extends Material<Quad2DShader>
 
     override public function draw(node:DisplayNode2D<Quad2DShader>, camera:Camera2D)
     {
-        //shader.init({ mpos : node.worldTransform, mproj : camera.proj }, {cTrans:node.worldColorTransform});
 	    shader.mpos = node.worldTransform;
 	    shader.mproj = camera.proj;
         shader.cTrans = node.worldColorTransform;

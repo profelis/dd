@@ -44,15 +44,9 @@ class BatchRender extends RenderBase
 
     var textureFrame:Frame;
 
-    var invalidateTexture:Bool;
-
     override public function updateStep()
     {
-        var f = smartSprite.textureFrame;
-
         smartSprite.nativeUpdateStep();
-
-        invalidateTexture = f != smartSprite.textureFrame;
     }
 
     override public function drawStep(camera:Camera2D):Void
@@ -70,7 +64,7 @@ class BatchRender extends RenderBase
 
         mat.startBatch(smartSprite, smartSprite.texture);
 
-		drawBatch(smartSprite, camera, invalidateTexture);
+		drawBatch(smartSprite, camera);
 
         mat.stopBatch();
     }
@@ -79,7 +73,7 @@ class BatchRender extends RenderBase
     var cTrans:Vector<Vector3D>;
     var regions:Vector<Vector3D>;
 
-    function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
+    function drawBatch(node:Node2D, camera:Camera2D)
     {
         var renderList = new FastList<Node2D>();
 
@@ -137,7 +131,7 @@ class BatchRender extends RenderBase
 
         for (s in subNodes)
         {
-            drawBatch(s, camera, invalidateTexture);
+            drawBatch(s, camera);
         }
 
         for (s in renderList)

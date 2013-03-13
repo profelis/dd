@@ -20,27 +20,13 @@ class Batch2DMaterial extends Material<BatchShader>
         super(null);
     }
 
-    var texOpt:UInt = 0;
-
-    inline function updateShaderRef()
-    {
-        shaderRef = SHADERS.get(texOpt & 0x60).get(texOpt & 0x18).get(texOpt & 0x7);
-    }
-
     public function startBatch(node:Sprite2D, tex:Texture2D)
     {
         this.node = node;
 
-        if (texOpt != tex.options)
-        {
-            texOpt = tex.options;
-            updateShaderRef();
-            attachShader();
-        }
-
         ctx.setBlendFactors(node.blendMode.src, node.blendMode.dst);
 
-	    untyped shader.tex = tex.texture;
+	    shader.tex = tex.texture;
 
         shader.bind(ctx, node.geometry.vbuf);
     }
@@ -57,13 +43,10 @@ class Batch2DMaterial extends Material<BatchShader>
     {
         //untyped shader.init({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}, {tex:tex.texture});
         //shader.send(true, untyped shader.getVertexConstants({mpos:mpos, mproj:camera.proj, cTransArr:cTrans, regions:regions}));
-	    untyped
-	    {
-		    shader.mpos = mpos;
-		    shader.mproj = camera.proj;
-		    shader.cTransArr = cTrans;
-		    shader.regions = regions;
-	    }
+		shader.mpos = mpos;
+		shader.mproj = camera.proj;
+		shader.cTransArr = cTrans;
+		shader.regions = regions;
 
         #if dd_stat
         node.world.statistics.drawCalls ++;
@@ -77,164 +60,69 @@ class Batch2DMaterial extends Material<BatchShader>
     {
         throw "use drawBatch";
     }
-
-    public static var SHADERS(default, null):IntHash<IntHash<IntHash<Class<Shader>>>> = initSHADERS();
-
-    static function initSHADERS()
-    {
-        var res = new IntHash();
-
-        var a = new IntHash<Class<Shader>>();
-        a.set(Texture2DOptions.MIPMAP_DISABLE, WrapNearestNo);
-        a.set(Texture2DOptions.MIPMAP_NEAREST, WrapNearestNearest);
-        a.set(Texture2DOptions.MIPMAP_LINEAR, WrapNearestLinear);
-
-        var b = new IntHash<Class<Shader>>();
-        b.set(Texture2DOptions.MIPMAP_DISABLE, WrapLinearNo);
-        b.set(Texture2DOptions.MIPMAP_NEAREST, WrapLinearNearest);
-        b.set(Texture2DOptions.MIPMAP_LINEAR, WrapLinearLinear);
-
-        var ab = new IntHash();
-        ab.set(Texture2DOptions.FILTERING_NEAREST, a);
-        ab.set(Texture2DOptions.FILTERING_LINEAR, b);
-        res.set(Texture2DOptions.REPEAT_NORMAL, ab);
-
-        var c = new IntHash<Class<Shader>>();
-        c.set(Texture2DOptions.MIPMAP_DISABLE, ClampNearestNo);
-        c.set(Texture2DOptions.MIPMAP_NEAREST, ClampNearestNearest);
-        c.set(Texture2DOptions.MIPMAP_LINEAR, ClampNearestLinear);
-
-        var d = new IntHash<Class<Shader>>();
-        d.set(Texture2DOptions.MIPMAP_DISABLE, ClampLinearNo);
-        d.set(Texture2DOptions.MIPMAP_NEAREST, ClampLinearNearest);
-        d.set(Texture2DOptions.MIPMAP_LINEAR, ClampLinearLinear);
-
-        var cd = new IntHash();
-        cd.set(Texture2DOptions.FILTERING_NEAREST, c);
-        cd.set(Texture2DOptions.FILTERING_LINEAR, d);
-        res.set(Texture2DOptions.REPEAT_CLAMP, cd);
-
-        return res;
-    }
-
+	
+	public var wrap(get, set):Null<Bool>;
+	
+	function get_wrap() {
+		return shader.pWrap;
+	}
+	
+	function set_wrap(v) {
+		return shader.pWrap = v;
+	}
+	
+	public var filter(get, set):Null<Bool>;
+	
+	function get_filter() {
+		return shader.pFilter;
+	}
+	
+	function set_filter(v) {
+		return shader.pFilter = v;
+	}
+	
+	public var mipmap(get, set):Null<Bool>;
+	
+	function get_mipmap() {
+		return shader.pMipmap;
+	}
+	
+	function set_mipmap(v) {
+		return shader.pMipmap = v;
+	}
 }
 
-class WrapNearestNo extends Shader
+class Sprite2DShader extends Shader
 {
     static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
+		var input : {
+			pos : Float2,
+			uv: Float2,
+			index:Float
+		};
 
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, nearest, mm_no);
-    };
+		var tuv:Float2;
+		var cTrans:Float4;
+		var pWrap:Param<Bool>;
+		var pFilter:Param<Bool>;
+		var pMipmap:Param<Bool>;
+
+		function vertex(mpos:M44<20>, mproj:Matrix, cTransArr:Float4<20>, regions:Float4<20>)
+		{
+			// http://code.google.com/p/hxformat/issues/detail?id=28#c8
+			var i = input.pos.xyzw;
+			i.x = input.index.x * 4;
+			out = input.pos.xyzw * mpos[i.x] * mproj;
+
+			var region = regions[input.index];
+			tuv = input.uv * region.zw + region.xy;
+			cTrans = cTransArr[index];
+		}
+
+		function fragment(tex:Texture)
+		{
+			out = tex.get(tuv, wrap=pWrap, filter=pFilter, mipmap=pMipmap) * cTrans;
+		}
+	};
 }
 
-class WrapNearestNearest extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, nearest, mm_near);
-    };
-}
-
-class WrapNearestLinear extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, nearest, mm_linear);
-    };
-}
-
-class WrapLinearNo extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, linear, mm_no);
-    };
-}
-
-class WrapLinearNearest extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, linear, mm_near);
-    };
-}
-
-class WrapLinearLinear extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, wrap, linear, mm_linear);
-    };
-}
-
-class ClampNearestNo extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, nearest, mm_no);
-    };
-}
-
-class ClampNearestNearest extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, nearest, mm_near);
-    };
-}
-
-class ClampNearestLinear extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, nearest, mm_linear);
-    };
-}
-
-class ClampLinearNo extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, linear, mm_no);
-    };
-}
-
-class ClampLinearNearest extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, linear, mm_near);
-    };
-}
-
-class ClampLinearLinear extends Shader
-{
-    static var SRC = {
-        include("./deep/dd/material/batch2d/Batch2DShader.hxsl");
-
-        function texture(t:Texture, uv:Float2)
-            return t.get(uv, clamp, linear, mm_linear);
-    };
-}

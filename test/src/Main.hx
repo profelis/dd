@@ -1,4 +1,5 @@
 package ;
+import deep.dd.display.Quad2D;
 import deep.dd.utils.Stats;
 import deep.dd.material.sprite2d.Sprite2DMaterial;
 import deep.dd.texture.atlas.parser.StarlingParser;
@@ -16,6 +17,7 @@ import deep.dd.display.Scene2D;
 import flash.display3D.Context3DRenderMode;
 import deep.dd.World2D;
 import flash.events.Event;
+import mt.m3d.Color;
 
 @:bitmap("metalslug_monster39x40.png") class SpriteSheet extends BitmapData {}
 
@@ -57,11 +59,11 @@ class Main
         //sp2 = new Node2D();
         //scene.addChild(sp2);
 
-        /*var q = new Quad2D();
+        var q = new Quad2D();
         q.color = 0xFF0000;
         q.width = 100;
         q.height = 100;
-        scene.addChild(q);  */
+        scene.addChild(q);  
 
         //s.tex
 	//	cast(mc.texture, AtlasTexture2D).addAnimation("idle", [0]);
@@ -75,6 +77,10 @@ class Main
 		var st = new AtlasTexture2D(world.cache.getTexture(StarlingAtlasImage), new StarlingParser(Xml.parse(Std.string(new StarlingAtlasData()))));
 		mc2.texture = st;
 		world.scene.addChild(mc2);
+		mc2.mouseEnabled = true;
+		mc2.textureHitTest = true;
+		mc2.onMouseOver.addListener(function (_, _) { mc2.colorTransform = new Color(1, 0, 0); } );
+		mc2.onMouseOut.addListener(function (_, _) { mc2.colorTransform = null; } );
 		//cast(mc2.animator, Animator).stop();
 
 

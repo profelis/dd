@@ -207,7 +207,7 @@ class SubTexture2D extends Texture2D
     function new (texture:Texture2D)
     {
         baseTexture = texture;
-        super(baseTexture.options);
+        super();
 
         textureWidth = baseTexture.textureWidth;
         textureHeight = baseTexture.textureHeight;

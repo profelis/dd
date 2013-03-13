@@ -104,7 +104,7 @@ class FlashTexture2D extends BitmapTexture2D
 
     override public function toString()
     {
-        return Std.format("{FlashTexture2D: displayObject:$displayObject}");
+        return '{FlashTexture2D: displayObject:$displayObject}';
     }
 
 }

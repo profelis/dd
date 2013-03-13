@@ -19,7 +19,7 @@ class AnimatorBase
     * Атлас, который будет использоваться в качестве текстуры
     * @lang ru
     **/
-    public var atlas(default, set_atlas):AtlasTexture2D;
+    public var atlas(default, set):AtlasTexture2D;
 
     /**
     * Текущий кадр анимации

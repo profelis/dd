@@ -28,10 +28,9 @@ class Cache
 
         if (disposeTextures)
         {
-            for (k in bmpTextureCache.keys())
+            for (t in bmpTextureCache)
             {
-                var h = bmpTextureCache.get(k);
-                for (i in h) i.dispose();
+                t.dispose();
             }
         }
     }
@@ -100,27 +99,21 @@ class Cache
         bmpCache.remove(ref);
     }
 
-    var bmpTextureCache:Map<BitmapData, Map<String, Texture2D>>;
+    var bmpTextureCache:Map<BitmapData, Texture2D>;
 	
-    public function getTexture(ref:Class<BitmapData>, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
+    public function getTexture(ref:Class<BitmapData>):Texture2D
     {
-        var res = getBitmapTexture(getBitmap(ref), options);
+        var res = getBitmapTexture(getBitmap(ref));
         Reflect.setField(res, "bitmapRef", ref);
         return res;
     }
 
-    public function getBitmapTexture(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
+    public function getBitmapTexture(bmp:BitmapData):Texture2D
     {
         var h = bmpTextureCache.get(bmp);
-        var res:Texture2D;
         if (h != null)
         {
-            res = h.get(key(options));
-            if (res != null) return res;
-        }
-        else
-        {
-            bmpTextureCache.set(bmp, h = new Map());
+            return h;
         }
 
         if (bmpUseCount.exists(bmp))
@@ -128,9 +121,9 @@ class Cache
 			bmpUseCount.set(bmp, bmpUseCount.get(bmp) + 1);
 		}
 
-        res = new BitmapTexture2D(bmp, options);
+        var res = new BitmapTexture2D(bmp);
         Reflect.setField(res, "cache", this);
-        h.set(key(options), res);
+        bmpTextureCache.set(bmp, res);
 
         return res;
     }
@@ -145,7 +138,7 @@ class Cache
         if (disposeTexture)
         {
             var res = bmpTextureCache.get(bmp);
-            if (res != null) for (i in res) i.dispose();
+            res.dispose();
         }
         bmpTextureCache.remove(bmp);
     }

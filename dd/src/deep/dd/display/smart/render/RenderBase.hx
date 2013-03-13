@@ -13,7 +13,7 @@ class RenderBase
 
 	public var ignoreInBatch(default, null):Bool = false;
 
-	public var smartSprite(default, set_smartSprite):SmartSprite2D;
+	public var smartSprite(default, set):SmartSprite2D;
 
 	function set_smartSprite(s)
 	{

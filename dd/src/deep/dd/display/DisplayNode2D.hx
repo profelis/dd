@@ -16,15 +16,12 @@ class DisplayNode2D<K:hxsl.Shader> extends Node2D
     @:isVar public var geometry(get_geometry, set_geometry):Geometry;
 
     public var material(default, set_material):Material<K>;
+	
+	public var displayWidth(get, set):Float;
+	public var displayHeight(get, set):Float;
 
-    /**
-    * @private
-    */
-    public var _displayWidth:Float = 0;
-    /**
-    * @private
-    */
-    public var _displayHeight:Float = 0;
+    var _displayWidth:Float = 0;
+    var _displayHeight:Float = 0;
 
     public function new(material:Material<K> = null)
     {
@@ -126,8 +123,6 @@ class DisplayNode2D<K:hxsl.Shader> extends Node2D
         return m;
     }
 
-    public var displayWidth(get_displayWidth, set_displayWidth):Float;
-
     function get_displayWidth():Float
     {
         return _displayWidth * scaleX;
@@ -143,8 +138,6 @@ class DisplayNode2D<K:hxsl.Shader> extends Node2D
         else scaleX = v / _displayWidth;
         return v;
     }
-
-    public var displayHeight(get_displayHeight, set_displayHeight):Float;
 
     function get_displayHeight():Float
     {

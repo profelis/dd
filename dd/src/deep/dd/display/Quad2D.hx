@@ -4,7 +4,7 @@ import deep.dd.geometry.Geometry;
 import deep.dd.camera.Camera2D;
 import deep.dd.material.Quad2DMaterial;
 
-class Quad2D extends DisplayNode2D
+class Quad2D extends DisplayNode2D<Quad2DShader>
 {
     public function new()
     {

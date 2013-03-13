@@ -46,7 +46,7 @@ class BitmapTexture2D extends Texture2D
     **/
     public var bitmapHeight(default, null):Int;
 
-    public function new(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    public function new(bmp:BitmapData)
     {
         bitmapData = bmp;
         bitmapWidth = bmp.width;
@@ -54,7 +54,7 @@ class BitmapTexture2D extends Texture2D
         textureWidth = Texture2D.getNextPowerOfTwo(bitmapWidth);
         textureHeight = Texture2D.getNextPowerOfTwo(bitmapHeight);
 
-        super(options);
+        super();
 
         frame = new Frame(bitmapWidth, bitmapHeight,
             new Vector3D(0, 0, bitmapWidth/textureWidth, bitmapHeight/textureHeight));
@@ -64,7 +64,7 @@ class BitmapTexture2D extends Texture2D
     * Билд метод для создания битмап текстуры на основе класса битмапы
     * @lang ru
     **/
-    public static function createFromRef(ref:Class<BitmapData>, options:UInt = Texture2DOptions.QUALITY_ULTRA):BitmapTexture2D
+    public static function createFromRef(ref:Class<BitmapData>):BitmapTexture2D
     {
         var res = new BitmapTexture2D(Type.createInstance(ref, [0, 0]));
         res.bitmapRef = ref;
@@ -109,7 +109,7 @@ class BitmapTexture2D extends Texture2D
         memory += b.width * b.height * 4;
         texture.uploadFromBitmapData(b);
 
-        if ((options & Texture2DOptions.MIPMAP_LINEAR) | (options & Texture2DOptions.MIPMAP_NEAREST) > 0)
+        if (mipmap)
         {
             var w:Int = textureWidth >> 1;
             var h:Int = textureHeight >> 1;
@@ -165,7 +165,7 @@ class ATFTexture2D extends Texture2D
 {
     var atfData:ByteArray;
 
-    function new(data:ByteArray, options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    function new(data:ByteArray)
     {
         #if debug
         if (String.fromCharCode(data[0]) + String.fromCharCode(data[1]) + String.fromCharCode(data[2]) != "ATF")
@@ -177,7 +177,7 @@ class ATFTexture2D extends Texture2D
 
         atfData = data;
 
-        super(options);
+        super();
 
         frame = new Frame(textureWidth, textureHeight, new Vector3D(0, 0, 1, 1));
     }
@@ -228,12 +228,12 @@ class ATFTexture2D extends Texture2D
 **/
 class EmptyTexture extends Texture2D
 {
-    public function new(width:Int, height:Int, options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    public function new(width:Int, height:Int)
     {
         textureWidth = Texture2D.getNextPowerOfTwo(width);
         textureHeight = Texture2D.getNextPowerOfTwo(height);
 
-        super(options);
+        super();
 
         frame = new Frame(textureWidth, textureHeight, new Vector3D(0, 0, 1, 1));
     }
@@ -253,12 +253,6 @@ class EmptyTexture extends Texture2D
 **/
 class Texture2D
 {
-    /**
-    * Свойства текстуры
-    * @lang ru
-    **/
-    public var options(default, null):UInt;
-
     /**
     * Предпочтительная ширина текстуры с учетом фрейма
     * @lang ru
@@ -301,9 +295,11 @@ class Texture2D
 
     public var name:String;
 
-    function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    function new()
     {
-        this.options = options;
+		wrap = true;
+		mipmap = true;
+		filter = true;
         name = "texture_" + uid++;
     }
 
@@ -441,32 +437,27 @@ class Texture2D
 
         return '{$ref: $name, $width x $height}';
     }
-}
-
-// ND2D thanks
-/**
-* Свойства текстуры. Параметры мипмапинга, сглаживания и повтора текстуры
-* @lang ru
-**/
-class Texture2DOptions
-{
-
-    // defines how and if mip mapping should be used
-    public static inline var MIPMAP_DISABLE = 1;
-    public static inline var MIPMAP_NEAREST = 2;
-    public static inline var MIPMAP_LINEAR = 4;
-
-    // texture filtering methods
-    public static inline var FILTERING_NEAREST = 8;
-    public static inline var FILTERING_LINEAR = 16;
-
-    // texture repeat
-    public static inline var REPEAT_NORMAL = 32;
-    public static inline var REPEAT_CLAMP = 64;
-
-    // predefined presets
-    public static inline var QUALITY_LOW = MIPMAP_DISABLE | FILTERING_NEAREST | REPEAT_NORMAL;
-    public static inline var QUALITY_MEDIUM = MIPMAP_DISABLE | FILTERING_LINEAR | REPEAT_NORMAL;
-    public static inline var QUALITY_HIGH = MIPMAP_NEAREST | FILTERING_LINEAR | REPEAT_NORMAL;
-    public static inline var QUALITY_ULTRA = MIPMAP_LINEAR | FILTERING_LINEAR | REPEAT_NORMAL;
+	
+	public var optionsUpdated(default, null):Bool;
+	
+	public var wrap(default, set):Null<Bool>;
+	
+	function set_wrap(v) {
+		optionsUpdated = true;
+		return wrap = v;
+	}
+	
+	public var filter(default, set):Null<Bool>;
+	
+	function set_filter(v) {
+		optionsUpdated = true;
+		return filter = v;
+	}
+	
+	public var mipmap(default, set):Null<Bool>;
+	
+	function set_mipmap(v) {
+		optionsUpdated = true;
+		return mipmap = v;
+	}
 }

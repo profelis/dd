@@ -29,14 +29,14 @@ class Node2D
 
     public var extra:Dynamic;
 
-    public var transform(get_transform, null):Matrix3D;
+    public var transform(get, null):Matrix3D;
     /**
     * @private
     */
     public var invalidateTransform:Bool = true;
 
-    public var worldTransform(get_worldTransform, null):Matrix3D;
-    public var invertWorldTransform(get_invertWorldTransform, null):Matrix3D;
+    public var worldTransform(get, null):Matrix3D;
+    public var invertWorldTransform(get, null):Matrix3D;
     /**
     * @private
     */
@@ -46,16 +46,16 @@ class Node2D
     */
     public var invalidateInvertWorldTransform:Bool = true;
 
-    public var colorTransform(default, set_colorTransform):Color;
-    public var worldColorTransform(get_worldColorTransform, null):Vector3D;
+    public var colorTransform(default, set):Color;
+    public var worldColorTransform(get, null):Vector3D;
     /**
     * @private
     */
     public var invalidateColorTransform:Bool;
 
-    public var alpha(default, set_alpha):Float = 1;
+    public var alpha(default, set):Float = 1;
 
-    public var visible(default, set_visible):Bool = true;
+    public var visible(default, set):Bool = true;
 
     function set_visible(v)
     {
@@ -775,10 +775,10 @@ class Node2D
                 }
                 else
                 {
-                    var x0:Float = (boundRect.x > _boundRect2.x) ? _boundRect2.x : boundRect.x;
-                    var y0:Float = (boundRect.y > _boundRect2.y) ? _boundRect2.y : boundRect.y;
-                    var x1:Float = (boundRect.right < _boundRect2.right) ? _boundRect2.right : boundRect.right;
-                    var y1:Float = (boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : boundRect.bottom;
+                    var x0 = (boundRect.x > _boundRect2.x) ? _boundRect2.x : boundRect.x;
+                    var y0 = (boundRect.y > _boundRect2.y) ? _boundRect2.y : boundRect.y;
+                    var x1 = (boundRect.right < _boundRect2.right) ? _boundRect2.right : boundRect.right;
+                    var y1 = (boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : boundRect.bottom;
                     boundRect.x = x0;
                     boundRect.y = y0;
                     boundRect.width = x1 - x0;

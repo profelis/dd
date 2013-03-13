@@ -70,10 +70,13 @@ class Sprite2D extends DisplayNode2D<Sprite2DShader>
             mouseX = p.x;
             mouseY = p.y;
         }
+		
+		var t = texture;
+		//if (FastHaxe.is(t, SubTexture2D)) t = cast(t, SubTexture2D).baseTexture; TODO:
 
-        if (textureHitTest && texture != null && FastHaxe.is(texture, BitmapTexture2D))
+        if (textureHitTest && t != null && FastHaxe.is(t, BitmapTexture2D))
         {
-            var b:BitmapData = flash.Lib.as(texture, BitmapTexture2D).bitmapData;
+            var b:BitmapData = flash.Lib.as(t, BitmapTexture2D).bitmapData;
             if (b == null)
             {
                 #if debug trace("textureHitTest error. Bitmap is null"); #end
@@ -106,13 +109,13 @@ class Sprite2D extends DisplayNode2D<Sprite2DShader>
             x = x * region.z + region.x;
             y = y * region.w + region.y;
 
-            if ((texture.options & Texture2DOptions.REPEAT_NORMAL) > 0)
+            if (texture.wrap)
             {
                 x %= b.width;
                 y %= b.height;
             }
-            x *= texture.textureWidth / b.width;
-            y *= texture.textureHeight / b.height;
+            x *= t.textureWidth / b.width;
+            y *= t.textureHeight / b.height;
 
             return (b.getPixel32(Std.int(x), Std.int(y)) >>> 24) > 0;
         }
@@ -145,10 +148,7 @@ class Sprite2D extends DisplayNode2D<Sprite2DShader>
         super.init(ctx);
     }
 
-    /**
-    * @private setter
-    */
-    public var textureFrame(default, default):Frame;
+    public var textureFrame(default, null):Frame;
 
     override public function updateStep()
     {

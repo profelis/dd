@@ -33,7 +33,7 @@ class Animator extends AnimatorBase
     * Имя текущего кадра
     * @lang ru
     **/
-	public var frameLabel(get_frameLabel, null):String;
+	public var frameLabel(get, null):String;
 
     /**
     * Активна ли в этот момент анимация
@@ -45,19 +45,19 @@ class Animator extends AnimatorBase
     * Общее число кадров у атласа
     * @lang ru
     **/
-	public var totalFrames(get_totalFrames, null):Int;
+	public var totalFrames(get, null):Int;
 
     /**
     * Кол-во кадров текущей анимации
     * @lang ru
     **/
-	public var animationFrames(get_animationFrames, null):Int;
+	public var animationFrames(get, null):Int;
 
     /**
     * Имя текущей анимации
     * @lang ru
     **/
-	public var animationName(get_animationName, null):String;
+	public var animationName(get, null):String;
 
     /**
     * Текущая анимация
@@ -192,9 +192,9 @@ class Animator extends AnimatorBase
     * @param frame имя или название кадра
     * @lang ru
     **/
-	public function gotoFrame(frame:Dynamic):Void
+	public function gotoFrame(?frame:Int, ?frameName:String):Void
 	{
-		if (Std.is(frame, Int))
+		if (frame != null)
 		{
 			if (frame > 0 && frame < animationFrames) this.frame = frame;
 		}
@@ -206,7 +206,7 @@ class Animator extends AnimatorBase
 			var frameFound:Bool = false;
 			for (i in 0...(frames.length))
 			{
-				if (frames[i].name == frame)
+				if (frames[i].name == frameName)
 				{
 					frameFound = true;
 					this.frame = i;

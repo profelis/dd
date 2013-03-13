@@ -53,15 +53,11 @@ class CloudRender extends RenderBase
 
     var textureFrame:Frame;
 
-    var invalidateTexture:Bool;
-
     override public function updateStep()
     {
         var f = smartSprite.textureFrame;
 
         smartSprite.nativeUpdateStep();
-
-        invalidateTexture = f != smartSprite.textureFrame;
     }
 
     override public function drawStep(camera:Camera2D):Void
@@ -78,12 +74,12 @@ class CloudRender extends RenderBase
         renderSize = 0;
 		textureFrame = smartSprite.textureFrame;
 
-		drawBatch(smartSprite, camera, invalidateTexture);
+		drawBatch(smartSprite, camera);
     }
 
     public var renderSize(default, null):UInt;
 
-    inline function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
+    inline function drawBatch(node:Node2D, camera:Camera2D)
     {
         var batchList = new FastList<Sprite2D>();
         var renderList = new FastList<Node2D>();
