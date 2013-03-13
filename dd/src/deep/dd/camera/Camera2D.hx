@@ -113,6 +113,6 @@ class Camera2D
 
     public function toString()
     {
-        return Std.format("{Camera2D: $x $y}");
+        return '{Camera2D: $x $y}';
     }
 }

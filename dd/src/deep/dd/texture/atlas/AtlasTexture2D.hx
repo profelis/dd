@@ -29,7 +29,7 @@ class AtlasTexture2D extends SubTexture2D
     * Набор всех анимаций атласа
     * @lang ru
     **/
-	public var animations(default, null):Hash<Animation>;
+	public var animations(default, null):Map<String, Animation>;
 
     public function new(texture:Texture2D, parser:IAtlasParser)
     {
@@ -39,7 +39,7 @@ class AtlasTexture2D extends SubTexture2D
 
         frame = frames[0];
 		
-		animations = new Hash<Animation>();
+		animations = new Map();
     }
 
     /**

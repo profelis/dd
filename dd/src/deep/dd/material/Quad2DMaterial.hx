@@ -33,8 +33,8 @@ class Quad2DShader extends Shader
         var c:Float4;
         function vertex(mpos:M44, mproj:M44)
         {
-            out = pos.xyzw * mpos * mproj;
-            c = color;
+            out = input.pos.xyzw * mpos * mproj;
+            c = input.color;
         }
 
         function fragment(cTrans:Float4)

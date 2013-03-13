@@ -2,16 +2,15 @@ package deep.dd.display;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
-import msignal.Signal.Signal1;
-import msignal.Signal.Signal2;
+import deep.events.Signal;
 import Reflect;
 import deep.dd.utils.FastListUtils;
 import flash.Vector;
 import deep.dd.utils.MouseData;
 import flash.events.TouchEvent;
 import flash.events.MouseEvent;
-import msignal.Signal;
-import haxe.FastList;
+import deep.events.Signal;
+import haxe.ds.GenericStack;
 import mt.m3d.Color;
 import deep.dd.World2D;
 import flash.geom.Vector3D;
@@ -68,7 +67,7 @@ class Node2D
     /**
     * @private
     */
-    public var children(default, null):FastList<Node2D>;
+    public var children(default, null):GenericStack<Node2D>;
     var childrenUtils:FastListUtils<Node2D>;
 
     public var numChildren(default, null):UInt = 0;
@@ -137,7 +136,7 @@ class Node2D
         onWorldTransformChange = new Signal1<Node2D>();
         onColorTransformChange = new Signal1<Node2D>();
 
-        children = new FastList<Node2D>();
+        children = new GenericStack<Node2D>();
         childrenUtils = new FastListUtils<Node2D>(children);
         transform = new Matrix3D();
 
@@ -161,11 +160,11 @@ class Node2D
         if (children != null)
             for (child in children) child.dispose();
 
-        onTransformChange.removeAll();
+        onTransformChange.destroy();
         onTransformChange = null;
-        onWorldTransformChange.removeAll();
+        onWorldTransformChange.destroy();
         onWorldTransformChange = null;
-        onColorTransformChange.removeAll();
+        onColorTransformChange.destroy();
         onColorTransformChange = null;
 
         ctx = null;
@@ -180,37 +179,37 @@ class Node2D
         // TODO: replace with var o:Dynamic = this; o.onVisibleChange = null;
         if (Reflect.field(this, "onVisibleChange") != null)
         {
-            onVisibleChange.removeAll();
+            onVisibleChange.destroy();
             Reflect.setField(this, "onVisibleChange", null);
         }
         if (Reflect.field(this, "onMouseOver") != null)
         {
-            onMouseOver.removeAll();
+            onMouseOver.destroy();
             Reflect.setField(this, "onMouseOver", null);
         }
         if (Reflect.field(this, "onMouseOut") != null)
         {
-            onMouseOut.removeAll();
+            onMouseOut.destroy();
             Reflect.setField(this, "onMouseOut", null);
         }
         if (Reflect.field(this, "onMouseDown") != null)
         {
-            onMouseDown.removeAll();
+            onMouseDown.destroy();
             Reflect.setField(this, "onMouseDown", null);
         }
         if (Reflect.field(this, "onMouseUp") != null)
         {
-            onMouseUp.removeAll();
+            onMouseUp.destroy();
             Reflect.setField(this, "onMouseUp", null);
         }
         if (Reflect.field(this, "onWorld") != null)
         {
-            onWorld.removeAll();
+            onWorld.destroy();
             Reflect.setField(this, "onWorld", null);
         }
         if (Reflect.field(this, "onScene") != null)
         {
-            onScene.removeAll();
+            onScene.destroy();
             Reflect.setField(this, "onScene", null);
         }
 
@@ -235,16 +234,16 @@ class Node2D
     {
         if (parent != null)
         {
-            parent.onWorldTransformChange.remove(onParentTransformChange);
-            parent.onColorTransformChange.remove(onParentColorChange);
+            parent.onWorldTransformChange.removeListener(onParentTransformChange);
+            parent.onColorTransformChange.removeListener(onParentColorChange);
         }
 
         parent = p;
 
         if (parent != null)
         {
-            parent.onWorldTransformChange.add(onParentTransformChange);
-            parent.onColorTransformChange.add(onParentColorChange);
+            parent.onWorldTransformChange.addListener(onParentTransformChange);
+            parent.onColorTransformChange.addListener(onParentColorChange);
         }
 
         onParentColorChange();
@@ -841,6 +840,6 @@ class Node2D
     {
         var ref = Type.getClassName(Type.getClass(this)).split(".").pop();
 
-        return Std.format("{$ref: $name, visible:$visible}");
+        return '{$ref: $name, visible:$visible}';
     }
 }

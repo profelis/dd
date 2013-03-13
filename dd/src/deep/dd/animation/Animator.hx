@@ -272,6 +272,6 @@ class Animator extends AnimatorBase
 
     public function toString()
     {
-        return Std.format('{Animator: fps:$fps frame:$frame frameLabel:$frameLabel isPlaying:$isPlaying}');
+        return '{Animator: fps:$fps frame:$frame frameLabel:$frameLabel isPlaying:$isPlaying}';
     }
 }

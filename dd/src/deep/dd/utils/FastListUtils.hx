@@ -1,14 +1,12 @@
 package deep.dd.utils;
 
-import haxe.rtti.Generic;
-import haxe.FastList;
-import haxe.FastList.FastCell;
+import haxe.ds.GenericStack;
 
-class FastListUtils<T> implements Generic
+@:generic class FastListUtils<T>
 {
-    var l:FastList<T>;
+    var l:GenericStack<T>;
 
-    public function new(list:FastList<T>)
+    public function new(list:GenericStack<T>)
     {
         l = list;
         #if debug

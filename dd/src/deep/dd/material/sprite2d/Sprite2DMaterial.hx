@@ -62,8 +62,8 @@ class Sprite2DShader extends Shader
 
 		function vertex(mpos:M44, mproj:M44, region:Float4)
 		{
-			out = pos.xyzw * mpos * mproj;
-			tuv = uv * region.zw + region.xy;
+			out = input.pos.xyzw * mpos * mproj;
+			tuv = input.uv * region.zw + region.xy;
 		}
 
 		function fragment(tex:Texture, cTrans:Float4)

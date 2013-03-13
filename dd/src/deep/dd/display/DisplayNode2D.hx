@@ -13,7 +13,7 @@ class DisplayNode2D<K:hxsl.Shader> extends Node2D
 {
     var invalidateDisplayBounds:Bool = true;
 
-    public var geometry(get_geometry, set_geometry):Geometry;
+    @:isVar public var geometry(get_geometry, set_geometry):Geometry;
 
     public var material(default, set_material):Material<K>;
 

@@ -1,7 +1,6 @@
 package deep.dd.material;
 
 import flash.display3D.Context3D;
-import flash.utils.TypedDictionary;
 import deep.dd.display.DisplayNode2D;
 import deep.dd.camera.Camera2D;
 import deep.dd.geometry.Geometry;

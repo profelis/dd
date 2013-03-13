@@ -2,8 +2,8 @@ package deep.dd.utils;
 
 import deep.dd.texture.Texture2D;
 import deep.dd.World2D;
-import flash.utils.TypedDictionary;
 import flash.display.BitmapData;
+import haxe.ds.ObjectMap;
 
 class Cache
 {
@@ -11,9 +11,9 @@ class Cache
     {
         this.w = w;
 
-        bmpCache = new TypedDictionary();
-        bmpUseCount = new TypedDictionary(true);
-        bmpTextureCache = new TypedDictionary();
+        bmpCache = new ObjectMap();
+        bmpUseCount = new ObjectMap(true);
+        bmpTextureCache = new Map();
     }
 
     public function dispose(disposeBitmaps:Bool = true, disposeTextures:Bool = true)
@@ -21,14 +21,14 @@ class Cache
         w = null;
         if (disposeBitmaps)
         {
-            for (k in bmpCache) bmpCache.get(k).dispose();
+            for (k in bmpCache.keys()) bmpCache.get(k).dispose();
             bmpCache = null;
             bmpUseCount = null;
         }
 
         if (disposeTextures)
         {
-            for (k in bmpTextureCache)
+            for (k in bmpTextureCache.keys())
             {
                 var h = bmpTextureCache.get(k);
                 for (i in h) i.dispose();
@@ -38,7 +38,7 @@ class Cache
 
     public function reinitBitmapTextureCache():Void
     {
-        bmpTextureCache = new TypedDictionary();
+        bmpTextureCache = new Map();
         for (key in bmpUseCount.keys())
         {
             bmpUseCount.set(key, 0);
@@ -52,8 +52,8 @@ class Cache
 
     var w:World2D;
 
-    var bmpCache:TypedDictionary<Class<BitmapData>, BitmapData>;
-    var bmpUseCount:TypedDictionary<BitmapData, Int>;
+    var bmpCache:Map<Class<BitmapData>, BitmapData>;
+    var bmpUseCount:Map<BitmapData, Int>;
 
     public function releaseBitmap(bmp:BitmapData)
     {
@@ -64,8 +64,8 @@ class Cache
         {
             if (autoDisposeBitmaps)
             {
-                bmpUseCount.delete(bmp);
-                bmpCache.delete(Type.getClass(bmp));
+                bmpUseCount.remove(bmp);
+                bmpCache.remove(Type.getClass(bmp));
                 bmp.dispose();
             }
             else
@@ -97,10 +97,10 @@ class Cache
             var res = bmpCache.get(ref);
             if (res != null) res.dispose();
         }
-        bmpCache.delete(ref);
+        bmpCache.remove(ref);
     }
 
-    var bmpTextureCache:TypedDictionary<BitmapData, Hash<Texture2D>>;
+    var bmpTextureCache:Map<BitmapData, Map<String, Texture2D>>;
 	
     public function getTexture(ref:Class<BitmapData>, options:UInt = Texture2DOptions.QUALITY_ULTRA):Texture2D
     {
@@ -120,7 +120,7 @@ class Cache
         }
         else
         {
-            bmpTextureCache.set(bmp, h = new Hash());
+            bmpTextureCache.set(bmp, h = new Map());
         }
 
         if (bmpUseCount.exists(bmp))
@@ -147,7 +147,7 @@ class Cache
             var res = bmpTextureCache.get(bmp);
             if (res != null) for (i in res) i.dispose();
         }
-        bmpTextureCache.delete(bmp);
+        bmpTextureCache.remove(bmp);
     }
 
     public function toString()

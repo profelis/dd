@@ -447,7 +447,7 @@ class Poly2D extends Polygon
         vbuf.uploadFromVector(buf, 0, points.length);
     }
 
-	override public function dispose():Dynamic 
+	override public function dispose() 
 	{
 		super.dispose();
 		colors = null;

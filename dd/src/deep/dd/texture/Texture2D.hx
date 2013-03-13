@@ -439,7 +439,7 @@ class Texture2D
     {
         var ref = Type.getClassName(Type.getClass(this)).split(".").pop();
 
-        return Std.format("{$ref: $name, $width x $height}");
+        return '{$ref: $name, $width x $height}';
     }
 }
 

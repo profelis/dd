@@ -1,0 +1,8 @@
+-cp src
+-cp dd/src
+-cp test/src
+-lib hxsl
+-swf bin/dd.swf
+-swf-header 800:600:30:FFFFFF
+-swf-version 11.5
+-main Main

@@ -1,10 +1,10 @@
 package deep.dd;
 
-import msignal.Signal.Signal2;
+import deep.events.Signal.Signal2;
 import flash.ui.MultitouchInputMode;
 import flash.ui.Multitouch;
 import flash.display.Stage;
-import msignal.Signal;
+import deep.events.Signal;
 import deep.dd.utils.MouseData;
 import deep.dd.display.Node2D;
 import flash.events.TouchEvent;
@@ -148,7 +148,7 @@ class World2D
 
     static function initTouchAlias()
     {
-        var res:Hash<String> = new Hash<String>();
+        var res:Map<String, String> = new Map();
         res.set(TouchEvent.TOUCH_MOVE, MouseEvent.MOUSE_MOVE);
         res.set(TouchEvent.TOUCH_BEGIN, MouseEvent.MOUSE_DOWN);
         res.set(TouchEvent.TOUCH_END, MouseEvent.MOUSE_UP);

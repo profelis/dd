@@ -46,6 +46,6 @@ class Animation
 
     public function toString()
     {
-        return Std.format("{Animation: $name numFrames:$numFrames}");
+        return '{Animation: $name numFrames:$numFrames}';
     }
 }
