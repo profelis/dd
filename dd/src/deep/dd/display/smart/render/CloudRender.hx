@@ -1,5 +1,6 @@
 package deep.dd.display.smart.render;
 
+import haxe.ds.GenericStack;
 import mt.m3d.UV;
 import mt.m3d.Color;
 import mt.m3d.Vector;
@@ -9,13 +10,12 @@ import deep.dd.display.Node2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.geometry.CloudGeometry;
 import deep.dd.material.Material;
-import deep.dd.material.cloud2d.Cloud2DMaterial;
+import deep.dd.material.Cloud2DMaterial;
 import deep.dd.texture.Texture2D;
 import deep.dd.utils.Frame;
 import deep.dd.utils.FastHaxe;
-import haxe.FastList;
 
-class CloudRender extends RenderBase
+class CloudRender extends RenderBase<Cloud2DShader>
 {
     public var startSize(default, null):UInt;
 	public var size(default, null):UInt;
@@ -43,7 +43,7 @@ class CloudRender extends RenderBase
 
     var geom:CloudGeometry;
 
-    override public function copy():RenderBase
+    override public function copy():RenderBase<Cloud2DShader>
     {
         var res = new CloudRender(startSize, incSize);
         return res;
@@ -81,8 +81,8 @@ class CloudRender extends RenderBase
 
     inline function drawBatch(node:Node2D, camera:Camera2D)
     {
-        var batchList = new FastList<Sprite2D>();
-        var renderList = new FastList<Node2D>();
+        var batchList = new GenericStack<Sprite2D>();
+        var renderList = new GenericStack<Node2D>();
 
         for (c in node.children)
         {

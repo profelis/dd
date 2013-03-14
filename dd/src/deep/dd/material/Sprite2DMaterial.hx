@@ -1,7 +1,7 @@
-package deep.dd.material.sprite2d;
+package deep.dd.material;
 
 import flash.geom.Matrix3D;
-import deep.dd.material.sprite2d.Sprite2DMaterial;
+import deep.dd.material.Sprite2DMaterial;
 import deep.dd.texture.Texture2D;
 import deep.dd.material.Material;
 import deep.dd.display.Sprite2D;
@@ -31,6 +31,10 @@ class Sprite2DMaterial extends Material<Sprite2DShader>
 
         if (tex == null) throw "error"; // TODO:
 
+		shader.pFilter = tex.filter;
+		shader.pWrap = tex.wrap;
+		shader.pMipmap = tex.mipmap;
+		
 	    shader.mpos = sp.drawTransform;
 	    shader.mproj = camera.proj;
 	    shader.region = sp.textureFrame.region;

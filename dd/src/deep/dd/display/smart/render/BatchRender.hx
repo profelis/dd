@@ -3,7 +3,7 @@ package deep.dd.display.smart.render;
 import flash.Vector;
 import flash.geom.Vector3D;
 import flash.geom.Matrix3D;
-import deep.dd.material.batch2d.Batch2DMaterial;
+import deep.dd.material.Batch2DMaterial;
 import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;
@@ -13,9 +13,9 @@ import deep.dd.material.Material;
 import deep.dd.texture.Texture2D;
 import deep.dd.utils.Frame;
 import deep.dd.utils.FastHaxe;
-import haxe.FastList;
+import haxe.ds.GenericStack;
 
-class BatchRender extends RenderBase
+class BatchRender extends RenderBase<Batch2DShader>
 {
 
     static public inline var MAX_SIZE = 20;
@@ -28,14 +28,14 @@ class BatchRender extends RenderBase
         material = mat = new Batch2DMaterial();
         this.geometry = geometry != null ? geometry : BatchGeometry.createTexturedBatch(MAX_SIZE);
 
-        mpos = new Vector<Matrix3D>(MAX_SIZE, true);
-        cTrans = new Vector<Vector3D>(MAX_SIZE, true);
-        regions = new Vector<Vector3D>(MAX_SIZE, true);
+        mpos = new Array<Matrix3D>();
+        cTrans = new Array<Vector3D>();
+        regions = new Array<Vector3D>();
 
         ignoreInBatch = true;
 	}
 
-    override public function copy():RenderBase
+    override public function copy():RenderBase<Batch2DShader>
     {
         return new BatchRender(cast(geometry.copy(), BatchGeometry));
     }
@@ -69,15 +69,15 @@ class BatchRender extends RenderBase
         mat.stopBatch();
     }
 
-    var mpos:Vector<Matrix3D>;
-    var cTrans:Vector<Vector3D>;
-    var regions:Vector<Vector3D>;
+    var mpos:Array<Matrix3D>;
+    var cTrans:Array<Vector3D>;
+    var regions:Array<Vector3D>;
 
     function drawBatch(node:Node2D, camera:Camera2D)
     {
-        var renderList = new FastList<Node2D>();
+        var renderList = new GenericStack<Node2D>();
 
-        var subNodes = new FastList<Node2D>();
+        var subNodes = new GenericStack<Node2D>();
 
         var idx:UInt = 0;
         var vectorsFull = false;

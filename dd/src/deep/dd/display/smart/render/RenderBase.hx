@@ -5,15 +5,15 @@ import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.geometry.Geometry;
 import deep.dd.material.Material;
 
-class RenderBase
+class RenderBase<T:hxsl.Shader>
 {
 	public var geometry(default, null):Geometry;
 
-	public var material(default, null):Material;
+	public var material(default, null):Material<T>;
 
 	public var ignoreInBatch(default, null):Bool = false;
 
-	public var smartSprite(default, set):SmartSprite2D;
+	public var smartSprite(default, set):SmartSprite2D<T>;
 
 	function set_smartSprite(s)
 	{
@@ -34,7 +34,7 @@ class RenderBase
 		throw "override me";
 	}
 
-	public function copy():RenderBase
+	public function copy():RenderBase<T>
 	{
 		throw "not implemented";
 		return null;

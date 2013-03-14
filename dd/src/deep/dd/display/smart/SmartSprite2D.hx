@@ -11,11 +11,12 @@ import flash.geom.Matrix3D;
 import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
 import deep.dd.texture.Texture2D;
-import deep.dd.material.sprite2d.Sprite2DMaterial;
+import deep.dd.material.Sprite2DMaterial;
 import deep.dd.geometry.Geometry;
 import deep.dd.utils.FastHaxe;
-
-class Batch2D extends SmartSprite2D
+import hxsl.Shader;
+/*
+class Batch2D extends SmartSprite2D<deep.dd.material.Batch2DMaterial.Batch2DShader>
 {
     public function new()
     {
@@ -24,8 +25,8 @@ class Batch2D extends SmartSprite2D
 
     public var batchRender(default, null):deep.dd.display.smart.render.BatchRender;
 }
-
-class Cloud2D extends SmartSprite2D
+*/
+class Cloud2D extends SmartSprite2D<deep.dd.material.Cloud2DMaterial.Cloud2DShader>
 {
 
     public function new(startSize:UInt = 20, incSize:UInt = 20)
@@ -37,9 +38,9 @@ class Cloud2D extends SmartSprite2D
 
 }
 
-class SmartSprite2D extends Sprite2D
+class SmartSprite2D<T:Shader> extends BaseSprite2D<T>
 {
-    public function new(render:RenderBase = null)
+    public function new(render:RenderBase<T> = null)
     {
         super();
 
@@ -63,9 +64,9 @@ class SmartSprite2D extends Sprite2D
         }
     }
 
-    public var render(default, setRender):RenderBase;
+    public var render(default, set):RenderBase<T>;
 
-    function setRender(r:RenderBase):RenderBase
+    function set_render(r:RenderBase<T>):RenderBase<T>
     {
     	if (r == render) return render;
 
@@ -94,7 +95,7 @@ class SmartSprite2D extends Sprite2D
     /**
     * @private
     **/
-    public inline function nativeUpdateStep()
+    public function nativeUpdateStep()
     {
         super.updateStep();
     }

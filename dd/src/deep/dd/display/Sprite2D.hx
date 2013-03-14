@@ -11,7 +11,7 @@ import flash.geom.Matrix3D;
 import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
 import deep.dd.texture.Texture2D;
-import deep.dd.material.sprite2d.Sprite2DMaterial;
+import deep.dd.material.Sprite2DMaterial;
 import deep.dd.geometry.Geometry;
 import deep.dd.utils.FastHaxe;
 
@@ -28,13 +28,21 @@ class CenteredSprite2D extends Sprite2D
     }
 }
 
-class Sprite2D extends DisplayNode2D<Sprite2DShader>
+class Sprite2D extends BaseSprite2D<Sprite2DShader> {
+	
+	public function new(material:Sprite2DMaterial = null)
+    {
+        super(material != null ? material : new Sprite2DMaterial());
+    }
+}
+
+class BaseSprite2D<T:hxsl.Shader> extends DisplayNode2D<T>
 {
-    public function new(material:Sprite2DMaterial = null)
+    public function new(material:Material<T> = null)
     {
         drawTransform = new Matrix3D();
 
-        super(material != null ? material : new Sprite2DMaterial());
+        super(material);
     }
 
     override function createGeometry()
@@ -44,13 +52,7 @@ class Sprite2D extends DisplayNode2D<Sprite2DShader>
 
     public var animator(default, set_animator):AnimatorBase;
 
-    /**
-    * @private
-    */
-    public var invalidateDrawTransform:Bool;
-    /**
-    * @private
-    */
+    var invalidateDrawTransform:Bool;
     public var drawTransform(default, null):Matrix3D;
 
     public var texture(default, set_texture):Texture2D;
@@ -144,7 +146,7 @@ class Sprite2D extends DisplayNode2D<Sprite2DShader>
 
     override public function init(ctx:Context3D):Void
     {
-        if (this.ctx != ctx && texture != null) texture.init(ctx);
+        if (texture != null) texture.init(ctx);
         super.init(ctx);
     }
 
@@ -263,8 +265,8 @@ class Sprite2D extends DisplayNode2D<Sprite2DShader>
                 }
                 else
                 {
-                    dx *= texture.frame.frameWidth;
-                    dy *= texture.frame.frameHeight;
+                    dx *= t.frame.frameWidth;
+                    dy *= t.frame.frameHeight;
                 }
                 displayBounds.x += dx;
                 displayBounds.y += dy;

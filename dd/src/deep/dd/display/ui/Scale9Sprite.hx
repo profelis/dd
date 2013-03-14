@@ -3,22 +3,25 @@ package deep.dd.display.ui;
 import deep.dd.display.smart.render.RenderBase;
 import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.display.Sprite2D;
+import deep.dd.texture.atlas.AtlasTexture2D;
 import deep.dd.texture.Texture2D;
+import deep.dd.utils.Frame;
 import flash.geom.Rectangle;
+import hxsl.Shader;
 
 /**
  * ...
  * @author deep <system.grand@gmail.com>
  */
-class Scale9Sprite extends SmartSprite2D
+class Scale9Sprite<T:Shader> extends SmartSprite2D<T>
 {
 
 	public var rect(default, set):Rectangle;
 	var needUpdate = true;
 	var items:Array<Sprite2D>;
-	var textures:Array<Texture2D>;
+	var textures:Array<SubTexture2D>;
 	
-	public function new(render:RenderBase = null) 
+	public function new(render:RenderBase<T> = null) 
 	{
 		super(render);
 		
@@ -40,8 +43,9 @@ class Scale9Sprite extends SmartSprite2D
 		if (tex != texture) {
 			if (textures != null)
 				for (t in textures) {
-					t.
+					t.dispose();
 				}
+			needUpdate = true;
 		}
 		return super.set_texture(tex);
 	}
@@ -53,6 +57,15 @@ class Scale9Sprite extends SmartSprite2D
 			var h = displayHeight;
 			var tw = texture.width;
 			var th = texture.height;
+			if (textures == null || textures[0].base
+			textures = [];
+			for (i in 0...9) {
+				var x = Std.int(i / 3);
+				var y = i % 3;
+				var t = new SubTexture2D(res);
+				textures.push(t);
+				t.frame = new Frame(
+			}
 			for (i in 0...9) {
 				var x = Std.int(i / 3);
 				var y = i % 3;
