@@ -34,7 +34,7 @@ class Dispatcher1<T> extends Dispatcher < T -> Void > {
 		super();
 	}
 	
-	public function dispatch(type:String, v:T):Void {
+	public function dispatch(type:Dynamic, v:T):Void {
         var ls = listeners.get(type);
         if (ls != null) {
             incCopy(type);
@@ -96,13 +96,13 @@ class Dispatcher<T> implements IDispatcher<T>
     var listeners:ObjectMap<Dynamic, Array<Slot<T>>>;
     var needCopy:ObjectMap<Dynamic, Int>;
 	
-	inline function incCopy(type:Dynamic)
+	@:extern inline function incCopy(type:Dynamic)
 	{
 		if (needCopy.exists(type)) needCopy.set(type, needCopy.get(type) + 1);
 			else needCopy.set(type, 1);
 	}
 	
-	inline function decCopy(type:Dynamic)
+	@:extern inline function decCopy(type:Dynamic)
 	{
 		var v = needCopy.get(type);
 		if (v > 1) needCopy.set(type, v - 1);
@@ -124,7 +124,7 @@ class Dispatcher<T> implements IDispatcher<T>
 		if (s.dispatcher != null) throw "remove slot from prevent dispatcher";
         var ls = listeners.get(s.type);
 		if (ls == null) listeners.set(s.type, ls = []);
-        else if (needCopy.exists(s.type)) listeners.set(s.type, ls = ls.slice(0));
+        else if (needCopy.exists(s.type)) listeners.set(s.type, ls = ls.copy());
         var priority = s.priority;
 
 		if (priority != null)
@@ -140,8 +140,10 @@ class Dispatcher<T> implements IDispatcher<T>
 				}
 				i++;
 			}
-			if (i == n)
-				if (p > priority) ls.unshift(s) else ls.push(s);
+			if (i == n) {
+				if (priority != null && p != null && p > priority) ls.unshift(s);
+				else ls.push(s);
+			}
 		}
 		else ls.push(s);
         s.setDispatcher(this);
@@ -156,13 +158,21 @@ class Dispatcher<T> implements IDispatcher<T>
     public function existsListener(type:Dynamic, listener:T):Bool {
         return findSlot(type, listener) != null;
     }
+	
+	public function listener(type:Dynamic, listener:T, add:Bool):Slot<T> {
+		return if (add) addListener(type, listener); else removeListener(type, listener);
+	}
+	
+	public function slot(slot:Slot<T>, add:Bool):Slot<T> {
+		return if (add) addSlot(slot); else removeSlot(slot);
+	}
 
     function findSlot(type:Dynamic, listener:T, remove:Bool = false):Slot<T> {
 		#if debug if (type == null) throw "type can't be null"; #end
 		#if debug if (listener == null) throw "listener can't be null"; #end
         var ls = listeners.get(type);
 		if (ls == null) return null;
-        if (remove && needCopy.exists(type)) listeners.set(type, ls = ls.slice(0));
+        if (remove && needCopy.exists(type)) listeners.set(type, ls = ls.copy());
         var i = 0;
         for (s in ls) {
             if (s.listener == listener) {
@@ -200,7 +210,7 @@ class Dispatcher<T> implements IDispatcher<T>
 		#if debug if (s.dispatcher != this) throw "dispatcher doesn't contains slot"; #end
         var ls = listeners.get(s.type);
 		if (ls == null) return null;
-        if (needCopy.exists(s.type)) listeners.set(s.type, ls = ls.slice(0));
+        if (needCopy.exists(s.type)) listeners.set(s.type, ls = ls.copy());
 		var pos = Lambda.indexOf(ls, s);
 		if (pos != -1)
 		{

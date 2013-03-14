@@ -114,6 +114,14 @@ class Signal<T> implements ISignal<T>
 
         return s;
     }
+	
+	public function listener(listener:T, add:Bool):Slot<T> {
+		return if (add) addListener(listener); else removeListener(listener);
+	}
+	
+	public function slot(slot:Slot<T>, add:Bool):Slot<T> {
+		return if (add) addSlot(slot); else removeSlot(slot);
+	}
 
     public function getSlot(listener:T):Slot<T> {
         return findSlot(listener);
