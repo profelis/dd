@@ -234,6 +234,13 @@ class SubTexture2D extends Texture2D
     override public function dispose():Void
     {
         if (useCount > 0) return;
+		
+		texture = null;
+		if (cache == null)
+        {
+            Reflect.setField(this, "frame", null);
+        }
+        ctx = null;
 
         if (baseTexture != null)
         {

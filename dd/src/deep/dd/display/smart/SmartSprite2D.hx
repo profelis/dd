@@ -94,7 +94,7 @@ class SmartSprite2D extends Sprite2D
     /**
     * @private
     **/
-    public function nativeUpdateStep()
+    public inline function nativeUpdateStep()
     {
         super.updateStep();
     }

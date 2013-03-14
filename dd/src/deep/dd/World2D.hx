@@ -51,8 +51,6 @@ class World2D
     public var width(get_width, set_width):Int;
     public var height(get_height, set_height):Int;
 
-    public var pause:Bool = false;
-
     public var camera:Camera2D;
     public var scene(default, set_scene):Scene2D;
 
@@ -65,14 +63,14 @@ class World2D
     public var onResize:Signal2<Int, Int>;
 	
 	public var onContext(default, null):Signal0;
-	public var onPreRender(default, null):Signal0;
+	
+	public var sharedContext:Bool = false;
 
     public function new(stage:Stage, context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stage3dId:Int = 0)
     {
         WORLDS.push(this);
 
         onResize = new Signal2<Int, Int>();
-        onPreRender = new Signal0();
 		onContext = new Signal0();
 
         this.stage = stage;
@@ -97,7 +95,10 @@ class World2D
         stage3d.addEventListener(Event.CONTEXT3D_CREATE, onContextHandler);
 
         ctx = stage3d.context3D;
-        if (ctxExist()) onContextHandler(null);
+        if (ctxExist()) {
+			sharedContext = true;
+			onContextHandler(null);
+		}
         else stage3d.requestContext3D(Std.string(context3DRenderMode));
 
         if (Multitouch.inputMode == MultitouchInputMode.NONE)
@@ -138,8 +139,6 @@ class World2D
         stage.addEventListener(TouchEvent.TOUCH_MOVE, onTouchEvent);
         stage.addEventListener(TouchEvent.TOUCH_BEGIN, onTouchEvent);
         stage.addEventListener(TouchEvent.TOUCH_END, onTouchEvent);
-
-        stage.addEventListener(Event.ENTER_FRAME, onRender);
 
         onContext.dispatch();
     }
@@ -231,14 +230,10 @@ class World2D
         invalidateSize = false;
     }
 
-    function onRender(_)
+    public function render()
     {
-        if (pause) return;
-
         if (ctxExist())
 		{
-            onPreRender.dispatch();
-
             #if dd_stat
             statistics.reset();
             #end
@@ -247,23 +242,21 @@ class World2D
 
 			if (camera.needUpdate) camera.update();
 
-			ctx.setCulling(Context3DTriangleFace.NONE);
-			ctx.setDepthTest(false, Context3DCompareMode.ALWAYS);
-
-			ctx.clear(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+			if (!sharedContext) ctx.clear(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 
 			scene.update();
-
+			
+			ctx.setCulling(Context3DTriangleFace.NONE);
+			ctx.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			scene.drawStep(camera);
 
-			ctx.present();
+			if (!sharedContext) ctx.present();
 		}
     }
 	
 	function dispose(disposeContext3D:Bool = true):Void
 	{
 		stage3d.removeEventListener(Event.CONTEXT3D_CREATE, onContextHandler);
-		stage.removeEventListener(Event.ENTER_FRAME, onRender);
         stage.removeEventListener(Event.RESIZE, onResizeHandler);
 
         stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseEvent);

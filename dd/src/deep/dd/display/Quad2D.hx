@@ -40,7 +40,7 @@ class Quad2D extends DisplayNode2D<Quad2DShader>
     override function set_geometry(g:Geometry)
     {
         super.set_geometry(g);
-        if (g != null) needUpdateColor = true;
+        needUpdateColor = true;
 
         return g;
     }
