@@ -128,11 +128,6 @@ class Cache
         return res;
     }
 
-    inline function key(options:UInt)
-    {
-        return Std.string(options);
-    }
-
     public function removeBitmapTexture(bmp:BitmapData, disposeTexture:Bool = true):Void
     {
         if (disposeTexture)

@@ -359,7 +359,7 @@ class Geometry
     public function setVertexColor(vertex:UInt, color:UInt, ?alpha:Float)
     {
         #if debug
-        if (vertex < 0 || poly.points.length <= vertex) throw "out of vertex bounds";
+        if (vertex < 0 || poly.points.length <= Std.int(vertex)) throw "out of vertex bounds";
         if (poly.colors == null) throw "set colors first";
         #end
 

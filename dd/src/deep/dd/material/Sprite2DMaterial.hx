@@ -19,6 +19,8 @@ class Sprite2DMaterial extends Material<Sprite2DShader>
     {
         super(new Sprite2DShader());
     }
+	
+	var sp:Sprite2D;
 
     override public function draw(node:DisplayNode2D<Sprite2DShader>, camera:Camera2D)
     {
@@ -26,7 +28,7 @@ class Sprite2DMaterial extends Material<Sprite2DShader>
         if (!FastHaxe.is(node, Sprite2D)) throw "Sprite2DMaterial can't draw " + node;
         #end
 
-        var sp:Sprite2D = cast(node);
+        sp = cast(node);
         var tex = sp.texture;
 
         if (tex == null) throw "error"; // TODO:

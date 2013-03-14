@@ -12,7 +12,7 @@ class Cloud2DMaterial extends Material<Cloud2DShader>
 {
     public function new()
     {
-        super(null);
+        super(new Cloud2DShader());
     }
 
     public function drawCloud(node:SmartSprite2D<Cloud2DShader>, camera:Camera2D, renderSize:UInt)

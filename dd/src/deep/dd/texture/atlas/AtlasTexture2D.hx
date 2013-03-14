@@ -204,7 +204,7 @@ interface IAtlasParser
 **/
 class SubTexture2D extends Texture2D
 {
-    function new (texture:Texture2D)
+    public function new (texture:Texture2D)
     {
         baseTexture = texture;
         super();

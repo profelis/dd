@@ -321,10 +321,10 @@ class Texture2D
     * Не
     * @lang ru
     **/
-    public var releaseRawData(default, #if debug set_releaseBitmap #else default #end):Bool = false;
+    public var releaseRawData(default, #if debug set #else default #end):Bool = false;
 
     #if debug
-    function set_releaseBitmap(v)
+    function set_releaseRawData(v)
     {
         if (cache != null) throw "releaseBitmap conflict with cache";
         return releaseRawData = false;
