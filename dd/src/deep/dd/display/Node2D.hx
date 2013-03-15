@@ -1,5 +1,7 @@
 package deep.dd.display;
 
+import deep.dd.utils.MouseEventType;
+import deep.events.Dispatcher;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import deep.events.Signal;
@@ -88,20 +90,14 @@ class Node2D
     public var onTransformChange(default, null):Signal1<Node2D>;
     public var onWorldTransformChange(default, null):Signal1<Node2D>;
     public var onColorTransformChange(default, null):Signal1<Node2D>;
-    public var onVisibleChange(get_onVisibleChange, null):Signal1<Node2D>;
+    public var onVisibleChange(get, null):Signal1<Node2D>;
 
-    public var onMouseOver(get_onMouseOver, null):Signal2<Node2D, MouseData>;
-    public var onMouseOut(get_onMouseOut, null):Signal2<Node2D, MouseData>;
-    public var onMouseDown(get_onMouseDown, null):Signal2<Node2D, MouseData>;
-    public var onMouseUp(get_onMouseUp, null):Signal2<Node2D, MouseData>;
+    public var onMouseEvent(get, null):Dispatcher2<Node2D, MouseData>;
 
     public var onWorld(get_onWorld, null):Signal2<World2D, World2D>;
     public var onScene(get_onScene, null):Signal2<Scene2D, Scene2D>;
 
-    function get_onMouseOver() { if (onMouseOver == null) onMouseOver = new Signal2<Node2D, MouseData>(); return onMouseOver; }
-    function get_onMouseOut() { if (onMouseOut == null) onMouseOut = new Signal2<Node2D, MouseData>(); return onMouseOut; }
-    function get_onMouseDown() { if (onMouseDown == null) onMouseDown = new Signal2<Node2D, MouseData>(); return onMouseDown; }
-    function get_onMouseUp() { if (onMouseUp == null) onMouseUp = new Signal2<Node2D, MouseData>(); return onMouseUp; }
+    function get_onMouseEvent() { if (onMouseEvent == null) onMouseEvent = new Dispatcher2<Node2D, MouseData>(); return onMouseEvent; }
     function get_onWorld() { if (onWorld == null) onWorld = new Signal2<World2D, World2D>(); return onWorld; }
     function get_onScene() { if (onScene == null) onScene = new Signal2<Scene2D, Scene2D>(); return onScene; }
     function get_onVisibleChange() { if (onVisibleChange == null) onVisibleChange = new Signal1<Node2D>(); return onVisibleChange; }
@@ -182,25 +178,10 @@ class Node2D
             onVisibleChange.destroy();
             Reflect.setField(this, "onVisibleChange", null);
         }
-        if (Reflect.field(this, "onMouseOver") != null)
+        if (Reflect.field(this, "onMouseEvent") != null)
         {
-            onMouseOver.destroy();
-            Reflect.setField(this, "onMouseOver", null);
-        }
-        if (Reflect.field(this, "onMouseOut") != null)
-        {
-            onMouseOut.destroy();
-            Reflect.setField(this, "onMouseOut", null);
-        }
-        if (Reflect.field(this, "onMouseDown") != null)
-        {
-            onMouseDown.destroy();
-            Reflect.setField(this, "onMouseDown", null);
-        }
-        if (Reflect.field(this, "onMouseUp") != null)
-        {
-            onMouseUp.destroy();
-            Reflect.setField(this, "onMouseUp", null);
+            onMouseEvent.destroy();
+            Reflect.setField(this, "onMouseEvent", null);
         }
         if (Reflect.field(this, "onWorld") != null)
         {
@@ -417,11 +398,17 @@ class Node2D
 
         if (mouseOver)
         {
-            if (!oldMouseOver) onMouseOver.dispatch(this, md);
+            if (!oldMouseOver) {
+				//trace('over $this');
+				onMouseEvent.dispatch(MouseEventType.MOUSE_OVER, this, md);
+			}
         }
         else
         {
-            if (oldMouseOver) onMouseOut.dispatch(this, md);
+            if (oldMouseOver) {
+				//trace('out $this');
+				onMouseEvent.dispatch(MouseEventType.MOUSE_OUT, this, md);
+			}
         }
 
         if (res != null)
@@ -432,16 +419,16 @@ class Node2D
                     if (mouseOver)
                     {
                         mouseDown = true;
-                        onMouseDown.dispatch(res, md);
-//                        trace("mouse down " + res + " " + this);
+                        onMouseEvent.dispatch(MouseEventType.MOUSE_DOWN, res, md);
+                        //trace("mouse down " + res + " " + this);
                     }
 
                 case MouseEvent.MOUSE_UP:
                     if (mouseDown)
                     {
                         mouseDown = false;
-                        onMouseUp.dispatch(res, md);
-//                        trace("mouse up " + res + " " + this);
+                        onMouseEvent.dispatch(MouseEventType.MOUSE_UP, res, md);
+                        //trace("mouse up " + res + " " + this);
                     }
             }
         }
