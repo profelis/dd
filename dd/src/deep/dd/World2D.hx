@@ -107,7 +107,7 @@ class World2D
 
     function onContextHandler(_)
     {
-        if (ctx == stage3d.context3D) return;
+        if (!sharedContext && ctx == stage3d.context3D) return;
 
         if (ctx != null)
         {

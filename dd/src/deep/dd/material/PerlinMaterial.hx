@@ -170,7 +170,7 @@ class PerlinShader extends Shader
 
         function vertex(delta : Float3, scale : Float, mpos:M44, mproj:M44)
         {
-            tuv = ([pos.x, -pos.y, 0] + delta) * scale;
+		tuv = ([input.pos.x, -input.pos.y, 0] + delta) * scale;
             out = pos.xyzw * mpos * mproj;
             one = 1/256;
         }

@@ -4,6 +4,7 @@ import deep.dd.display.smart.render.RenderBase;
 import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
+import deep.dd.texture.SubTexture2D;
 import deep.dd.texture.Texture2D;
 import deep.dd.utils.Frame;
 import flash.geom.Rectangle;
@@ -107,8 +108,8 @@ class ScaleSprite<T:Shader> extends SmartSprite2D<T>
 			var tw = texture.width;
 			var th = texture.height;
 			
-			var ox = [0.0, rect.x, w - tw + rect.right];
-			var oy = [0.0, rect.y, h - th + rect.bottom];
+			var ox = stepX == 1 ? [0.0] : [0.0, rect.x, w - tw + rect.right];
+			var oy = stepY == 1 ? [0.0] : [0.0, rect.y, h - th + rect.bottom];
 			var sx = (w - tw + rect.width) / rect.width;
 			var sy = (h - th + rect.height) / rect.height;
 			var sxi = stepX == 1 ? 0 : 1;
@@ -136,5 +137,16 @@ class ScaleSprite<T:Shader> extends SmartSprite2D<T>
 	override function set_displayHeight(h) {
 		invalidateDisplayBounds = true;
 		return _displayHeight = h;
+	}
+	
+	override public function dispose() {
+		if (textures != null) {
+			for (t in textures) {
+				t.dispose();
+			}
+		}
+		super.dispose();
+		textures = null;
+		items = null;
 	}
 }
