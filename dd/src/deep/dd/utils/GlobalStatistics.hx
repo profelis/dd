@@ -1,7 +1,6 @@
 package deep.dd.utils;
 
 import deep.dd.texture.Texture2D;
-import flash.utils.TypedDictionary;
 import flash.display3D.Context3D;
 
 class GlobalStatistics
@@ -10,7 +9,7 @@ class GlobalStatistics
     {
     }
 
-    static public var stats(default, null):TypedDictionary<Context3D, Stat> = new TypedDictionary();
+    static public var stats(default, null):Map<Context3D, Stat> = new Map();
 
     static public function initContext(ctx:Context3D)
     {
@@ -19,7 +18,7 @@ class GlobalStatistics
 
     static public function freeContext(ctx:Context3D)
     {
-        stats.delete(ctx);
+        stats.remove(ctx);
     }
 
     static public function removeTexture(ctx:Context3D, text:Texture2D)
@@ -49,6 +48,6 @@ class Stat
 
     public function toString()
     {
-        return Std.format("{GlobalStatistics textures: $textures, $texturesMemory: ${texturesMemory / 1024} kb}");
+        return '{GlobalStatistics textures: $textures, $texturesMemory: ${texturesMemory / 1024} kb}';
     }
 }

@@ -9,24 +9,21 @@ import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
 import mt.m3d.Polygon;
 
-class DisplayNode2D extends Node2D
+class DisplayNode2D<K:hxsl.Shader> extends Node2D
 {
     var invalidateDisplayBounds:Bool = true;
 
-    public var geometry(get_geometry, set_geometry):Geometry;
+    @:isVar public var geometry(get_geometry, set_geometry):Geometry;
 
-    public var material(default, set_material):Material;
+    public var material(default, set_material):Material<K>;
+	
+	public var displayWidth(get, set):Float;
+	public var displayHeight(get, set):Float;
 
-    /**
-    * @private
-    */
-    public var _displayWidth:Float = 0;
-    /**
-    * @private
-    */
-    public var _displayHeight:Float = 0;
+    var _displayWidth:Float = 0;
+    var _displayHeight:Float = 0;
 
-    public function new(material:Material = null)
+    public function new(material:Material<K> = null)
     {
         super();
         this.material = material;
@@ -51,26 +48,28 @@ class DisplayNode2D extends Node2D
 
         if (material != null)
         {
-            Reflect.setField(material, "useCount", material.useCount - 1);
+	        material.useCount --;
             material.dispose();
             Reflect.setField(this, "material", null);
         }
     }
 
-    override function displayMouseStep(p:Vector3D)
+    override function displayHitTest(p:Vector3D, mouseHit = true)
     {
-        if (!displayBounds.isEmpty())
+        var d = displayBounds;
+        if (!d.isEmpty())
         {
             p = globalToLocal(p);
-            if (displayBounds.contains(p.x, p.y))
+            if (d.contains(p.x, p.y))
             {
-                mouseX = p.x;
-                mouseY = p.y;
+                if (mouseHit)
+                {
+                    mouseX = p.x;
+                    mouseY = p.y;
+                }
                 return true;
             }
         }
-        mouseX = Math.NaN;
-        mouseY = Math.NaN;
         return false;
     }
 
@@ -108,7 +107,7 @@ class DisplayNode2D extends Node2D
         return g;
     }
 
-    function set_material(m:Material):Material
+    function set_material(m:Material<K>):Material<K>
     {
         if (m == material) return m;
 
@@ -123,8 +122,6 @@ class DisplayNode2D extends Node2D
         }
         return m;
     }
-
-    public var displayWidth(get_displayWidth, set_displayWidth):Float;
 
     function get_displayWidth():Float
     {
@@ -141,8 +138,6 @@ class DisplayNode2D extends Node2D
         else scaleX = v / _displayWidth;
         return v;
     }
-
-    public var displayHeight(get_displayHeight, set_displayHeight):Float;
 
     function get_displayHeight():Float
     {
@@ -164,18 +159,15 @@ class DisplayNode2D extends Node2D
 	{
         if (invalidateDisplayBounds)
         {
-            displayBounds = super.get_displayBounds();
-
-            displayBounds.width = _displayWidth;
-            displayBounds.height = _displayHeight;
+            displayBounds.setTo(0, 0, _displayWidth, _displayHeight);
 
             var g = geometry;
             if (g != null && !g.standart)
             {
-                var dx = -g.offsetX / g.width * _displayWidth;
-                var dy = -g.offsetY / g.height * _displayHeight;
-                displayBounds.x -= dx;
-                displayBounds.y -= dy;
+                displayBounds.x += g.offsetX / g.width * _displayWidth;
+                displayBounds.y += g.offsetY / g.height * _displayHeight;
+                displayBounds.width *= g.width;
+                displayBounds.height *= g.height;
             }
 
             invalidateDisplayBounds = false;

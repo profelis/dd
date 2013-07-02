@@ -33,7 +33,7 @@ class BlendMode
 
     public function toString()
     {
-        return Std.format("{BlendMode $src - $dst}");
+        return '{BlendMode $src - $dst}';
     }
 }
 

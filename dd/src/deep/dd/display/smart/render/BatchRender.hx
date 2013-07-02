@@ -1,12 +1,10 @@
 package deep.dd.display.smart.render;
 
-import haxe.Timer;
 import flash.Vector;
 import flash.geom.Vector3D;
 import flash.geom.Matrix3D;
-import deep.dd.material.batch2d.Batch2DMaterial;
+import deep.dd.material.Batch2DMaterial;
 import deep.dd.display.smart.SmartSprite2D;
-import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;
 import deep.dd.display.Sprite2D;
@@ -15,9 +13,9 @@ import deep.dd.material.Material;
 import deep.dd.texture.Texture2D;
 import deep.dd.utils.Frame;
 import deep.dd.utils.FastHaxe;
-import haxe.FastList;
+import haxe.ds.GenericStack;
 
-class BatchRender extends RenderBase
+class BatchRender extends RenderBase<Batch2DShader>
 {
 
     static public inline var MAX_SIZE = 20;
@@ -30,32 +28,25 @@ class BatchRender extends RenderBase
         material = mat = new Batch2DMaterial();
         this.geometry = geometry != null ? geometry : BatchGeometry.createTexturedBatch(MAX_SIZE);
 
-        mpos = new Vector<Matrix3D>(MAX_SIZE, true);
-        cTrans = new Vector<Vector3D>(MAX_SIZE, true);
-        regions = new Vector<Vector3D>(MAX_SIZE, true);
+        mpos = new Array<Matrix3D>();
+        cTrans = new Array<Vector3D>();
+        regions = new Array<Vector3D>();
 
         ignoreInBatch = true;
 	}
 
-    override public function copy():RenderBase
+    override public function copy():RenderBase<Batch2DShader>
     {
-        return new BatchRender(BatchGeometry.createTexturedBatch(cast(geometry, BatchGeometry).size, geometry.width, geometry.height, geometry.offsetX, geometry.offsetY));
+        return new BatchRender(cast(geometry.copy(), BatchGeometry));
     }
 
     var mat:Batch2DMaterial;
 
     var textureFrame:Frame;
-    var animator:AnimatorBase;
-
-    var invalidateTexture:Bool;
 
     override public function updateStep()
     {
-        var f = smartSprite.textureFrame;
-
         smartSprite.nativeUpdateStep();
-
-        invalidateTexture = f != smartSprite.textureFrame;
     }
 
     override public function drawStep(camera:Camera2D):Void
@@ -70,24 +61,23 @@ class BatchRender extends RenderBase
         }
 
 		textureFrame = smartSprite.textureFrame;
-        animator = smartSprite.animator;
 
         mat.startBatch(smartSprite, smartSprite.texture);
 
-		drawBatch(smartSprite, camera, invalidateTexture);
+		drawBatch(smartSprite, camera);
 
         mat.stopBatch();
     }
 
-    var mpos:Vector<Matrix3D>;
-    var cTrans:Vector<Vector3D>;
-    var regions:Vector<Vector3D>;
+    var mpos:Array<Matrix3D>;
+    var cTrans:Array<Vector3D>;
+    var regions:Array<Vector3D>;
 
-    function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
+    function drawBatch(node:Node2D, camera:Camera2D)
     {
-        var renderList = new FastList<Node2D>();
+        var renderList = new GenericStack<Node2D>();
 
-        var subNodes = new FastList<Node2D>();
+        var subNodes = new GenericStack<Node2D>();
 
         var idx:UInt = 0;
         var vectorsFull = false;
@@ -104,7 +94,6 @@ class BatchRender extends RenderBase
             {
                 var s:Sprite2D = flash.Lib.as(c, Sprite2D);
 
-
                 if (c.numChildren > 0 || s == null)
                 {
                     //trace("to subnode");
@@ -112,11 +101,9 @@ class BatchRender extends RenderBase
                     continue;
                 }
 
-                if (invalidateTexture) s.updateDrawTransform(); // TODO: optimize
-
                 mpos[idx] = s.drawTransform;
                 cTrans[idx] = s.worldColorTransform;
-                regions[idx] = s.textureFrame != null ? s.textureFrame.region : smartSprite.textureFrame.region;
+                regions[idx] = s.textureFrame != null ? s.textureFrame.region : textureFrame.region;
 
                 idx ++;
                 if (idx == MAX_SIZE)
@@ -144,7 +131,7 @@ class BatchRender extends RenderBase
 
         for (s in subNodes)
         {
-            drawBatch(s, camera, invalidateTexture);
+            drawBatch(s, camera);
         }
 
         for (s in renderList)
@@ -163,7 +150,6 @@ class BatchRender extends RenderBase
         emptyVector = null;
         emptyMatrix = null;
         textureFrame = null;
-        animator = null;
 
         mpos = null;
         cTrans = null;

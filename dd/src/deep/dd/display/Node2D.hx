@@ -1,16 +1,18 @@
 package deep.dd.display;
 
+import deep.dd.utils.MouseEventType;
+import deep.events.Dispatcher;
+import flash.geom.Point;
 import flash.geom.Rectangle;
-import msignal.Signal.Signal1;
-import msignal.Signal.Signal2;
+import deep.events.Signal;
 import Reflect;
 import deep.dd.utils.FastListUtils;
 import flash.Vector;
 import deep.dd.utils.MouseData;
 import flash.events.TouchEvent;
 import flash.events.MouseEvent;
-import msignal.Signal;
-import haxe.FastList;
+import deep.events.Signal;
+import haxe.ds.GenericStack;
 import mt.m3d.Color;
 import deep.dd.World2D;
 import flash.geom.Vector3D;
@@ -29,30 +31,33 @@ class Node2D
 
     public var extra:Dynamic;
 
-    public var transform(get_transform, null):Matrix3D;
+    public var transform(get, null):Matrix3D;
     /**
     * @private
     */
     public var invalidateTransform:Bool = true;
 
-    public var worldTransform(get_worldTransform, null):Matrix3D;
-    public var invertWorldTransform(get_invertWorldTransform, null):Matrix3D;
+    public var worldTransform(get, null):Matrix3D;
+    public var invertWorldTransform(get, null):Matrix3D;
     /**
     * @private
     */
     public var invalidateWorldTransform:Bool = true;
+    /**
+    * @private
+    */
     public var invalidateInvertWorldTransform:Bool = true;
 
-    public var colorTransform(default, set_colorTransform):Color;
-    public var worldColorTransform(get_worldColorTransform, null):Vector3D;
+    public var colorTransform(default, set):Color;
+    public var worldColorTransform(get, null):Vector3D;
     /**
     * @private
     */
     public var invalidateColorTransform:Bool;
 
-    public var alpha(default, set_alpha):Float = 1;
+    public var alpha(default, set):Float = 1;
 
-    public var visible(default, set_visible):Bool = true;
+    public var visible(default, set):Bool = true;
 
     function set_visible(v)
     {
@@ -64,7 +69,7 @@ class Node2D
     /**
     * @private
     */
-    public var children(default, null):FastList<Node2D>;
+    public var children(default, null):GenericStack<Node2D>;
     var childrenUtils:FastListUtils<Node2D>;
 
     public var numChildren(default, null):UInt = 0;
@@ -73,8 +78,8 @@ class Node2D
 
     public var mouseEnabled:Bool = false;
     public var mouseChildren:Bool = true;
-    public var mouseX(get_mouseX, null):Float;
-    public var mouseY(get_mouseY, null):Float;
+    public var mouseX(get_mouseX, null):Float = 0/0; // NaN
+    public var mouseY(get_mouseY, null):Float = 0/0;
 
     var oldMouseOver:Bool = false;
     public var mouseOver(default, null):Bool = false;
@@ -82,23 +87,17 @@ class Node2D
 
     public var ignoreInBatch:Bool = false;
 
-    public var onTransformChange(default, null):Signal0;
-    public var onWorldTransformChange(default, null):Signal0;
-    public var onColorTransformChange(default, null):Signal0;
-    public var onVisibleChange(get_onVisibleChange, null):Signal1<Node2D>;
+    public var onTransformChange(default, null):Signal1<Node2D>;
+    public var onWorldTransformChange(default, null):Signal1<Node2D>;
+    public var onColorTransformChange(default, null):Signal1<Node2D>;
+    public var onVisibleChange(get, null):Signal1<Node2D>;
 
-    public var onMouseOver(get_onMouseOver, null):Signal2<Node2D, MouseData>;
-    public var onMouseOut(get_onMouseOut, null):Signal2<Node2D, MouseData>;
-    public var onMouseDown(get_onMouseDown, null):Signal2<Node2D, MouseData>;
-    public var onMouseUp(get_onMouseUp, null):Signal2<Node2D, MouseData>;
+    public var onMouseEvent(get, null):Dispatcher2<Node2D, MouseData>;
 
     public var onWorld(get_onWorld, null):Signal2<World2D, World2D>;
     public var onScene(get_onScene, null):Signal2<Scene2D, Scene2D>;
 
-    function get_onMouseOver() { if (onMouseOver == null) onMouseOver = new Signal2<Node2D, MouseData>(); return onMouseOver; }
-    function get_onMouseOut() { if (onMouseOut == null) onMouseOut = new Signal2<Node2D, MouseData>(); return onMouseOut; }
-    function get_onMouseDown() { if (onMouseDown == null) onMouseDown = new Signal2<Node2D, MouseData>(); return onMouseDown; }
-    function get_onMouseUp() { if (onMouseUp == null) onMouseUp = new Signal2<Node2D, MouseData>(); return onMouseUp; }
+    function get_onMouseEvent() { if (onMouseEvent == null) onMouseEvent = new Dispatcher2<Node2D, MouseData>(); return onMouseEvent; }
     function get_onWorld() { if (onWorld == null) onWorld = new Signal2<World2D, World2D>(); return onWorld; }
     function get_onScene() { if (onScene == null) onScene = new Signal2<Scene2D, Scene2D>(); return onScene; }
     function get_onVisibleChange() { if (onVisibleChange == null) onVisibleChange = new Signal1<Node2D>(); return onVisibleChange; }
@@ -121,7 +120,7 @@ class Node2D
     }
 
 	public var bounds(get_bounds, null):Rectangle;
-	private var _boundRect2:Rectangle;
+	var _boundRect2:Rectangle;
 
     public var displayBounds(get_displayBounds, null):Rectangle;
 
@@ -129,11 +128,11 @@ class Node2D
     {
         blendMode = BlendMode.NORMAL_A;
 
-        onTransformChange = new Signal0();
-        onWorldTransformChange = new Signal0();
-        onColorTransformChange = new Signal0();
+        onTransformChange = new Signal1<Node2D>();
+        onWorldTransformChange = new Signal1<Node2D>();
+        onColorTransformChange = new Signal1<Node2D>();
 
-        children = new FastList<Node2D>();
+        children = new GenericStack<Node2D>();
         childrenUtils = new FastListUtils<Node2D>(children);
         transform = new Matrix3D();
 
@@ -154,15 +153,15 @@ class Node2D
     {
         if (parent != null) parent.removeChild(this);
 
-        onTransformChange.removeAll();
-        onTransformChange = null;
-        onWorldTransformChange.removeAll();
-        onWorldTransformChange = null;
-        onColorTransformChange.removeAll();
-        onColorTransformChange = null;
-
         if (children != null)
             for (child in children) child.dispose();
+
+        onTransformChange.destroy();
+        onTransformChange = null;
+        onWorldTransformChange.destroy();
+        onWorldTransformChange = null;
+        onColorTransformChange.destroy();
+        onColorTransformChange = null;
 
         ctx = null;
         children = null;
@@ -176,37 +175,22 @@ class Node2D
         // TODO: replace with var o:Dynamic = this; o.onVisibleChange = null;
         if (Reflect.field(this, "onVisibleChange") != null)
         {
-            onVisibleChange.removeAll();
+            onVisibleChange.destroy();
             Reflect.setField(this, "onVisibleChange", null);
         }
-        if (Reflect.field(this, "onMouseOver") != null)
+        if (Reflect.field(this, "onMouseEvent") != null)
         {
-            onMouseOver.removeAll();
-            Reflect.setField(this, "onMouseOver", null);
-        }
-        if (Reflect.field(this, "onMouseOut") != null)
-        {
-            onMouseOut.removeAll();
-            Reflect.setField(this, "onMouseOut", null);
-        }
-        if (Reflect.field(this, "onMouseDown") != null)
-        {
-            onMouseDown.removeAll();
-            Reflect.setField(this, "onMouseDown", null);
-        }
-        if (Reflect.field(this, "onMouseUp") != null)
-        {
-            onMouseUp.removeAll();
-            Reflect.setField(this, "onMouseUp", null);
+            onMouseEvent.destroy();
+            Reflect.setField(this, "onMouseEvent", null);
         }
         if (Reflect.field(this, "onWorld") != null)
         {
-            onWorld.removeAll();
+            onWorld.destroy();
             Reflect.setField(this, "onWorld", null);
         }
         if (Reflect.field(this, "onScene") != null)
         {
-            onScene.removeAll();
+            onScene.destroy();
             Reflect.setField(this, "onScene", null);
         }
 
@@ -231,34 +215,34 @@ class Node2D
     {
         if (parent != null)
         {
-            parent.onWorldTransformChange.remove(onParentTransformChange);
-            parent.onColorTransformChange.remove(onParentColorChange);
+            parent.onWorldTransformChange.removeListener(onParentTransformChange);
+            parent.onColorTransformChange.removeListener(onParentColorChange);
         }
 
         parent = p;
 
         if (parent != null)
         {
-            parent.onWorldTransformChange.add(onParentTransformChange);
-            parent.onColorTransformChange.add(onParentColorChange);
+            parent.onWorldTransformChange.addListener(onParentTransformChange);
+            parent.onColorTransformChange.addListener(onParentColorChange);
         }
 
         onParentColorChange();
         onParentTransformChange();
     }
 
-    function onParentColorChange()
+    function onParentColorChange(?_)
     {
         invalidateColorTransform = true;
-        onColorTransformChange.dispatch();
+        onColorTransformChange.dispatch(this);
     }
 
-    function onParentTransformChange()
+    function onParentTransformChange(?_)
     {
         invalidateBounds = true;
         invalidateWorldTransform = true;
         invalidateInvertWorldTransform = true;
-        onWorldTransformChange.dispatch();
+        onWorldTransformChange.dispatch(this);
     }
 
     function setScene(s:Scene2D):Void
@@ -349,7 +333,6 @@ class Node2D
         if (!childrenUtils.remove(c)) throw "c must be child";
         numChildren = childrenUtils.length;
 
-        c.parent = null;
         c.setParent(null);
         c.setScene(null);
 
@@ -374,26 +357,18 @@ class Node2D
 
     function get_mouseX()
     {
-        if (mouseX != mouseX)
-        {
-            return world != null ? globalToLocal(world.mousePos).x : Math.NaN;
-        }
-        return mouseX;
+        if (mouseX == mouseX) return mouseX;
+        return world != null ? globalToLocal(world.mousePos).x : Math.NaN;
     }
 
     function get_mouseY()
     {
-        if (mouseY != mouseY)
-        {
-            return world != null ? globalToLocal(world.mousePos).y : Math.NaN;
-        }
-        return mouseY;
+        if (mouseY == mouseY) return mouseY;
+        return world != null ? globalToLocal(world.mousePos).y : Math.NaN;
     }
 
-    function displayMouseStep(pos:Vector3D)
+    function displayHitTest(pos:Vector3D, mouseHit = true)
     {
-        mouseX = Math.NaN;
-        mouseY = Math.NaN;
         return false;
     }
 
@@ -401,13 +376,21 @@ class Node2D
     {
         var res:Node2D = null;
 
-        if (mouseEnabled && (mouseOver = displayMouseStep(pos))) res = this;
+        if (mouseEnabled && (mouseOver = displayHitTest(pos))) res = this;
+        if (!mouseOver)
+        {
+            mouseX = Math.NaN;
+            mouseY = Math.NaN;
+        }
 
         if (mouseChildren && children != null && numChildren > 0)
             for (i in children)
             {
-                var subRes = i.mouseStep(pos, md);
-                if (subRes != null) res = subRes;
+                if (i.mouseChildren || i.mouseEnabled)
+                {
+                    var subRes = i.mouseStep(pos, md);
+                    if (subRes != null) res = subRes;
+                }
             }
 
         if (onTransformChange == null) res = null; // destrucred test
@@ -415,11 +398,17 @@ class Node2D
 
         if (mouseOver)
         {
-            if (!oldMouseOver) onMouseOver.dispatch(this, md);
+            if (!oldMouseOver) {
+				//trace('over $this');
+				onMouseEvent.dispatch(MouseEventType.MOUSE_OVER, this, md);
+			}
         }
         else
         {
-            if (oldMouseOver) onMouseOut.dispatch(this, md);
+            if (oldMouseOver) {
+				//trace('out $this');
+				onMouseEvent.dispatch(MouseEventType.MOUSE_OUT, this, md);
+			}
         }
 
         if (res != null)
@@ -430,16 +419,16 @@ class Node2D
                     if (mouseOver)
                     {
                         mouseDown = true;
-                        onMouseDown.dispatch(res, md);
-//                        trace("mouse down " + res + " " + this);
+                        onMouseEvent.dispatch(MouseEventType.MOUSE_DOWN, res, md);
+                        //trace("mouse down " + res + " " + this);
                     }
 
                 case MouseEvent.MOUSE_UP:
                     if (mouseDown)
                     {
                         mouseDown = false;
-                        onMouseUp.dispatch(res, md);
-//                        trace("mouse up " + res + " " + this);
+                        onMouseEvent.dispatch(MouseEventType.MOUSE_UP, res, md);
+                        //trace("mouse up " + res + " " + this);
                     }
             }
         }
@@ -447,6 +436,24 @@ class Node2D
         oldMouseOver = mouseOver;
 
         return res;
+    }
+
+    public function hitTest(x:Float, y:Float):Bool
+    {
+        if (!bounds.contains(x, y)) return false;
+
+        return globalHitTest(localToGlobal(new Vector3D(x, y)));
+    }
+
+    function globalHitTest(pos:Vector3D):Bool
+    {
+        if (displayHitTest(pos, false)) return true;
+
+        if (numChildren == 0 || children == null) return false;
+
+        for (c in children) if (c.globalHitTest(pos)) return true;
+
+        return false;
     }
 
     public function updateStep()
@@ -463,7 +470,7 @@ class Node2D
 
     function get_worldTransform():Matrix3D
     {
-        if (invalidateTransform || invalidateWorldTransform)
+        if (invalidateWorldTransform)
         {
             worldTransform.rawData = transform.rawData;
             if (parent != null) worldTransform.append(parent.worldTransform);
@@ -475,7 +482,7 @@ class Node2D
 
     function get_invertWorldTransform():Matrix3D
     {
-        if (invalidateTransform || invalidateWorldTransform || invalidateInvertWorldTransform)
+        if (invalidateWorldTransform || invalidateInvertWorldTransform)
         {
             invertWorldTransform.rawData = worldTransform.rawData;
             invertWorldTransform.invert();
@@ -496,31 +503,32 @@ class Node2D
             var moved = x != 0 || y != 0;
             var scaled = scaleX != 1 || scaleY != 1;
 
-            if (usePivot) transform.appendTranslation(-pivot.x, -pivot.y, -pivot.z);
+            if (usePivot) transform.appendTranslation(-pivot.x, -pivot.y, 0);
             if (scaled) transform.appendScale(scaleX, scaleY, 1);
             if (rotation != 0) transform.appendRotation(rotation, Vector3D.Z_AXIS);
             if (moved) transform.appendTranslation(x, y, 0);
-            if (usePivot) transform.appendTranslation(pivot.x, pivot.y, pivot.z);
+            if (usePivot) transform.appendTranslation(pivot.x, pivot.y, 0);
 
             invalidateTransform = false;
-            invalidateWorldTransform = true;
         }
 
         return transform;
     }
 
-    public var pivot(default, set_pivot):Vector3D;
+    public var pivot(default, set_pivot):Point;
     public var usePivot(default, null):Bool;
 
-    function set_pivot(v:Vector3D):Vector3D
+    function set_pivot(v:Point):Point
     {
-        if (v != null && v.x == 0 && v.y == 0 && v.z == 0) v = null;
+        if (v != null && v.x == 0 && v.y == 0) v = null;
 
         pivot = v;
         usePivot = v != null;
         invalidateBounds = true;
         invalidateTransform = true;
-        onTransformChange.dispatch();
+        invalidateWorldTransform = true;
+        onTransformChange.dispatch(this);
+
         return v;
     }
 
@@ -534,54 +542,75 @@ class Node2D
 
     function set_x(v:Float)
     {
-        x = v;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
-        onWorldTransformChange.dispatch();
+        if (x != v)
+        {
+            x = v;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+            onWorldTransformChange.dispatch(this);
+        }
         return v;
     }
 
     function set_y(v:Float)
     {
-        y = v;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
-        onWorldTransformChange.dispatch();
+        if (y != v)
+        {
+            y = v;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+            onWorldTransformChange.dispatch(this);
+        }
         return v;
     }
 
     function set_rotation(v:Float)
     {
-        rotation = v;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
-        onWorldTransformChange.dispatch();
+        if (rotation != v)
+        {
+            while (rotation < -Math.PI) rotation += 2 * Math.PI;
+            while (rotation > Math.PI) rotation -= 2 * Math.PI;
+            rotation = v;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+            onWorldTransformChange.dispatch(this);
+        }
         return v;
     }
 
     function set_scaleX(v:Float)
     {
-        scaleX = v;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
-        onWorldTransformChange.dispatch();
+        if (scaleX != v)
+        {
+            scaleX = v;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+            onWorldTransformChange.dispatch(this);
+        }
         return v;
     }
 
     function set_scaleY(v:Float)
     {
-        scaleY = v;
-        invalidateBounds = true;
-        invalidateTransform = true;
-        onTransformChange.dispatch();
-        onWorldTransformChange.dispatch();
+        if (scaleY != v)
+        {
+            scaleY = v;
+            invalidateBounds = true;
+            invalidateTransform = true;
+            invalidateWorldTransform = true;
+            onTransformChange.dispatch(this);
+            onWorldTransformChange.dispatch(this);
+        }
         return v;
     }
-
 
     // color transform
 
@@ -614,7 +643,7 @@ class Node2D
         colorTransform = c;
         alpha = c.a;
         invalidateColorTransform = true;
-        onColorTransformChange.dispatch();
+        onColorTransformChange.dispatch(this);
 
         return c;
     }
@@ -622,10 +651,12 @@ class Node2D
     function set_alpha(v:Float):Float
     {
         v = Color.clamp(v);
-        alpha = colorTransform.a = v;
-        invalidateColorTransform = true;
-        onColorTransformChange.dispatch();
-
+        if (v != alpha)
+        {
+            alpha = colorTransform.a = v;
+            invalidateColorTransform = true;
+            onColorTransformChange.dispatch(this);
+        }
         return v;
     }
 
@@ -645,7 +676,7 @@ class Node2D
             for (c in children)
             {
                 if (!c.visible) continue;
-                _boundRect2 = c.getBounds(this, _boundRect2);
+                c.getBounds(this, _boundRect2);
 
                 if (!_boundRect2.isEmpty())
                 {
@@ -675,6 +706,11 @@ class Node2D
 		return bounds;
 	}
 
+    static var p1:Vector3D = new Vector3D();
+    static var p2:Vector3D = new Vector3D();
+    static var p3:Vector3D = new Vector3D();
+    static var p4:Vector3D = new Vector3D();
+
     public function getBounds(target:Node2D, boundRect:Rectangle = null):Rectangle
     {
         if (boundRect == null) boundRect = new Rectangle();
@@ -684,26 +720,37 @@ class Node2D
         var m:Matrix3D = target.invertWorldTransform.clone();
         m.prepend(worldTransform);
 
-        var p1:Vector3D = new Vector3D(boundRect.x, boundRect.y);
-        var p2:Vector3D = new Vector3D(boundRect.x, boundRect.bottom);
-        var p3:Vector3D = new Vector3D(boundRect.right, boundRect.y);
-        var p4:Vector3D = new Vector3D(boundRect.right, boundRect.bottom);
-        p1 = m.transformVector(p1);
-        p2 = m.transformVector(p2);
-        p3 = m.transformVector(p3);
-        p4 = m.transformVector(p4);
+        if (!boundRect.isEmpty())
+        {
+            p1.setTo(boundRect.x, boundRect.y, 0);
+            p2.setTo(boundRect.x, boundRect.bottom, 0);
+            p3.setTo(boundRect.right, boundRect.y, 0);
+            p4.setTo(boundRect.right, boundRect.bottom, 0);
+            p1 = m.transformVector(p1);
+            p2 = m.transformVector(p2);
+            p3 = m.transformVector(p3);
+            p4 = m.transformVector(p4);
 
-        boundRect.x = Math.min(p1.x, Math.min(p2.x, Math.min(p3.x, p4.x)));
-        boundRect.right = Math.max(p1.x, Math.max(p2.x, Math.max(p3.x, p4.x)));
-        boundRect.y = Math.min(p1.y, Math.min(p2.y, Math.min(p3.y, p4.y)));
-        boundRect.bottom = Math.max(p1.y, Math.max(p2.y, Math.max(p3.y, p4.y)));
+            boundRect.x = Math.min(p1.x, Math.min(p2.x, Math.min(p3.x, p4.x)));
+            boundRect.right = Math.max(p1.x, Math.max(p2.x, Math.max(p3.x, p4.x)));
+            boundRect.y = Math.min(p1.y, Math.min(p2.y, Math.min(p3.y, p4.y)));
+            boundRect.bottom = Math.max(p1.y, Math.max(p2.y, Math.max(p3.y, p4.y)));
+        }
+        else
+        {
+            p1.setTo(boundRect.x, boundRect.y, 0);
+            p1 = m.transformVector(p1);
+            boundRect.x = p1.x;
+            boundRect.y = p1.y;
+        }
 
         if (numChildren == 0) return boundRect;
 
         for (c in children)
         {
             if (!c.visible) continue;
-            _boundRect2 = c.getBounds(target, _boundRect2);
+            c.getBounds(target, _boundRect2);
+
             if (!_boundRect2.isEmpty())
             {
                 if (boundRect.isEmpty())
@@ -715,28 +762,27 @@ class Node2D
                 }
                 else
                 {
-                    var x0:Float = (boundRect.x > _boundRect2.x) ? _boundRect2.x : boundRect.x;
-                    var y0:Float = (boundRect.y > _boundRect2.y) ? _boundRect2.y : boundRect.y;
-                    var x1:Float = (boundRect.right < _boundRect2.right) ? _boundRect2.right : boundRect.right;
-                    var y1:Float = (boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : boundRect.bottom;
+                    var x0 = (boundRect.x > _boundRect2.x) ? _boundRect2.x : boundRect.x;
+                    var y0 = (boundRect.y > _boundRect2.y) ? _boundRect2.y : boundRect.y;
+                    var x1 = (boundRect.right < _boundRect2.right) ? _boundRect2.right : boundRect.right;
+                    var y1 = (boundRect.bottom < _boundRect2.bottom) ? _boundRect2.bottom : boundRect.bottom;
                     boundRect.x = x0;
                     boundRect.y = y0;
                     boundRect.width = x1 - x0;
                     boundRect.height = y1 - y0;
                 }
-
             }
         }
 
         return boundRect;
     }
 
-    public function localToGlobal(v:Vector3D):Vector3D
+    public inline function localToGlobal(v:Vector3D):Vector3D
     {
         return worldTransform.transformVector(v);
     }
 
-    public function globalToLocal(v:Vector3D):Vector3D
+    public inline function globalToLocal(v:Vector3D):Vector3D
     {
         return invertWorldTransform.transformVector(v);
     }
@@ -781,6 +827,6 @@ class Node2D
     {
         var ref = Type.getClassName(Type.getClass(this)).split(".").pop();
 
-        return Std.format("{$ref: $name, visible:$visible}");
+        return '{$ref: $name, visible:$visible}';
     }
 }

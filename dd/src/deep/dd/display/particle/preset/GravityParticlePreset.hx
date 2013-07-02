@@ -1,10 +1,10 @@
-package deep.dd.particle.preset;
+package deep.dd.display.particle.preset;
 
 import flash.geom.Point;
 import mt.m3d.Color;
 import flash.geom.Vector3D;
-import deep.dd.particle.preset.ParticlePresetBase;
-import deep.dd.particle.preset.ParticlePresetBase.Bounds;
+import deep.dd.display.particle.preset.ParticlePresetBase;
+import deep.dd.display.particle.preset.ParticlePresetBase.Bounds;
 
 class GravityParticlePreset extends ParticlePresetBase
 {

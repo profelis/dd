@@ -1,5 +1,9 @@
 package deep.dd.texture.atlas.parser;
 
+/**
+*  @author Dima Granetchi <system.grand@gmail.com>, <deep@e-citrus.ru>
+*/
+
 import deep.dd.utils.Frame;
 import deep.dd.texture.Texture2D;
 import flash.geom.Rectangle;
@@ -8,7 +12,13 @@ import flash.geom.Point;
 import deep.dd.texture.atlas.AtlasTexture2D;
 
 /**
+* Парсер для атласного упаковщика Cheetah https://github.com/scriptum/Cheetah-Texture-Packer
+* @lang ru
+**/
+
+/**
 * Parser for https://github.com/scriptum/Cheetah-Texture-Packer
+* @lang en
 **/
 class CheetahParser implements IAtlasParser
 {

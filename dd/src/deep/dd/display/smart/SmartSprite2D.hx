@@ -1,5 +1,6 @@
 package deep.dd.display.smart;
 
+import deep.dd.display.Node2D;
 import deep.dd.display.smart.render.RenderBase;
 import deep.dd.display.Sprite2D;
 import deep.dd.texture.atlas.AtlasTexture2D;
@@ -10,11 +11,12 @@ import flash.geom.Matrix3D;
 import deep.dd.camera.Camera2D;
 import flash.display3D.Context3D;
 import deep.dd.texture.Texture2D;
-import deep.dd.material.sprite2d.Sprite2DMaterial;
+import deep.dd.material.Sprite2DMaterial;
 import deep.dd.geometry.Geometry;
 import deep.dd.utils.FastHaxe;
-
-class Batch2D extends SmartSprite2D
+import hxsl.Shader;
+/*
+class Batch2D extends SmartSprite2D<deep.dd.material.Batch2DMaterial.Batch2DShader>
 {
     public function new()
     {
@@ -23,8 +25,8 @@ class Batch2D extends SmartSprite2D
 
     public var batchRender(default, null):deep.dd.display.smart.render.BatchRender;
 }
-
-class Cloud2D extends SmartSprite2D
+*/
+class Cloud2D extends SmartSprite2D<deep.dd.material.Cloud2DMaterial.Cloud2DShader>
 {
 
     public function new(startSize:UInt = 20, incSize:UInt = 20)
@@ -36,13 +38,15 @@ class Cloud2D extends SmartSprite2D
 
 }
 
-class SmartSprite2D extends Sprite2D
+class SmartSprite2D<T:Shader> extends BaseSprite2D<T>
 {
-    public function new(render:RenderBase = null)
+    public function new(render:RenderBase<T> = null)
     {
         super();
 
         this.render = render;
+
+        mouseChildren = false;
     }
 
     override function createGeometry()
@@ -60,9 +64,9 @@ class SmartSprite2D extends Sprite2D
         }
     }
 
-    public var render(default, setRender):RenderBase;
+    public var render(default, set):RenderBase<T>;
 
-    function setRender(r:RenderBase):RenderBase
+    function set_render(r:RenderBase<T>):RenderBase<T>
     {
     	if (r == render) return render;
 
@@ -99,5 +103,28 @@ class SmartSprite2D extends Sprite2D
     override public function drawStep(camera:Camera2D):Void
     {
         if (render != null) render.drawStep(camera);
+    }
+
+    override public function addChildAt(c:Node2D, pos:UInt):Void
+    {
+        super.addChildAt(c, pos);
+
+        var s:Sprite2D = flash.Lib.as(c, Sprite2D);
+        if (s != null && s.texture == null) s.texture = texture;
+    }
+
+    override function set_texture(tex:Texture2D):Texture2D
+    {
+        var old = texture;
+        var res = super.set_texture(tex);
+
+        if (children != null)
+            for (c in children)
+            {
+                var s = flash.Lib.as(c, Sprite2D);
+                if (s != null && s.texture == old) s.texture = res;
+            }
+
+        return res;
     }
 }

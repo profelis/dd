@@ -16,7 +16,9 @@ class Scene2D extends Node2D
 
     override function setParent(n)
     {
+        #if debug
         throw "scene can't has parent";
+        #end
     }
 
     public var timeScale:Float = 1;
@@ -29,17 +31,18 @@ class Scene2D extends Node2D
         updateStep();
     }
 
-    override function displayMouseStep(p:Vector3D)
+    override function displayHitTest(p:Vector3D, mouseHit = true)
     {
         p = globalToLocal(p);
         if (p.x >= 0 && p.x <= world.width && p.y >= 0 && p.y <= world.height)
         {
-            mouseX = p.x;
-            mouseY = p.y;
+            if (mouseHit)
+            {
+                mouseX = p.x;
+                mouseY = p.y;
+            }
             return true;
         }
-        mouseX = Math.NaN;
-        mouseY = Math.NaN;
         return false;
     }
 

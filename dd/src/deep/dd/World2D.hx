@@ -1,7 +1,10 @@
 package deep.dd;
 
+import deep.events.Signal.Signal2;
+import flash.ui.MultitouchInputMode;
+import flash.ui.Multitouch;
 import flash.display.Stage;
-import msignal.Signal.Signal2;
+import deep.events.Signal;
 import deep.dd.utils.MouseData;
 import deep.dd.display.Node2D;
 import flash.events.TouchEvent;
@@ -25,6 +28,8 @@ import flash.geom.Rectangle;
 
 class World2D
 {
+    public static var WORLDS:Array<World2D> = new Array<World2D>();
+
     public var stage3dId(default, null):Int;
 
     public var context3DRenderMode(default, null):Context3DRenderMode;
@@ -46,8 +51,6 @@ class World2D
     public var width(get_width, set_width):Int;
     public var height(get_height, set_height):Int;
 
-    public var pause:Bool = false;
-
     public var camera:Camera2D;
     public var scene(default, set_scene):Scene2D;
 
@@ -58,21 +61,29 @@ class World2D
     public var statistics(default, null):Statistics;
 
     public var onResize:Signal2<Int, Int>;
+	
+	public var onContext(default, null):Signal0;
+	
+	public var sharedContext:Bool = false;
 
     public function new(stage:Stage, context3DRenderMode:Context3DRenderMode, bounds:Rectangle = null, antialiasing:Int = 2, stage3dId:Int = 0)
     {
+        WORLDS.push(this);
+
+        onResize = new Signal2<Int, Int>();
+		onContext = new Signal0();
+
         this.stage = stage;
         this.context3DRenderMode = context3DRenderMode;
         this.bounds =  bounds;
         this.antialiasing = antialiasing;
         this.stage3dId = stage3dId;
 
-        onResize = new Signal2<Int, Int>();
-
         cache = new Cache(this);
         #if dd_stat
         statistics = new Statistics(this);
         #end
+        mousePos = new Vector3D();
 
         bgColor = new Color(1, 1, 1);
 
@@ -81,20 +92,25 @@ class World2D
         stage.addEventListener(Event.RESIZE, onResizeHandler);
 
         stage3d = stage.stage3Ds[stage3dId];
-        stage3d.addEventListener(Event.CONTEXT3D_CREATE, onContext);
+        stage3d.addEventListener(Event.CONTEXT3D_CREATE, onContextHandler);
 
         ctx = stage3d.context3D;
-        if (ctxExist()) onContext(null);
+        if (ctxExist()) {
+			sharedContext = true;
+			onContextHandler(null);
+		}
         else stage3d.requestContext3D(Std.string(context3DRenderMode));
+
+        if (Multitouch.inputMode == MultitouchInputMode.NONE)
+            Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
     }
 
-    function onContext(_)
+    function onContextHandler(_)
     {
-        if (ctx == stage3d.context3D) return;
+        if (!sharedContext && ctx == stage3d.context3D) return;
 
         if (ctx != null)
         {
-            Material.freeContextCache(ctx);
             cache.reinitBitmapTextureCache();
             #if dd_stat
             GlobalStatistics.freeContext(ctx);
@@ -114,7 +130,7 @@ class World2D
 		
         if (scene != null) scene.init(ctx);
         invalidateSize = true;
-
+		
         stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseEvent);
         stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseEvent);
         stage.addEventListener(MouseEvent.MOUSE_UP, onMouseEvent);
@@ -124,14 +140,14 @@ class World2D
         stage.addEventListener(TouchEvent.TOUCH_BEGIN, onTouchEvent);
         stage.addEventListener(TouchEvent.TOUCH_END, onTouchEvent);
 
-        stage.addEventListener(Event.ENTER_FRAME, onRender);
+        onContext.dispatch();
     }
 
     static var touchAlias = initTouchAlias();
 
     static function initTouchAlias()
     {
-        var res:Hash<String> = new Hash<String>();
+        var res:Map<String, String> = new Map();
         res.set(TouchEvent.TOUCH_MOVE, MouseEvent.MOUSE_MOVE);
         res.set(TouchEvent.TOUCH_BEGIN, MouseEvent.MOUSE_DOWN);
         res.set(TouchEvent.TOUCH_END, MouseEvent.MOUSE_UP);
@@ -145,7 +161,7 @@ class World2D
     {
         if (scene == null) return;
 
-        if (mouseOut && (mouseOut = bounds.contains(e.stageX, e.stageY))) return;
+        if (mouseOut && (mouseOut = !bounds.contains(e.stageX, e.stageY))) return;
 
         var md:MouseData = new MouseData();
         md.type = touchAlias.get(e.type);
@@ -155,7 +171,7 @@ class World2D
         md.ctrl = e.ctrlKey;
         md.alt = e.altKey;
 
-        mouseStep(md);
+        scene.mouseStep(mousePos, md);
     }
 
     function onMouseLeave(e:Event)
@@ -166,14 +182,14 @@ class World2D
         var md:MouseData = new MouseData();
         md.type = MouseEvent.MOUSE_MOVE;
 
-        mouseStep(md);
+        scene.mouseStep(mousePos, md);
     }
 
     function onMouseEvent(e:MouseEvent)
     {
         if (scene == null) return;
 
-        if (mouseOut && (mouseOut = bounds.contains(e.stageX, e.stageY))) return;
+        if (mouseOut && (mouseOut = !bounds.contains(e.stageX, e.stageY))) return;
 
         var md:MouseData = new MouseData();
         md.type = e.type;
@@ -181,11 +197,6 @@ class World2D
         md.ctrl = e.ctrlKey;
         md.alt = e.altKey;
 
-        mouseStep(md);
-    }
-
-    inline function mouseStep(md:MouseData)
-    {
         scene.mouseStep(mousePos, md);
     }
 
@@ -198,9 +209,12 @@ class World2D
     {
 		if (autoResize)
         {
-            bounds.width = Std.int(stage.stageWidth);
-            bounds.height = Std.int(stage.stageHeight);
+            var w = Std.int(stage.stageWidth);
+            var h = Std.int(stage.stageHeight);
+            bounds.width = w;
+            bounds.height = h;
             invalidateSize = true;
+            onResize.dispatch(w, h);
         }
     }
 
@@ -213,14 +227,11 @@ class World2D
         camera.resize(w, h);
         ctx.configureBackBuffer(w, h, antialiasing);
 
-        onResize.dispatch(w, h);
         invalidateSize = false;
     }
 
-    function onRender(_)
+    public function render()
     {
-        if (pause) return;
-
         if (ctxExist())
 		{
             #if dd_stat
@@ -231,23 +242,21 @@ class World2D
 
 			if (camera.needUpdate) camera.update();
 
-			ctx.setCulling(Context3DTriangleFace.NONE);
-			ctx.setDepthTest(false, Context3DCompareMode.ALWAYS);
-
-			ctx.clear(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+			if (!sharedContext) ctx.clear(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 
 			scene.update();
-
+			
+			ctx.setCulling(Context3DTriangleFace.NONE);
+			ctx.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			scene.drawStep(camera);
 
-			ctx.present();
+			if (!sharedContext) ctx.present();
 		}
     }
 	
 	function dispose(disposeContext3D:Bool = true):Void
 	{
-		stage3d.removeEventListener(Event.CONTEXT3D_CREATE, onContext);
-		stage.removeEventListener(Event.ENTER_FRAME, onRender);
+		stage3d.removeEventListener(Event.CONTEXT3D_CREATE, onContextHandler);
         stage.removeEventListener(Event.RESIZE, onResizeHandler);
 
         stage.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseEvent);
@@ -283,10 +292,13 @@ class World2D
 		stage = null;
 		stage3d = null;
 
-        if (disposeContext3D) ctx.dispose();
+        if (disposeContext3D && ctxExist()) ctx.dispose();
         ctx = null;
 
         Reflect.setField(this, "bounds", null);
+        mousePos = null;
+
+        WORLDS.remove(this);
 	}
 
     function set_scene(s:Scene2D)
@@ -299,7 +311,7 @@ class World2D
         if (scene != null)
         {
             Reflect.callMethod(scene, Reflect.field(scene, "setWorld"), [this]);
-            scene.init(ctx);
+            if (ctxExist()) scene.init(ctx);
             invalidateSize = true;
         }
 		
@@ -319,12 +331,17 @@ class World2D
 		{
             if (rect.width <= 0) throw "bounds.width < 0";
             if (rect.height <= 0) throw "bounds.height < 0";
+            if (rect.x < 0 || rect.y < 0 || rect.right > stage.stageHeight || rect.bottom > stage.stageWidth)
+                throw "rect out of stage";
         }
         #end
 
 		bounds = rect != null ? rect : new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+        bounds.width = Std.int(bounds.width);
+        bounds.height = Std.int(bounds.height);
         autoResize = (rect == null);
 		invalidateSize = true;
+        onResize.dispatch(Std.int(bounds.width), Std.int(bounds.height));
 		return bounds;
 	}
 	
@@ -375,6 +392,7 @@ class World2D
 			bounds.width = val;
 			invalidateSize = true;
 			autoResize = false;
+            onResize.dispatch(val, Std.int(bounds.height));
 		}
 		return val;
 	}
@@ -394,6 +412,7 @@ class World2D
 			bounds.height = val;
 			invalidateSize = true;
 			autoResize = false;
+            onResize.dispatch(Std.int(bounds.width), val);
 		}
 		return val;
 	}
@@ -402,6 +421,8 @@ class World2D
 
     public function get_mousePos()
     {
-        return new Vector3D(stage.mouseX - bounds.x + camera.x, stage.mouseY - bounds.y + camera.y);
+        mousePos.setTo(stage.mouseX - bounds.x + camera.x, stage.mouseY - bounds.y + camera.y, 0);
+
+        return mousePos;
     }
 }

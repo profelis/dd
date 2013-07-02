@@ -1,14 +1,12 @@
 package deep.dd.utils;
 
-import haxe.rtti.Generic;
-import haxe.FastList;
-import haxe.FastList.FastCell;
+import haxe.ds.GenericStack;
 
-class FastListUtils<T> implements Generic
+@:generic class FastListUtils<T>
 {
-    var l:FastList<T>;
+    var l:GenericStack<T>;
 
-    public function new(list:FastList<T>)
+    public function new(list:GenericStack<T>)
     {
         l = list;
         #if debug
@@ -16,13 +14,13 @@ class FastListUtils<T> implements Generic
         #end
     }
 
-    public var tail:FastCell<T>;
+    public var tail:GenericCell<T>;
 
     public function push(v:T)
     {
         if (tail != null)
         {
-            var i = new FastCell<T>(v, null);
+            var i = new GenericCell<T>(v, null);
             tail.next = i;
             tail = i;
         }
@@ -124,7 +122,7 @@ class FastListUtils<T> implements Generic
             pos --;
         }
 
-        var i = new FastCell<T>(v, h.next);
+        var i = new GenericCell<T>(v, h.next);
         h.next = i;
         length ++;
     }

@@ -1,5 +1,6 @@
 package ;
 
+import tests.TestTextureHit;
 import tests.BitmapFontTest;
 import tests.TextFieldTest;
 import tests.TestRender;
@@ -58,7 +59,7 @@ class Main extends Sprite
 
 
 
-		scenes = [TestBounds, TestQuad, BitmapFontTest, TextFieldTest, TestRender];
+		scenes = [TestTextureHit, TestBounds, TestQuad, BitmapFontTest, TextFieldTest, TestRender];
 
 
 

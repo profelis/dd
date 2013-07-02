@@ -1,10 +1,10 @@
-package deep.dd.particle.preset;
+package deep.dd.display.particle.preset;
 
 import flash.geom.Matrix3D;
 import mt.m3d.Color;
 import flash.geom.Vector3D;
-import deep.dd.particle.preset.ParticlePresetBase;
-import deep.dd.particle.preset.ParticlePresetBase.Bounds;
+import deep.dd.display.particle.preset.ParticlePresetBase;
+import deep.dd.display.particle.preset.ParticlePresetBase.Bounds;
 
 class RadialParticlePreset extends ParticlePresetBase
 {
@@ -21,10 +21,6 @@ class RadialParticlePreset extends ParticlePresetBase
 
     public var startAngle:Bounds<Float>;
     public var angleSpeed:Bounds<Float>;
-
-    public var startDepth:Bounds<Float>;
-    public var depthSpeed:Bounds<Float>;
-
 
     public function new() {}
 

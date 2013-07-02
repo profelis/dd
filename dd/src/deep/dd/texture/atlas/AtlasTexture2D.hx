@@ -1,5 +1,11 @@
 package deep.dd.texture.atlas;
 
+/**
+*  @author Dima Granetchi <system.grand@gmail.com>, <deep@e-citrus.ru>
+*  @author Zaphod
+*/
+
+import deep.dd.texture.SubTexture2D;
 import deep.dd.utils.Frame;
 import deep.dd.animation.Animation;
 import flash.geom.Rectangle;
@@ -8,11 +14,23 @@ import flash.geom.Vector3D;
 import flash.display3D.Context3D;
 import deep.dd.texture.Texture2D;
 
+/**
+* Текстура, которая для рендера использует нарисованый в битмапу DisplayObject
+* @lang ru
+**/
 class AtlasTexture2D extends SubTexture2D
 {
+    /**
+    * Полный список кадров атласа
+    * @lang ru
+    **/
     public var frames(default, null):Array<Frame>;
 
-	var animationMap:Hash<Animation>;
+    /**
+    * Набор всех анимаций атласа
+    * @lang ru
+    **/
+	public var animations(default, null):Map<String, Animation>;
 
     public function new(texture:Texture2D, parser:IAtlasParser)
     {
@@ -22,14 +40,22 @@ class AtlasTexture2D extends SubTexture2D
 
         frame = frames[0];
 		
-		animationMap = new Hash<Animation>();
+		animations = new Map();
     }
 
+    /**
+    * Возвращает субтекстуру определенного фрейма по ее порядковому номеру
+    * @lang ru
+    **/
     public function getTextureById(id:Int):Texture2D
     {
         return getTextureByFrame(frames[id]);
     }
 
+    /**
+    * Возвращает субтекстуру фрейма по его id
+    * @lang ru
+    **/
     public function getTextureByName(name:String):Texture2D
     {
         for (f in frames)
@@ -38,6 +64,10 @@ class AtlasTexture2D extends SubTexture2D
         return null;
     }
 
+    /**
+    * Возвращает субтекстуру определенного фрейма
+    * @lang ru
+    **/
     public function getTextureByFrame(f:Frame):Texture2D
     {
         var res = new SubTexture2D(baseTexture);
@@ -46,10 +76,14 @@ class AtlasTexture2D extends SubTexture2D
         return res;
     }
 
+    /**
+    * Добавляем анимацию в список анимаций
+    * @lang ru
+    **/
 	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Animation
 	{
 		#if debug
-		if (animationMap.exists(name)) throw ("Animation " + name + "  already exist");
+		if (animations.exists(name)) throw ("Animation " + name + "  already exist");
 		#end
 		
 		var framesToAdd:Array<Frame> = [];
@@ -82,13 +116,18 @@ class AtlasTexture2D extends SubTexture2D
 		}
 		
 		var anim:Animation = new Animation(framesToAdd, name);
-		animationMap.set(name, anim);
+		animations.set(name, anim);
 		return anim;
 	}
-	
+
+    /**
+    * Получить анимацию по имени и тут же добавить ее в список анимаций.
+    * Если name = "run", то найдутся все кадры run0 run1 ... runN и отсортированы по возрастанию
+    * @lang ru
+    **/
 	public function getAnimation(name:String):Animation
 	{
-		var anim:Animation = animationMap.get(name);
+		var anim:Animation = animations.get(name);
 		if (anim != null) return anim;
 		
 		var animFrames:Array<Frame> = [];
@@ -102,7 +141,7 @@ class AtlasTexture2D extends SubTexture2D
 			AtlasTexture2D.sortPrefixLength = name.length;
 			AtlasTexture2D.sortFramesInAnimation(animFrames);
 			anim = new Animation(animFrames, name);
-			animationMap.set(name, anim);
+			animations.set(name, anim);
 		}
 		
 		return anim;
@@ -138,54 +177,23 @@ class AtlasTexture2D extends SubTexture2D
 	{
 		super.dispose();
 		
-		if (animationMap != null)
+		if (animations != null)
 		{
-			for (anim in animationMap)
+			for (anim in animations)
 			{
 				anim.dispose();
 			}
-			animationMap = null;
+			animations = null;
 		}
 	}
 
 }
 
+/**
+* Парсер атласной текстуры
+* @lang ru
+**/
 interface IAtlasParser
 {
     function parse(a:AtlasTexture2D):Array<Frame>;
-}
-
-class SubTexture2D extends Texture2D
-{
-    function new (texture:Texture2D)
-    {
-        baseTexture = texture;
-        super(baseTexture.options);
-
-        textureWidth = baseTexture.textureWidth;
-        textureHeight = baseTexture.textureHeight;
-
-        width = baseTexture.width;
-        height = baseTexture.height;
-
-        baseTexture.useCount ++;
-    }
-
-    public var baseTexture(default, null):Texture2D;
-
-    override public function init(ctx:Context3D)
-    {
-        baseTexture.init(ctx);
-
-        texture = baseTexture.texture;
-    }
-
-    override public function dispose():Void
-    {
-        if (useCount > 0) return;
-
-        baseTexture.useCount --;
-        baseTexture.dispose();
-
-    }
 }

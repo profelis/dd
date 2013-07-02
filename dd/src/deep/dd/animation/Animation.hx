@@ -1,16 +1,35 @@
 package deep.dd.animation;
 
+/**
+*  @author Zaphod
+*/
+
 import deep.dd.utils.Frame;
 import deep.dd.texture.Texture2D;
+
 /**
- * ...
- * @author Zaphod
- */
+* Утилитарный класс, хранит кадры анимации и ее название
+* @lang ru
+*/
 
 class Animation 
 {
+    /**
+    * Набор фреймов
+    * @lang ru
+    **/
 	public var frames(default, null):Array<Frame>;
+
+    /**
+    * Кол-во фреймов
+    * @lang ru
+    **/
 	public var numFrames(default, null):Int;
+
+    /**
+    * Имя анимации
+    * @lang ru
+    **/
 	public var name(default, null):String;
 	
 	public function new(frames:Array<Frame>, name:String) 
@@ -27,7 +46,6 @@ class Animation
 
     public function toString()
     {
-        return Std.format("{Animation: $name numFrames:$numFrames}");
+        return '{Animation: $name numFrames:$numFrames}';
     }
-	
 }

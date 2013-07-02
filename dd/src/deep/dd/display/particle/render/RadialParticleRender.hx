@@ -1,19 +1,18 @@
+package deep.dd.display.particle.render;
 
-package deep.dd.particle.render;
-
-import deep.dd.particle.render.ParticleRenderBase;
-import deep.dd.particle.preset.RadialParticlePreset;
+import deep.dd.display.particle.render.ParticleRenderBase;
+import deep.dd.display.particle.preset.RadialParticlePreset;
 import flash.geom.Matrix3D;
 import deep.dd.display.smart.SmartSprite2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.utils.FastHaxe;
 import deep.dd.camera.Camera2D;
-import deep.dd.display.render.RenderBase;
+import deep.dd.display.smart.render.RenderBase;
 import deep.dd.geometry.CloudGeometry;
 import deep.dd.geometry.Geometry;
 import deep.dd.material.radialParticle2D.RadialParticle2DMaterial;
-import deep.dd.particle.preset.ParticlePresetBase;
-import deep.dd.particle.preset.ParticlePresetBase.Bounds;
+import deep.dd.display.particle.preset.ParticlePresetBase;
+import deep.dd.display.particle.preset.ParticlePresetBase.Bounds;
 import mt.m3d.Color;
 import flash.geom.Vector3D;
 
@@ -28,10 +27,10 @@ class RadialParticleRenderBuilder
     {
         return new RadialParticleRender(
             preset,
-            new deep.dd.display.render.CloudRender(
+            new deep.dd.display.smart.render.CloudRender(
                 startSize,
                 incSize,
-                CloudGeometry.createTexturedCloud(startSize, deep.dd.display.render.CloudRender.PER_VERTEX, 1, 1, -0.5, -0.5)
+                CloudGeometry.createTexturedCloud(startSize, deep.dd.display.smart.render.CloudRender.PER_VERTEX, 1, 1, -0.5, -0.5)
             )
         );
     }
@@ -40,8 +39,8 @@ class RadialParticleRenderBuilder
     {
         return new RadialParticleRender(
             preset,
-            new deep.dd.display.render.BatchRender(
-                deep.dd.geometry.BatchGeometry.createTexturedBatch(deep.dd.display.render.BatchRender.MAX_SIZE, 1, 1, -0.5, -0.5)
+            new deep.dd.display.smart.render.BatchRender(
+                deep.dd.geometry.BatchGeometry.createTexturedBatch(deep.dd.display.smart.render.BatchRender.MAX_SIZE, 1, 1, -0.5, -0.5)
             )
         );
     }

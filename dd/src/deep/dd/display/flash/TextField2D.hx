@@ -1,5 +1,10 @@
 package deep.dd.display.flash;
 
+/**
+* @author Zaphod
+* @author Dima Granetchi <system.grand@gmail.com>, <deep@e-citrus.ru>
+*/
+
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.texture.FlashTexture2D;
@@ -12,14 +17,18 @@ import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
+/**
+* Текстовое поле, базируется на рендере стандартного TextField на битмапу,
+* что позволяет использовать все возможности текстовых полей
+*
+* @see flash.text.TextField
+* @lang ru
+**/
 class TextField2D extends Sprite2D
 {
-    
 	var flashField:TextField;
 	
-	var autoWrap:Bool = true;
-	
-	private var needRedraw:Bool;
+	var needRedraw:Bool;
 	
 	public function new(field:TextField = null) 
 	{
@@ -44,17 +53,25 @@ class TextField2D extends Sprite2D
 		antiAliasType = flashField.antiAliasType;
 		
 		Reflect.setField(this, "texture", new FlashTexture2D(flashField));
-		
+
 		needRedraw = true;
     }
-	
+
+    /**
+    * Кол-во символов в текстовом поле
+    * @lang ru
+    **/
 	public var length(get_length, null):Int;
 	
 	function get_length():Int
 	{
 		return text.length;
 	}
-	
+
+    /**
+    * Формат текстового поля
+    * @lang ru
+    **/
 	public var textFormat(default, set_textFormat):TextFormat;
 	
 	function set_textFormat(v:TextFormat):TextFormat
@@ -63,7 +80,11 @@ class TextField2D extends Sprite2D
 		needRedraw = true;
 		return textFormat;
 	}
-	
+
+    /**
+    * Выравнивание текстового поля (по левому, правому краю или по центру)
+    * @lang ru
+    **/
 	public var autoSize(default, set_autoSize):TextFieldAutoSize;
 	
 	function set_autoSize(v:TextFieldAutoSize):TextFieldAutoSize
@@ -75,7 +96,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Текст отображаемый в текстовом поле
+    * @lang ru
+    **/
 	public var text(default, set_text):String;
 	
 	function set_text(v:String):String
@@ -87,7 +112,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Цвет текста
+    * @lang ru
+    **/
 	public var textColor(get_textColor, set_textColor):UInt;
 	
 	function get_textColor():UInt
@@ -104,7 +133,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Ширина текстового поля
+    * @lang ru
+    **/
 	public var textWidth(default, set_textWidth):Int;
 	
 	function set_textWidth(v:Int):Int
@@ -112,15 +145,15 @@ class TextField2D extends Sprite2D
 		if (textWidth != v)
 		{
 			textWidth = (v > 0) ? v : 0;
-			if (autoWrap)
-			{
-				wordWrap = textWidth > 0;
-			}
 			needRedraw = true;
 		}
 		return v;
 	}
-	
+
+    /**
+    * Высота текстового поля
+    * @lang ru
+    **/
 	public var textHeight(default, set_textHeight):Int;
 	
 	function set_textHeight(v:Int):Int
@@ -132,7 +165,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Показывать рамку вокруг текстового поля
+    * @lang ru
+    **/
 	public var border(default, set_border):Bool;
 	
 	function set_border(v:Bool):Bool
@@ -144,7 +181,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Цвет рамки вокруг текстового поля
+    * @lang ru
+    **/
 	public var borderColor(default, set_borderColor):UInt;
 	
 	function set_borderColor(v:UInt):UInt
@@ -156,7 +197,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Показывать одноцветный фон у текстового поля или нет
+    * @lang ru
+    **/
 	public var background(default, set_background):Bool;
 	
 	function set_background(v:Bool):Bool
@@ -168,7 +213,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Цвет фона текстового поля
+    * @lang ru
+    **/
 	public var backgroundColor(default, set_backgroundColor):UInt;
 	
 	function set_backgroundColor(v:UInt):UInt
@@ -180,7 +229,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Переносить слова на новую строку
+    * @lang ru
+    **/
 	public var wordWrap(default, set_wordWrap):Bool;
 	
 	function set_wordWrap(v:Bool):Bool
@@ -192,7 +245,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Использовать встоенные шрифты для отображения текста
+    * @lang ru
+    **/
 	public var embedFonts(default, set_embedFonts):Bool;
 	
 	function set_embedFonts(v:Bool):Bool
@@ -204,7 +261,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Учитывать пробелы при отображении html текста
+    * @lang ru
+    **/
 	public var condenseWhite(default, set_condenseWhite):Bool;
 	
 	function set_condenseWhite(v:Bool):Bool
@@ -216,7 +277,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Название шрифта
+    * @lang ru
+    **/
 	public var font(get_font, set_font):String;
 	
 	function get_font():String
@@ -233,7 +298,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Размер текста
+    * @lang ru
+    **/
 	public var size(get_size, set_size):Float;
 	
 	function get_size():Float 
@@ -250,7 +319,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Выравнивание текста в текстовом поле
+    * @lang ru
+    **/
 	public var align(get_align, set_align):TextFormatAlign;
 
 	function get_align():TextFormatAlign 
@@ -267,7 +340,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Отображать текст жирным
+    * @lang ru
+    **/
 	public var bold(get_bold, set_bold):Bool;
 
 	function get_bold():Bool
@@ -284,7 +361,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Отображать текст курсивом
+    * @lang ru
+    **/
 	public var italic(get_italic, set_italic):Bool;
 	
 	function get_italic():Bool 
@@ -301,7 +382,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Отображать текст с подчеркиванием
+    * @lang ru
+    **/
 	public var underline(get_underline, set_underline):Bool;
 	
 	function get_underline():Bool 
@@ -318,7 +403,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Если задать true текстовое поле будет выводить текст в несколько строк
+    * @lang ru
+    **/
 	public var multiline(default, set_multiline):Bool;
 	
 	function set_multiline(v:Bool):Bool 
@@ -330,7 +419,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Толщина линий букв. Значение может быть от -200 до 200
+    * @lang ru
+    **/
 	public var thickness(default, set_thickness):Float;
 	
 	function set_thickness(v:Float):Float
@@ -342,7 +435,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Четкость линий букв. Значение может быть от -400 до 400
+    * @lang ru
+    **/
 	public var sharpness(default, set_sharpness):Float;
 	
 	function set_sharpness(v:Float):Float
@@ -354,7 +451,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Выравнивание по сетке, работает только если включен ADVANCED антиалиасинг
+    * @lang ru
+    **/
 	public var gridFitType(default, set_gridFitType):GridFitType;
 	
 	function set_gridFitType(v:GridFitType):GridFitType
@@ -366,7 +467,11 @@ class TextField2D extends Sprite2D
 		}
 		return v;
 	}
-	
+
+    /**
+    * Тип антиалиасинга
+    * @lang ru
+    **/
 	public var antiAliasType(default, set_antiAliasType):AntiAliasType;
 	
 	function set_antiAliasType(v:AntiAliasType):AntiAliasType
@@ -381,24 +486,22 @@ class TextField2D extends Sprite2D
 
     override public function updateStep()
     {
-        if (needRedraw) updateField();
+        if (needRedraw) validateNow();
         super.updateStep();
     }
 
-
-    override public function drawStep(camera:Camera2D):Void
-	{
-		super.drawStep(camera);
-	}
-	
 	override public function dispose():Void 
 	{
 		super.dispose();
 		flashField = null;
 		Reflect.setField(this, "textFormat", null);
 	}
-	
-	function updateField():Void
+
+    /**
+    * Тип антиалиасинга
+    * @lang ru
+    **/
+	public function validateNow():Void
 	{
 		flashField.defaultTextFormat = textFormat;
 		flashField.multiline = multiline;

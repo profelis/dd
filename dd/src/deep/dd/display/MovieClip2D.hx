@@ -15,7 +15,7 @@ class MovieClip2D extends Sprite2D
     public function new()
     {
         super();
-        animator = anim = new Animator();
+        animator = new Animator();
     }
 
     override function set_animator(v)
@@ -24,7 +24,9 @@ class MovieClip2D extends Sprite2D
         if (!FastHaxe.is(v, Animator)) throw "animator must be Animator instance";
         #end
 
-        return super.set_animator(anim = flash.Lib.as(v, Animator));
+        anim = flash.Lib.as(v, Animator);
+        fps = anim.fps;
+        return super.set_animator(anim);
     }
 	
 	public function addAnimation(name:String, keyFrames:Array<Dynamic>):Animation

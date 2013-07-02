@@ -1,5 +1,9 @@
 package deep.dd.geometry;
 
+/**
+* @author Dima Granetchi <system.grand@gmail.com>, <deep@e-citrus.ru>
+*/
+
 import flash.display3D.Context3D;
 import mt.m3d.UV;
 import mt.m3d.Color;
@@ -9,6 +13,10 @@ import mt.m3d.Vector;
 import flash.display3D.Context3D;
 import mt.m3d.Polygon;
 
+/**
+* Геометрия визуальных нодов
+* @lang ru
+**/
 class Geometry
 {
     public var poly(default, null):Poly2D;
@@ -21,26 +29,75 @@ class Geometry
         this.poly = p;
     }
 
+    /**
+    * Можно ли изменять размер текстуры
+    * @lang ru
+    **/
     public var resizable(default, null):Bool = false;
+
+    /**
+    * Стандартная ли текстура (стандартной считается текстура с размером 1 на 1 и с началом отсчета в 0,0)
+    * @lang ru
+    **/
     public var standart(default, null):Bool = false;
 
+    /**
+    * Зарезервированы ли в вершином буфере два float для хранения координат текстуры
+    * @lang ru
+    **/
     public var textured(default, null):Bool = false;
 
+    /**
+    * Ширина геометрии
+    * @lang ru
+    **/
     public var width(default, null):Float;
+
+    /**
+    * Высота геометрии
+    * @lang ru
+    **/
     public var height(default, null):Float;
 
+    /**
+    * Смещение геометрии по оси X
+    * @lang ru
+    **/
     public var offsetX(default, null):Float;
+
+    /**
+    * Смещение геометрии по оси Y
+    * @lang ru
+    **/
     public var offsetY(default, null):Float;
 
+    /**
+    * Разбиение геометрии по оси X
+    * Кол-во треугольников у стандартной текстуры равно stepX * stepY * 2
+    * @lang ru
+    **/
     public var stepsX(default, null):Int;
+
+    /**
+    * Разбиение геометрии по оси Y
+    * Кол-во треугольников у стандартной текстуры равно stepX * stepY * 2
+    * @lang ru
+    **/
     public var stepsY(default, null):Int;
 
     public var needUpdate(default, null):Bool = true;
 
+    /**
+    * Кол-во треугольников в геометрии
+    * @lang ru
+    **/
     public var triangles(default, null):UInt;
 
     var ctx:Context3D;
 
+    /**
+    * @private
+    **/
     public function init(ctx:Context3D)
     {
         if (this.ctx != ctx)
@@ -61,6 +118,10 @@ class Geometry
         }
     }
 
+    /**
+    * Обновление геометрии
+    * @lang ru
+    **/
     public function update():Void
     {
         if (ctx == null) return;
@@ -72,6 +133,10 @@ class Geometry
         needUpdate = false;
     }
 
+    /**
+    * Удалит геометрию из памяти и очистит все буферы созданые в ней
+    * @lang ru
+    **/
     public function dispose():Void
     {
         poly.dispose();
@@ -89,16 +154,37 @@ class Geometry
         }
     }
 
+    /**
+    * Создает копию геометрию
+    * @lang ru
+    **/
+    public function copy():Geometry
+    {
+        return create(Geometry, textured, width, height, stepsX, stepsY, offsetX, offsetY);
+    }
+
+    /**
+    * Билдер стандартной геометрии для текстурированого нода
+    * @lang ru
+    **/
     static public function createTextured(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
     {
         return create(Geometry, true, width, height, stepsX, stepsY, offsetX, offsetY);
     }
 
+    /**
+    * Билдер стандартной геометрии
+    * @lang ru
+    **/
     static public function createSolid(width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):Geometry
     {
         return create(Geometry, false, width, height, stepsX, stepsY, offsetX, offsetY);
     }
 
+    /**
+    * Базовый билд метод для стандартных геометрий
+    * @lang ru
+    **/
     static public function create<T:Geometry>(ref:Class<T>, textured:Bool, width = 1.0, height = 1.0, stepsX = 1, stepsY = 1, offsetX = 0.0, offsetY = 0.0):T
     {
         #if debug
@@ -180,7 +266,12 @@ class Geometry
         return res;
     }
 
-    function resize(width:Float, height:Float)
+    /**
+    * Изменить размер геометрии
+    * Менять размер геометрии стоит, когда это точно необходимо
+    * @lang ru
+    **/
+    public function resize(width:Float, height:Float)
     {
         #if debug
         if (!resizable) throw "can't resize geometry";
@@ -198,11 +289,17 @@ class Geometry
 
         this.width = width;
         this.height = height;
+        this.standart = width == 1 || height == 1 && offsetY == 0 && offsetX == 0;
 
         needUpdate = true;
     }
 
-    function offset(dx = 0.0, dy = 0.0)
+    /**
+    * Изменить смещение геомертии
+    * Менять смещение геометрии стоит, когда это точно необходимо
+    * @lang ru
+    **/
+    public function offset(dx = 0.0, dy = 0.0)
     {
         #if debug
         if (!resizable) throw "can't resize geometry";
@@ -219,10 +316,15 @@ class Geometry
 
         this.offsetX = dx;
         this.offsetY = dy;
+        this.standart = width == 1 || height == 1 && offsetY == 0 && offsetX == 0;
 
         needUpdate = true;
     }
 
+    /**
+    * Меняет цвет вершин в вершинном буфере
+    * @lang ru
+    **/
     public function setColor(color:UInt):Void
     {
         var c = new Color();
@@ -247,18 +349,29 @@ class Geometry
         needUpdate = true;
     }
 
-    public function setVertexColor(vertex:UInt, c:UInt, ?alpha:Float)
+    /**
+    * Меняет цвет определенной вершины
+    * @param vertex порядковый номер вершины
+    * @param color цвет вершины
+    * @param alpha прозрачность вершины, если не задана, то будет оставлена прежняя прозрачность
+    * @lang ru
+    **/
+    public function setVertexColor(vertex:UInt, color:UInt, ?alpha:Float)
     {
         #if debug
-        if (vertex < 0 || poly.points.length <= vertex) throw "out of vertex bounds";
+        if (vertex < 0 || poly.points.length <= Std.int(vertex)) throw "out of vertex bounds";
         if (poly.colors == null) throw "set colors first";
         #end
 
-        poly.colors[vertex].fromInt(c, alpha != null ? alpha : poly.colors[vertex].a);
+        poly.colors[vertex].fromInt(color, alpha != null ? alpha : poly.colors[vertex].a);
 
         needUpdate = true;
     }
 
+    /**
+    * Удаляет данные о цвете из геометрии
+    * @lang ru
+    **/
     public function removeColor():Void
     {
         if (poly.colors != null)
@@ -271,8 +384,10 @@ class Geometry
 }
 
 
-//------------------------------------------
-
+/**
+* Утилитарный класс геометрии
+* @lang ru
+**/
 class Poly2D extends Polygon
 {
     public function new(points, idx)
@@ -332,7 +447,7 @@ class Poly2D extends Polygon
         vbuf.uploadFromVector(buf, 0, points.length);
     }
 
-	override public function dispose():Dynamic 
+	override public function dispose() 
 	{
 		super.dispose();
 		colors = null;

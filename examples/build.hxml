@@ -1,7 +1,3 @@
--cmd cd /Users/deep/Documents/dev/dd/examples
-
---next
-
 -swf9 bin/dd_examples.swf
 -swf-header 800:600:60:FFFFFF
 --flash-strict
@@ -18,6 +14,6 @@
 #--no-traces
 
 #-D shaderDebug
--debug
+#-debug
 #--no-inline
--D fdb
+#-D fdb

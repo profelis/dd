@@ -4,7 +4,7 @@ import deep.dd.geometry.Geometry;
 import deep.dd.camera.Camera2D;
 import deep.dd.material.Quad2DMaterial;
 
-class Quad2D extends DisplayNode2D
+class Quad2D extends DisplayNode2D<Quad2DShader>
 {
     public function new()
     {
@@ -18,8 +18,11 @@ class Quad2D extends DisplayNode2D
 
     function set_color(v)
     {
-        color = v;
-        needUpdateColor = true;
+        if (color != v)
+        {
+            color = v;
+            needUpdateColor = true;
+        }
         return color;
     }
 
@@ -37,7 +40,7 @@ class Quad2D extends DisplayNode2D
     override function set_geometry(g:Geometry)
     {
         super.set_geometry(g);
-        if (g != null) needUpdateColor = true;
+        needUpdateColor = true;
 
         return g;
     }

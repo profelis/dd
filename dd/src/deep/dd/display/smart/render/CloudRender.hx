@@ -1,22 +1,21 @@
 package deep.dd.display.smart.render;
 
+import haxe.ds.GenericStack;
 import mt.m3d.UV;
 import mt.m3d.Color;
 import mt.m3d.Vector;
 import deep.dd.display.smart.SmartSprite2D;
-import deep.dd.animation.AnimatorBase;
 import deep.dd.camera.Camera2D;
 import deep.dd.display.Node2D;
 import deep.dd.display.Sprite2D;
 import deep.dd.geometry.CloudGeometry;
 import deep.dd.material.Material;
-import deep.dd.material.cloud2d.Cloud2DMaterial;
+import deep.dd.material.Cloud2DMaterial;
 import deep.dd.texture.Texture2D;
 import deep.dd.utils.Frame;
 import deep.dd.utils.FastHaxe;
-import haxe.FastList;
 
-class CloudRender extends RenderBase
+class CloudRender extends RenderBase<Cloud2DShader>
 {
     public var startSize(default, null):UInt;
 	public var size(default, null):UInt;
@@ -44,7 +43,7 @@ class CloudRender extends RenderBase
 
     var geom:CloudGeometry;
 
-    override public function copy():RenderBase
+    override public function copy():RenderBase<Cloud2DShader>
     {
         var res = new CloudRender(startSize, incSize);
         return res;
@@ -53,17 +52,12 @@ class CloudRender extends RenderBase
     var mat:Cloud2DMaterial;
 
     var textureFrame:Frame;
-    var animator:AnimatorBase;
-
-    var invalidateTexture:Bool;
 
     override public function updateStep()
     {
-        var f = smartSprite.textureFrame;
+        //var f = smartSprite.textureFrame;
 
         smartSprite.nativeUpdateStep();
-
-        invalidateTexture = f != smartSprite.textureFrame;
     }
 
     override public function drawStep(camera:Camera2D):Void
@@ -79,17 +73,16 @@ class CloudRender extends RenderBase
 
         renderSize = 0;
 		textureFrame = smartSprite.textureFrame;
-        animator = smartSprite.animator;
 
-		drawBatch(smartSprite, camera, invalidateTexture);
+		drawBatch(smartSprite, camera);
     }
 
     public var renderSize(default, null):UInt;
 
-    inline function drawBatch(node:Node2D, camera:Camera2D, invalidateTexture:Bool)
+    inline function drawBatch(node:Node2D, camera:Camera2D)
     {
-        var batchList = new FastList<Sprite2D>();
-        var renderList = new FastList<Node2D>();
+        var batchList = new GenericStack<Sprite2D>();
+        var renderList = new GenericStack<Node2D>();
 
         for (c in node.children)
         {
@@ -121,8 +114,6 @@ class CloudRender extends RenderBase
 
         for (s in batchList)
         {
-            if (invalidateTexture) s.updateDrawTransform(); // TODO: optimize
-
             var sPoly = s.geometry.poly;
 
             var i = idx;
@@ -181,6 +172,5 @@ class CloudRender extends RenderBase
         super.dispose(deep);
         mat = null;
         textureFrame = null;
-        animator = null;
     }
 }

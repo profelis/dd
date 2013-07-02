@@ -1,5 +1,6 @@
 package deep.dd.display;
 
+import flash.geom.Matrix3D;
 import mt.m3d.Color;
 import flash.geom.Vector3D;
 import flash.display3D.Context3D;
@@ -25,10 +26,7 @@ class TextureRenderer extends Sprite2D
     {
         super.set_texture(t);
 
-        if (texture != null)
-        {
-            cam.resize(Math.ceil(texture.width), Math.ceil(texture.height));
-        }
+        if (texture != null) cam.resize(Math.ceil(texture.width), Math.ceil(texture.height));
         return texture;
     }
 
@@ -39,21 +37,43 @@ class TextureRenderer extends Sprite2D
         return bgColor = c != null ? c : new Color(0, 0, 0, 0);
     }
 
+    override public function updateStep()
+    {
+        renderToTexture = true;
+        onWorldTransformChange.dispatch(this);
+
+        super.updateStep();
+
+        renderToTexture = false;
+        onWorldTransformChange.dispatch(this);
+
+        cam.resize(Std.int(texture.width), Std.int(texture.height));
+        if (cam.needUpdate) cam.update();
+    }
+
+    static var EMPTY:Matrix3D = new Matrix3D();
+
+    override function get_worldTransform()
+    {
+        if (renderToTexture)
+            return EMPTY;
+
+        return super.get_worldTransform();
+    }
+
+    var renderToTexture:Bool = false;
+
     override public function drawStep(camera:Camera2D):Void
     {
         ctx.setRenderToTexture(texture.texture, false, world.antialiasing);
         ctx.clear(bgColor.r, bgColor.g, bgColor.b, bgColor.a);
 
-        cam.x = worldTransform.rawData[12];
-        cam.y = worldTransform.rawData[13];
-        cam.resize(texture.width, texture.height);
-        if (cam.needUpdate) cam.update();
-
         for (i in children) if (i.visible) i.drawStep(cam);
 
         ctx.setRenderToBackBuffer();
 
-        super.drawStep(camera);
+        updateDrawTransform();
+        if (material != null) material.draw(this, camera);
     }
 
     override public function dispose():Void

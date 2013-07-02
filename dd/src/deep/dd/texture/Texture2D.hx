@@ -1,5 +1,9 @@
 package deep.dd.texture;
 
+/**
+* @author Dima Granetchi <system.grand@gmail.com>, <deep@e-citrus.ru>
+*/
+
 import flash.utils.ByteArray;
 import flash.geom.Vector3D;
 import deep.dd.utils.Frame;
@@ -17,16 +21,32 @@ import flash.display3D.textures.Texture;
 import deep.dd.utils.GlobalStatistics;
 #end
 
-
+/**
+* Текстура отображающая битмапу
+* @lang ru
+**/
 class BitmapTexture2D extends Texture2D
 {
-    var bitmapData:BitmapData;
+    /**
+    * Ссылка на битмапу текстуры. Может и не существовать
+    * @lang ru
+    **/
+    public var bitmapData(default, null):BitmapData;
     var bitmapRef:Class<BitmapData>;
 
+    /**
+    * Ширина битмапы
+    * @lang ru
+    **/
     public var bitmapWidth(default, null):Int;
+
+    /**
+    * Высота битмапы
+    * @lang ru
+    **/
     public var bitmapHeight(default, null):Int;
 
-    public function new(bmp:BitmapData, options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    public function new(bmp:BitmapData)
     {
         bitmapData = bmp;
         bitmapWidth = bmp.width;
@@ -34,13 +54,17 @@ class BitmapTexture2D extends Texture2D
         textureWidth = Texture2D.getNextPowerOfTwo(bitmapWidth);
         textureHeight = Texture2D.getNextPowerOfTwo(bitmapHeight);
 
-        super(options);
+        super();
 
         frame = new Frame(bitmapWidth, bitmapHeight,
             new Vector3D(0, 0, bitmapWidth/textureWidth, bitmapHeight/textureHeight));
     }
 
-    public static function createFromRef(ref:Class<BitmapData>, options:UInt = Texture2DOptions.QUALITY_ULTRA):BitmapTexture2D
+    /**
+    * Билд метод для создания битмап текстуры на основе класса битмапы
+    * @lang ru
+    **/
+    public static function createFromRef(ref:Class<BitmapData>):BitmapTexture2D
     {
         var res = new BitmapTexture2D(Type.createInstance(ref, [0, 0]));
         res.bitmapRef = ref;
@@ -85,7 +109,7 @@ class BitmapTexture2D extends Texture2D
         memory += b.width * b.height * 4;
         texture.uploadFromBitmapData(b);
 
-        if ((options & Texture2DOptions.MIPMAP_LINEAR) | (options & Texture2DOptions.MIPMAP_NEAREST) > 0)
+        if (mipmap)
         {
             var w:Int = textureWidth >> 1;
             var h:Int = textureHeight >> 1;
@@ -132,13 +156,16 @@ class BitmapTexture2D extends Texture2D
     }
 }
 
-//---------------------------
-// only RGBA
+/**
+* ATF текстура.
+* Пока не поддерживается
+* @lang ru
+**/
 class ATFTexture2D extends Texture2D
 {
     var atfData:ByteArray;
 
-    public function new(data:ByteArray, options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    function new(data:ByteArray)
     {
         #if debug
         if (String.fromCharCode(data[0]) + String.fromCharCode(data[1]) + String.fromCharCode(data[2]) != "ATF")
@@ -150,7 +177,7 @@ class ATFTexture2D extends Texture2D
 
         atfData = data;
 
-        super(options);
+        super();
 
         frame = new Frame(textureWidth, textureHeight, new Vector3D(0, 0, 1, 1));
     }
@@ -195,16 +222,18 @@ class ATFTexture2D extends Texture2D
     }
 }
 
-//---------------------------
-
+/**
+* Пустая текстура, обычно используется для рендера на текстуру
+* @lang ru
+**/
 class EmptyTexture extends Texture2D
 {
-    public function new(width:Int, height:Int, options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    public function new(width:Int, height:Int)
     {
         textureWidth = Texture2D.getNextPowerOfTwo(width);
         textureHeight = Texture2D.getNextPowerOfTwo(height);
 
-        super(options);
+        super();
 
         frame = new Frame(textureWidth, textureHeight, new Vector3D(0, 0, 1, 1));
     }
@@ -218,22 +247,46 @@ class EmptyTexture extends Texture2D
     }
 }
 
-//---------------------------
-
+/**
+* Базовый класс текстуры
+* @lang ru
+**/
 class Texture2D
 {
-    public var options(default, null):UInt;
-
-    // preferred size
+    /**
+    * Предпочтительная ширина текстуры с учетом фрейма
+    * @lang ru
+    **/
     public var width(default, null):Float;
+    /**
+    * Предпочтительная высота текстуры с учетом фрейма
+    * @lang ru
+    **/
     public var height(default, null):Float;
 
-    // texture size 2^n
+    /**
+    * Ширина загруженой текстуры
+    * @lang ru
+    **/
     public var textureWidth(default, null):Int;
+
+    /**
+    * Высота загруженой текстуры
+    * @lang ru
+    **/
     public var textureHeight(default, null):Int;
 
+    /**
+    * Кадр текстуры
+    * @see deep.dd.utils.Frame
+    * @lang ru
+    **/
     public var frame(default, set_frame):Frame;
 
+    /**
+    * Загруженная текстура в гпу
+    * @lang ru
+    **/
     public var texture(default, null):Texture;
 
     var ctx:Context3D;
@@ -242,22 +295,39 @@ class Texture2D
 
     public var name:String;
 
-    function new(options:UInt = Texture2DOptions.QUALITY_ULTRA)
+    function new()
     {
-        this.options = options;
+		wrap = true;
+		mipmap = true;
+		filter = true;
         name = "texture_" + uid++;
     }
 
+    /**
+    * Счетчик использования текстуры
+    * @lang ru
+    **/
     public var useCount(default, null):Int = 0;
+
+    /**
+    * Ссылка на кеш, если текстура было создана через кеш
+    * @lang ru
+    **/
     public var cache(default, null):Cache;
 
-    public var releaseRawData(default, #if debug set_releaseBitmap #else default #end):Bool = false;
+    /**
+    * Удалять ссылку на битмапу или атф данные.
+    * Если значение true, то в случае потери контекста не удастся восстановить текстуру
+    * Не
+    * @lang ru
+    **/
+    public var releaseRawData(default, #if debug set #else default #end):Bool = false;
 
     #if debug
-    function set_releaseBitmap(v)
+    function set_releaseRawData(v)
     {
         if (cache != null) throw "releaseBitmap conflict with cache";
-        return releaseRawData = v;
+        return releaseRawData = false;
     }
     #end
 
@@ -274,14 +344,30 @@ class Texture2D
         return frame = f;
     }
 
+    /**
+    * Флаг, что нужно обновить текстуру
+    * @lang ru
+    **/
     public var needUpdate:Bool = false;
 
+    /**
+    * Обновление текстуры
+    * @lang ru
+    **/
     public function update()
     {
     }
 
+    /**
+    * Размер текстуры в байтах занимаемый в памяти
+    * @lang ru
+    **/
     public var memory(default, null):UInt = 0;
 
+    /**
+    * Метод инициализации контекста, вызывается при создании контекста
+    * @lang ru
+    **/
     public function init(ctx:Context3D)
     {
         if (this.ctx == ctx) return;
@@ -290,6 +376,10 @@ class Texture2D
         uploadTexture();
     }
 
+    /**
+    * Выгрузка текстуры
+    * @lang ru
+    **/
     function unloadTexture()
     {
         if (texture != null)
@@ -302,6 +392,10 @@ class Texture2D
         }
     }
 
+    /**
+    * Загрузка текстуры
+    * @lang ru
+    **/
     function uploadTexture()
     {
         #if dd_stat
@@ -341,30 +435,29 @@ class Texture2D
     {
         var ref = Type.getClassName(Type.getClass(this)).split(".").pop();
 
-        return Std.format("{$ref: $name, $width x $height}");
+        return '{$ref: $name, $width x $height}';
     }
-}
-
-// ND2D thanks
-class Texture2DOptions
-{
-
-    // defines how and if mip mapping should be used
-    public static inline var MIPMAP_DISABLE = 1;
-    public static inline var MIPMAP_NEAREST = 2;
-    public static inline var MIPMAP_LINEAR = 4;
-
-    // texture filtering methods
-    public static inline var FILTERING_NEAREST = 8;
-    public static inline var FILTERING_LINEAR = 16;
-
-    // texture repeat
-    public static inline var REPEAT_NORMAL = 32;
-    public static inline var REPEAT_CLAMP = 64;
-
-    // predefined presets
-    public static inline var QUALITY_LOW = MIPMAP_DISABLE | FILTERING_NEAREST | REPEAT_NORMAL;
-    public static inline var QUALITY_MEDIUM = MIPMAP_DISABLE | FILTERING_LINEAR | REPEAT_NORMAL;
-    public static inline var QUALITY_HIGH = MIPMAP_NEAREST | FILTERING_LINEAR | REPEAT_NORMAL;
-    public static inline var QUALITY_ULTRA = MIPMAP_LINEAR | FILTERING_LINEAR | REPEAT_NORMAL;
+	
+	public var optionsUpdated(default, null):Bool;
+	
+	public var wrap(default, set):Null<Bool>;
+	
+	function set_wrap(v) {
+		optionsUpdated = true;
+		return wrap = v;
+	}
+	
+	public var filter(default, set):Null<Bool>;
+	
+	function set_filter(v) {
+		optionsUpdated = true;
+		return filter = v;
+	}
+	
+	public var mipmap(default, set):Null<Bool>;
+	
+	function set_mipmap(v) {
+		optionsUpdated = true;
+		return mipmap = v;
+	}
 }

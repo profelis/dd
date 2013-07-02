@@ -8,15 +8,25 @@ import flash.display3D.Context3D;
 import deep.dd.texture.Texture2D.Texture2DOptions;
 import flash.display.DisplayObject;
 
+/**
+* Текстура, которая для рендера использует нарисованый в битмапу DisplayObject
+* @lang ru
+**/
 class FlashTexture2D extends BitmapTexture2D
 {
     var displayObject:DisplayObject;
 
+    /**
+    * Будет ли текстура автоматически по размеру подстраиваться под DisplayObject или сохранит заданый размер
+    * @lang ru
+    **/
     public var autoSize:Bool;
 
-    public var displayObjectWidth:Int;
-    public var displayObjectHeight:Int;
-
+    /**
+    * Если значение true, то текстура будет обновляться раз в кадр
+    * Нужно для анимации, но весьма ресурсоемко
+    * @lang ru
+    **/
     public var autoUpdate:Bool;
 
     public function new(d:DisplayObject, autoUpdate = false, width:UInt = 0, height:UInt = 0, options:UInt = Texture2DOptions.QUALITY_ULTRA)
@@ -24,14 +34,13 @@ class FlashTexture2D extends BitmapTexture2D
         displayObject = d;
         this.autoUpdate = autoUpdate;
         autoSize = width == 0 || height == 0;
-        displayObjectWidth = width;
-        displayObjectHeight = height;
+        bitmapWidth = width;
+        bitmapHeight = height;
 
         update();
 
         super(bitmapData, options);
     }
-
 
     override public function init(ctx:Context3D)
     {
@@ -61,7 +70,7 @@ class FlashTexture2D extends BitmapTexture2D
         }
         else if (bitmapData == null)
         {
-            bitmapData = new BitmapData(displayObjectWidth, displayObjectHeight, true, 0x00000000);
+            bitmapData = new BitmapData(bitmapWidth, bitmapHeight, true, 0x00000000);
             bitmapData.lock();
             f = true;
         }
@@ -95,7 +104,7 @@ class FlashTexture2D extends BitmapTexture2D
 
     override public function toString()
     {
-        return Std.format("{FlashTexture2D: displayObject:$displayObject}");
+        return '{FlashTexture2D: displayObject:$displayObject}';
     }
 
 }

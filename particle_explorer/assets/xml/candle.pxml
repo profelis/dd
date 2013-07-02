@@ -5,12 +5,12 @@
 <spawnNum value="30"/>
 <spawnStep value="0.05"/>
 <blend source="SOURCE_ALPHA" destination="ONE"/>
-<startPosition minX="0" maxX="0" minY="0" maxY="0" minZ="0" maxZ="0" />
-<startVelocity minX="-2" maxX="2" minY="-130" maxY="-70" minZ="0" maxZ="0" />
-<gravity x="10" y="0" z="0" />
+<startPosition minX="0" maxX="0" minY="0" maxY="0" />
+<startVelocity minX="-2" maxX="2" minY="-130" maxY="-70" />
+<gravity x="10" y="0" />
 <startColor minR="1" maxR="1" minG="0.6" maxG="0.6" minB="0.2" maxB="0.2" minA="0.6" maxA="0.6" />
 <endColor minR="1" maxR="1" minG="0.3" maxG="0.3" minB="0" maxB="0" minA="0" maxA="0" />
 <startScale min="0.31" max="1.87" />
 <endScale min="0.08" max="0.23" />
-<rotation minX="0" maxX="0" minY="0" maxY="0" minZ="0" maxZ="0" />
+<rotation min="0" max="0" />
 </particleEmitterConfig>

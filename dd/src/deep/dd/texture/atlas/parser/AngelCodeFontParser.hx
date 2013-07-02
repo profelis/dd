@@ -1,5 +1,9 @@
 package deep.dd.texture.atlas.parser;
 
+/**
+*  @author Zaphod
+*/
+
 import deep.dd.texture.atlas.FontAtlasTexture2D;
 import deep.dd.utils.Frame;
 import deep.dd.texture.Texture2D;

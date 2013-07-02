@@ -1,4 +1,6 @@
 package tests;
+
+import flash.geom.Point;
 import deep.dd.texture.Texture2D.BitmapTexture2D;
 import flash.display.BitmapData;
 import deep.dd.display.Sprite2D;
@@ -50,11 +52,11 @@ class TestBounds extends Test
         quad1.displayHeight = 100;
 		quad1.x = 10;
 		quad1.y = 20;
-		quad1.geometry.setColor(0xff0000);
+		quad1.color = 0xff0000;
 		container.addChild(quad1);
         quad1.mouseEnabled = true;
         quad1.onMouseOver.add(function (_,_) quad1.color = 0xFFFF00);
-        quad1.onMouseOut.add(function (_,_) quad1.color = 0xFFFFFF);
+        quad1.onMouseOut.add(function (_,_) quad1.color = 0xff0000);
 
 		quad2 = new Sprite2D();
         var b = new BitmapData(64, 64, false, 0x00ff00);
@@ -62,7 +64,7 @@ class TestBounds extends Test
 		//quad2.rotation = 30;
 		quad2.x = -10;
 		quad2.y = 10;
-        quad2.pivot = new Vector3D(2, 1);
+        quad2.pivot = new Point(2, 1);
 		container.addChild(quad2);
 	}
 	
