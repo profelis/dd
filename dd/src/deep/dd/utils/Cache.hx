@@ -12,7 +12,7 @@ class Cache
         this.w = w;
 
         bmpCache = new ObjectMap();
-        bmpUseCount = new ObjectMap(true);
+        bmpUseCount = new ObjectMap();
         bmpTextureCache = new Map();
     }
 
@@ -51,7 +51,7 @@ class Cache
 
     var w:World2D;
 
-    var bmpCache:Map<Class<BitmapData>, BitmapData>;
+    var bmpCache:Map<Dynamic, BitmapData>;
     var bmpUseCount:Map<BitmapData, Int>;
 
     public function releaseBitmap(bmp:BitmapData)

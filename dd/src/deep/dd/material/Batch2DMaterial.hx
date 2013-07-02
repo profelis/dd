@@ -14,7 +14,7 @@ class Batch2DMaterial extends Material<Batch2DShader>
 {
     public function new()
     {
-        super(null);
+        super(new Batch2DShader());
     }
 
     public function startBatch(node:SmartSprite2D<Batch2DShader>, tex:Texture2D)
@@ -77,13 +77,7 @@ class Batch2DShader extends Shader
 		
 		function vertex(mproj:M44, mpos:M44<20>, cTransArr:Float4<20>, regions:Float4<20>)
 		{
-			// http://code.google.com/p/hxformat/issues/detail?id=28#c8
-			//var i = input.pos.xyzw;
-			//i.x = input.index.x * 4;
-			//out = input.pos.xyzw * mpos[i.x] * mproj;
-			var mp:M44 = mpos[input.index * 4];
-			var t = input.pos.xyzw * mp * mproj;
-			out = t;
+			out = input.pos.xyzw * mpos[input.index.x * 4] * mproj;
 			
 			var region = regions[input.index];
 			tuv = input.uv * region.zw + region.xy;

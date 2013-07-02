@@ -55,7 +55,7 @@ class CloudRender extends RenderBase<Cloud2DShader>
 
     override public function updateStep()
     {
-        var f = smartSprite.textureFrame;
+        //var f = smartSprite.textureFrame;
 
         smartSprite.nativeUpdateStep();
     }

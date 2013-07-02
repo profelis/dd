@@ -14,13 +14,13 @@ import haxe.ds.GenericStack;
         #end
     }
 
-    public var tail:FastCell<T>;
+    public var tail:GenericCell<T>;
 
     public function push(v:T)
     {
         if (tail != null)
         {
-            var i = new FastCell<T>(v, null);
+            var i = new GenericCell<T>(v, null);
             tail.next = i;
             tail = i;
         }
@@ -122,7 +122,7 @@ import haxe.ds.GenericStack;
             pos --;
         }
 
-        var i = new FastCell<T>(v, h.next);
+        var i = new GenericCell<T>(v, h.next);
         h.next = i;
         length ++;
     }
